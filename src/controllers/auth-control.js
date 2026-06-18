@@ -1,10 +1,7 @@
 let users = [
-  
-{ username: "lucas",
-   password: "1234" ,
-  username:"Paulo ",
-  password:"2026"}];
-
+  { username: "lucas", password: "1234" },
+  { username: "Paulo", password: "2026" }
+];
 module.exports={
     index:(req,res)=>{
         res.render("index");
