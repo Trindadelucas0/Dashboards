@@ -16,7 +16,7 @@ app.use(
 );
 
 app.use(router);
-const PORT = 5454;
+const PORT = 4243;
 app.listen(PORT,()=>{
      console.log(`SERVIDOR INICIADO \nRODANDO EM \n=> http://localhost:${PORT}/ <=`)
 }) 
