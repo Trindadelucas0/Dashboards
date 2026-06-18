@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#22a329">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/png" href="/logo.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/logo.png" sizes="180x180">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Selecionar Dashboard — Êxito</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0f5612 0%, #1a8a20 30%, #22a329 60%, #2CB930 100%);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated background orbs */
+    body::before,
+    body::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      animation: float 8s ease-in-out infinite;
+    }
+    body::before {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, #4ade80, transparent 70%);
+      top: -150px; right: -100px;
+      animation-delay: 0s;
+    }
+    body::after {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #86efac, transparent 70%);
+      bottom: -120px; left: -80px;
+      animation-delay: -4s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, -30px) scale(1.05); }
+    }
+
+    /* Dot pattern overlay */
+    .dot-pattern {
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Main container */
+    .selector-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 820px;
+      margin: 1rem;
+      animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(40px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Header card */
+    .header-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 2rem 2rem 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 12px rgba(44, 185, 48, 0.3));
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .logo-img:hover {
+      transform: scale(1.08) rotate(-3deg);
+    }
+
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .brand-name .green { color: #22a329; }
+    .brand-name .dark  { color: #1a1a2e; }
+
+    .brand-sub {
+      margin-top: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #22a329;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* Logout button */
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0.5rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      background: transparent;
+      color: #6b7280;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+    }
+    .btn-logout:hover {
+      border-color: #ef4444;
+      color: #ef4444;
+      background: #fef2f2;
+      transform: translateY(-1px);
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+      margin: 1.25rem 0;
+    }
+
+    /* Welcome section */
+    .welcome-section {
+      text-align: center;
+    }
+
+    .welcome-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin: 0;
+    }
+    .welcome-title .user-name {
+      color: #22a329;
+    }
+
+    .welcome-sub {
+      margin-top: 4px;
+      font-size: 0.82rem;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    /* Dashboard grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+
+    /* Dashboard card */
+    .dashboard-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 1.75rem 1.5rem;
+      box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+      animation: cardStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .dashboard-card:nth-child(1) { animation-delay: 0.15s; }
+    .dashboard-card:nth-child(2) { animation-delay: 0.25s; }
+    .dashboard-card:nth-child(3) { animation-delay: 0.35s; }
+    .dashboard-card:nth-child(4) { animation-delay: 0.45s; }
+    .dashboard-card:nth-child(5) { animation-delay: 0.55s; }
+    .dashboard-card:nth-child(6) { animation-delay: 0.65s; }
+
+    @keyframes cardStagger {
+      from { opacity: 0; transform: translateY(24px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .dashboard-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #22a329, #4ade80);
+      border-radius: 20px 20px 0 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow:
+        0 20px 60px rgba(44, 185, 48, 0.18),
+        0 0 0 2px rgba(44, 185, 48, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .dashboard-card:hover::before {
+      opacity: 1;
+    }
+
+    .dashboard-card:active {
+      transform: translateY(-2px) scale(0.99);
+    }
+
+    /* Card icon */
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      transition: all 0.35s ease;
+    }
+
+    .dashboard-card:hover .card-icon {
+      background: linear-gradient(135deg, #22a329, #4ade80);
+      transform: scale(1.08);
+      box-shadow: 0 6px 20px rgba(44, 185, 48, 0.3);
+    }
+
+    .card-icon svg {
+      width: 28px;
+      height: 28px;
+      color: #22a329;
+      transition: color 0.35s ease;
+    }
+
+    .dashboard-card:hover .card-icon svg {
+      color: #fff;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .card-desc {
+      font-size: 0.75rem;
+      color: #6b7280;
+      font-weight: 500;
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    .card-arrow {
+      margin-top: auto;
+      padding-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #22a329;
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: all 0.3s ease;
+    }
+
+    .dashboard-card:hover .card-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Footer */
+    .selector-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.5);
+      animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .selector-container {
+        margin: 0.75rem;
+      }
+      .header-card {
+        padding: 1.5rem 1.25rem 1.25rem;
+      }
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      .header-top {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      .btn-logout {
+        align-self: flex-end;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Dot pattern overlay -->
+  <div class="dot-pattern"></div>
+
+  <div class="selector-container">
+    <!-- Header -->
+    <div class="header-card">
+      <div class="header-top">
+        <div class="header-left">
+          <img src="/img/logo.png" alt="Êxito Logo" class="logo-img"
+            onerror="this.style.display='none'">
+          <div class="brand-info">
+            <div class="brand-name">
+              <span class="dark">Êx</span><span class="green">i</span><span class="dark">to</span>
+            </div>
+            <div class="brand-sub">Dashboards</div>
+          </div>
+        </div>
+        <a href="/auth/logout" class="btn-logout">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          </svg>
+          Sair
+        </a>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="welcome-section">
+        <h1 class="welcome-title">
+          Bem-vindo, <span class="user-name"><%= typeof currentUser !== 'undefined' && currentUser ? currentUser : 'Usuário' %></span>
+        </h1>
+        <p class="welcome-sub">Selecione o dashboard que deseja acessar</p>
+      </div>
+    </div>
+
+    <!-- =============================================
+         DASHBOARD CARDS
+         Para adicionar um novo dashboard, copie um bloco
+         <a class="dashboard-card"> ... </a> e altere:
+           1. href  → rota do novo dashboard
+           2. SVG   → ícone desejado
+           3. Título e descrição
+         Veja COMO_ADICIONAR_DASHBOARDS.md para detalhes.
+    ============================================= -->
+    <div class="dashboard-grid">
+
+      <!-- Card: UNICATINTAS -->
+      <a href="/auth/UNICATINTAS" class="dashboard-card">
+        <div class="card-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+          </svg>
+        </div>
+        <h2 class="card-title">UNICATINTAS</h2>
+        <p class="card-desc">Dashboard de tintas e revestimentos</p>
+        <div class="card-arrow">
+          Acessar
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Card: Loja Máquinas -->
+      <a href="/auth/loja-maquinas" class="dashboard-card">
+        <div class="card-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <h2 class="card-title">Loja Máquinas</h2>
+        <p class="card-desc">Dashboard de máquinas e equipamentos</p>
+        <div class="card-arrow">
+          Acessar
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Card: Baifer 2TRM -->
+      <a href="/auth/baifer2trm" class="dashboard-card">
+        <div class="card-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <h2 class="card-title">Baifer 2TRM</h2>
+        <p class="card-desc">Dashboard de análises e relatórios</p>
+        <div class="card-arrow">
+          Acessar
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="selector-footer">
+      © <%= new Date().getFullYear() %> Êxito · Todos os direitos reservados
+    </div>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(function () {});
+    }
+  </script>
+</body>
+</html>
