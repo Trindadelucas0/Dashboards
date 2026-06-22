@@ -1,0 +1,2267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Tributário | LOJA das Máquinas e Ferramentas</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#0f1117; --bg-sidebar:#161b27; --bg-card:#1e2535; --bg-card-hover:#252d42;
+      --accent:#3b82f6; --accent-hover:#2563eb; --success:#10b981; --danger:#ef4444;
+      --warning:#f59e0b; --purple:#8b5cf6; --cyan:#06b6d4; --orange:#f97316;
+      --text:#e2e8f0; --text-sec:#94a3b8; --text-muted:#64748b;
+      --border:rgba(255,255,255,0.07); --border-accent:rgba(59,130,246,0.35);
+      --sidebar-w:260px; --header-h:68px; --radius:12px; --radius-sm:8px;
+      --shadow:0 4px 24px rgba(0,0,0,0.35); --t:0.22s ease;
+    }
+    html { font-size:14px; scroll-behavior:smooth; }
+    body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+    #app { display:flex; min-height:100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width:var(--sidebar-w); background:var(--bg-sidebar); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0;left:0;bottom:0; z-index:100; transition:width var(--t),transform var(--t); overflow:hidden; }
+    .sidebar.collapsed { width:72px; }
+    .sidebar.collapsed .logo-text,.sidebar.collapsed .nav-label,.sidebar.collapsed .sec-label,.sidebar.collapsed .sidebar-foot-info { display:none; }
+    .sidebar-logo { padding:0 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; min-height:var(--header-h); flex-shrink:0; }
+    .logo-icon { width:38px;height:38px; background:linear-gradient(135deg,var(--accent),var(--purple)); border-radius:10px; display:flex;align-items:center;justify-content:center; font-size:16px;color:#fff; flex-shrink:0; }
+    .logo-text .company { font-size:13px;font-weight:700;color:var(--text);white-space:nowrap; }
+    .logo-text .subtitle { font-size:10px;color:var(--text-muted);margin-top:2px;white-space:nowrap; }
+    .sidebar-nav { flex:1; padding:12px 8px; overflow-y:auto; overflow-x:hidden; }
+    .sidebar-nav::-webkit-scrollbar { width:4px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+    .sec-label { font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:10px 12px 4px; }
+    .nav-item { display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--t),color var(--t);margin-bottom:2px;white-space:nowrap;user-select:none; }
+    .nav-item:hover { background:rgba(255,255,255,0.05); }
+    .nav-item.active { background:rgba(59,130,246,0.15);color:var(--accent); }
+    .nav-item.active .nav-ico { color:var(--accent); }
+    .nav-ico { width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-muted);flex-shrink:0;transition:color var(--t); }
+    .nav-item:hover .nav-ico { color:var(--text); }
+    .nav-label { font-size:13px;font-weight:500; }
+    .sidebar-foot { padding:14px 16px;border-top:1px solid var(--border);flex-shrink:0; }
+    .sidebar-foot-info .lbl { font-size:10px;color:var(--text-muted); }
+    .sidebar-foot-info .val { font-size:12px;font-weight:600;color:var(--accent);margin-top:2px; }
+
+    /* MAIN */
+    .main-wrapper { margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left var(--t); }
+    .main-wrapper.sb-collapsed { margin-left:72px; }
+    .top-header { height:var(--header-h);background:var(--bg-sidebar);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:14px;position:sticky;top:0;z-index:50; }
+    .btn-toggle { width:36px;height:36px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-sec);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:background var(--t),color var(--t); }
+    .btn-toggle:hover { background:var(--bg-card-hover);color:var(--text); }
+    .header-title { font-size:15px;font-weight:600;flex:1; }
+    .header-title span { font-size:12px;font-weight:400;color:var(--text-muted);margin-left:8px; }
+    .header-actions { display:flex;align-items:center;gap:10px;flex-shrink:0; }
+    .period-sel { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:7px 12px;font-size:12px;font-family:inherit;cursor:pointer;outline:none; }
+    .period-sel:focus { border-color:var(--border-accent); }
+    .regime-badge { background:rgba(16,185,129,0.12);color:var(--success);border:1px solid rgba(16,185,129,0.3);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600; }
+
+    /* CONTENT */
+    .content { flex:1;padding:24px;overflow-x:hidden; }
+    .tab-section { display:none;animation:fadeUp .28s ease; }
+    .tab-section.active { display:block; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .sec-header { display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap; }
+    .sec-title { font-size:18px;font-weight:700; }
+    .sec-title small { font-size:12px;font-weight:400;color:var(--text-muted);margin-left:8px; }
+    .sec-sub { font-size:12px;color:var(--text-sec);margin-top:4px; }
+
+    /* KPI CARDS */
+    .kpi-grid { display:grid;gap:16px;margin-bottom:24px; }
+    .kpi-grid-4 { grid-template-columns:repeat(4,1fr); }
+    .kpi-grid-3 { grid-template-columns:repeat(3,1fr); }
+    .kpi-grid-2 { grid-template-columns:repeat(2,1fr); }
+    .kpi-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;transition:transform var(--t),box-shadow var(--t); }
+    .kpi-card:hover { transform:translateY(-2px);box-shadow:var(--shadow); }
+    .kpi-card::before { content:'';position:absolute;top:0;left:0;right:0;height:3px; }
+    .kpi-card.c-blue::before   { background:linear-gradient(90deg,var(--accent),transparent); }
+    .kpi-card.c-green::before  { background:linear-gradient(90deg,var(--success),transparent); }
+    .kpi-card.c-red::before    { background:linear-gradient(90deg,var(--danger),transparent); }
+    .kpi-card.c-yellow::before { background:linear-gradient(90deg,var(--warning),transparent); }
+    .kpi-card.c-purple::before { background:linear-gradient(90deg,var(--purple),transparent); }
+    .kpi-card.c-cyan::before   { background:linear-gradient(90deg,var(--cyan),transparent); }
+    .kpi-card.c-orange::before { background:linear-gradient(90deg,var(--orange),transparent); }
+    .kpi-head { display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px; }
+    .kpi-ico { width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:16px; }
+    .kpi-ico.c-blue   { background:rgba(59,130,246,.15);color:var(--accent); }
+    .kpi-ico.c-green  { background:rgba(16,185,129,.15);color:var(--success); }
+    .kpi-ico.c-red    { background:rgba(239,68,68,.15); color:var(--danger); }
+    .kpi-ico.c-yellow { background:rgba(245,158,11,.15);color:var(--warning); }
+    .kpi-ico.c-purple { background:rgba(139,92,246,.15);color:var(--purple); }
+    .kpi-ico.c-cyan   { background:rgba(6,182,212,.15); color:var(--cyan); }
+    .kpi-ico.c-orange { background:rgba(249,115,22,.15);color:var(--orange); }
+    .kpi-badge { font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;display:flex;align-items:center;gap:4px; }
+    .kpi-badge.up      { background:rgba(16,185,129,.15);color:var(--success); }
+    .kpi-badge.down    { background:rgba(239,68,68,.15); color:var(--danger); }
+    .kpi-badge.neutral { background:rgba(100,116,139,.15);color:var(--text-muted); }
+    .kpi-val { font-size:22px;font-weight:800;line-height:1.1;margin-bottom:4px; }
+    .kpi-lbl { font-size:12px;color:var(--text-sec);font-weight:500; }
+    .kpi-sub { font-size:11px;color:var(--text-muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border); }
+
+    /* CHARTS */
+    .charts-row { display:grid;gap:16px;margin-bottom:24px; }
+    .cr-2col { grid-template-columns:1fr 1fr; }
+    .cr-1-2  { grid-template-columns:1fr 2fr; }
+    .cr-2-1  { grid-template-columns:2fr 1fr; }
+    .cr-1col { grid-template-columns:1fr; }
+    .chart-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px; }
+    .chart-ttl { font-size:14px;font-weight:600;margin-bottom:2px; }
+    .chart-sub { font-size:11px;color:var(--text-muted);margin-bottom:14px; }
+    .chart-wrap { position:relative; }
+    .chart-wrap.h220 { height:220px; }
+    .chart-wrap.h260 { height:260px; }
+    .chart-wrap.h300 { height:300px; }
+
+    /* TABLES */
+    .table-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px; }
+    .table-head { padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+    .table-head .ttl { font-size:14px;font-weight:600; }
+    .table-head .sub { font-size:11px;color:var(--text-muted);margin-top:2px; }
+    .tbl-scroll { overflow-x:auto; }
+    table { width:100%;border-collapse:collapse; }
+    thead th { padding:9px 16px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);background:rgba(255,255,255,0.025);border-bottom:1px solid var(--border);white-space:nowrap; }
+    thead th.r { text-align:right; }
+    tbody td { padding:11px 16px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle; }
+    tbody tr:last-child td { border-bottom:none; }
+    tbody tr:hover td { background:rgba(255,255,255,0.02); }
+    td.r { text-align:right; }
+    .td-val { font-weight:600; }
+    .td-mute { color:var(--text-muted);font-size:12px; }
+
+    /* PROGRESS */
+    .pb-wrap { display:flex;align-items:center;gap:10px; }
+    .pb-bar  { flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden; }
+    .pb-fill { height:100%;border-radius:3px;transition:width .8s ease;background:var(--accent); }
+    .pb-fill.gr { background:var(--success); }
+    .pb-fill.ye { background:var(--warning); }
+    .pb-fill.pu { background:var(--purple); }
+    .pb-fill.cy { background:var(--cyan); }
+    .pb-fill.or { background:var(--orange); }
+    .pb-fill.rd { background:var(--danger); }
+    .pb-pct { font-size:12px;font-weight:600;min-width:44px;text-align:right; }
+
+    /* RANK */
+    .rank { width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0; }
+    .rank.g1 { background:rgba(245,158,11,.2);color:var(--warning); }
+    .rank.g2 { background:rgba(148,163,184,.2);color:#94a3b8; }
+    .rank.g3 { background:rgba(180,120,80,.2);color:#c97c4a; }
+    .rank.gn { background:rgba(100,116,139,.15);color:var(--text-muted); }
+
+    /* VARIATION */
+    .var-up   { display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(16,185,129,.15);color:var(--success); }
+    .var-down { display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(239,68,68,.15); color:var(--danger); }
+    .var-neu  { display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(100,116,139,.15);color:var(--text-muted); }
+
+    /* TAX CARDS */
+    .tax-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px; }
+    .tax-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:transform var(--t); }
+    .tax-card:hover { transform:translateY(-2px); }
+    .tax-card-head { display:flex;align-items:center;justify-content:space-between;margin-bottom:14px; }
+    .tax-name { font-size:13px;font-weight:700;letter-spacing:.04em; }
+    .tax-cur  { font-size:24px;font-weight:800;margin-bottom:4px; }
+    .tax-prev { font-size:11px;color:var(--text-muted);margin-bottom:12px; }
+    .tax-foot { display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted); }
+
+    /* MEMORY */
+    .formula-box { background:rgba(59,130,246,0.07);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:20px; }
+    .formula-box .fttl { font-weight:700;color:var(--accent);margin-bottom:8px;font-size:13px; }
+    .formula-box .fline { color:var(--text-sec);line-height:1.8;font-size:12px;font-family:'Courier New',monospace; }
+    .mem-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px; }
+    .mem-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden; }
+    .mem-card-head { padding:12px 16px;font-size:13px;font-weight:700;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+    .mem-row { display:flex;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);font-size:12px; }
+    .mem-row:last-child { border-bottom:none; }
+    .mem-row.hl  { background:rgba(59,130,246,0.06); }
+    .mem-row.tot { background:rgba(16,185,129,0.08);font-weight:700; }
+    .mem-row.neg { background:rgba(239,68,68,0.05); }
+    .mem-row .lbl { color:var(--text-sec); }
+    .mem-row .val { font-weight:600; }
+    .mem-row.tot .val { color:var(--success); }
+    .mem-row.neg .val { color:var(--danger); }
+    .alert-box { background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--warning); }
+
+    /* DRE */
+    .margin-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px; }
+    .margin-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center; }
+    .margin-val { font-size:28px;font-weight:800;margin-bottom:4px; }
+    .margin-lbl { font-size:12px;color:var(--text-sec); }
+    .margin-sub { font-size:11px;color:var(--text-muted);margin-top:4px; }
+    .dre-tbl td:first-child { padding-left:16px;font-weight:500; }
+    .dre-tbl .dre-group td  { font-weight:700;background:rgba(255,255,255,0.03);color:var(--text-sec);font-size:11px;text-transform:uppercase;letter-spacing:.05em; }
+    .dre-tbl .dre-indent td:first-child { padding-left:32px;color:var(--text-sec); }
+    .dre-tbl .dre-total td  { font-weight:800;background:rgba(59,130,246,0.07);border-top:1px solid var(--border-accent); }
+    .dre-tbl .dre-lucro td  { font-weight:800;background:rgba(16,185,129,0.08);color:var(--success);font-size:14px; }
+    .dre-tbl .dre-neg td.r  { color:var(--danger); }
+    .dre-tbl .dre-subv td   { background:rgba(245,158,11,0.06); }
+    .dre-tbl .dre-nd td     { color:var(--text-muted);font-style:italic; }
+
+    /* INDICATORS */
+    .ind-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px; }
+    .ind-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:transform var(--t); }
+    .ind-card:hover { transform:translateY(-2px); }
+    .ind-head { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+    .ind-name { font-size:11px;font-weight:600;color:var(--text-sec);text-transform:uppercase;letter-spacing:.04em; }
+    .ind-val  { font-size:26px;font-weight:800;margin-bottom:6px; }
+    .ind-formula { font-size:11px;color:var(--text-muted);font-family:'Courier New',monospace;background:rgba(255,255,255,0.04);padding:6px 10px;border-radius:6px;margin-bottom:10px; }
+    .ind-interp { font-size:11px;color:var(--text-sec);line-height:1.55;padding-top:10px;border-top:1px solid var(--border); }
+    .dot { width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block; }
+    .dot.gr { background:var(--success); }
+    .dot.ye { background:var(--warning); }
+    .dot.rd { background:var(--danger); }
+    .dot.gy { background:var(--text-muted); }
+
+    /* CHIPS */
+    .chip { display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:500; }
+    .chip.bl { background:rgba(59,130,246,.15);color:var(--accent); }
+    .chip.gr { background:rgba(16,185,129,.15);color:var(--success); }
+    .chip.ye { background:rgba(245,158,11,.15);color:var(--warning); }
+    .chip.pu { background:rgba(139,92,246,.15);color:var(--purple); }
+    .chip.cy { background:rgba(6,182,212,.15); color:var(--cyan); }
+    .chip.or { background:rgba(249,115,22,.15);color:var(--orange); }
+    .chip.rd { background:rgba(239,68,68,.15); color:var(--danger); }
+    .chip.gy { background:rgba(100,116,139,.15);color:var(--text-muted); }
+
+    /* UTIL */
+    .divider { height:1px;background:var(--border);margin:20px 0; }
+    .mb-24 { margin-bottom:24px; }
+    .t-success { color:var(--success); }
+    .t-danger  { color:var(--danger); }
+    .t-warning { color:var(--warning); }
+    .t-accent  { color:var(--accent); }
+    .t-muted   { color:var(--text-muted); }
+    .fw7 { font-weight:700; }
+    .fw8 { font-weight:800; }
+
+    /* OVERLAY */
+    .overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:99; }
+    ::-webkit-scrollbar { width:6px;height:6px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:var(--border);border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover { background:var(--text-muted); }
+
+    /* RESPONSIVE */
+    @media (max-width:1300px) {
+      .tax-grid { grid-template-columns:repeat(2,1fr); }
+      .mem-grid { grid-template-columns:repeat(2,1fr); }
+      .ind-grid { grid-template-columns:repeat(2,1fr); }
+      .margin-grid { grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-width:960px) {
+      .kpi-grid-4 { grid-template-columns:repeat(2,1fr); }
+      .kpi-grid-3 { grid-template-columns:repeat(2,1fr); }
+      .cr-2col,.cr-1-2,.cr-2-1 { grid-template-columns:1fr; }
+    }
+    @media (max-width:768px) {
+      .sidebar { transform:translateX(-100%); }
+      .sidebar.mob-open { transform:translateX(0); }
+      .main-wrapper { margin-left:0 !important; }
+      .content { padding:14px; }
+      .tax-grid,.mem-grid,.ind-grid { grid-template-columns:1fr; }
+      .margin-grid { grid-template-columns:repeat(2,1fr); }
+      .overlay { display:block; }
+      .overlay.hidden { display:none; }
+      .export-bar { width:100%; justify-content:flex-end; flex-wrap:wrap; }
+      .btn-export { padding:6px 10px; font-size:.72rem; }
+    }
+
+    /* === EXPORT BUTTONS === */
+    .export-bar { display:flex; gap:8px; margin-left:auto; flex-shrink:0; }
+    .btn-export {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:7px 14px; border-radius:8px;
+      font-size:.78rem; font-weight:600;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:var(--text-sec); cursor:pointer;
+      transition:all .2s ease; font-family:inherit;
+    }
+    .btn-export:hover { background:rgba(59,130,246,.25); border-color:rgba(59,130,246,.5); color:#fff; }
+    .btn-export:disabled { opacity:.5; cursor:wait; }
+    .btn-export i { font-size:.85rem; }
+    .btn-export.pdf  i { color:#ef4444; }
+    .btn-export.xlsx i { color:#22c55e; }
+    .btn-export.print i { color:#f59e0b; }
+
+    /* === SUPPLIER MODAL === */
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(4px);
+      z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px;
+    }
+    .modal-box {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+      width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column;
+      box-shadow:var(--shadow);
+    }
+    .modal-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 20px; border-bottom:1px solid var(--border);
+    }
+    .modal-header h3 { font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px; }
+    .modal-header h3 i { color:var(--warning); }
+    .modal-close {
+      background:none; border:none; color:var(--text-muted); font-size:22px;
+      cursor:pointer; line-height:1; padding:0 4px;
+    }
+    .modal-close:hover { color:var(--text); }
+    .modal-body { padding:16px 20px; overflow-y:auto; flex:1; }
+    .search-box input {
+      width:100%; padding:9px 12px; border-radius:var(--radius-sm);
+      border:1px solid var(--border); background:var(--bg); color:var(--text);
+      font-family:inherit; font-size:13px; outline:none;
+    }
+    .search-box input:focus { border-color:var(--border-accent); }
+    .supplier-actions { display:flex; gap:8px; margin:12px 0; }
+    .supplier-actions button {
+      padding:6px 12px; border-radius:6px; font-size:11px; font-weight:600;
+      border:1px solid var(--border); background:rgba(255,255,255,.05);
+      color:var(--text-sec); cursor:pointer; font-family:inherit;
+    }
+    .supplier-actions button:hover { background:rgba(59,130,246,.15); color:var(--accent); }
+    .supplier-list { display:flex; flex-direction:column; gap:4px; max-height:320px; overflow-y:auto; }
+    .supplier-item {
+      display:flex; align-items:flex-start; gap:10px; padding:10px 12px;
+      border-radius:var(--radius-sm); cursor:pointer; transition:background .15s;
+    }
+    .supplier-item:hover { background:rgba(255,255,255,.04); }
+    .supplier-item input { margin-top:3px; accent-color:var(--accent); }
+    .supplier-info { display:flex; flex-direction:column; gap:2px; }
+    .supplier-info strong { font-size:13px; font-weight:600; }
+    .supplier-info small { font-size:11px; color:var(--text-muted); }
+    .modal-footer {
+      display:flex; justify-content:flex-end; gap:10px;
+      padding:14px 20px; border-top:1px solid var(--border);
+    }
+    .btn-cancel {
+      padding:8px 16px; border-radius:var(--radius-sm); font-size:12px; font-weight:600;
+      border:1px solid var(--border); background:transparent; color:var(--text-sec);
+      cursor:pointer; font-family:inherit;
+    }
+    .btn-cancel:hover { background:rgba(255,255,255,.05); }
+    .btn-confirm {
+      padding:8px 16px; border-radius:var(--radius-sm); font-size:12px; font-weight:600;
+      border:1px solid rgba(59,130,246,.4); background:rgba(59,130,246,.2);
+      color:var(--accent); cursor:pointer; font-family:inherit;
+      display:inline-flex; align-items:center; gap:6px;
+    }
+    .btn-confirm:hover { background:rgba(59,130,246,.35); }
+
+    /* === PDF EXPORT THEME (scoped capture) === */
+    .pdf-export-target {
+      --bg: #f8fafc; --bg-card: #ffffff; --bg-card-hover: #f1f5f9;
+      --text: #1e293b; --text-sec: #475569; --text-muted: #64748b;
+      --border: rgba(0,0,0,0.12);
+      background: #f8fafc !important; color: #1e293b !important;
+      padding: 20px; opacity: 1 !important; filter: none !important; animation: none !important;
+    }
+    .pdf-export-target * { opacity: 1 !important; filter: none !important; }
+    .pdf-export-target .sec-title, .pdf-export-target .kpi-val, .pdf-export-target .chart-ttl,
+    .pdf-export-target .margin-val, .pdf-export-target .ind-val, .pdf-export-target .tax-cur,
+    .pdf-export-target .table-head .ttl, .pdf-export-target tbody td, .pdf-export-target td,
+    .pdf-export-target .kpi-lbl, .pdf-export-target .mem-row .lbl, .pdf-export-target .mem-row .val,
+    .pdf-export-target .fw7, .pdf-export-target .fw8 { color: #1e293b !important; }
+    .pdf-export-target .sec-sub, .pdf-export-target .kpi-sub, .pdf-export-target .chart-sub,
+    .pdf-export-target .table-head .sub, .pdf-export-target .td-mute, .pdf-export-target .sec-title small,
+    .pdf-export-target .margin-sub, .pdf-export-target .tax-prev, .pdf-export-target .ind-formula {
+      color: #475569 !important;
+    }
+    .pdf-export-target .kpi-card, .pdf-export-target .chart-card, .pdf-export-target .table-card,
+    .pdf-export-target .margin-card, .pdf-export-target .tax-card, .pdf-export-target .mem-card,
+    .pdf-export-target .ind-card, .pdf-export-target .alert-box {
+      background: #ffffff !important; border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+    }
+    .pdf-export-target .t-success { color: #059669 !important; }
+    .pdf-export-target .t-warning { color: #d97706 !important; }
+    .pdf-export-target .t-danger  { color: #dc2626 !important; }
+    .pdf-export-target .t-accent  { color: #2563eb !important; }
+    .pdf-export-target .t-muted   { color: #64748b !important; }
+    .pdf-export-target .kpi-ico.c-blue   { background: rgba(59,130,246,.22) !important; color: #2563eb !important; }
+    .pdf-export-target .kpi-ico.c-green  { background: rgba(16,185,129,.22) !important; color: #059669 !important; }
+    .pdf-export-target .kpi-ico.c-yellow { background: rgba(245,158,11,.22) !important; color: #d97706 !important; }
+    .pdf-export-target .kpi-ico.c-purple { background: rgba(139,92,246,.22) !important; color: #7c3aed !important; }
+    .pdf-export-target .export-bar { display: none !important; }
+    .pdf-export-target thead th { background: #f1f5f9 !important; color: #475569 !important; }
+    .pdf-export-target .dre-tbl .dre-group td { background: #f1f5f9 !important; color: #475569 !important; }
+    .pdf-export-target .dre-tbl .dre-total td { background: #ecfdf5 !important; }
+    .pdf-export-target .dre-tbl .dre-lucro td { background: #ecfdf5 !important; color: #059669 !important; }
+    .tab-section.export-capture {
+      display: block !important;
+      position: fixed;
+      top: 0; left: 0;
+      width: 1200px;
+      z-index: 10000;
+      max-height: none;
+      overflow: visible;
+    }
+    body.pdf-capturing { overflow: hidden; }
+
+    #print-supplier-report { display:none; }
+    body.supplier-printing #app, body.supplier-printing #overlay { display:none !important; }
+    body.supplier-printing #print-supplier-report { display:block !important; }
+
+    @media print {
+      body { background:#fff !important; color:#1a1a2e !important; }
+      .sidebar, .top-header, .export-bar, .btn-export, .modal-overlay, #overlay { display:none !important; }
+      body.supplier-printing #app { display:none !important; }
+      body.supplier-printing #print-supplier-report { display:block !important; position:static !important; }
+      .main-wrapper { margin-left:0 !important; }
+      .tab-section { display:none !important; }
+      .kpi-card, .chart-card, .table-card, .ind-card, .tax-card, .mem-card {
+        background:#fff !important; border:1px solid #ddd !important; color:#1a1a2e !important;
+      }
+      table th { background:#f0f0f0 !important; color:#1a1a2e !important; }
+      table td { color:#333 !important; border-color:#ddd !important; }
+      canvas { max-width:100% !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="overlay" class="overlay hidden" onclick="closeMob()"></div>
+
+<div id="app">
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="fas fa-screwdriver-wrench"></i></div>
+      <div class="logo-text">
+        <div class="company">LOJA MÁQUINAS</div>
+        <div class="subtitle">Máquinas &amp; Ferramentas &bull; Q1/2026</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sec-label">Principal</div>
+      <div class="nav-item active" id="nav-visao-geral" onclick="showTab('visao-geral')">
+        <div class="nav-ico"><i class="fas fa-gauge-high"></i></div><span class="nav-label">Visão Geral</span>
+      </div>
+      <div class="sec-label">Movimentação</div>
+      <div class="nav-item" id="nav-compras" onclick="showTab('compras')">
+        <div class="nav-ico"><i class="fas fa-cart-shopping"></i></div><span class="nav-label">Compras</span>
+      </div>
+      <div class="nav-item" id="nav-finalidade" onclick="showTab('finalidade')">
+        <div class="nav-ico"><i class="fas fa-tags"></i></div><span class="nav-label">Finalidade de Compras</span>
+      </div>
+      <div class="nav-item" id="nav-vendas" onclick="showTab('vendas')">
+        <div class="nav-ico"><i class="fas fa-store"></i></div><span class="nav-label">Vendas</span>
+      </div>
+      <div class="sec-label">Tributário</div>
+      <div class="nav-item" id="nav-impostos" onclick="showTab('impostos')">
+        <div class="nav-ico"><i class="fas fa-file-invoice-dollar"></i></div><span class="nav-label">Impostos</span>
+      </div>
+      <div class="nav-item" id="nav-memoria" onclick="showTab('memoria')">
+        <div class="nav-ico"><i class="fas fa-calculator"></i></div><span class="nav-label">Memória de Cálculo</span>
+      </div>
+      <div class="sec-label">Financeiro</div>
+      <div class="nav-item" id="nav-dre" onclick="showTab('dre')">
+        <div class="nav-ico"><i class="fas fa-chart-line"></i></div><span class="nav-label">DRE</span>
+      </div>
+      <div class="nav-item" id="nav-indicadores" onclick="showTab('indicadores')">
+        <div class="nav-ico"><i class="fas fa-circle-nodes"></i></div><span class="nav-label">Indicadores</span>
+      </div>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="sidebar-foot-info">
+        <div class="lbl">Competência</div>
+        <div class="val">Janeiro – Março 2026</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="main-wrapper" id="mainWrapper">
+    <header class="top-header">
+      <button class="btn-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <div class="header-title" id="headerTitle">Visão Geral <span>Resumo Executivo – 1º Trimestre 2026 (Fev = cópia Jan nas planilhas)</span></div>
+      <div class="header-actions">
+        <select class="period-sel">
+          <option>Janeiro – Março 2026</option>
+          <option>Anual 2025</option>
+        </select>
+        <div class="regime-badge"><i class="fas fa-circle" style="font-size:7px;margin-right:5px;"></i>Lucro Real</div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- ===============================================
+           ABA 1 – VISÃO GERAL
+           =============================================== -->
+      <section id="tab-visao-geral" class="tab-section active">
+<div class="alert-box" style="margin-bottom:20px;border-color:rgba(245,158,11,0.35);color:var(--warning);background:rgba(245,158,11,0.07)"><i class="fas fa-triangle-exclamation" style="margin-right:8px;"></i><strong>Atenção:</strong> Resumo e EFD de <strong>Fev/2026</strong> são idênticos a Jan — gráficos Q1 podem superestimar Fev até correção das planilhas.</div>
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Visão Geral <small>1º Trimestre / 2026</small></div>
+            <div class="sec-sub">LOJA das Máquinas e Ferramentas Ltda — CNPJ 13.983.066/0001-90</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-visao-geral','Visao_Geral')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-visao-geral','Visao_Geral')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
+        </div>
+
+        <!-- KPI Cards – Mar/2026 -->
+        <div class="kpi-grid kpi-grid-4">
+          <div class="kpi-card c-blue">
+            <div class="kpi-head">
+              <div class="kpi-ico c-blue"><i class="fas fa-store"></i></div>
+              <div class="kpi-badge neutral">Mar/2026</div>
+            </div>
+            <div class="kpi-val">R$ 539,9K</div>
+            <div class="kpi-lbl">Receita Bruta de Vendas</div>
+            <div class="kpi-sub">Acumulado Jan–Mar: R$ 1,31M</div>
+          </div>
+          <div class="kpi-card c-green">
+            <div class="kpi-head">
+              <div class="kpi-ico c-green"><i class="fas fa-cart-shopping"></i></div>
+              <div class="kpi-badge neutral">Mar/2026</div>
+            </div>
+            <div class="kpi-val">R$ 395,5K</div>
+            <div class="kpi-lbl">Total de Compras</div>
+            <div class="kpi-sub">Fonte: ICMS – Entradas Mar/2026</div>
+          </div>
+          <div class="kpi-card c-yellow">
+            <div class="kpi-head">
+              <div class="kpi-ico c-yellow"><i class="fas fa-file-invoice-dollar"></i></div>
+              <div class="kpi-badge down"><i class="fas fa-arrow-up"></i>27.53%</div>
+            </div>
+            <div class="kpi-val">R$ 148,6K</div>
+            <div class="kpi-lbl">Deduções Tributárias</div>
+            <div class="kpi-sub">Sobre receita bruta Mar/2026</div>
+          </div>
+          <div class="kpi-card c-purple">
+            <div class="kpi-head">
+              <div class="kpi-ico c-purple"><i class="fas fa-hand-holding-dollar"></i></div>
+              <div class="kpi-badge up"><i class="fas fa-arrow-down"></i>ICMS Apurado</div>
+            </div>
+            <div class="kpi-val t-accent">R$ 86.887</div>
+            <div class="kpi-lbl">ICMS a Recolher – Mar/2026</div>
+            <div class="kpi-sub">PIS a recolher (EFD): R$ 3.029,17</div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-row cr-2col">
+          <div class="chart-card">
+            <div class="chart-ttl">Receita Bruta × Deduções Tributárias</div>
+            <div class="chart-sub">Valores mensais Jan–Mar 2026 (R$ mil) — DRE Contábil</div>
+            <div class="chart-wrap h260"><canvas id="chartCompBar"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-ttl">Deduções Tributárias sobre a Receita (%)</div>
+            <div class="chart-sub">% de ICMS+COFINS+PIS+ICMS-ST+Devoluções sobre RB mensal</div>
+            <div class="chart-wrap h260"><canvas id="chartDedPct"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Composição Mai + tabela -->
+        <div class="charts-row cr-2col">
+          <div class="chart-card">
+            <div class="chart-ttl">Composição das Deduções – Mar/2026</div>
+            <div class="chart-sub">Participação de cada tributo no total de deduções do mês</div>
+            <div class="chart-wrap h260"><canvas id="chartComposicao"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-ttl">Análise de Impostos sobre Vendas – Mar/2026</div>
+            <div class="chart-sub">Valores apurados / % sobre Receita Bruta de R$ 539.918,00</div>
+            <div style="overflow-x:auto">
+              <table>
+                <thead><tr><th>Tributo</th><th class="r">Apurado Bruto</th><th class="r">A Recolher</th><th class="r">% s/ RB</th></tr></thead>
+                <tbody>
+                  <tr><td>ICMS (Resumo acumulador)</td><td class="r">R$ 86.887,00</td><td class="r td-val t-accent">R$ 86.887</td><td class="r"><span class="chip bl">16.09%</span></td></tr>
+                  <tr><td>ICMS ST</td><td class="r">R$ 0</td><td class="r td-val">R$ 0</td><td class="r"><span class="chip pu">0,00%</span></td></tr>
+                  <tr><td>PIS (1,65% – N. Cum.)</td><td class="r">R$ 8.721,00</td><td class="r td-val t-success">R$ 3.029,17</td><td class="r"><span class="chip gr">1.62%</span></td></tr>
+                  <tr><td>COFINS (7,60% – N. Cum.)</td><td class="r">R$ 53.033,00</td><td class="r td-val t-success">R$ 18.420,59</td><td class="r"><span class="chip ye">9.82%</span></td></tr>
+                  <tr><td>IRPJ</td><td class="r td-mute">Em apuração</td><td class="r td-mute">—</td><td class="r"><span class="chip gy">—</span></td></tr>
+                  <tr><td>CSLL</td><td class="r td-mute">Em apuração</td><td class="r td-mute">—</td><td class="r"><span class="chip gy">—</span></td></tr>
+                  <tr style="background:rgba(59,130,246,0.05)">
+                    <td class="fw7">Total (s/ IRPJ/CSLL)</td><td class="r fw7">R$ 148.641,00</td><td class="r fw7">R$ 86.887</td><td class="r fw7">20.07%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===============================================
+           ABA 2 – COMPRAS
+           =============================================== -->
+      <section id="tab-compras" class="tab-section">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Compras <small>Março 2026</small></div>
+            <div class="sec-sub">Aquisições de máquinas, ferramentas e insumos — período 01/03/2026 a 31/03/2026</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-compras','Compras')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-compras','Compras')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
+        </div>
+
+        <div class="kpi-grid kpi-grid-3">
+          <div class="kpi-card c-green">
+            <div class="kpi-head"><div class="kpi-ico c-green"><i class="fas fa-boxes-stacked"></i></div><div class="kpi-badge neutral">Mar/2026</div></div>
+            <div class="kpi-val">R$ 395,5K</div>
+            <div class="kpi-lbl">Total de Compras</div>
+            <div class="kpi-sub">Fonte: Relatório ICMS de Entradas</div>
+          </div>
+          <div class="kpi-card c-blue">
+            <div class="kpi-head"><div class="kpi-ico c-blue"><i class="fas fa-handshake"></i></div><div class="kpi-badge neutral">—</div></div>
+            <div class="kpi-val">27</div>
+            <div class="kpi-lbl">Principais Fornecedores</div>
+            <div class="kpi-sub">1º fornecedor: 79% · também: NOVA CASA DIST, STIHL FERRAMEN, ASL ESPECIALIS, CONDOR ATACADI</div>
+          </div>
+          <div class="kpi-card c-purple">
+            <div class="kpi-head"><div class="kpi-ico c-purple"><i class="fas fa-map-location-dot"></i></div><div class="kpi-badge neutral">—</div></div>
+            <div class="kpi-val">10 UFs</div>
+            <div class="kpi-lbl">Estados de Origem</div>
+            <div class="kpi-sub">DF lidera com 95.9% das compras</div>
+          </div>
+        </div>
+
+        <div class="charts-row cr-2col">
+          <div class="chart-card">
+            <div class="chart-ttl">Ranking de Fornecedores</div>
+            <div class="chart-sub">Valor contábil de entradas por fornecedor – Mar/2026 (R$ mil)</div>
+            <div class="chart-wrap h300"><canvas id="chartFornecedores"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-ttl">Compras por Estado de Origem (UF)</div>
+            <div class="chart-sub">Participação % por UF de procedência – Mar/2026</div>
+            <div class="chart-wrap h300"><canvas id="chartComprasUF"></canvas></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-head">
+            <div><div class="ttl">Ranking de Fornecedores – Mar/2026</div><div class="sub">Participação individual no volume total de compras do período</div></div>
+          </div>
+          <div class="tbl-scroll">
+            <table>
+              <thead><tr><th>#</th><th>Fornecedor</th><th>UF</th><th class="r">Valor Contábil</th><th>Participação</th><th class="r">CFOP Principal</th></tr></thead>
+              <tbody>
+<tr><td><div class="rank g1">1</div></td><td><div class="fw7">BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA</div><div class="td-mute">Fornecedor Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 311.751,55</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:100%"></div></div><div class="pb-pct">78.8%</div></div></td><td class="r td-mute">1-403</td></tr>
+<tr><td><div class="rank g2">2</div></td><td><div class="fw7">NOVA CASA DIST. MAT. P/ CONST. S/A</div><div class="td-mute">Fornecedor Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 14.070,60</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:5%"></div></div><div class="pb-pct">3.6%</div></div></td><td class="r td-mute">1-403</td></tr>
+<tr><td><div class="rank g3">3</div></td><td><div class="fw7">STIHL FERRAMENTAS MOTORIZADAS LTDA.</div><div class="td-mute">Fornecedor Mar/2026</div></td><td><span class="chip bl">SP</span></td><td class="r td-val">R$ 11.409,83</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:4%"></div></div><div class="pb-pct">2.9%</div></div></td><td class="r td-mute">2-911</td></tr>
+<tr><td><div class="rank gn">4</div></td><td><div class="fw7">ASL ESPECIALISTA FILTROS E PECAS LTDA</div><div class="td-mute">Fornecedor Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 10.845,00</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:3%"></div></div><div class="pb-pct">2.7%</div></div></td><td class="r td-mute">1-403</td></tr>
+<tr><td><div class="rank gn">5</div></td><td><div class="fw7">CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A</div><div class="td-mute">Fornecedor Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 9.191,96</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:3%"></div></div><div class="pb-pct">2.3%</div></div></td><td class="r td-mute">1-403</td></tr>
+<tr><td><div class="rank gn">6</div></td><td><div class="fw7">BSB DISTRIBUIDORA DE BATERIAS LTDA</div><div class="td-mute">Fornecedor Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 6.234,73</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:2%"></div></div><div class="pb-pct">1.6%</div></div></td><td class="r td-mute">1-403</td></tr>
+<tr><td><div class="rank gn">7</div></td><td><div class="fw7">FERROMIL COMERCIAL DE FERRAGENS LTDA EPP</div><div class="td-mute">Fornecedor Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 4.720,00</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:2%"></div></div><div class="pb-pct">1.2%</div></div></td><td class="r td-mute">1-102</td></tr>
+<tr><td><div class="rank gn">8</div></td><td><div class="fw7">ABRITTA POSTOS DE SERVICOS LTDA</div><div class="td-mute">Fornecedor Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 4.437,03</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:1%"></div></div><div class="pb-pct">1.1%</div></div></td><td class="r td-mute">1-556</td></tr>
+<tr><td><div class="rank gn">9+</div></td><td><div class="fw7">Demais Fornecedores</div><div class="td-mute">Outros</div></td><td><span class="chip gy">—</span></td><td class="r td-val">R$ 22.811,30</td><td><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:45%;background:var(--text-muted)"></div></div><div class="pb-pct">5.8%</div></div></td><td class="r td-mute">vários</td></tr>
+</tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===============================================
+           ABA 2B – FINALIDADE DE COMPRAS (CFOP)
+           =============================================== -->
+      <section id="tab-finalidade" class="tab-section">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Finalidade de Compras <small>Março 2026 — por CFOP</small></div>
+            <div class="sec-sub">Classificação fiscal das entradas — Entradas 03-2026.xls — por CFOP — Mar/2026</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export print" onclick="openSupplierModal()" title="Imprimir por Fornecedor"><i class="fas fa-truck"></i> Por Fornecedor</button>
+            <button class="btn-export pdf" onclick="exportPDF('tab-finalidade','Finalidade_Compras')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-finalidade','Finalidade_Compras')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
+        </div>
+
+        <div class="alert-box" style="border-color:rgba(59,130,246,0.35);color:var(--accent);background:rgba(59,130,246,0.07)">
+          <i class="fas fa-info-circle" style="margin-right:8px;"></i>
+          <strong>Fonte única de dados:</strong> Cada entrada é classificada automaticamente pelo CFOP da NF-e. Nenhuma classificação manual.
+          Devoluções (1.202, 1.411) reduzem o estoque e o custo mas aparecem aqui como entradas contábeis.
+        </div>
+
+        <!-- KPI por finalidade -->
+        <div class="kpi-grid kpi-grid-4">
+          <div class="kpi-card c-blue">
+            <div class="kpi-head"><div class="kpi-ico c-blue"><i class="fas fa-rotate-left"></i></div><div class="kpi-badge neutral">1-102 / 1-403 / 2-102</div></div>
+            <div class="kpi-val">R$ 385.693,47</div>
+            <div class="kpi-lbl">Revenda</div>
+            <div class="kpi-sub">Compra p/ comercialização — 97.5% do total</div>
+          </div>
+          <div class="kpi-card c-orange">
+            <div class="kpi-head"><div class="kpi-ico c-orange"><i class="fas fa-building"></i></div><div class="kpi-badge neutral">1-652</div></div>
+            <div class="kpi-val">R$ 0,00</div>
+            <div class="kpi-lbl">Bonificação (CFOP 2-910)</div>
+            <div class="kpi-sub">Nenhuma NF com CFOP 2-910 em Mar/2026</div>
+          </div>
+          <div class="kpi-card c-purple">
+            <div class="kpi-head"><div class="kpi-ico c-purple"><i class="fas fa-arrows-rotate"></i></div><div class="kpi-badge neutral">1-202 / 1-411 / 2-202</div></div>
+            <div class="kpi-val">R$ 3.086,63</div>
+            <div class="kpi-lbl">Devoluções / Retornos</div>
+            <div class="kpi-sub">Dev. de venda e de compra Mar/2026</div>
+          </div>
+          <div class="kpi-card c-cyan">
+            <div class="kpi-head"><div class="kpi-ico c-cyan"><i class="fas fa-box-open"></i></div><div class="kpi-badge neutral">1-652 / 1-556 / 2-911</div></div>
+            <div class="kpi-val">R$ 6.691,99</div>
+            <div class="kpi-lbl">Uso e Consumo / Outras</div>
+            <div class="kpi-sub">Combustível, material uso/consumo, retornos</div>
+          </div>
+        </div>
+
+        <!-- Gráfico de distribuição -->
+        <div class="charts-row cr-2col">
+          <div class="chart-card">
+            <div class="chart-ttl">Distribuição por Finalidade Fiscal</div>
+            <div class="chart-sub">% do valor total de entradas — Mar/2026 (R$ 395.472,00 — Resumo acumulador)</div>
+            <div class="chart-wrap h280"><canvas id="chartFinalidadeDist"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-ttl">Valor por Finalidade (R$ mil)</div>
+            <div class="chart-sub">Comparativo dos grupos fiscais de compras — Mar/2026</div>
+            <div class="chart-wrap h280"><canvas id="chartFinalidadeBar"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Tabela CFOP detalhada com drilldown -->
+        <div class="table-card">
+          <div class="table-head">
+            <div><div class="ttl">Detalhamento por CFOP — Clique para expandir fornecedores</div><div class="sub">Cada CFOP possui sua finalidade fiscal e créditos tributários permitidos</div></div>
+          </div>
+          <div class="tbl-scroll">
+            <table id="tbl-cfop">
+              <thead><tr><th>CFOP</th><th>Descrição</th><th>Finalidade</th><th>Créd. PIS/COFINS</th><th class="r">Nº NFs</th><th class="r">Total (R$)</th><th class="r">% Total</th><th class="c">Detalhes</th></tr></thead>
+              <tbody id="cfop-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Drilldown modal (expandido inline) -->
+        <div id="drilldown-panel" style="display:none;background:var(--bg-card);border:1px solid var(--border-accent);border-radius:var(--radius);padding:20px;margin-bottom:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <div>
+              <div id="dd-title" style="font-size:16px;font-weight:700;"></div>
+              <div id="dd-sub" style="font-size:12px;color:var(--text-muted);margin-top:4px;"></div>
+            </div>
+            <button onclick="closeDrilldown()" style="background:var(--bg-card-hover);border:1px solid var(--border);color:var(--text-sec);padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;">Fechar</button>
+          </div>
+          <div class="tbl-scroll">
+            <table id="tbl-drilldown">
+              <thead><tr><th>#</th><th>Fornecedor</th><th>CNPJ</th><th>UF</th><th class="r">Nº NFs</th><th class="r">Total (R$)</th><th class="r">% CFOP</th></tr></thead>
+              <tbody id="dd-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===============================================
+           ABA 3 – VENDAS
+           =============================================== -->
+      <section id="tab-vendas" class="tab-section">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Vendas & Receitas <small>Março 2026 — Q1 comparativo</small></div>
+            <div class="sec-sub">Receita fiscal (Acumulador) vs NF Saídas (Saídas.xls) — Jan a Mar/2026</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-vendas','Vendas')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-vendas','Vendas')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
+        </div>
+
+        <div class="kpi-grid kpi-grid-4">
+          <div class="kpi-card c-blue">
+            <div class="kpi-head"><div class="kpi-ico c-blue"><i class="fas fa-file-invoice-dollar"></i></div><div class="kpi-badge neutral">Mar/2026</div></div>
+            <div class="kpi-val">R$ 539,9K</div>
+            <div class="kpi-lbl">Receita Bruta Fiscal</div>
+            <div class="kpi-sub">Resumo acumulador col. 15 — Mar/2026</div>
+          </div>
+          <div class="kpi-card c-green">
+            <div class="kpi-head"><div class="kpi-ico c-green"><i class="fas fa-sack-dollar"></i></div><div class="kpi-badge neutral">Mar/2026</div></div>
+            <div class="kpi-val">R$ 688,6K</div>
+            <div class="kpi-lbl">Total NF Saídas</div>
+            <div class="kpi-sub">Saídas 03-2026.xls — Resumo acumulador (27.5% vs base fiscal)</div>
+          </div>
+          <div class="kpi-card c-yellow">
+            <div class="kpi-head"><div class="kpi-ico c-yellow"><i class="fas fa-chart-line"></i></div><div class="kpi-badge up"><i class="fas fa-arrow-up"></i>14.0%</div></div>
+            <div class="kpi-val">+40.7%</div>
+            <div class="kpi-lbl">Crescimento RB</div>
+            <div class="kpi-sub">Mar vs Jan: 383.654 → 539.918</div>
+          </div>
+          <div class="kpi-card c-orange">
+            <div class="kpi-head"><div class="kpi-ico c-orange"><i class="fas fa-ranking-star"></i></div><div class="kpi-badge neutral">—</div></div>
+            <div class="kpi-val">TAM</div>
+            <div class="kpi-lbl">Principal Cliente</div>
+            <div class="kpi-sub">R$ 93.488,90 (13.6% do NF Saídas)</div>
+          </div>
+        </div>
+
+        <div class="alert-box" style="margin-bottom:20px"><i class="fas fa-info-circle" style="margin-right:8px;"></i>
+          <strong>Reconciliação:</strong> Receita Fiscal (base) = R$ 539.918,00 | Total NF Saídas = R$ 688.559,00 | Diferença = R$ 148.641,00.
+        </div>
+
+        <div class="charts-row cr-2col">
+          <div class="chart-card">
+            <div class="chart-ttl">Evolução Receita — Jan a Mar/2026</div>
+            <div class="chart-sub">Receita Bruta Fiscal vs Total NF Saídas (R$ mil)</div>
+            <div class="chart-wrap h260"><canvas id="chartVendasEvol"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-ttl">Compras × Vendas — Q1/2026</div>
+            <div class="chart-sub">Entradas (compras) vs Receita Bruta Fiscal por mês</div>
+            <div class="chart-wrap h260"><canvas id="chartComprasVendas"></canvas></div>
+          </div>
+        </div>
+
+        <div class="charts-row cr-2col">
+          <div class="chart-card">
+            <div class="chart-ttl">Ranking de Clientes por Faturamento</div>
+            <div class="chart-sub">Valor contábil de vendas por cliente – Mar/2026 (R$ mil) — base NF Saídas</div>
+            <div class="chart-wrap h300"><canvas id="chartClientes"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-ttl">Vendas por Estado de Destino (UF)</div>
+            <div class="chart-sub">Participação % por UF — Mar/2026</div>
+            <div class="chart-wrap h300"><canvas id="chartVendasUF"></canvas></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-head">
+            <div><div class="ttl">Ranking de Clientes – Mar/2026</div><div class="sub">Participação sobre Total NF Saídas (R$ 688.559,00)</div></div>
+          </div>
+          <div class="tbl-scroll">
+            <table>
+              <thead><tr><th>#</th><th>Cliente</th><th>UF</th><th class="r">Faturamento</th><th>Participação</th></tr></thead>
+              <tbody>
+<tr><td><div class="rank g1">1</div></td><td><div class="fw7">TAM LINHAS AEREAS S/A.</div><div class="td-mute">Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 93.488,90</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:14%"></div></div><div class="pb-pct">13.6%</div></div></td></tr>
+<tr><td><div class="rank g2">2</div></td><td><div class="fw7">BP GA 007 CONSTRUTORA E INCORPORADORA SPE LTDA</div><div class="td-mute">Mar/2026</div></td><td><span class="chip or">GO</span></td><td class="r td-val">R$ 14.635,25</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:4%"></div></div><div class="pb-pct">2.1%</div></div></td></tr>
+<tr><td><div class="rank g3">3</div></td><td><div class="fw7">SDF LOGISTICA LTDA</div><div class="td-mute">Mar/2026</div></td><td><span class="chip or">GO</span></td><td class="r td-val">R$ 7.300,56</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:4%"></div></div><div class="pb-pct">1.1%</div></div></td></tr>
+<tr><td><div class="rank gn">4</div></td><td><div class="fw7">ITALO DOS SANTOS LELIS</div><div class="td-mute">Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 6.774,16</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:4%"></div></div><div class="pb-pct">1.0%</div></div></td></tr>
+<tr><td><div class="rank gn">5</div></td><td><div class="fw7">JABUR SOLUCOES EM RECURSOS HUMANOS LTDA</div><div class="td-mute">Mar/2026</div></td><td><span class="chip bl">SP</span></td><td class="r td-val">R$ 6.516,00</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:4%"></div></div><div class="pb-pct">0.9%</div></div></td></tr>
+<tr><td><div class="rank gn">6</div></td><td><div class="fw7">DFCARGAS TRANSPORTE, SERVICOS E COMERCIO LTDA</div><div class="td-mute">Mar/2026</div></td><td><span class="chip or">GO</span></td><td class="r td-val">R$ 6.499,90</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:4%"></div></div><div class="pb-pct">0.9%</div></div></td></tr>
+<tr><td><div class="rank gn">7</div></td><td><div class="fw7">JUCELINO PEREIRA DOS SANTOS</div><div class="td-mute">Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 5.999,98</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:4%"></div></div><div class="pb-pct">0.9%</div></div></td></tr>
+<tr><td><div class="rank gn">8</div></td><td><div class="fw7">EDERVAL GONCALVES DA SILVA</div><div class="td-mute">Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 5.580,00</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:4%"></div></div><div class="pb-pct">0.8%</div></div></td></tr>
+<tr><td><div class="rank gn">9</div></td><td><div class="fw7">CONSORCIO MANUTENCAO BRASILIA</div><div class="td-mute">Mar/2026</div></td><td><span class="chip gy">RJ</span></td><td class="r td-val">R$ 5.198,06</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:4%"></div></div><div class="pb-pct">0.8%</div></div></td></tr>
+<tr><td><div class="rank gn">10</div></td><td><div class="fw7">M A LOPES DA SILVA - JJD PINTURAS E REFORMAS</div><div class="td-mute">Mar/2026</div></td><td><span class="chip or">GO</span></td><td class="r td-val">R$ 5.113,00</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:4%"></div></div><div class="pb-pct">0.7%</div></div></td></tr>
+<tr><td><div class="rank gn">11+</div></td><td><div class="fw7">Demais Clientes</div><div class="td-mute">DF, GO e outros</div></td><td><span class="chip gy">—</span></td><td class="r td-val">R$ 531.453,19</td><td><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:58%;background:var(--text-muted)"></div></div><div class="pb-pct">77.2%</div></div></td></tr>
+</tbody>
+            </table>
+          </div>
+        </div>
+<div class="table-card"><div class="table-head"><div><div class="ttl">CFOP de Saídas – Mar/2026</div><div class="sub">Classificação fiscal das vendas — Saídas 03-2026.xls</div></div></div><div class="tbl-scroll"><table><thead><tr><th>CFOP</th><th class="r">Qtd NF</th><th class="r">Valor</th><th class="r">%</th></tr></thead><tbody id="tbl-cfop-saidas"><tr><td class="fw7">5-102</td><td class="r">1684</td><td class="r td-val">R$ 374.788,79</td><td class="r">54.4%</td></tr><tr><td class="fw7">6-108</td><td class="r">414</td><td class="r td-val">R$ 134.230,89</td><td class="r">19.5%</td></tr><tr><td class="fw7">5-929</td><td class="r">120</td><td class="r td-val">R$ 71.058,66</td><td class="r">10.3%</td></tr><tr><td class="fw7">6-102</td><td class="r">39</td><td class="r td-val">R$ 56.231,17</td><td class="r">8.2%</td></tr><tr><td class="fw7">5-405</td><td class="r">509</td><td class="r td-val">R$ 49.080,90</td><td class="r">7.1%</td></tr><tr><td class="fw7">5-202</td><td class="r">6</td><td class="r td-val">R$ 1.533,51</td><td class="r">0.2%</td></tr><tr><td class="fw7">5-403</td><td class="r">1</td><td class="r td-val">R$ 978,00</td><td class="r">0.1%</td></tr><tr><td class="fw7">5-949</td><td class="r">12</td><td class="r td-val">R$ 344,39</td><td class="r">0.1%</td></tr><tr><td class="fw7">5-411</td><td class="r">1</td><td class="r td-val">R$ 312,78</td><td class="r">0.0%</td></tr></tbody></table></div></div>
+      </section>
+
+      <!-- ===============================================
+           ABA 4 – IMPOSTOS
+           =============================================== -->
+      <section id="tab-impostos" class="tab-section">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Impostos <small>Competência Março 2026</small></div>
+            <div class="sec-sub">Apuração tributária — Lucro Real — PIS/COFINS Não-Cumulativo (1,65% / 7,6%)</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-impostos','Impostos')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-impostos','Impostos')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
+        </div>
+
+        <div class="alert-box"><i class="fas fa-info-circle" style="margin-right:8px;"></i>
+          <strong>Regime:</strong> Lucro Real — varejo. ICMS do Resumo acumulador; PIS do EFD Mar/2026; COFINS estimado (sem EFD COFINS na pasta). NF Saídas Mar/2026: <strong>R$ 688.559,00</strong> em Mar/2026.
+        </div>
+
+        <div class="tax-grid">
+          <!-- ICMS -->
+          <div class="tax-card">
+            <div class="tax-card-head"><div class="tax-name t-accent">ICMS</div><span class="chip bl">Resumo col. 17</span></div>
+            <div class="tax-cur t-accent">R$ 86.887</div>
+            <div class="tax-prev">ICMS apurado (Resumo col. 17): R$ 86.887,00</div>
+            <div class="tax-foot"><span>Fonte: Resumo acumulador 03-2026</span><span class="var-neu">Mar/2026</span></div>
+          </div>
+          <!-- ICMS ST -->
+          <div class="tax-card">
+            <div class="tax-card-head"><div class="tax-name" style="color:var(--purple)">ICMS ST</div><span class="chip pu">DF / GO / MG</span></div>
+            <div class="tax-cur" style="color:var(--purple)">R$ 0,00</div>
+            <div class="tax-prev">Substituição tributária não apurada no período</div>
+            <div class="tax-foot"><span>0,00% s/ Receita Bruta</span><span class="var-neu">Mar/2026</span></div>
+          </div>
+          <!-- PIS -->
+          <div class="tax-card">
+            <div class="tax-card-head"><div class="tax-name" style="color:var(--success)">PIS</div><span class="chip gr">Não-Cumulativo</span></div>
+            <div class="tax-cur t-success">R$ 3.029,17</div>
+            <div class="tax-prev">Apurado: R$ 8.721,00 | Crédito descontado (EFD): R$ 5.692,06</div>
+            <div class="tax-foot"><span>EFD PIS 03-2026</span><span class="var-neu">A recolher</span></div>
+          </div>
+          <!-- COFINS -->
+          <div class="tax-card">
+            <div class="tax-card-head"><div class="tax-name" style="color:var(--warning)">COFINS</div><span class="chip ye">Não-Cumulativo</span></div>
+            <div class="tax-cur" style="color:var(--warning)">R$ 18.420,59</div>
+            <div class="tax-prev">Apurado estimado: R$ 53.033,00 | A recolher estimado (proporcional ao PIS)</div>
+            <div class="tax-foot"><span>Sem EFD COFINS na pasta</span><span class="var-neu">Estimado</span></div>
+          </div>
+          <!-- IRPJ -->
+          <div class="tax-card">
+            <div class="tax-card-head"><div class="tax-name" style="color:var(--cyan)">IRPJ</div><span class="chip cy">Trimestral</span></div>
+            <div class="tax-cur t-muted" style="font-size:18px">Em apuração</div>
+            <div class="tax-prev">Regime Lucro Real — LALUR em elaboração</div>
+            <div class="tax-foot"><span>Alíquota: 15% + 10% adicional</span><span class="var-neu">Q2/2026</span></div>
+          </div>
+          <!-- CSLL -->
+          <div class="tax-card">
+            <div class="tax-card-head"><div class="tax-name" style="color:var(--orange)">CSLL</div><span class="chip or">Trimestral</span></div>
+            <div class="tax-cur t-muted" style="font-size:18px">Em apuração</div>
+            <div class="tax-prev">Regime Lucro Real — apuração trimestral</div>
+            <div class="tax-foot"><span>Alíquota: 9%</span><span class="var-neu">Q2/2026</span></div>
+          </div>
+        </div>
+
+        <div class="charts-row cr-2col">
+          <div class="chart-card">
+            <div class="chart-ttl">Evolução Mensal – Deduções por Tributo</div>
+            <div class="chart-sub">Valores debitados do resultado (DRE) por tributo – Jan a Mar/2026 (R$)</div>
+            <div class="chart-wrap h280"><canvas id="chartImpostosEv"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-ttl">Participação sobre Receita Bruta – Mar/2026</div>
+            <div class="chart-sub">% de cada tributo apurado bruto sobre RB de R$ 539.918,00</div>
+            <div class="chart-wrap h280"><canvas id="chartImpostosPart"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===============================================
+           ABA 5 – MEMÓRIA DE CÁLCULO
+           =============================================== -->
+      <section id="tab-memoria" class="tab-section">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Memória de Cálculo <small>Março 2026</small></div>
+            <div class="sec-sub">Detalhamento da apuração de cada tributo — Lucro Real — Resumo acumulador + EFD PIS</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-memoria','Memoria_Calculo')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-memoria','Memoria_Calculo')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
+        </div>
+
+        <div class="formula-box">
+          <div class="fttl"><i class="fas fa-function" style="margin-right:8px;"></i>Fontes de Dados — LOJA Máquinas Mar/2026</div>
+          <div class="fline">
+            ICMS = Resumo acumulador 03-2026 — coluna 17 (Total saídas)<br>
+            PIS = Demonstrativo EFD PIS e COFINS 03-2026 (apuração não cumulativa)<br>
+            COFINS = Estimado por residual (NF Saídas − Base − ICMS − PIS) — <em>sem planilha EFD COFINS</em><br>
+            CMV / Despesas / IRPJ / CSLL = <strong>Não disponíveis</strong> nas planilhas fornecidas
+          </div>
+        </div>
+        <div class="mem-grid">
+          <!-- ICMS -->
+          <div class="mem-card">
+            <div class="mem-card-head"><span class="t-accent fw7">ICMS — Resumo Acumulador</span><span class="chip bl">Mar/2026</span></div>
+            <div class="mem-row hl"><span class="lbl">Total NF Saídas (col. 9)</span><span class="val">R$ 688.559,00</span></div>
+            <div class="mem-row"><span class="lbl">Base tributável saídas (col. 15)</span><span class="val">R$ 539.918,00</span></div>
+            <div class="mem-row"><span class="lbl">ICMS débito (col. 17)</span><span class="val t-danger">R$ 86.887,00</span></div>
+            <div class="mem-row tot"><span class="lbl">ICMS apurado</span><span class="val">R$ 86.887,00</span></div>
+            <div class="mem-row"><span class="lbl">% s/ Receita base</span><span class="val">16.09%</span></div>
+          </div>
+
+          <!-- PIS -->
+          <div class="mem-card">
+            <div class="mem-card-head"><span style="color:var(--success)" class="fw7">PIS — EFD Mar/2026</span><span class="chip gr">Não-Cumulativo</span></div>
+            <div class="mem-row hl"><span class="lbl">PIS apurado no período</span><span class="val t-danger">R$ 8.721,00</span></div>
+            <div class="mem-row neg"><span class="lbl">(–) Crédito descontado (EFD)</span><span class="val t-success">R$ 5.692,06</span></div>
+            <div class="mem-row tot"><span class="lbl">PIS a recolher</span><span class="val">R$ 3.029,17</span></div>
+          </div>
+
+          <!-- COFINS -->
+          <div class="mem-card">
+            <div class="mem-card-head"><span style="color:var(--warning)" class="fw7">COFINS — Estimado</span><span class="chip ye">Residual</span></div>
+            <div class="mem-row hl"><span class="lbl">COFINS estimado (deduções)</span><span class="val t-danger">R$ 53.033,00</span></div>
+            <div class="mem-row"><span class="lbl">A recolher estimado</span><span class="val">R$ 18.420,59</span></div>
+            <div class="mem-row"><span class="lbl">Fonte</span><span class="val td-mute">NF − base − ICMS − PIS</span></div>
+          </div>
+
+          <!-- ICMS ST -->
+          <div class="mem-card">
+            <div class="mem-card-head"><span style="color:var(--purple)" class="fw7">ICMS ST</span><span class="chip pu">Não Apurado</span></div>
+            <div class="mem-row hl"><span class="lbl">Substituição Tributária</span><span class="val">R$ 0,00 — sem apuração na pasta</span></div>
+            <div class="mem-row tot"><span class="lbl">ICMS ST a Recolher</span><span class="val">R$ 0,00</span></div>
+          </div>
+            <div class="mem-row hl"><span class="lbl">CST 01/05 – Saídas tributáveis</span><span class="val">R$ —,00</span></div>
+            <div class="mem-row"><span class="lbl">Base tributável</span><span class="val">R$ —,00</span></div>
+            <div class="mem-row"><span class="lbl">Alíquota COFINS</span><span class="val">7,60%</span></div>
+            <div class="mem-row"><span class="lbl">COFINS Apurado (débito)</span><span class="val t-danger">R$ 53.033,00,35</span></div>
+            <div class="mem-row neg"><span class="lbl">(–) Crédito Disponível no Período</span><span class="val t-danger">R$ 53.033,00,35</span></div>
+            <div class="mem-row tot"><span class="lbl">COFINS a Recolher</span><span class="val">R$ 0,00</span></div>
+            <div class="mem-row"><span class="lbl">Crédito p/ Próximo Período</span><span class="val t-warning">R$ —</span></div>
+          </div>
+
+          <!-- IRPJ -->
+          <div class="mem-card">
+            <div class="mem-card-head"><span style="color:var(--cyan)" class="fw7">IRPJ — Lucro Real</span><span class="chip cy">Em Apuração</span></div>
+            <div class="mem-row hl"><span class="lbl">Apuração</span><span class="val">Trimestral (Q2)</span></div>
+            <div class="mem-row"><span class="lbl">Lucro Líquido Contábil Q2</span><span class="val t-muted">Em elaboração</span></div>
+            <div class="mem-row"><span class="lbl">(+/–) Ajustes LALUR</span><span class="val t-muted">—</span></div>
+            <div class="mem-row"><span class="lbl">Lucro Real (base IRPJ)</span><span class="val t-muted">—</span></div>
+            <div class="mem-row"><span class="lbl">Alíquota básica 15%</span><span class="val t-muted">—</span></div>
+            <div class="mem-row"><span class="lbl">Adicional 10% s/ &gt; R$60k/tri</span><span class="val t-muted">—</span></div>
+            <div class="mem-row tot"><span class="lbl">IRPJ Estimado Q2/2026</span><span class="val t-muted">Em apuração</span></div>
+          </div>
+
+          <!-- CSLL -->
+          <div class="mem-card">
+            <div class="mem-card-head"><span style="color:var(--orange)" class="fw7">CSLL — Lucro Real</span><span class="chip or">Em Apuração</span></div>
+            <div class="mem-row hl"><span class="lbl">Apuração</span><span class="val">Trimestral (Q2)</span></div>
+            <div class="mem-row"><span class="lbl">Lucro Líquido Contábil Q2</span><span class="val t-muted">Em elaboração</span></div>
+            <div class="mem-row"><span class="lbl">(+/–) Ajustes LACS</span><span class="val t-muted">—</span></div>
+            <div class="mem-row"><span class="lbl">Base de Cálculo CSLL</span><span class="val t-muted">—</span></div>
+            <div class="mem-row"><span class="lbl">Alíquota CSLL</span><span class="val">9,00%</span></div>
+            <div class="mem-row"><span class="lbl">CSLL Estimada</span><span class="val t-muted">—</span></div>
+            <div class="mem-row tot"><span class="lbl">CSLL Estimada Q2/2026</span><span class="val t-muted">Em apuração</span></div>
+          </div>
+        </div>
+
+        <!-- Resumo consolidado -->
+        <div class="table-card">
+          <div class="table-head"><div><div class="ttl">Resumo Consolidado – Março 2026</div><div class="sub">Total de obrigações tributárias apuradas e estimadas na competência</div></div></div>
+          <div class="tbl-scroll">
+            <table>
+              <thead><tr><th>Tributo</th><th>Vencimento</th><th>Apurado Bruto</th><th class="r">Créditos/Benef.</th><th class="r">A Recolher</th><th class="r">% s/ RB</th></tr></thead>
+              <tbody>
+                <tr><td class="fw7 t-accent">ICMS (Resumo acumulador)</td><td>20/04/2026</td><td>R$ —</td><td class="r t-success">R$ (—,16)</td><td class="r td-val">R$ 86.887,43</td><td class="r"><span class="chip bl">16.47%</span></td></tr>
+                <tr><td class="fw7" style="color:var(--purple)">ICMS ST</td><td>—</td><td>R$ 0,00</td><td class="r">—</td><td class="r td-val t-success">R$ 0,00</td><td class="r"><span class="chip pu">0,00%</span></td></tr>
+                <tr><td class="fw7" style="color:var(--success)">PIS (Não-Cumulativo)</td><td>25/04/2026</td><td>R$ 8.721,00,06</td><td class="r t-success">R$ (—)</td><td class="r td-val t-success">R$ 0,00</td><td class="r"><span class="chip gr">0,00%</span></td></tr>
+                <tr><td class="fw7" style="color:var(--warning)">COFINS (Não-Cumulativo)</td><td>25/04/2026</td><td>R$ 53.033,00,35</td><td class="r t-success">R$ (—,35)</td><td class="r td-val t-success">R$ 0,00</td><td class="r"><span class="chip ye">0,00%</span></td></tr>
+                <tr><td class="fw7" style="color:var(--cyan)">IRPJ</td><td>30/07/2026</td><td class="td-mute">Em apuração Q2</td><td class="r">—</td><td class="r td-mute">Em apuração</td><td class="r"><span class="chip gy">—</span></td></tr>
+                <tr><td class="fw7" style="color:var(--orange)">CSLL</td><td>30/07/2026</td><td class="td-mute">Em apuração Q2</td><td class="r">—</td><td class="r td-mute">Em apuração</td><td class="r"><span class="chip gy">—</span></td></tr>
+                <tr style="background:rgba(59,130,246,0.07)">
+                  <td colspan="2" class="fw8">TOTAL (ICMS + PIS + COFINS)</td>
+                  <td class="fw8">R$ 148.641,00,00</td>
+                  <td class="r fw8 t-success">R$ (119.342,57)</td>
+                  <td class="r fw8 t-accent">R$ 86.887,43</td>
+                  <td class="r fw8">20.07%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===============================================
+           ABA 6 – DRE
+           =============================================== -->
+      <section id="tab-dre" class="tab-section">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">DRE – Demonstrativo do Resultado <small>Jan – Mar 2026 (Q1)</small></div>
+            <div class="sec-sub">Resumo acumulador + EFD PIS — CMV estimado (63,5% RB). Sem balancete na pasta.</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-dre','DRE')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-dre','DRE')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
+        </div>
+
+                <!-- Margin cards (Q1 Jan-Mar – período com CMV lançado) -->
+        <div class="margin-grid">
+          <div class="margin-card">
+            <div class="margin-val" style="color:var(--success)">9,25%</div>
+            <div class="margin-lbl">Margem Bruta</div>
+            <div class="margin-sub">Média Q1 (Jan–Mar) — CMV estimado (63,5% RB) · Fev = cópia Jan</div>
+          </div>
+          <div class="margin-card">
+            <div class="margin-val t-muted" style="font-size:20px">—</div>
+            <div class="margin-lbl">Margem Operacional</div>
+            <div class="margin-sub">Sem balancete / despesas operacionais</div>
+          </div>
+          <div class="margin-card">
+            <div class="margin-val t-accent">9,25%</div>
+            <div class="margin-lbl">Margem Líquida</div>
+            <div class="margin-sub">Média Q1 — igual bruta (sem despesas na pasta)</div>
+          </div>
+          <div class="margin-card">
+            <div class="margin-val t-warning">20,07%</div>
+            <div class="margin-lbl">Impostos a recolher (Mar/2026)</div>
+            <div class="margin-sub">ICMS + PIS + COFINS a recolher s/ Receita Bruta</div>
+          </div>
+        </div>
+
+        
+
+        <!-- DRE Table -->
+        <div class="table-card mb-24">
+          <div class="table-head"><div><div class="ttl">Demonstrativo do Resultado – Jan a Mar / 2026</div><div class="sub">Valores em R$ — Fonte: Resumo acumulador + EFD PIS — CMV estimado (63,5% RB)</div></div></div>
+          <div class="tbl-scroll">
+            <table class="dre-tbl">
+              <thead>
+                <tr>
+                  <th style="min-width:240px">Descrição</th>
+                  <th class="r">Jan/2026</th><th class="r">Fev/2026</th><th class="r">Mar/2026</th>
+                  <th class="r fw7">Acum. Q1</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="dre-group"><td colspan="6">Receitas</td></tr>
+                <tr class="dre-indent"><td>(+) Receita Bruta de Vendas</td><td class="r">383.654</td><td class="r">383.654</td><td class="r">539.918</td><td class="r fw7">1.307.226</td></tr>
+
+                <tr class="dre-group"><td colspan="6">Deduções da Receita Bruta</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) Devoluções de Vendas</td><td class="r">(0)</td><td class="r">(0)</td><td class="r">(0)</td><td class="r fw7">(0)</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) ICMS s/ Vendas</td><td class="r">(64.675)</td><td class="r">(64.675)</td><td class="r">(86.887)</td><td class="r fw7">(216.237)</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) COFINS</td><td class="r">(32.979)</td><td class="r">(32.979)</td><td class="r">(53.033)</td><td class="r fw7">(118.991)</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) PIS</td><td class="r">(6.149)</td><td class="r">(6.149)</td><td class="r">(8.721)</td><td class="r fw7">(21.019)</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) Substituição Tributária</td><td class="r">(0)</td><td class="r">(0)</td><td class="r">(0)</td><td class="r fw7">(0)</td></tr>
+                <tr class="dre-total"><td>(=) Receita Líquida</td><td class="r">279.851</td><td class="r">279.851</td><td class="r">391.277</td><td class="r fw7">950.979</td></tr>
+
+                <tr class="dre-group"><td colspan="6">Custos</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) CMV – Custo das Mercadorias Vendidas</td><td class="r">(243.620)</td><td class="r">(243.620)</td><td class="r">(342.848)</td><td class="r fw7">(830.088)</td></tr>
+                <tr class="dre-total"><td>(=) Lucro Bruto</td><td class="r">36.231</td><td class="r">36.231</td><td class="r">48.429</td><td class="r fw7">120.891</td></tr>
+
+                <tr class="dre-group"><td colspan="6">Despesas operacionais</td></tr>
+                <tr class="dre-indent"><td colspan="5" class="td-mute" style="font-size:12px">Despesas operacionais — <strong>N/D</strong> (sem balancete nas planilhas LOJA)</td></tr>
+
+                <tr class="dre-lucro"><td>(=) LUCRO / PREJUÍZO DO EXERCÍCIO</td><td class="r">36.231</td><td class="r">36.231</td><td class="r">48.429</td><td class="r fw7">120.891</td></tr>
+                <tr style="background:rgba(255,255,255,0.02)">
+                  <td class="td-mute" style="font-size:11px">% s/ Receita Bruta</td>
+                  <td class="r td-mute">9.44%</td><td class="r td-mute">9.44%</td><td class="r td-mute">8.97%</td><td class="r td-mute fw7">9.25%</td>
+                </tr>
+                </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="alert-box"><i class="fas fa-triangle-exclamation" style="margin-right:8px;"></i>
+          * CMV estimado em 63,5% da receita fiscal (col. 15 Resumo). Despesas operacionais não constam nas planilhas.
+        </div>
+
+        <!-- DRE Charts -->
+        <div class="charts-row cr-2col">
+          <div class="chart-card">
+            <div class="chart-ttl">Receita Bruta e Resultado – Jan a Mar/2026</div>
+            <div class="chart-sub">Receita bruta × Lucro bruto × Lucro líquido — Q1/2026</div>
+            <div class="chart-wrap h260"><canvas id="chartDRE"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-ttl">Margens de Rentabilidade (%) – Q1 2026</div>
+            <div class="chart-sub">Margem bruta e margem líquida — Janeiro a Março 2026</div>
+            <div class="chart-wrap h260"><canvas id="chartMargens"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===============================================
+           ABA 7 – INDICADORES
+           =============================================== -->
+      <section id="tab-indicadores" class="tab-section">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Indicadores Financeiros <small>Referência Q1 2026 – Jan a Mar</small></div>
+            <div class="sec-sub">Margens com receita fiscal (Resumo) e CMV estimado. CMV e COFINS parcialmente estimados. Despesas e balanço não fornecidos.</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-indicadores','Indicadores')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-indicadores','Indicadores')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
+        </div>
+
+        <div class="alert-box"><i class="fas fa-info-circle" style="margin-right:8px;"></i>
+          Indicadores de liquidez requerem balanço patrimonial (não fornecido). Margens com Resumo acumulador + CMV estimado (63,5% da receita fiscal).
+        </div>
+
+                <!-- Margens reais -->
+        <div class="sec-title" style="font-size:13px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px;">
+          <i class="fas fa-chart-line" style="margin-right:8px;color:var(--success)"></i>Margens de Rentabilidade — Q1 2026 (Jan–Mar)
+        </div>
+        <div class="ind-grid">
+          <div class="ind-card">
+            <div class="ind-head"><div class="ind-name">Margem Bruta Q1</div><span class="dot gr"></span></div>
+            <div class="ind-val t-success">9,25%</div>
+            <div class="ind-formula">MB = Lucro Bruto / Rec. Bruta = 120.891 / 1.307.226</div>
+            <div class="ind-interp"><strong>Margem com CMV estimado (63,5% RB).</strong> Q1: 9.25% bruta. Jan 9.44% → Mar 8.97%.</div>
+          </div>
+          <div class="ind-card">
+            <div class="ind-head"><div class="ind-name">Margem Líquida Q1</div><span class="dot ye"></span></div>
+            <div class="ind-val t-accent">9,25%</div>
+            <div class="ind-formula">ML = Lucro Líq. / Rec. Bruta = 120.891 / 1.307.226</div>
+            <div class="ind-interp"><strong>CMV estimado sem balancete.</strong> Receita fiscal cresceu de 383.654 (Jan) para 539.918 (Mar), +40.7%. Fev/2026 pode estar duplicado nas planilhas.</div>
+          </div>
+          <div class="ind-card">
+            <div class="ind-head"><div class="ind-name">Margem Bruta – Jan</div><span class="dot ye"></span></div>
+            <div class="ind-val" style="color:var(--success)">9,44%</div>
+            <div class="ind-formula">MB = 36.231 / 383.654</div>
+            <div class="ind-interp">Janeiro: receita fiscal 383.654, lucro bruto 36.231 (CMV estimado).</div>
+          </div>
+          <div class="ind-card">
+            <div class="ind-head"><div class="ind-name">Margem Bruta – Mar</div><span class="dot gr"></span></div>
+            <div class="ind-val t-success">8,97%</div>
+            <div class="ind-formula">MB = 48.429 / 539.918</div>
+            <div class="ind-interp">Março: receita 539.918, CMV estimado 342.848 (63,5% da RB).</div>
+          </div>
+        </div>
+
+        
+
+        <div class="divider"></div>
+
+                <!-- Carga tributária -->
+        <div class="sec-title" style="font-size:13px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px;">
+          <i class="fas fa-file-invoice-dollar" style="margin-right:8px;color:var(--warning)"></i>Carga Tributária — Análise por Competência
+        </div>
+        <div class="ind-grid" style="grid-template-columns:repeat(2,1fr)">
+          <div class="ind-card">
+            <div class="ind-head"><div class="ind-name">Impostos a recolher – Mar/2026</div><span class="dot gr"></span></div>
+            <div class="ind-val t-success">20,07%</div>
+            <div class="ind-formula">CT = (ICMS+PIS+COFINS rec.) / RB = R$ 108.336,76 / R$ 539.918,00</div>
+            <div class="ind-interp"><strong>ICMS apurado 16,09% da RB.</strong> A recolher: ICMS R$ 86.887,00, PIS R$ 3.029,17, COFINS R$ 18.420,59 (estimado).</div>
+          </div>
+          <div class="ind-card">
+            <div class="ind-head"><div class="ind-name">Deduções sobre Receita – Jan/2026</div><span class="dot rd"></span></div>
+            <div class="ind-val t-warning">27,06%</div>
+            <div class="ind-formula">Ded% = 103.803 / 383.654 (Jan/2026)</div>
+            <div class="ind-interp">Janeiro: deduções 103.803 — ICMS 64.675, PIS 6.149, COFINS 32.979 (Resumo + EFD).</div>
+          </div>
+        </div>
+
+        
+
+        <div class="divider"></div>
+
+        <!-- Indicadores de balanço - não disponíveis -->
+        <div class="sec-title" style="font-size:13px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px;">
+          <i class="fas fa-scale-balanced" style="margin-right:8px;color:var(--text-muted)"></i>Indicadores Patrimoniais — Dados não fornecidos
+        </div>
+        <div class="ind-grid">
+          <div class="ind-card" style="opacity:0.5">
+            <div class="ind-head"><div class="ind-name">Liquidez Corrente</div><span class="dot gy"></span></div>
+            <div class="ind-val t-muted">N/D</div>
+            <div class="ind-formula">LC = Ativo Circ. / Passivo Circ.</div>
+            <div class="ind-interp">Requer Balanço Patrimonial — não fornecido nesta análise. Solicitar ao departamento contábil.</div>
+          </div>
+          <div class="ind-card" style="opacity:0.5">
+            <div class="ind-head"><div class="ind-name">Liquidez Seca</div><span class="dot gy"></span></div>
+            <div class="ind-val t-muted">N/D</div>
+            <div class="ind-formula">LS = (AC – Estoque) / PC</div>
+            <div class="ind-interp">Requer Balanço Patrimonial — não fornecido nesta análise.</div>
+          </div>
+          <div class="ind-card" style="opacity:0.5">
+            <div class="ind-head"><div class="ind-name">Capital de Giro</div><span class="dot gy"></span></div>
+            <div class="ind-val t-muted">N/D</div>
+            <div class="ind-formula">CG = Ativo Circ. – Passivo Circ.</div>
+            <div class="ind-interp">Requer Balanço Patrimonial — não fornecido nesta análise.</div>
+          </div>
+          <div class="ind-card" style="opacity:0.5">
+            <div class="ind-head"><div class="ind-name">Grau de Endividamento</div><span class="dot gy"></span></div>
+            <div class="ind-val t-muted">N/D</div>
+            <div class="ind-formula">END = Passivo Total / Ativo Total</div>
+            <div class="ind-interp">Requer Balanço Patrimonial — não fornecido nesta análise.</div>
+          </div>
+        </div>
+
+        <!-- Indicadores chart -->
+        <div class="charts-row cr-1col">
+          <div class="chart-card">
+            <div class="chart-ttl">Evolução das Margens e Carga Tributária – Q1 2026 (Jan–Mar)</div>
+            <div class="chart-sub">Margem bruta e líquida | Deduções s/ receita bruta — Q1/2026</div>
+            <div class="chart-wrap h220"><canvas id="chartIndicadores"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODAL: Impressão por Fornecedor -->
+<div class="modal-overlay" id="supplierModal" style="display:none;" onclick="if(event.target===this)closeSupplierModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3><i class="fas fa-truck"></i> Imprimir por Fornecedor</h3>
+      <button onclick="closeSupplierModal()" class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="search-box">
+        <input type="text" id="supplierSearch" placeholder="Buscar fornecedor..." oninput="filterSuppliers(this.value)">
+      </div>
+      <div class="supplier-actions">
+        <button type="button" onclick="toggleAllSuppliers(true)">Selecionar Todos</button>
+        <button type="button" onclick="toggleAllSuppliers(false)">Limpar Seleção</button>
+      </div>
+      <div class="supplier-list" id="supplierList"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" onclick="closeSupplierModal()">Cancelar</button>
+      <button type="button" class="btn-confirm" onclick="printBySupplier()"><i class="fas fa-print"></i> Imprimir Selecionados</button>
+    </div>
+  </div>
+</div>
+
+<script>
+        const MONTHS = ['Jan', 'Fev', 'Mar'];
+
+  const VENDAS = [383654, 383654, 539918];
+  const DEDUCOES = [103803, 103803, 148641];
+  const DED_PCT  = [27.06, 27.06, 27.53];
+
+  const ICMS_DED  = [64675, 64675, 86887];
+  const ICMST_DED = [0, 0, 0];
+  const COFINS_DED= [32979, 32979, 53033];
+  const PIS_DED   = [6149, 6149, 8721];
+  const DEV_DED   = [0, 0, 0];
+
+  const CMV       = [243620, 243620, 342848];
+  const LUC_BRUTO = [36231, 36231, 48429];
+  const LUC_LIQ   = [36231, 36231, 48429];
+  const MARG_MB   = [9.44, 9.44, 8.97];
+  const MARG_ML   = [9.44, 9.44, 8.97];
+
+  const TOTAL_SAIDAS_NF = [487457, 487457, 688559];
+  const COMPRAS_MES = [297014, 297014, 395472];
+
+  const PIS_RECOLHER_MAR = 3029.17;
+  const COFINS_RECOLHER_MAR = 18420.59;
+  const ICMS_PCT_MAR = 16.09;
+  const PIS_PCT_MAR = 1.62;
+  const COFINS_PCT_MAR = 9.82;
+  const DED_EFET_PCT_MAR = 3.97;
+
+  const CLI_TOP = {
+    nomes: ["TAM LINHAS AEREAS ", "BP GA 007 CONSTRUT", "SDF LOGISTICA LTDA", "ITALO DOS SANTOS L", "JABUR SOLUCOES EM ", "DFCARGAS TRANSPORT", "JUCELINO PEREIRA D", "EDERVAL GONCALVES ", "CONSORCIO MANUTENC", "M A LOPES DA SILVA", "FERNANDO ANTONIO J", "Demais"],
+    vals:  [93488.9, 14635.25, 7300.56, 6774.16, 6516.0, 6499.9, 5999.98, 5580.0, 5198.06, 5113.0, 4455.28, 526997.91],
+  };
+  const UF_VENDAS = {
+    labels: ["DF", "GO", "SP", "RJ", "MG", "BA", "ES"],
+    vals: [70.91, 7.91, 6.4, 2.66, 2.5, 1.91, 1.32],
+  };
+
+  const FORN_TOP = {
+    nomes: ["DISTR. FERRAM.", "NOVA CASA DIST", "STIHL FERRAMEN", "ASL ESPECIALIS", "CONDOR ATACADI", "BSB DISTRIBUID", "FERROMIL COMER", "ABRITTA POSTOS"],
+    vals:  [311751.55, 14070.6, 11409.83, 10845.0, 9191.96, 6234.73, 4720.0, 4437.03],
+  };
+  const COMPRAS_UF = {
+    labels: ["DF", "SP", "SC", "ES", "MG"],
+    vals: [95.93, 2.96, 0.79, 0.18, 0.13],
+  };
+
+  const CFOP_FINALIDADE = {
+    '1-102': { descricao:'Compra p/ comercialização (intraestadual)',          finalidade:'Revenda',          creditoPisCofins:true,  debitaIcms:true  },
+    '1-202': { descricao:'Devolução de venda p/ comercialização (intraest.)',  finalidade:'Devolução Venda',  creditoPisCofins:false, debitaIcms:false },
+    '1-403': { descricao:'Compra p/ comercialização com ST (intraestadual)',   finalidade:'Revenda c/ ST',    creditoPisCofins:true,  debitaIcms:false },
+    '1-411': { descricao:'Devolução de compra (intraestadual)',                finalidade:'Devol. Compra',    creditoPisCofins:false, debitaIcms:false },
+    '1-652': { descricao:'Compra de combustível/lubrificante',                 finalidade:'Uso e Consumo',    creditoPisCofins:false, debitaIcms:true  },
+    '1-556': { descricao:'Compra de material de uso/consumo',                  finalidade:'Uso e Consumo',    creditoPisCofins:false, debitaIcms:true  },
+    '2-102': { descricao:'Compra p/ comercialização (interestadual)',          finalidade:'Revenda',          creditoPisCofins:true,  debitaIcms:true  },
+    '2-202': { descricao:'Devolução de venda p/ comercialização (interest.)',  finalidade:'Devolução Venda',  creditoPisCofins:false, debitaIcms:false },
+    '2-403': { descricao:'Compra p/ comercialização com ST (interestadual)',   finalidade:'Revenda c/ ST',    creditoPisCofins:true,  debitaIcms:false },
+    '2-911': { descricao:'Retorno de remessa p/ industrialização',             finalidade:'Retorno Ind.',     creditoPisCofins:false, debitaIcms:false },
+    '5-102': { descricao:'Venda p/ comercialização (intraestadual)',           finalidade:'Venda',            creditoPisCofins:true,  debitaIcms:true  },
+    '5-403': { descricao:'Venda com ST (intraestadual)',                       finalidade:'Venda c/ ST',      creditoPisCofins:true,  debitaIcms:false },
+    '5-405': { descricao:'Venda com ST (interestadual)',                       finalidade:'Venda c/ ST',      creditoPisCofins:true,  debitaIcms:false },
+    '5-202': { descricao:'Devolução de compra (intraestadual)',                finalidade:'Devol. Compra',    creditoPisCofins:false, debitaIcms:false },
+    '5-411': { descricao:'Devolução de venda (intraestadual)',                 finalidade:'Devolução Venda',  creditoPisCofins:false, debitaIcms:false },
+    '5-929': { descricao:'Lançamento decorrente de emissão de NF-e',           finalidade:'Outras Saídas',    creditoPisCofins:false, debitaIcms:false },
+    '5-949': { descricao:'Outra saída — não especificada',                     finalidade:'Outras Saídas',    creditoPisCofins:false, debitaIcms:false },
+    '6-102': { descricao:'Venda p/ comercialização (interestadual)',           finalidade:'Venda',            creditoPisCofins:true,  debitaIcms:true  },
+    '6-108': { descricao:'Venda p/ comercialização (interestadual)',           finalidade:'Venda',            creditoPisCofins:true,  debitaIcms:true  },
+  };
+
+  const CFOP_DADOS = [
+    { cfop:'1-102', qtd:189, total:319110.11,
+      fornecedores:[
+        { nome:'BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA', cnpj:'52.005.382/0001-40', uf:'DF', qtd:137, total:291116.07 },
+        { nome:'NOVA CASA DIST. MAT. P/ CONST. S/A', cnpj:'74.200.403/0002-00', uf:'DF', qtd:5, total:8789.02 },
+        { nome:'CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A', cnpj:'03.261.204/0001-74', uf:'DF', qtd:7, total:7482.96 },
+        { nome:'FERROMIL COMERCIAL DE FERRAGENS LTDA EPP', cnpj:'13.467.965/0001-30', uf:'DF', qtd:2, total:4720.0 },
+        { nome:'BANDEIRANTE COM ATAC EMB E DESC EIRELI', cnpj:'08.692.115/0001-04', uf:'DF', qtd:1, total:1634.8 },
+        { nome:'R7X INDUSTRIA DE EMBALAGENS LTDA', cnpj:'31.648.232/0001-84', uf:'DF', qtd:1, total:960.0 },
+        { nome:'Demais fornecedores', cnpj:'—', uf:'—', qtd:36, total:4407.26 },
+      ]
+    },
+    { cfop:'1-403', qtd:74, total:52122.56,
+      fornecedores:[
+        { nome:'BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA', cnpj:'52.005.382/0001-40', uf:'DF', qtd:43, total:20635.48 },
+        { nome:'ASL ESPECIALISTA FILTROS E PECAS LTDA', cnpj:'10.869.569/0001-41', uf:'DF', qtd:2, total:10845.0 },
+        { nome:'BSB DISTRIBUIDORA DE BATERIAS LTDA', cnpj:'09.547.508/0001-89', uf:'DF', qtd:2, total:6234.73 },
+        { nome:'NOVA CASA DIST. MAT. P/ CONST. S/A', cnpj:'74.200.403/0002-00', uf:'DF', qtd:4, total:5281.58 },
+        { nome:'BRASIL TEMPER COMERCIO DE VIDROS LTDA', cnpj:'07.842.195/0001-66', uf:'DF', qtd:1, total:2000.0 },
+        { nome:'CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A', cnpj:'03.261.204/0001-74', uf:'DF', qtd:4, total:1709.0 },
+        { nome:'Demais fornecedores', cnpj:'—', uf:'—', qtd:18, total:5416.77 },
+      ]
+    },
+    { cfop:'2-102', qtd:4, total:12823.34,
+      fornecedores:[
+        { nome:'STIHL FERRAMENTAS MOTORIZADAS LTDA.', cnpj:'87.235.172/0008-07', uf:'SP', qtd:3, total:9768.02 },
+        { nome:'VCH - IMPORTADORA, EXPORTADORA E DISTRIBUICAO DE PRODUTOS LT', cnpj:'10.702.092/0011-87', uf:'SC', qtd:1, total:3055.32 },
+      ]
+    },
+    { cfop:'1-652', qtd:18, total:4525.06,
+      fornecedores:[
+        { nome:'ABRITTA POSTOS DE SERVICOS LTDA', cnpj:'10.668.863/0001-95', uf:'DF', qtd:10, total:2323.55 },
+        { nome:'PETROFORTE DISTRIBUIDORA LTDA', cnpj:'39.290.876/0002-36', uf:'DF', qtd:1, total:1512.7 },
+        { nome:'POSTO DE COMBUSTIVEIS GARANTIA LTDA (AGUAS CLARAS)', cnpj:'72.578.438/0004-05', uf:'DF', qtd:2, total:398.59 },
+        { nome:'AUTO POSTO STRADA LTDA', cnpj:'59.823.012/0001-69', uf:'DF', qtd:2, total:100.22 },
+        { nome:'97 - R36 - CASCOL COMBUSTIVEIS PARA VEICULOS LTDA', cnpj:'00.306.597/0097-49', uf:'DF', qtd:1, total:100.0 },
+        { nome:'AUTO POSTO QS 09 EIRELI', cnpj:'05.959.931/0001-35', uf:'DF', qtd:1, total:50.0 },
+        { nome:'Demais fornecedores', cnpj:'—', uf:'—', qtd:1, total:40.0 },
+      ]
+    },
+    { cfop:'1-556', qtd:3, total:2162.58,
+      fornecedores:[
+        { nome:'ABRITTA POSTOS DE SERVICOS LTDA', cnpj:'10.668.863/0001-95', uf:'DF', qtd:2, total:2113.48 },
+        { nome:'ALVES GAMA ATACADISTA DE ALIMENTOS LTDA', cnpj:'34.410.537/0001-41', uf:'DF', qtd:1, total:49.1 },
+      ]
+    },
+    { cfop:'1-202', qtd:18, total:1871.6,
+      fornecedores:[
+        { nome:'RENATO DIAS DOS SANTOS', cnpj:'—', uf:'DF', qtd:1, total:398.98 },
+        { nome:'ALESSANDO NOGUEIRA DE OLIVEIRA', cnpj:'—', uf:'DF', qtd:1, total:279.9 },
+        { nome:'LUIZ MARCIO', cnpj:'—', uf:'DF', qtd:2, total:278.98 },
+        { nome:'DANIEL RURIK PERIQUITO SAD', cnpj:'—', uf:'DF', qtd:1, total:149.99 },
+        { nome:'ANTONIO SILVIO SANTANA PIRES', cnpj:'—', uf:'DF', qtd:1, total:139.9 },
+        { nome:'ELVILSO BISPO DE PAULA', cnpj:'—', uf:'DF', qtd:1, total:130.0 },
+        { nome:'Demais fornecedores', cnpj:'—', uf:'—', qtd:11, total:493.85 },
+      ]
+    },
+    { cfop:'2-403', qtd:1, total:1637.46,
+      fornecedores:[
+        { nome:'STIHL FERRAMENTAS MOTORIZADAS LTDA.', cnpj:'87.235.172/0008-07', uf:'SP', qtd:1, total:1637.46 },
+      ]
+    },
+    { cfop:'2-202', qtd:2, total:1193.03,
+      fornecedores:[
+        { nome:'FABIO DE SOUZA ROCHA', cnpj:'—', uf:'ES', qtd:1, total:699.03 },
+        { nome:'ISABEL APARECIDA', cnpj:'—', uf:'MG', qtd:1, total:494.0 },
+      ]
+    },
+    { cfop:'1-411', qtd:1, total:22.0,
+      fornecedores:[
+        { nome:'FABIO CORDEIRO TRINTA', cnpj:'—', uf:'DF', qtd:1, total:22.0 },
+      ]
+    },
+    { cfop:'2-911', qtd:3, total:4.35,
+      fornecedores:[
+        { nome:'STIHL FERRAMENTAS MOTORIZADAS LTDA.', cnpj:'87.235.172/0008-07', uf:'SP', qtd:3, total:4.35 },
+      ]
+    },
+  ];
+
+  const CFOP_SAIDAS_DADOS = [
+    { cfop:'5-102', qtd:1684, total:374788.79, descricao:'Venda p/ comercialização (intraestadual)' },
+    { cfop:'6-108', qtd:414, total:134230.89, descricao:'Venda p/ comercialização (interestadual)' },
+    { cfop:'5-929', qtd:120, total:71058.66, descricao:'Lançamento decorrente de emissão de NF-e' },
+    { cfop:'6-102', qtd:39, total:56231.17, descricao:'Venda p/ comercialização (interestadual)' },
+    { cfop:'5-405', qtd:509, total:49080.9, descricao:'Venda com ST (interestadual)' },
+    { cfop:'5-202', qtd:6, total:1533.51, descricao:'Devolução de compra (intraestadual)' },
+    { cfop:'5-403', qtd:1, total:978.0, descricao:'Venda com ST (intraestadual)' },
+    { cfop:'5-949', qtd:12, total:344.39, descricao:'Outra saída não especificada' },
+    { cfop:'5-411', qtd:1, total:312.78, descricao:'Devolução de venda (intraestadual)' },
+  ];
+
+  const FINALIDADE_CORES = {
+    'Revenda':          '#3b82f6',
+    'Revenda c/ ST':    '#06b6d4',
+    'Ativo Imobilizado':'#f97316',
+    'Uso e Consumo':    '#10b981',
+    'Devolução Venda':  '#8b5cf6',
+    'Devol. Compra':    '#8b5cf6',
+    'Serviço Transp.':  '#f59e0b',
+    'Retorno Conserto': '#ef4444',
+    'Outras Entradas':  '#64748b',
+  };
+
+  /* -----------------------------------------------
+     CHART.JS DEFAULTS
+     ----------------------------------------------- */
+  Chart.defaults.color       = '#94a3b8';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+  Chart.defaults.font.family = "'Inter', sans-serif";
+  Chart.defaults.font.size   = 12;
+
+  const PAL = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#f97316','#ec4899'];
+
+  function tip() {
+    return {
+      backgroundColor:'#1e2535', borderColor:'rgba(255,255,255,0.1)', borderWidth:1,
+      padding:12, titleColor:'#e2e8f0', bodyColor:'#94a3b8', cornerRadius:8
+    };
+  }
+  function leg() { return { labels:{ usePointStyle:true, padding:16, boxWidth:8, boxHeight:8 } }; }
+
+  const chartInst = {};
+  const tabsInit  = {};
+
+  function safeChart(id, cfg) {
+    if (chartInst[id]) chartInst[id].destroy();
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    chartInst[id] = new Chart(ctx, cfg);
+  }
+
+  /* -----------------------------------------------
+     TAB NAVIGATION
+     ----------------------------------------------- */
+  const tabTitles = {
+    'visao-geral':  ['Visão Geral',             'Resumo Executivo Q1/2026 — Fev = cópia Jan nas planilhas'],
+    'compras':      ['Compras',                 'Aquisições Mar/2026 — LOJA Máquinas'],
+    'finalidade':   ['Finalidade de Compras',   'Classificação por CFOP — Mar/2026'],
+    'vendas':       ['Vendas',                  'Faturamento Mar/2026 — LOJA Máquinas'],
+    'impostos':     ['Impostos',                'Apuração Tributária Mar/2026 — Lucro Real'],
+    'memoria':      ['Memória de Cálculo',      'ICMS + PIS/COFINS Não-Cumulativo — Mar/2026'],
+    'dre':          ['DRE',                     'Demonstrativo do Resultado Jan–Mar 2026 (Q1)'],
+    'indicadores':  ['Indicadores',             'Análise de Margens Q1 2026 (Jan–Mar)'],
+  };
+
+  function showTab(name) {
+    document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const sec = document.getElementById('tab-' + name);
+    const nav = document.getElementById('nav-' + name);
+    if (sec) sec.classList.add('active');
+    if (nav) nav.classList.add('active');
+    const h = tabTitles[name] || ['Dashboard',''];
+    document.getElementById('headerTitle').innerHTML = h[0] + ' <span>' + h[1] + '</span>';
+    if (!tabsInit[name]) {
+      tabsInit[name] = true;
+      setTimeout(() => {
+        const inits = {
+          'visao-geral':  initVisaoGeral,
+          'compras':      initCompras,
+          'finalidade':   initFinalidade,
+          'vendas':       initVendas,
+          'impostos':     initImpostos,
+          'dre':          initDRE,
+          'indicadores':  initIndicadores,
+        };
+        if (inits[name]) inits[name]();
+      }, 50);
+    }
+    if (window.innerWidth <= 768) closeMob();
+  }
+
+  /* -----------------------------------------------
+     SIDEBAR
+     ----------------------------------------------- */
+  let sbCollapsed = false;
+  function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const mw = document.getElementById('mainWrapper');
+    if (window.innerWidth <= 768) {
+      sb.classList.toggle('mob-open');
+      document.getElementById('overlay').classList.toggle('hidden');
+    } else {
+      sbCollapsed = !sbCollapsed;
+      sb.classList.toggle('collapsed', sbCollapsed);
+      mw.classList.toggle('sb-collapsed', sbCollapsed);
+    }
+  }
+  function closeMob() {
+    document.getElementById('sidebar').classList.remove('mob-open');
+    document.getElementById('overlay').classList.add('hidden');
+  }
+
+  /* -----------------------------------------------
+     INIT: VISÃO GERAL
+     ----------------------------------------------- */
+  function initVisaoGeral() {
+    // Bar: Receita Bruta vs Deduções
+    safeChart('chartCompBar', {
+      type: 'bar',
+      data: {
+        labels: MONTHS,
+        datasets: [
+          { label:'Receita Bruta (R$ mil)', data: VENDAS.map(v=>+(v/1000).toFixed(1)),   backgroundColor:'rgba(59,130,246,0.7)',  borderRadius:4 },
+          { label:'Deduções Trib. (R$ mil)', data: DEDUCOES.map(v=>+(v/1000).toFixed(1)), backgroundColor:'rgba(239,68,68,0.65)',  borderRadius:4 },
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins: { legend:leg(), tooltip:{ ...tip(), callbacks:{ label:c => c.dataset.label+': R$ '+c.parsed.y.toFixed(0)+'K' } } },
+        scales: {
+          y: { ticks:{ callback:v=>'R$'+v+'K' }, grid:{ color:'rgba(255,255,255,0.05)' } },
+          x: { grid:{ color:'rgba(255,255,255,0.03)' } }
+        }
+      }
+    });
+
+    // Line: % deduções
+    safeChart('chartDedPct', {
+      type: 'line',
+      data: {
+        labels: MONTHS,
+        datasets: [{
+          label:'Deduções % s/ RB',
+          data: DED_PCT,
+          borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.1)',
+          borderWidth:2.5, pointRadius:5, pointBackgroundColor:'#ef4444',
+          fill:true, tension:0.3,
+        }]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins: { legend:leg(), tooltip:{ ...tip(), callbacks:{ label:c => c.parsed.y.toFixed(2)+'%' } } },
+        scales: {
+          y: { ticks:{ callback:v=>v+'%' }, grid:{ color:'rgba(255,255,255,0.05)' }, min:0, max:28 },
+          x: { grid:{ color:'rgba(255,255,255,0.03)' } }
+        }
+      }
+    });
+
+    // Doughnut: composição Mar/2026
+    safeChart('chartComposicao', {
+      type: 'doughnut',
+      data: {
+        labels: ['Devoluções','ICMS ST','COFINS','PIS','Outros/Ajuste'],
+        datasets: [{
+          data: [0, 0, 53033, 8721, 0],
+          backgroundColor: PAL, borderWidth:0, hoverOffset:6
+        }]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false, cutout:'62%',
+        plugins: {
+          legend:{ ...leg(), position:'right' },
+          tooltip:{ ...tip(), callbacks:{ label:c=>{
+            const tot=c.dataset.data.reduce((a,b)=>a+b,0);
+            return c.label+': R$ '+c.parsed.toLocaleString('pt-BR')+' ('+((c.parsed/tot)*100).toFixed(1)+'%)';
+          }}}
+        }
+      }
+    });
+  }
+
+  /* -----------------------------------------------
+     INIT: COMPRAS
+     ----------------------------------------------- */
+  function initCompras() {
+    const forn = FORN_TOP;
+    safeChart('chartFornecedores', {
+      type:'bar',
+      data:{ labels:forn.nomes, datasets:[{ label:'Valor (R$ mil)', data:forn.vals.map(v=>+(v/1000).toFixed(1)), backgroundColor:PAL, borderRadius:5 }] },
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{ ...tip(), callbacks:{ label:c=>'R$ '+c.parsed.x.toFixed(0)+'K' } } },
+        scales:{ x:{ ticks:{ callback:v=>'R$'+v+'K' }, grid:{ color:'rgba(255,255,255,0.05)' } }, y:{ grid:{display:false} } }
+      }
+    });
+
+    safeChart('chartComprasUF', {
+      type:'doughnut',
+      data:{ labels:COMPRAS_UF.labels, datasets:[{ data:COMPRAS_UF.vals, backgroundColor:PAL, borderWidth:0, hoverOffset:6 }] },
+      options:{ responsive:true, maintainAspectRatio:false, cutout:'58%',
+        plugins:{ legend:{ ...leg(), position:'right' }, tooltip:{ ...tip(), callbacks:{ label:c=>c.label+': '+c.parsed.toFixed(2)+'%' } } }
+      }
+    });
+  }
+
+  /* -----------------------------------------------
+     INIT: VENDAS
+     ----------------------------------------------- */
+  function initVendas() {
+    if (document.getElementById('chartVendasEvol')) {
+    safeChart('chartVendasEvol', { type:'bar', data:{ labels:MONTHS, datasets:[
+      { label:'Receita Fiscal (R$ mil)', data:VENDAS.map(v=>+(v/1000).toFixed(1)), backgroundColor:'rgba(59,130,246,0.7)', borderRadius:4 },
+      { label:'Total NF Saídas (R$ mil)', data:TOTAL_SAIDAS_NF.map(v=>+(v/1000).toFixed(1)), backgroundColor:'rgba(16,185,129,0.65)', borderRadius:4 },
+    ]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:leg() }, scales:{ y:{ ticks:{ callback:v=>'R$'+v+'K' } } } } });
+    }
+    if (document.getElementById('chartComprasVendas')) {
+    safeChart('chartComprasVendas', { type:'bar', data:{ labels:MONTHS, datasets:[
+      { label:'Compras (R$ mil)', data:COMPRAS_MES.map(v=>+(v/1000).toFixed(0)), backgroundColor:'rgba(249,115,22,0.65)', borderRadius:4 },
+      { label:'Receita Fiscal (R$ mil)', data:VENDAS.map(v=>+(v/1000).toFixed(0)), backgroundColor:'rgba(59,130,246,0.65)', borderRadius:4 },
+    ]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:leg() }, scales:{ y:{ ticks:{ callback:v=>'R$'+v+'K' } } } } });
+    }
+
+    const cli = CLI_TOP;
+    safeChart('chartClientes', {
+      type:'bar',
+      data:{ labels:cli.nomes, datasets:[{ label:'Faturamento (R$ mil)', data:cli.vals.map(v=>+(v/1000).toFixed(1)), backgroundColor:PAL, borderRadius:5 }] },
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{ ...tip(), callbacks:{ label:c=>'R$ '+c.parsed.x.toFixed(0)+'K' } } },
+        scales:{ x:{ ticks:{ callback:v=>'R$'+v+'K' }, grid:{ color:'rgba(255,255,255,0.05)' } }, y:{ grid:{display:false} } }
+      }
+    });
+
+    safeChart('chartVendasUF', {
+      type:'doughnut',
+      data:{ labels:UF_VENDAS.labels, datasets:[{ data:UF_VENDAS.vals, backgroundColor:PAL, borderWidth:0, hoverOffset:6 }] },
+      options:{ responsive:true, maintainAspectRatio:false, cutout:'58%',
+        plugins:{ legend:{ ...leg(), position:'right' }, tooltip:{ ...tip(), callbacks:{ label:c=>c.label+': '+c.parsed.toFixed(2)+'%' } } }
+      }
+    });
+  }
+
+  /* -----------------------------------------------
+     INIT: IMPOSTOS
+     ----------------------------------------------- */
+  function initImpostos() {
+    safeChart('chartImpostosEv', {
+      type:'line',
+      data:{
+        labels: MONTHS,
+        datasets:[
+          { label:'ICMS s/ Vendas (DRE)', data:ICMS_DED,   borderColor:PAL[0], backgroundColor:'transparent', borderWidth:2, pointRadius:4, tension:0.3 },
+          { label:'ICMS ST',              data:ICMST_DED,  borderColor:PAL[3], backgroundColor:'transparent', borderWidth:2, pointRadius:4, tension:0.3 },
+          { label:'COFINS',               data:COFINS_DED, borderColor:PAL[2], backgroundColor:'transparent', borderWidth:2, pointRadius:4, tension:0.3 },
+          { label:'PIS',                  data:PIS_DED,    borderColor:PAL[1], backgroundColor:'transparent', borderWidth:2, pointRadius:4, tension:0.3 },
+          { label:'Devoluções',           data:DEV_DED,    borderColor:PAL[7], backgroundColor:'transparent', borderWidth:2, pointRadius:4, tension:0.3 },
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false, spanGaps:false,
+        plugins:{ legend:leg(), tooltip:{ ...tip(), callbacks:{ label:c=>'R$ '+c.parsed.y.toLocaleString('pt-BR') } } },
+        scales:{ y:{ ticks:{ callback:v=>'R$'+(v/1000).toFixed(0)+'K' }, grid:{ color:'rgba(255,255,255,0.05)' } }, x:{ grid:{ color:'rgba(255,255,255,0.03)' } } }
+      }
+    });
+
+    // % sobre RB (Mar/2026 – valores brutos apurados)
+    safeChart('chartImpostosPart', {
+      type:'bar',
+      data:{
+        labels:['ICMS','ICMS ST','PIS','COFINS'],
+        datasets:[{ label:'% s/ Receita Bruta (Mar)', data:[16.09, 0.00, 1.62, 9.82], backgroundColor:PAL, borderRadius:5 }]
+      },
+      options:{
+        indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{ ...tip(), callbacks:{ label:c=>c.parsed.x.toFixed(2)+'% sobre RB' } } },
+        scales:{ x:{ ticks:{ callback:v=>v+'%' }, grid:{ color:'rgba(255,255,255,0.05)' }, max:21 }, y:{ grid:{display:false} } }
+      }
+    });
+  }
+
+  /* -----------------------------------------------
+     INIT: DRE
+     ----------------------------------------------- */
+  function initDRE() {
+    // Bar: RB / Lucro Bruto / Lucro Líquido (apenas meses com dados completos)
+    safeChart('chartDRE', {
+      type:'bar',
+      data:{
+        labels:['Jan','Fev','Mar'],
+        datasets:[
+          { label:'Receita Bruta',  data:VENDAS.map(v=>+(v/1000).toFixed(0)), backgroundColor:'rgba(59,130,246,0.6)',  borderRadius:4 },
+          { label:'Lucro Bruto',    data:LUC_BRUTO.map(v=>+(v/1000).toFixed(0)),       backgroundColor:'rgba(16,185,129,0.6)',  borderRadius:4 },
+          { label:'Lucro Líquido',  data:LUC_LIQ.map(v=>+(v/1000).toFixed(0)),       backgroundColor:'rgba(6,182,212,0.6)',   borderRadius:4 },
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:leg(), tooltip:{ ...tip(), callbacks:{ label:c=>c.dataset.label+': R$ '+c.parsed.y.toFixed(0)+'K' } } },
+        scales:{ y:{ ticks:{ callback:v=>'R$'+v+'K' }, grid:{ color:'rgba(255,255,255,0.05)' } }, x:{ grid:{ color:'rgba(255,255,255,0.03)' } } }
+      }
+    });
+
+    // Line: margens % (Jan–Mar)
+    safeChart('chartMargens', {
+      type:'line',
+      data:{
+        labels:['Jan','Fev','Mar'],
+        datasets:[
+          { label:'Margem Bruta (%)',  data:MARG_MB.slice(0,3), borderColor:PAL[1], backgroundColor:'rgba(16,185,129,0.08)',  borderWidth:2.5, pointRadius:5, fill:true, tension:0.3 },
+          { label:'Margem Líquida (%)',data:MARG_ML.slice(0,3), borderColor:PAL[0], backgroundColor:'rgba(59,130,246,0.08)',  borderWidth:2.5, pointRadius:5, fill:true, tension:0.3 },
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:leg(), tooltip:{ ...tip(), callbacks:{ label:c=>c.dataset.label+': '+c.parsed.y.toFixed(2)+'%' } } },
+        scales:{ y:{ ticks:{ callback:v=>v+'%' }, grid:{ color:'rgba(255,255,255,0.05)' }, min:0, max:15 }, x:{ grid:{ color:'rgba(255,255,255,0.03)' } } }
+      }
+    });
+  }
+
+  /* -----------------------------------------------
+     INIT: INDICADORES
+     ----------------------------------------------- */
+  function initIndicadores() {
+    safeChart('chartIndicadores', {
+      type:'line',
+      data:{
+        labels: MONTHS,
+        datasets:[
+          { label:'Deduções % s/ RB', data:DED_PCT, borderColor:PAL[4], backgroundColor:'transparent', borderWidth:2, pointRadius:4, tension:0.3, borderDash:[5,4] },
+          { label:'Margem Bruta (%)',  data:MARG_MB, borderColor:PAL[1], backgroundColor:'transparent', borderWidth:2, pointRadius:4, tension:0.3 },
+          { label:'Margem Líquida (%)',data:MARG_ML, borderColor:PAL[0], backgroundColor:'transparent', borderWidth:2, pointRadius:4, tension:0.3 },
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false, spanGaps:false,
+        plugins:{ legend:leg(), tooltip:{ ...tip(), callbacks:{ label:c=>c.dataset.label+': '+(c.parsed.y !== null ? c.parsed.y.toFixed(2)+'%' : 'N/D') } } },
+        scales:{
+          y:{ ticks:{ callback:v=>v+'%' }, grid:{ color:'rgba(255,255,255,0.05)' }, min:0, max:28 },
+          x:{ grid:{ color:'rgba(255,255,255,0.03)' } }
+        }
+      }
+    });
+  }
+
+  /* -----------------------------------------------
+     INIT: FINALIDADE DE COMPRAS (CFOP)
+     ----------------------------------------------- */
+  let activeDrilldownCfop = null;
+
+  function closeDrilldown() {
+    document.getElementById('drilldown-panel').style.display = 'none';
+    activeDrilldownCfop = null;
+  }
+
+  function openDrilldown(cfop) {
+    if (activeDrilldownCfop === cfop) { closeDrilldown(); return; }
+    activeDrilldownCfop = cfop;
+    const item = CFOP_DADOS.find(d => d.cfop === cfop);
+    const info = CFOP_FINALIDADE[cfop] || {};
+    if (!item) return;
+    const totalCfop = item.total;
+    document.getElementById('dd-title').textContent = 'CFOP ' + cfop + ' — ' + (info.descricao || '');
+    document.getElementById('dd-sub').textContent =
+      'Finalidade: ' + (info.finalidade || '—') +
+      ' | Total: R$ ' + totalCfop.toLocaleString('pt-BR',{minimumFractionDigits:2}) +
+      ' | ' + item.qtd + ' NFs';
+    const tbody = document.getElementById('dd-tbody');
+    tbody.innerHTML = '';
+    item.fornecedores.forEach((f, i) => {
+      const pct = totalCfop > 0 ? ((f.total/totalCfop)*100).toFixed(1) : '0.0';
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + (i+1) + '</td>' +
+        '<td><div class="fw7">' + f.nome + '</div></td>' +
+        '<td><span class="td-mute">' + f.cnpj + '</span></td>' +
+        '<td><span class="chip ' + (f.uf==='DF'?'cy':f.uf==='SP'?'bl':f.uf==='GO'?'or':f.uf==='PR'?'pu':f.uf==='MG'?'gr':'gy') + '">' + f.uf + '</span></td>' +
+        '<td class="r">' + f.qtd + '</td>' +
+        '<td class="r td-val">R$ ' + f.total.toLocaleString('pt-BR',{minimumFractionDigits:2}) + '</td>' +
+        '<td class="r"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:' + pct + '%;background:' + (FINALIDADE_CORES[info.finalidade]||'#3b82f6') + '"></div></div><div class="pb-pct">' + pct + '%</div></div></td>';
+      tbody.appendChild(tr);
+    });
+    const panel = document.getElementById('drilldown-panel');
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  function initFinalidade() {
+    const totalGeral = CFOP_DADOS.reduce((a,b)=>a+b.total,0);
+
+    // Agregar por finalidade para gráficos
+    const finalGrupos = {};
+    CFOP_DADOS.forEach(d => {
+      const fin = (CFOP_FINALIDADE[d.cfop] || {}).finalidade || 'Outros';
+      if (!finalGrupos[fin]) finalGrupos[fin] = 0;
+      finalGrupos[fin] += d.total;
+    });
+    const finLabels = Object.keys(finalGrupos).sort((a,b)=>finalGrupos[b]-finalGrupos[a]);
+    const finVals   = finLabels.map(k=>finalGrupos[k]);
+    const finCores  = finLabels.map(k=>FINALIDADE_CORES[k]||'#64748b');
+
+    safeChart('chartFinalidadeDist', {
+      type:'doughnut',
+      data:{ labels:finLabels, datasets:[{ data:finVals, backgroundColor:finCores, borderWidth:0, hoverOffset:6 }] },
+      options:{
+        responsive:true, maintainAspectRatio:false, cutout:'58%',
+        plugins:{
+          legend:{ ...leg(), position:'right' },
+          tooltip:{ ...tip(), callbacks:{ label:c=>{
+            const pct = ((c.parsed/totalGeral)*100).toFixed(1);
+            return c.label+': R$ '+c.parsed.toLocaleString('pt-BR',{minimumFractionDigits:0})+' ('+pct+'%)';
+          }}}
+        }
+      }
+    });
+
+    safeChart('chartFinalidadeBar', {
+      type:'bar',
+      data:{ labels:finLabels, datasets:[{ label:'Valor (R$ mil)', data:finVals.map(v=>+(v/1000).toFixed(1)), backgroundColor:finCores, borderRadius:5 }] },
+      options:{
+        indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{ ...tip(), callbacks:{ label:c=>'R$ '+c.parsed.x.toFixed(0)+'K' } } },
+        scales:{ x:{ ticks:{ callback:v=>'R$'+v+'K' }, grid:{ color:'rgba(255,255,255,0.05)' } }, y:{ grid:{display:false} } }
+      }
+    });
+
+    // Montar tabela CFOP
+    const tbody = document.getElementById('cfop-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    CFOP_DADOS.forEach(d => {
+      const info = CFOP_FINALIDADE[d.cfop] || {};
+      const pct  = totalGeral > 0 ? ((d.total/totalGeral)*100).toFixed(1) : '0.0';
+      const cor  = FINALIDADE_CORES[info.finalidade] || '#64748b';
+      const credChip = info.creditoPisCofins
+        ? '<span class="chip gr"><i class="fas fa-check"></i> Sim</span>'
+        : '<span class="chip rd"><i class="fas fa-times"></i> Não</span>';
+      const tr = document.createElement('tr');
+      tr.style.cursor = 'pointer';
+      tr.title = 'Clique para ver fornecedores';
+      tr.innerHTML =
+        '<td><span class="chip" style="background:rgba(255,255,255,0.07);color:var(--text);font-family:monospace;font-weight:700;">' + d.cfop + '</span></td>' +
+        '<td style="font-size:12px;color:var(--text-sec)">' + (info.descricao || '—') + '</td>' +
+        '<td><span class="chip" style="background:'+cor+'22;color:'+cor+'">' + (info.finalidade||'—') + '</span></td>' +
+        '<td>' + credChip + '</td>' +
+        '<td class="r">' + d.qtd + '</td>' +
+        '<td class="r td-val">R$ ' + d.total.toLocaleString('pt-BR',{minimumFractionDigits:2}) + '</td>' +
+        '<td class="r"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:'+((d.total/totalGeral)*100).toFixed(0)+'%;background:'+cor+'"></div></div><div class="pb-pct">'+pct+'%</div></div></td>' +
+        '<td class="c"><button onclick="openDrilldown(\''+d.cfop+'\')" style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);color:var(--accent);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;">Ver <i class="fas fa-chevron-down"></i></button></td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* -----------------------------------------------
+     EXPORTAÇÃO PDF / EXCEL / IMPRESSÃO FORNECEDOR
+     ----------------------------------------------- */
+  function getCompanyName() {
+    return document.querySelector('.logo-text .company')?.textContent?.trim() || 'Dashboard';
+  }
+  function getExportDate() {
+    return new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+  }
+
+  const PDF_CLONE_CSS = `
+    .pdf-export-target {
+      --bg:#f8fafc; --bg-card:#fff; --bg-card-hover:#f1f5f9;
+      --text:#1e293b; --text-sec:#475569; --text-muted:#64748b;
+      --border:rgba(0,0,0,.12);
+      background:#f8fafc !important; color:#1e293b !important;
+      padding:20px; opacity:1 !important; filter:none !important; animation:none !important;
+    }
+    .pdf-export-target * { opacity:1 !important; filter:none !important; }
+    .pdf-export-target .sec-title,.pdf-export-target .kpi-val,.pdf-export-target .chart-ttl,
+    .pdf-export-target .margin-val,.pdf-export-target .ind-val,.pdf-export-target .tax-cur,
+    .pdf-export-target .table-head .ttl,.pdf-export-target tbody td,.pdf-export-target td,
+    .pdf-export-target .kpi-lbl,.pdf-export-target .mem-row .lbl,.pdf-export-target .mem-row .val,
+    .pdf-export-target .fw7,.pdf-export-target .fw8 { color:#1e293b !important; }
+    .pdf-export-target .sec-sub,.pdf-export-target .kpi-sub,.pdf-export-target .chart-sub,
+    .pdf-export-target .table-head .sub,.pdf-export-target .td-mute,.pdf-export-target .sec-title small,
+    .pdf-export-target .margin-sub,.pdf-export-target .tax-prev,.pdf-export-target .ind-formula {
+      color:#475569 !important;
+    }
+    .pdf-export-target .kpi-card,.pdf-export-target .chart-card,.pdf-export-target .table-card,
+    .pdf-export-target .margin-card,.pdf-export-target .tax-card,.pdf-export-target .mem-card,
+    .pdf-export-target .ind-card,.pdf-export-target .alert-box {
+      background:#fff !important; border:1px solid #e2e8f0 !important;
+      box-shadow:0 1px 3px rgba(0,0,0,.06) !important;
+    }
+    .pdf-export-target .t-success{color:#059669!important}
+    .pdf-export-target .t-warning{color:#d97706!important}
+    .pdf-export-target .t-danger{color:#dc2626!important}
+    .pdf-export-target .t-accent{color:#2563eb!important}
+    .pdf-export-target .t-muted{color:#64748b!important}
+    .pdf-export-target .kpi-ico.c-blue{background:rgba(59,130,246,.22)!important;color:#2563eb!important}
+    .pdf-export-target .kpi-ico.c-green{background:rgba(16,185,129,.22)!important;color:#059669!important}
+    .pdf-export-target .kpi-ico.c-yellow{background:rgba(245,158,11,.22)!important;color:#d97706!important}
+    .pdf-export-target .kpi-ico.c-purple{background:rgba(139,92,246,.22)!important;color:#7c3aed!important}
+    .pdf-export-target thead th{background:#f1f5f9!important;color:#475569!important}
+    .pdf-export-target .dre-tbl .dre-group td{background:#f1f5f9!important;color:#475569!important}
+    .pdf-export-target .dre-tbl .dre-total td{background:#ecfdf5!important}
+    .pdf-export-target .dre-tbl .dre-lucro td{background:#ecfdf5!important;color:#059669!important}
+    .pdf-export-target .export-bar{display:none!important}
+  `;
+
+  function applyPdfLiveTheme(el) {
+    el.style.setProperty('--text', '#1e293b');
+    el.style.setProperty('--text-sec', '#475569');
+    el.style.setProperty('--text-muted', '#64748b');
+    el.style.setProperty('--bg-card', '#ffffff');
+    el.style.setProperty('--border', 'rgba(0,0,0,0.12)');
+    el.style.opacity = '1';
+    el.style.animation = 'none';
+  }
+
+  function clearPdfLiveTheme(el) {
+    ['--text','--text-sec','--text-muted','--bg-card','--border','opacity','animation'].forEach(p => el.style.removeProperty(p));
+  }
+
+  function applyPdfCloneTheme(doc, el) {
+    el.classList.add('pdf-export-target');
+    applyPdfLiveTheme(el);
+    const bar = el.querySelector('.export-bar');
+    if (bar) bar.style.display = 'none';
+    const style = doc.createElement('style');
+    style.textContent = PDF_CLONE_CSS;
+    el.insertBefore(style, el.firstChild);
+  }
+
+  function solidifyRgba(color) {
+    if (typeof color !== 'string' || !color.startsWith('rgba')) return color;
+    return color.replace(/,\s*[\d.]+\)\s*$/, ', 1)');
+  }
+
+  function prepareChartsForPdf(section) {
+    const saved = [];
+    Object.entries(chartInst).forEach(([id, chart]) => {
+      if (!chart?.canvas || !section.contains(chart.canvas)) return;
+      const snap = { id, ticks: [], grids: [], legend: null, datasets: [] };
+      if (chart.options.scales) {
+        Object.keys(chart.options.scales).forEach(key => {
+          const s = chart.options.scales[key];
+          if (!s) return;
+          if (s.ticks) { snap.ticks.push({ key, color: s.ticks.color }); s.ticks.color = '#475569'; }
+          if (s.grid)  { snap.grids.push({ key, color: s.grid.color });  s.grid.color = 'rgba(0,0,0,0.1)'; }
+        });
+      }
+      if (chart.options.plugins?.legend?.labels) {
+        snap.legend = chart.options.plugins.legend.labels.color;
+        chart.options.plugins.legend.labels.color = '#475569';
+      }
+      chart.data.datasets.forEach((d, i) => {
+        snap.datasets.push({ backgroundColor: d.backgroundColor, borderColor: d.borderColor, fill: d.fill });
+        if (d.fill && typeof d.backgroundColor === 'string' && d.backgroundColor.startsWith('rgba')) {
+          d.backgroundColor = d.backgroundColor.replace(/,\s*[\d.]+\)/, ', 0.18)');
+        } else {
+          d.backgroundColor = solidifyRgba(d.backgroundColor);
+        }
+        if (d.borderColor) d.borderColor = solidifyRgba(d.borderColor) || d.borderColor;
+      });
+      chart.update('none');
+      saved.push(snap);
+    });
+    return saved;
+  }
+
+  function restoreChartsFromPdf(saved) {
+    saved.forEach(snap => {
+      const chart = chartInst[snap.id];
+      if (!chart) return;
+      snap.ticks.forEach(({ key, color }) => { if (chart.options.scales?.[key]?.ticks) chart.options.scales[key].ticks.color = color; });
+      snap.grids.forEach(({ key, color }) => { if (chart.options.scales?.[key]?.grid) chart.options.scales[key].grid.color = color; });
+      if (snap.legend != null && chart.options.plugins?.legend?.labels) chart.options.plugins.legend.labels.color = snap.legend;
+      snap.datasets.forEach((orig, i) => {
+        const d = chart.data.datasets[i];
+        if (!d) return;
+        d.backgroundColor = orig.backgroundColor;
+        d.borderColor = orig.borderColor;
+        d.fill = orig.fill;
+      });
+      chart.update('none');
+    });
+  }
+
+  async function exportPDF(sectionId, filename) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    const btn = event?.currentTarget;
+    const origHtml = btn?.innerHTML;
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...'; }
+
+    const wasHidden = !section.classList.contains('active');
+    if (wasHidden) section.classList.add('export-capture');
+    section.classList.add('pdf-export-target');
+    document.body.classList.add('pdf-capturing');
+    section.scrollTop = 0;
+    applyPdfLiveTheme(section);
+    const chartSnap = prepareChartsForPdf(section);
+
+    try {
+      await new Promise(r => setTimeout(r, 500));
+      const canvas = await html2canvas(section, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#f8fafc',
+        logging: false,
+        onclone: (doc, el) => applyPdfCloneTheme(doc, el)
+      });
+      const imgData = canvas.toDataURL('image/png');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      const margin = 10;
+      const headerH = 12;
+      const contentW = pageW - margin * 2;
+      const pdfHeight = (canvas.height * contentW) / canvas.width;
+      let heightLeft = pdfHeight;
+      let position = margin + headerH;
+
+      const addHeader = () => {
+        pdf.setFontSize(10);
+        pdf.setTextColor(26, 26, 46);
+        pdf.text(getCompanyName() + ' — ' + new Date().toLocaleDateString('pt-BR'), margin, margin + 4);
+        pdf.setDrawColor(200);
+        pdf.line(margin, margin + 7, pageW - margin, margin + 7);
+      };
+
+      addHeader();
+      pdf.addImage(imgData, 'PNG', margin, position, contentW, pdfHeight);
+      heightLeft -= (pageH - margin - headerH);
+
+      while (heightLeft > 0) {
+        position = margin + headerH - (pdfHeight - heightLeft);
+        pdf.addPage();
+        addHeader();
+        pdf.addImage(imgData, 'PNG', margin, position, contentW, pdfHeight);
+        heightLeft -= (pageH - margin - headerH);
+      }
+
+      pdf.save(filename + '_' + getExportDate() + '.pdf');
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao gerar PDF. Tente novamente.');
+    } finally {
+      restoreChartsFromPdf(chartSnap);
+      clearPdfLiveTheme(section);
+      document.body.classList.remove('pdf-capturing');
+      section.classList.remove('pdf-export-target', 'export-capture');
+      if (btn) { btn.disabled = false; btn.innerHTML = origHtml; }
+    }
+  }
+
+  function exportExcel(sectionId, filename) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    const tables = section.querySelectorAll('table');
+    const wb = XLSX.utils.book_new();
+
+    if (tables.length > 0) {
+      tables.forEach((tbl, i) => {
+        const ws = XLSX.utils.table_to_sheet(tbl);
+        const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+        const colWidths = [];
+        for (let C = range.s.c; C <= range.e.c; C++) {
+          let max = 10;
+          for (let R = range.s.r; R <= range.e.r; R++) {
+            const cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
+            if (cell && cell.v != null) max = Math.max(max, String(cell.v).length + 2);
+          }
+          colWidths.push({ wch: Math.min(max, 50) });
+        }
+        ws['!cols'] = colWidths;
+        XLSX.utils.book_append_sheet(wb, ws, 'Tabela_' + (i + 1));
+      });
+    } else {
+      const cards = section.querySelectorAll('.ind-card');
+      const rows = [['Indicador', 'Valor', 'Fórmula', 'Interpretação']];
+      cards.forEach(card => {
+        rows.push([
+          card.querySelector('.ind-name')?.textContent?.trim() || '',
+          card.querySelector('.ind-val')?.textContent?.trim() || '',
+          card.querySelector('.ind-formula')?.textContent?.trim() || '',
+          card.querySelector('.ind-interp')?.textContent?.trim() || ''
+        ]);
+      });
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [{ wch: 30 }, { wch: 15 }, { wch: 40 }, { wch: 60 }];
+      XLSX.utils.book_append_sheet(wb, ws, 'Indicadores');
+    }
+
+    if (!wb.SheetNames.length) {
+      alert('Nenhum dado encontrado para exportar.');
+      return;
+    }
+    XLSX.writeFile(wb, filename + '_' + getExportDate() + '.xlsx');
+  }
+
+  function collectUniqueSuppliers() {
+    const map = new Map();
+    (CFOP_DADOS || []).forEach(cfop => {
+      (cfop.fornecedores || []).forEach(f => {
+        const key = f.cnpj || f.nome;
+        if (!map.has(key)) map.set(key, { nome: f.nome, cnpj: f.cnpj, uf: f.uf });
+      });
+    });
+    return Array.from(map.values()).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  }
+
+  function openSupplierModal() {
+    const list = document.getElementById('supplierList');
+    const suppliers = collectUniqueSuppliers();
+    list.innerHTML = suppliers.map(s => {
+      const search = (s.nome + ' ' + s.cnpj).toLowerCase();
+      const esc = v => v.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+      return '<label class="supplier-item" data-search="' + esc(search) + '">' +
+        '<input type="checkbox" value="' + esc(s.cnpj) + '" data-nome="' + esc(s.nome) + '">' +
+        '<span class="supplier-info"><strong>' + esc(s.nome) + '</strong>' +
+        '<small>' + esc(s.cnpj) + ' · ' + esc(s.uf) + '</small></span></label>';
+    }).join('');
+    document.getElementById('supplierSearch').value = '';
+    document.getElementById('supplierModal').style.display = 'flex';
+  }
+
+  function closeSupplierModal() {
+    document.getElementById('supplierModal').style.display = 'none';
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+  }
+
+  function filterSuppliers(query) {
+    const q = query.toLowerCase();
+    document.querySelectorAll('#supplierList .supplier-item').forEach(el => {
+      el.style.display = el.dataset.search.includes(q) ? '' : 'none';
+    });
+  }
+
+  function toggleAllSuppliers(state) {
+    document.querySelectorAll('#supplierList .supplier-item').forEach(el => {
+      if (el.style.display === 'none') return;
+      const cb = el.querySelector('input');
+      if (cb) cb.checked = state;
+    });
+  }
+
+  function printBySupplier() {
+    const selected = Array.from(document.querySelectorAll('#supplierList input:checked'));
+    if (!selected.length) { alert('Selecione ao menos um fornecedor.'); return; }
+
+    closeSupplierModal();
+    let totalGeral = 0;
+    let html = '<div style="font-family:Inter,sans-serif;padding:24px;color:#1a1a2e;background:#fff;">';
+    html += '<h1 style="font-size:18px;margin-bottom:4px;">Relatório por Fornecedor</h1>';
+    html += '<p style="font-size:12px;color:#555;margin-bottom:24px;">' + getCompanyName() + ' — ' + new Date().toLocaleDateString('pt-BR') + '</p>';
+
+    selected.forEach(cb => {
+      const cnpj = cb.value;
+      const nome = cb.dataset.nome;
+      const rows = [];
+      let subtotal = 0;
+      let uf = '—';
+
+      (CFOP_DADOS || []).forEach(cfop => {
+        const f = (cfop.fornecedores || []).find(x => x.cnpj === cnpj);
+        if (f) {
+          const info = (CFOP_FINALIDADE[cfop.cfop] || {});
+          rows.push({ cfop: cfop.cfop, desc: info.descricao || '—', fin: info.finalidade || '—', qtd: f.qtd, total: f.total });
+          subtotal += f.total;
+          uf = f.uf;
+        }
+      });
+
+      totalGeral += subtotal;
+      html += '<div style="margin-bottom:28px;page-break-inside:avoid;">';
+      html += '<h2 style="font-size:14px;border-bottom:2px solid #3b82f6;padding-bottom:6px;">' + nome + '</h2>';
+      html += '<p style="font-size:11px;color:#555;">CNPJ: ' + cnpj + ' · UF: ' + uf + '</p>';
+      html += '<table style="width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;">';
+      html += '<thead><tr style="background:#f0f0f0;"><th style="padding:8px;text-align:left;">CFOP</th>';
+      html += '<th style="padding:8px;text-align:left;">Descrição</th><th style="padding:8px;text-align:left;">Finalidade</th>';
+      html += '<th style="padding:8px;text-align:right;">Qtd NFs</th><th style="padding:8px;text-align:right;">Valor (R$)</th></tr></thead><tbody>';
+      rows.forEach(r => {
+        html += '<tr><td style="padding:8px;border-bottom:1px solid #ddd;">' + r.cfop + '</td>';
+        html += '<td style="padding:8px;border-bottom:1px solid #ddd;">' + r.desc + '</td>';
+        html += '<td style="padding:8px;border-bottom:1px solid #ddd;">' + r.fin + '</td>';
+        html += '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;">' + r.qtd + '</td>';
+        html += '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;font-weight:600;">' +
+          r.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr>';
+      });
+      html += '</tbody><tfoot><tr><td colspan="4" style="padding:10px;text-align:right;font-weight:700;">Subtotal:</td>';
+      html += '<td style="padding:10px;text-align:right;font-weight:700;">R$ ' +
+        subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr></tfoot></table></div>';
+    });
+
+    html += '<div style="border-top:2px solid #1a1a2e;padding-top:12px;margin-top:16px;text-align:right;font-size:14px;font-weight:700;">';
+    html += 'Total Geral: R$ ' + totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</div></div>';
+
+    const old = document.getElementById('print-supplier-report');
+    if (old) old.remove();
+    const div = document.createElement('div');
+    div.id = 'print-supplier-report';
+    div.innerHTML = html;
+    document.body.appendChild(div);
+    document.body.classList.add('supplier-printing');
+
+    const cleanup = () => {
+      document.body.classList.remove('supplier-printing');
+      div.remove();
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    window.print();
+  }
+
+  /* -----------------------------------------------
+     INICIALIZAÇÃO
+     ----------------------------------------------- */
+  document.addEventListener('DOMContentLoaded', () => { showTab('visao-geral'); });
+</script>
+</body>
+</html>
