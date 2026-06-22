@@ -6,6 +6,9 @@
   <title>Dashboard Tributário | ÚNICA Comércio Atacadista de Tintas</title>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
@@ -264,6 +267,129 @@
       .margin-grid { grid-template-columns:repeat(2,1fr); }
       .overlay { display:block; }
       .overlay.hidden { display:none; }
+      .export-bar { width:100%; justify-content:flex-end; flex-wrap:wrap; }
+      .btn-export { padding:6px 10px; font-size:.72rem; }
+    }
+
+    /* === EXPORT BUTTONS === */
+    .export-bar { display:flex; gap:8px; margin-left:auto; flex-shrink:0; }
+    .btn-export {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:7px 14px; border-radius:8px;
+      font-size:.78rem; font-weight:600;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:var(--text-sec); cursor:pointer;
+      transition:all .2s ease; font-family:inherit;
+    }
+    .btn-export:hover { background:rgba(34,163,41,.25); border-color:rgba(34,163,41,.5); color:#fff; }
+    .btn-export:disabled { opacity:.5; cursor:wait; }
+    .btn-export i { font-size:.85rem; }
+    .btn-export.pdf  i { color:#ef4444; }
+    .btn-export.xlsx i { color:#22c55e; }
+    .btn-export.print i { color:#f59e0b; }
+
+    /* === SUPPLIER MODAL === */
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(4px);
+      z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px;
+    }
+    .modal-box {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+      width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column;
+      box-shadow:var(--shadow);
+    }
+    .modal-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 20px; border-bottom:1px solid var(--border);
+    }
+    .modal-header h3 { font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px; }
+    .modal-header h3 i { color:var(--warning); }
+    .modal-close {
+      background:none; border:none; color:var(--text-muted); font-size:22px;
+      cursor:pointer; line-height:1; padding:0 4px;
+    }
+    .modal-close:hover { color:var(--text); }
+    .modal-body { padding:16px 20px; overflow-y:auto; flex:1; }
+    .search-box input {
+      width:100%; padding:9px 12px; border-radius:var(--radius-sm);
+      border:1px solid var(--border); background:var(--bg); color:var(--text);
+      font-family:inherit; font-size:13px; outline:none;
+    }
+    .search-box input:focus { border-color:var(--border-accent); }
+    .supplier-actions { display:flex; gap:8px; margin:12px 0; }
+    .supplier-actions button {
+      padding:6px 12px; border-radius:6px; font-size:11px; font-weight:600;
+      border:1px solid var(--border); background:rgba(255,255,255,.05);
+      color:var(--text-sec); cursor:pointer; font-family:inherit;
+    }
+    .supplier-actions button:hover { background:rgba(34,163,41,.15); color:var(--accent); }
+    .supplier-list { display:flex; flex-direction:column; gap:4px; max-height:320px; overflow-y:auto; }
+    .supplier-item {
+      display:flex; align-items:flex-start; gap:10px; padding:10px 12px;
+      border-radius:var(--radius-sm); cursor:pointer; transition:background .15s;
+    }
+    .supplier-item:hover { background:rgba(255,255,255,.04); }
+    .supplier-item input { margin-top:3px; accent-color:var(--accent); }
+    .supplier-info { display:flex; flex-direction:column; gap:2px; }
+    .supplier-info strong { font-size:13px; font-weight:600; }
+    .supplier-info small { font-size:11px; color:var(--text-muted); }
+    .modal-footer {
+      display:flex; justify-content:flex-end; gap:10px;
+      padding:14px 20px; border-top:1px solid var(--border);
+    }
+    .btn-cancel {
+      padding:8px 16px; border-radius:var(--radius-sm); font-size:12px; font-weight:600;
+      border:1px solid var(--border); background:transparent; color:var(--text-sec);
+      cursor:pointer; font-family:inherit;
+    }
+    .btn-cancel:hover { background:rgba(255,255,255,.05); }
+    .btn-confirm {
+      padding:8px 16px; border-radius:var(--radius-sm); font-size:12px; font-weight:600;
+      border:1px solid rgba(34,163,41,.4); background:rgba(34,163,41,.2);
+      color:var(--accent); cursor:pointer; font-family:inherit;
+      display:inline-flex; align-items:center; gap:6px;
+    }
+    .btn-confirm:hover { background:rgba(34,163,41,.35); }
+
+    /* === PRINT MODE (PDF capture) === */
+    body.print-mode { background:#fff !important; color:#1a1a2e !important; }
+    .tab-section.export-capture {
+      display:block !important; position:absolute; left:-9999px; top:0;
+      width:1200px; z-index:-1;
+    }
+    body.print-mode .tab-section.export-capture,
+    body.print-mode .tab-section.active {
+      background:#fff !important; color:#1a1a2e !important;
+    }
+    body.print-mode .kpi-card, body.print-mode .chart-card, body.print-mode .table-card,
+    body.print-mode .ind-card, body.print-mode .alert-box, body.print-mode .tax-card, body.print-mode .mem-card {
+      background:#fff !important; border:1px solid #ddd !important; color:#1a1a2e !important;
+    }
+    body.print-mode .kpi-lbl, body.print-mode .kpi-sub, body.print-mode .chart-sub,
+    body.print-mode .sec-sub, body.print-mode .td-mute, body.print-mode .table-head .sub { color:#555 !important; }
+    body.print-mode .sec-title, body.print-mode .kpi-val, body.print-mode .chart-ttl,
+    body.print-mode .table-head .ttl { color:#1a1a2e !important; }
+    body.print-mode thead th { background:#f0f0f0 !important; color:#1a1a2e !important; }
+    body.print-mode tbody td { color:#333 !important; border-color:#ddd !important; }
+
+    #print-supplier-report { display:none; }
+    body.supplier-printing #app, body.supplier-printing #overlay { display:none !important; }
+    body.supplier-printing #print-supplier-report { display:block !important; }
+
+    @media print {
+      body { background:#fff !important; color:#1a1a2e !important; }
+      .sidebar, .top-header, .export-bar, .btn-export, .modal-overlay, #overlay { display:none !important; }
+      body.supplier-printing #app { display:none !important; }
+      body.supplier-printing #print-supplier-report { display:block !important; position:static !important; }
+      .main-wrapper { margin-left:0 !important; }
+      .tab-section { display:none !important; }
+      .kpi-card, .chart-card, .table-card, .ind-card, .tax-card, .mem-card {
+        background:#fff !important; border:1px solid #ddd !important; color:#1a1a2e !important;
+      }
+      table th { background:#f0f0f0 !important; color:#1a1a2e !important; }
+      table td { color:#333 !important; border-color:#ddd !important; }
+      canvas { max-width:100% !important; }
     }
   </style>
 </head>
@@ -343,6 +469,10 @@
           <div>
             <div class="sec-title">Visão Geral <small>Competência Maio / 2026</small></div>
             <div class="sec-sub">ÚNICA Comércio Atacadista de Tintas Automotivas — CNPJ 36.517.206/0001-30 — IE 07.968.214/001-09</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-visao-geral','Visao_Geral')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-visao-geral','Visao_Geral')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
           </div>
         </div>
 
@@ -447,6 +577,10 @@
           <div>
             <div class="sec-title">Compras <small>Maio 2026</small></div>
             <div class="sec-sub">Aquisições de mercadorias e insumos — período 01/05/2026 a 31/05/2026</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-compras','Compras')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-compras','Compras')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
           </div>
         </div>
 
@@ -579,6 +713,11 @@
             <div class="sec-title">Finalidade de Compras <small>Maio 2026 — por CFOP</small></div>
             <div class="sec-sub">Classificação fiscal das entradas — COMPRAS.xls coluna CFOP — 206 notas fiscais únicas (Mai/2026)</div>
           </div>
+          <div class="export-bar">
+            <button class="btn-export print" onclick="openSupplierModal()" title="Imprimir por Fornecedor"><i class="fas fa-truck"></i> Por Fornecedor</button>
+            <button class="btn-export pdf" onclick="exportPDF('tab-finalidade','Finalidade_Compras')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-finalidade','Finalidade_Compras')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
         </div>
 
         <div class="alert-box" style="border-color:rgba(34,163,41,0.35);color:var(--accent);background:rgba(34,163,41,0.07)">
@@ -668,6 +807,10 @@
           <div>
             <div class="sec-title">Vendas <small>Maio 2026</small></div>
             <div class="sec-sub">Faturamento de saídas — período 01/05/2026 a 31/05/2026 — Clientes do Grupo DAUTO e parceiros</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-vendas','Vendas')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-vendas','Vendas')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
           </div>
         </div>
 
@@ -759,6 +902,10 @@
             <div class="sec-title">Impostos <small>Competência Maio 2026</small></div>
             <div class="sec-sub">Apuração tributária — Lucro Real — PIS/COFINS Não-Cumulativo (1,65% / 7,6%)</div>
           </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-impostos','Impostos')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-impostos','Impostos')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
         </div>
 
         <div class="alert-box"><i class="fas fa-info-circle" style="margin-right:8px;"></i>
@@ -832,6 +979,10 @@
           <div>
             <div class="sec-title">Memória de Cálculo <small>Maio 2026</small></div>
             <div class="sec-sub">Detalhamento da apuração de cada tributo — ÚNICA CNPJ 36.517.206/0001-30 — Fonte: Apuração 5005 + EFD PIS/COFINS</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-memoria','Memoria_Calculo')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-memoria','Memoria_Calculo')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
           </div>
         </div>
 
@@ -974,6 +1125,10 @@
             <div class="sec-title">DRE – Demonstrativo do Resultado <small>Jan – Mai 2026</small></div>
             <div class="sec-sub">Dados da planilha contábil — CMV lançado para Jan, Fev, Mar. Abr e Mai com CMV em elaboração.</div>
           </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-dre','DRE')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-dre','DRE')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
         </div>
 
         <!-- Margin cards (Q1 Jan-Mar – período com CMV lançado) -->
@@ -1084,6 +1239,10 @@
             <div class="sec-title">Indicadores Financeiros <small>Referência Q1 2026 – Jan a Mar</small></div>
             <div class="sec-sub">Margens calculadas com dados do DRE contábil. Indicadores de balanço dependem de dados patrimoniais não fornecidos.</div>
           </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-indicadores','Indicadores')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-indicadores','Indicadores')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
         </div>
 
         <div class="alert-box"><i class="fas fa-info-circle" style="margin-right:8px;"></i>
@@ -1186,6 +1345,30 @@
       </section>
 
     </main>
+  </div>
+</div>
+
+<!-- MODAL: Impressão por Fornecedor -->
+<div class="modal-overlay" id="supplierModal" style="display:none;" onclick="if(event.target===this)closeSupplierModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3><i class="fas fa-truck"></i> Imprimir por Fornecedor</h3>
+      <button onclick="closeSupplierModal()" class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="search-box">
+        <input type="text" id="supplierSearch" placeholder="Buscar fornecedor..." oninput="filterSuppliers(this.value)">
+      </div>
+      <div class="supplier-actions">
+        <button type="button" onclick="toggleAllSuppliers(true)">Selecionar Todos</button>
+        <button type="button" onclick="toggleAllSuppliers(false)">Limpar Seleção</button>
+      </div>
+      <div class="supplier-list" id="supplierList"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" onclick="closeSupplierModal()">Cancelar</button>
+      <button type="button" class="btn-confirm" onclick="printBySupplier()"><i class="fas fa-print"></i> Imprimir Selecionados</button>
+    </div>
   </div>
 </div>
 
@@ -1834,6 +2017,233 @@
         '<td class="c"><button onclick="openDrilldown(\''+d.cfop+'\')" style="background:rgba(34,163,41,0.12);border:1px solid rgba(34,163,41,0.3);color:var(--accent);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;">Ver <i class="fas fa-chevron-down"></i></button></td>';
       tbody.appendChild(tr);
     });
+  }
+
+  /* -----------------------------------------------
+     EXPORTAÇÃO PDF / EXCEL / IMPRESSÃO FORNECEDOR
+     ----------------------------------------------- */
+  function getCompanyName() {
+    return document.querySelector('.logo-text .company')?.textContent?.trim() || 'Dashboard';
+  }
+  function getExportDate() {
+    return new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+  }
+
+  async function exportPDF(sectionId, filename) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    const btn = event?.currentTarget;
+    const origHtml = btn?.innerHTML;
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...'; }
+
+    const wasHidden = !section.classList.contains('active');
+    if (wasHidden) section.classList.add('export-capture');
+    document.body.classList.add('print-mode');
+
+    try {
+      await new Promise(r => setTimeout(r, 350));
+      const canvas = await html2canvas(section, { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false });
+      const imgData = canvas.toDataURL('image/png');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      const margin = 10;
+      const headerH = 12;
+      const contentW = pageW - margin * 2;
+      const pdfHeight = (canvas.height * contentW) / canvas.width;
+      let heightLeft = pdfHeight;
+      let position = margin + headerH;
+
+      const addHeader = () => {
+        pdf.setFontSize(10);
+        pdf.setTextColor(26, 26, 46);
+        pdf.text(getCompanyName() + ' — ' + new Date().toLocaleDateString('pt-BR'), margin, margin + 4);
+        pdf.setDrawColor(200);
+        pdf.line(margin, margin + 7, pageW - margin, margin + 7);
+      };
+
+      addHeader();
+      pdf.addImage(imgData, 'PNG', margin, position, contentW, pdfHeight);
+      heightLeft -= (pageH - margin - headerH);
+
+      while (heightLeft > 0) {
+        position = margin + headerH - (pdfHeight - heightLeft);
+        pdf.addPage();
+        addHeader();
+        pdf.addImage(imgData, 'PNG', margin, position, contentW, pdfHeight);
+        heightLeft -= (pageH - margin - headerH);
+      }
+
+      pdf.save(filename + '_' + getExportDate() + '.pdf');
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao gerar PDF. Tente novamente.');
+    } finally {
+      document.body.classList.remove('print-mode');
+      if (wasHidden) section.classList.remove('export-capture');
+      if (btn) { btn.disabled = false; btn.innerHTML = origHtml; }
+    }
+  }
+
+  function exportExcel(sectionId, filename) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    const tables = section.querySelectorAll('table');
+    const wb = XLSX.utils.book_new();
+
+    if (tables.length > 0) {
+      tables.forEach((tbl, i) => {
+        const ws = XLSX.utils.table_to_sheet(tbl);
+        const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+        const colWidths = [];
+        for (let C = range.s.c; C <= range.e.c; C++) {
+          let max = 10;
+          for (let R = range.s.r; R <= range.e.r; R++) {
+            const cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
+            if (cell && cell.v != null) max = Math.max(max, String(cell.v).length + 2);
+          }
+          colWidths.push({ wch: Math.min(max, 50) });
+        }
+        ws['!cols'] = colWidths;
+        XLSX.utils.book_append_sheet(wb, ws, 'Tabela_' + (i + 1));
+      });
+    } else {
+      const cards = section.querySelectorAll('.ind-card');
+      const rows = [['Indicador', 'Valor', 'Fórmula', 'Interpretação']];
+      cards.forEach(card => {
+        rows.push([
+          card.querySelector('.ind-name')?.textContent?.trim() || '',
+          card.querySelector('.ind-val')?.textContent?.trim() || '',
+          card.querySelector('.ind-formula')?.textContent?.trim() || '',
+          card.querySelector('.ind-interp')?.textContent?.trim() || ''
+        ]);
+      });
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [{ wch: 30 }, { wch: 15 }, { wch: 40 }, { wch: 60 }];
+      XLSX.utils.book_append_sheet(wb, ws, 'Indicadores');
+    }
+
+    if (!wb.SheetNames.length) {
+      alert('Nenhum dado encontrado para exportar.');
+      return;
+    }
+    XLSX.writeFile(wb, filename + '_' + getExportDate() + '.xlsx');
+  }
+
+  function collectUniqueSuppliers() {
+    const map = new Map();
+    (CFOP_DADOS || []).forEach(cfop => {
+      (cfop.fornecedores || []).forEach(f => {
+        const key = f.cnpj || f.nome;
+        if (!map.has(key)) map.set(key, { nome: f.nome, cnpj: f.cnpj, uf: f.uf });
+      });
+    });
+    return Array.from(map.values()).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  }
+
+  function openSupplierModal() {
+    const list = document.getElementById('supplierList');
+    const suppliers = collectUniqueSuppliers();
+    list.innerHTML = suppliers.map(s => {
+      const search = (s.nome + ' ' + s.cnpj).toLowerCase();
+      const esc = v => v.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+      return '<label class="supplier-item" data-search="' + esc(search) + '">' +
+        '<input type="checkbox" value="' + esc(s.cnpj) + '" data-nome="' + esc(s.nome) + '">' +
+        '<span class="supplier-info"><strong>' + esc(s.nome) + '</strong>' +
+        '<small>' + esc(s.cnpj) + ' · ' + esc(s.uf) + '</small></span></label>';
+    }).join('');
+    document.getElementById('supplierSearch').value = '';
+    document.getElementById('supplierModal').style.display = 'flex';
+  }
+
+  function closeSupplierModal() {
+    document.getElementById('supplierModal').style.display = 'none';
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+  }
+
+  function filterSuppliers(query) {
+    const q = query.toLowerCase();
+    document.querySelectorAll('#supplierList .supplier-item').forEach(el => {
+      el.style.display = el.dataset.search.includes(q) ? '' : 'none';
+    });
+  }
+
+  function toggleAllSuppliers(state) {
+    document.querySelectorAll('#supplierList .supplier-item').forEach(el => {
+      if (el.style.display === 'none') return;
+      const cb = el.querySelector('input');
+      if (cb) cb.checked = state;
+    });
+  }
+
+  function printBySupplier() {
+    const selected = Array.from(document.querySelectorAll('#supplierList input:checked'));
+    if (!selected.length) { alert('Selecione ao menos um fornecedor.'); return; }
+
+    closeSupplierModal();
+    let totalGeral = 0;
+    let html = '<div style="font-family:Inter,sans-serif;padding:24px;color:#1a1a2e;background:#fff;">';
+    html += '<h1 style="font-size:18px;margin-bottom:4px;">Relatório por Fornecedor</h1>';
+    html += '<p style="font-size:12px;color:#555;margin-bottom:24px;">' + getCompanyName() + ' — ' + new Date().toLocaleDateString('pt-BR') + '</p>';
+
+    selected.forEach(cb => {
+      const cnpj = cb.value;
+      const nome = cb.dataset.nome;
+      const rows = [];
+      let subtotal = 0;
+      let uf = '—';
+
+      (CFOP_DADOS || []).forEach(cfop => {
+        const f = (cfop.fornecedores || []).find(x => x.cnpj === cnpj);
+        if (f) {
+          const info = (CFOP_FINALIDADE[cfop.cfop] || {});
+          rows.push({ cfop: cfop.cfop, desc: info.descricao || '—', fin: info.finalidade || '—', qtd: f.qtd, total: f.total });
+          subtotal += f.total;
+          uf = f.uf;
+        }
+      });
+
+      totalGeral += subtotal;
+      html += '<div style="margin-bottom:28px;page-break-inside:avoid;">';
+      html += '<h2 style="font-size:14px;border-bottom:2px solid #22a329;padding-bottom:6px;">' + nome + '</h2>';
+      html += '<p style="font-size:11px;color:#555;">CNPJ: ' + cnpj + ' · UF: ' + uf + '</p>';
+      html += '<table style="width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;">';
+      html += '<thead><tr style="background:#f0f0f0;"><th style="padding:8px;text-align:left;">CFOP</th>';
+      html += '<th style="padding:8px;text-align:left;">Descrição</th><th style="padding:8px;text-align:left;">Finalidade</th>';
+      html += '<th style="padding:8px;text-align:right;">Qtd NFs</th><th style="padding:8px;text-align:right;">Valor (R$)</th></tr></thead><tbody>';
+      rows.forEach(r => {
+        html += '<tr><td style="padding:8px;border-bottom:1px solid #ddd;">' + r.cfop + '</td>';
+        html += '<td style="padding:8px;border-bottom:1px solid #ddd;">' + r.desc + '</td>';
+        html += '<td style="padding:8px;border-bottom:1px solid #ddd;">' + r.fin + '</td>';
+        html += '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;">' + r.qtd + '</td>';
+        html += '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;font-weight:600;">' +
+          r.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr>';
+      });
+      html += '</tbody><tfoot><tr><td colspan="4" style="padding:10px;text-align:right;font-weight:700;">Subtotal:</td>';
+      html += '<td style="padding:10px;text-align:right;font-weight:700;">R$ ' +
+        subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr></tfoot></table></div>';
+    });
+
+    html += '<div style="border-top:2px solid #1a1a2e;padding-top:12px;margin-top:16px;text-align:right;font-size:14px;font-weight:700;">';
+    html += 'Total Geral: R$ ' + totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</div></div>';
+
+    const old = document.getElementById('print-supplier-report');
+    if (old) old.remove();
+    const div = document.createElement('div');
+    div.id = 'print-supplier-report';
+    div.innerHTML = html;
+    document.body.appendChild(div);
+    document.body.classList.add('supplier-printing');
+
+    const cleanup = () => {
+      document.body.classList.remove('supplier-printing');
+      div.remove();
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    window.print();
   }
 
   /* -----------------------------------------------
