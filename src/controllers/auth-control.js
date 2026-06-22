@@ -1,3 +1,5 @@
+const jpgData = require("../data/jpg-filiais");
+
 let users = [
   { username: "lucas", password: "1234" },
   { username: "Paulo", password: "2026" }
@@ -58,5 +60,14 @@ module.exports={
   },
   baifer1trm:(req,res)=>{
     res.render("baifer1trm")
+  },
+  jpg:(req,res)=>{
+    res.render("jpg", { hub: jpgData.hub });
+  },
+  jpgFilial:(req,res)=>{
+    const key = req.params.filial;
+    const filialData = jpgData.filiais[key];
+    if (!filialData) return res.redirect("/auth/jpg");
+    res.render("jpg-filial", { filialData, filialKey: key });
   }
 };

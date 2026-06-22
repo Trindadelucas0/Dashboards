@@ -1,0 +1,2917 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Matriz DF | JPG</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#0f1117; --bg-sidebar:#161b27; --bg-card:#1e2535; --bg-card-hover:#252d42;
+      --accent:#3b82f6; --accent-hover:#2563eb; --success:#10b981; --danger:#ef4444;
+      --warning:#f59e0b; --purple:#8b5cf6; --cyan:#06b6d4; --orange:#f97316;
+      --text:#e2e8f0; --text-sec:#94a3b8; --text-muted:#64748b;
+      --border:rgba(255,255,255,0.07); --border-accent:rgba(59,130,246,0.35);
+      --sidebar-w:260px; --header-h:68px; --radius:12px; --radius-sm:8px;
+      --shadow:0 4px 24px rgba(0,0,0,0.35); --t:0.22s ease;
+    }
+    html { font-size:14px; scroll-behavior:smooth; }
+    body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+    #app { display:flex; min-height:100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width:var(--sidebar-w); background:var(--bg-sidebar); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0;left:0;bottom:0; z-index:100; transition:width var(--t),transform var(--t); overflow:hidden; }
+    .sidebar.collapsed { width:72px; }
+    .sidebar.collapsed .logo-text,.sidebar.collapsed .nav-label,.sidebar.collapsed .sec-label,.sidebar.collapsed .sidebar-foot-info { display:none; }
+    .sidebar-logo { padding:0 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; min-height:var(--header-h); flex-shrink:0; }
+    .logo-icon { width:38px;height:38px; background:linear-gradient(135deg,var(--accent),var(--purple)); border-radius:10px; display:flex;align-items:center;justify-content:center; font-size:16px;color:#fff; flex-shrink:0; }
+    .logo-text .company { font-size:13px;font-weight:700;color:var(--text);white-space:nowrap; }
+    .logo-text .subtitle { font-size:10px;color:var(--text-muted);margin-top:2px;white-space:nowrap; }
+    .sidebar-nav { flex:1; padding:12px 8px; overflow-y:auto; overflow-x:hidden; }
+    .sidebar-nav::-webkit-scrollbar { width:4px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+    .sec-label { font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:10px 12px 4px; }
+    .nav-item { display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--t),color var(--t);margin-bottom:2px;white-space:nowrap;user-select:none; }
+    .nav-item:hover { background:rgba(255,255,255,0.05); }
+    .nav-item.active { background:rgba(59,130,246,0.15);color:var(--accent); }
+    .nav-item.active .nav-ico { color:var(--accent); }
+    .nav-ico { width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-muted);flex-shrink:0;transition:color var(--t); }
+    .nav-item:hover .nav-ico { color:var(--text); }
+    .nav-label { font-size:13px;font-weight:500; }
+    .sidebar-foot { padding:14px 16px;border-top:1px solid var(--border);flex-shrink:0; }
+    .sidebar-foot-info .lbl { font-size:10px;color:var(--text-muted); }
+    .sidebar-foot-info .val { font-size:12px;font-weight:600;color:var(--accent);margin-top:2px; }
+
+    /* MAIN */
+    .main-wrapper { margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left var(--t); }
+    .main-wrapper.sb-collapsed { margin-left:72px; }
+    .top-header { height:var(--header-h);background:var(--bg-sidebar);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:14px;position:sticky;top:0;z-index:50; }
+    .btn-toggle { width:36px;height:36px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-sec);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:background var(--t),color var(--t); }
+    .btn-toggle:hover { background:var(--bg-card-hover);color:var(--text); }
+    .header-title { font-size:15px;font-weight:600;flex:1; }
+    .header-title span { font-size:12px;font-weight:400;color:var(--text-muted);margin-left:8px; }
+    .header-actions { display:flex;align-items:center;gap:10px;flex-shrink:0; }
+    .period-sel { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:7px 12px;font-size:12px;font-family:inherit;cursor:pointer;outline:none; }
+    .period-sel:focus { border-color:var(--border-accent); }
+    .regime-badge { background:rgba(16,185,129,0.12);color:var(--success);border:1px solid rgba(16,185,129,0.3);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600; }
+
+    /* CONTENT */
+    .content { flex:1;padding:24px;overflow-x:hidden; }
+    .tab-section { display:none;animation:fadeUp .28s ease; }
+    .tab-section.active { display:block; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .sec-header { display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap; }
+    .sec-title { font-size:18px;font-weight:700; }
+    .sec-title small { font-size:12px;font-weight:400;color:var(--text-muted);margin-left:8px; }
+    .sec-sub { font-size:12px;color:var(--text-sec);margin-top:4px; }
+
+    /* KPI CARDS */
+    .kpi-grid { display:grid;gap:16px;margin-bottom:24px; }
+    .kpi-grid-4 { grid-template-columns:repeat(4,1fr); }
+    .kpi-grid-3 { grid-template-columns:repeat(3,1fr); }
+    .kpi-grid-2 { grid-template-columns:repeat(2,1fr); }
+    .kpi-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;transition:transform var(--t),box-shadow var(--t); }
+    .kpi-card:hover { transform:translateY(-2px);box-shadow:var(--shadow); }
+    .kpi-card::before { content:'';position:absolute;top:0;left:0;right:0;height:3px; }
+    .kpi-card.c-blue::before   { background:linear-gradient(90deg,var(--accent),transparent); }
+    .kpi-card.c-green::before  { background:linear-gradient(90deg,var(--success),transparent); }
+    .kpi-card.c-red::before    { background:linear-gradient(90deg,var(--danger),transparent); }
+    .kpi-card.c-yellow::before { background:linear-gradient(90deg,var(--warning),transparent); }
+    .kpi-card.c-purple::before { background:linear-gradient(90deg,var(--purple),transparent); }
+    .kpi-card.c-cyan::before   { background:linear-gradient(90deg,var(--cyan),transparent); }
+    .kpi-card.c-orange::before { background:linear-gradient(90deg,var(--orange),transparent); }
+    .kpi-head { display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px; }
+    .kpi-ico { width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:16px; }
+    .kpi-ico.c-blue   { background:rgba(59,130,246,.15);color:var(--accent); }
+    .kpi-ico.c-green  { background:rgba(16,185,129,.15);color:var(--success); }
+    .kpi-ico.c-red    { background:rgba(239,68,68,.15); color:var(--danger); }
+    .kpi-ico.c-yellow { background:rgba(245,158,11,.15);color:var(--warning); }
+    .kpi-ico.c-purple { background:rgba(139,92,246,.15);color:var(--purple); }
+    .kpi-ico.c-cyan   { background:rgba(6,182,212,.15); color:var(--cyan); }
+    .kpi-ico.c-orange { background:rgba(249,115,22,.15);color:var(--orange); }
+    .kpi-badge { font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;display:flex;align-items:center;gap:4px; }
+    .kpi-badge.up      { background:rgba(16,185,129,.15);color:var(--success); }
+    .kpi-badge.down    { background:rgba(239,68,68,.15); color:var(--danger); }
+    .kpi-badge.neutral { background:rgba(100,116,139,.15);color:var(--text-muted); }
+    .kpi-val { font-size:22px;font-weight:800;line-height:1.1;margin-bottom:4px; }
+    .kpi-lbl { font-size:12px;color:var(--text-sec);font-weight:500; }
+    .kpi-sub { font-size:11px;color:var(--text-muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border); }
+
+    /* CHARTS */
+    .charts-row { display:grid;gap:16px;margin-bottom:24px; }
+    .cr-2col { grid-template-columns:1fr 1fr; }
+    .cr-1-2  { grid-template-columns:1fr 2fr; }
+    .cr-2-1  { grid-template-columns:2fr 1fr; }
+    .cr-1col { grid-template-columns:1fr; }
+    .chart-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px; }
+    .chart-ttl { font-size:14px;font-weight:600;margin-bottom:2px; }
+    .chart-sub { font-size:11px;color:var(--text-muted);margin-bottom:14px; }
+    .chart-wrap { position:relative; }
+    .chart-wrap.h220 { height:220px; }
+    .chart-wrap.h260 { height:260px; }
+    .chart-wrap.h300 { height:300px; }
+
+    /* TABLES */
+    .table-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px; }
+    .table-head { padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+    .table-head .ttl { font-size:14px;font-weight:600; }
+    .table-head .sub { font-size:11px;color:var(--text-muted);margin-top:2px; }
+    .tbl-scroll { overflow-x:auto; }
+    table { width:100%;border-collapse:collapse; }
+    thead th { padding:9px 16px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);background:rgba(255,255,255,0.025);border-bottom:1px solid var(--border);white-space:nowrap; }
+    thead th.r { text-align:right; }
+    tbody td { padding:11px 16px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle; }
+    tbody tr:last-child td { border-bottom:none; }
+    tbody tr:hover td { background:rgba(255,255,255,0.02); }
+    td.r { text-align:right; }
+    .td-val { font-weight:600; }
+    .td-mute { color:var(--text-muted);font-size:12px; }
+
+    /* PROGRESS */
+    .pb-wrap { display:flex;align-items:center;gap:10px; }
+    .pb-bar  { flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden; }
+    .pb-fill { height:100%;border-radius:3px;transition:width .8s ease;background:var(--accent); }
+    .pb-fill.gr { background:var(--success); }
+    .pb-fill.ye { background:var(--warning); }
+    .pb-fill.pu { background:var(--purple); }
+    .pb-fill.cy { background:var(--cyan); }
+    .pb-fill.or { background:var(--orange); }
+    .pb-fill.rd { background:var(--danger); }
+    .pb-pct { font-size:12px;font-weight:600;min-width:44px;text-align:right; }
+
+    /* RANK */
+    .rank { width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0; }
+    .rank.g1 { background:rgba(245,158,11,.2);color:var(--warning); }
+    .rank.g2 { background:rgba(148,163,184,.2);color:#94a3b8; }
+    .rank.g3 { background:rgba(180,120,80,.2);color:#c97c4a; }
+    .rank.gn { background:rgba(100,116,139,.15);color:var(--text-muted); }
+
+    /* VARIATION */
+    .var-up   { display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(16,185,129,.15);color:var(--success); }
+    .var-down { display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(239,68,68,.15); color:var(--danger); }
+    .var-neu  { display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(100,116,139,.15);color:var(--text-muted); }
+
+    /* TAX CARDS */
+    .tax-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px; }
+    .tax-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:transform var(--t); }
+    .tax-card:hover { transform:translateY(-2px); }
+    .tax-card-head { display:flex;align-items:center;justify-content:space-between;margin-bottom:14px; }
+    .tax-name { font-size:13px;font-weight:700;letter-spacing:.04em; }
+    .tax-cur  { font-size:24px;font-weight:800;margin-bottom:4px; }
+    .tax-prev { font-size:11px;color:var(--text-muted);margin-bottom:12px; }
+    .tax-foot { display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted); }
+
+    /* MEMORY */
+    .formula-box { background:rgba(59,130,246,0.07);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:20px; }
+    .formula-box .fttl { font-weight:700;color:var(--accent);margin-bottom:8px;font-size:13px; }
+    .formula-box .fline { color:var(--text-sec);line-height:1.8;font-size:12px;font-family:'Courier New',monospace; }
+    .mem-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px; }
+    .mem-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden; }
+    .mem-card-head { padding:12px 16px;font-size:13px;font-weight:700;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+    .mem-row { display:flex;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);font-size:12px; }
+    .mem-row:last-child { border-bottom:none; }
+    .mem-row.hl  { background:rgba(59,130,246,0.06); }
+    .mem-row.tot { background:rgba(16,185,129,0.08);font-weight:700; }
+    .mem-row.neg { background:rgba(239,68,68,0.05); }
+    .mem-row .lbl { color:var(--text-sec); }
+    .mem-row .val { font-weight:600; }
+    .mem-row.tot .val { color:var(--success); }
+    .mem-row.neg .val { color:var(--danger); }
+    .alert-box { background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--warning); }
+
+    /* DRE */
+    .margin-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px; }
+    .margin-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center; }
+    .margin-val { font-size:28px;font-weight:800;margin-bottom:4px; }
+    .margin-lbl { font-size:12px;color:var(--text-sec); }
+    .margin-sub { font-size:11px;color:var(--text-muted);margin-top:4px; }
+    .dre-tbl td:first-child { padding-left:16px;font-weight:500; }
+    .dre-tbl .dre-group td  { font-weight:700;background:rgba(255,255,255,0.03);color:var(--text-sec);font-size:11px;text-transform:uppercase;letter-spacing:.05em; }
+    .dre-tbl .dre-indent td:first-child { padding-left:32px;color:var(--text-sec); }
+    .dre-tbl .dre-total td  { font-weight:800;background:rgba(59,130,246,0.07);border-top:1px solid var(--border-accent); }
+    .dre-tbl .dre-lucro td  { font-weight:800;background:rgba(16,185,129,0.08);color:var(--success);font-size:14px; }
+    .dre-tbl .dre-neg td.r  { color:var(--danger); }
+    .dre-tbl .dre-subv td   { background:rgba(245,158,11,0.06); }
+    .dre-tbl .dre-nd td     { color:var(--text-muted);font-style:italic; }
+
+    /* INDICATORS */
+    .ind-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px; }
+    .ind-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:transform var(--t); }
+    .ind-card:hover { transform:translateY(-2px); }
+    .ind-head { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+    .ind-name { font-size:11px;font-weight:600;color:var(--text-sec);text-transform:uppercase;letter-spacing:.04em; }
+    .ind-val  { font-size:26px;font-weight:800;margin-bottom:6px; }
+    .ind-formula { font-size:11px;color:var(--text-muted);font-family:'Courier New',monospace;background:rgba(255,255,255,0.04);padding:6px 10px;border-radius:6px;margin-bottom:10px; }
+    .ind-interp { font-size:11px;color:var(--text-sec);line-height:1.55;padding-top:10px;border-top:1px solid var(--border); }
+    .dot { width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block; }
+    .dot.gr { background:var(--success); }
+    .dot.ye { background:var(--warning); }
+    .dot.rd { background:var(--danger); }
+    .dot.gy { background:var(--text-muted); }
+
+    /* CHIPS */
+    .chip { display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:500; }
+    .chip.bl { background:rgba(59,130,246,.15);color:var(--accent); }
+    .chip.gr { background:rgba(16,185,129,.15);color:var(--success); }
+    .chip.ye { background:rgba(245,158,11,.15);color:var(--warning); }
+    .chip.pu { background:rgba(139,92,246,.15);color:var(--purple); }
+    .chip.cy { background:rgba(6,182,212,.15); color:var(--cyan); }
+    .chip.or { background:rgba(249,115,22,.15);color:var(--orange); }
+    .chip.rd { background:rgba(239,68,68,.15); color:var(--danger); }
+    .chip.gy { background:rgba(100,116,139,.15);color:var(--text-muted); }
+
+    /* UTIL */
+    .divider { height:1px;background:var(--border);margin:20px 0; }
+    .mb-24 { margin-bottom:24px; }
+    .t-success { color:var(--success); }
+    .t-danger  { color:var(--danger); }
+    .t-warning { color:var(--warning); }
+    .t-accent  { color:var(--accent); }
+    .t-muted   { color:var(--text-muted); }
+    .fw7 { font-weight:700; }
+    .fw8 { font-weight:800; }
+
+    /* OVERLAY */
+    .overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:99; }
+    ::-webkit-scrollbar { width:6px;height:6px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:var(--border);border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover { background:var(--text-muted); }
+
+    /* RESPONSIVE */
+    @media (max-width:1300px) {
+      .tax-grid { grid-template-columns:repeat(2,1fr); }
+      .mem-grid { grid-template-columns:repeat(2,1fr); }
+      .ind-grid { grid-template-columns:repeat(2,1fr); }
+      .margin-grid { grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-width:960px) {
+      .kpi-grid-4 { grid-template-columns:repeat(2,1fr); }
+      .kpi-grid-3 { grid-template-columns:repeat(2,1fr); }
+      .cr-2col,.cr-1-2,.cr-2-1 { grid-template-columns:1fr; }
+    }
+    @media (max-width:768px) {
+      .sidebar { transform:translateX(-100%); }
+      .sidebar.mob-open { transform:translateX(0); }
+      .main-wrapper { margin-left:0 !important; }
+      .content { padding:14px; }
+      .tax-grid,.mem-grid,.ind-grid { grid-template-columns:1fr; }
+      .margin-grid { grid-template-columns:repeat(2,1fr); }
+      .overlay { display:block; }
+      .overlay.hidden { display:none; }
+      .export-bar { width:100%; justify-content:flex-end; flex-wrap:wrap; }
+      .btn-export { padding:6px 10px; font-size:.72rem; }
+    }
+
+    /* === EXPORT BUTTONS === */
+    .export-bar { display:flex; gap:8px; margin-left:auto; flex-shrink:0; }
+    .btn-export {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:7px 14px; border-radius:8px;
+      font-size:.78rem; font-weight:600;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:var(--text-sec); cursor:pointer;
+      transition:all .2s ease; font-family:inherit;
+    }
+    .btn-export:hover { background:rgba(59,130,246,.25); border-color:rgba(59,130,246,.5); color:#fff; }
+    .btn-export:disabled { opacity:.5; cursor:wait; }
+    .btn-export i { font-size:.85rem; }
+    .btn-export.pdf  i { color:#ef4444; }
+    .btn-export.xlsx i { color:#22c55e; }
+    .btn-export.print i { color:#f59e0b; }
+
+    /* === SUPPLIER MODAL === */
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(4px);
+      z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px;
+    }
+    .modal-box {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+      width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column;
+      box-shadow:var(--shadow);
+    }
+    .modal-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 20px; border-bottom:1px solid var(--border);
+    }
+    .modal-header h3 { font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px; }
+    .modal-header h3 i { color:var(--warning); }
+    .modal-close {
+      background:none; border:none; color:var(--text-muted); font-size:22px;
+      cursor:pointer; line-height:1; padding:0 4px;
+    }
+    .modal-close:hover { color:var(--text); }
+    .modal-body { padding:16px 20px; overflow-y:auto; flex:1; }
+    .search-box input {
+      width:100%; padding:9px 12px; border-radius:var(--radius-sm);
+      border:1px solid var(--border); background:var(--bg); color:var(--text);
+      font-family:inherit; font-size:13px; outline:none;
+    }
+    .search-box input:focus { border-color:var(--border-accent); }
+    .supplier-actions { display:flex; gap:8px; margin:12px 0; }
+    .supplier-actions button {
+      padding:6px 12px; border-radius:6px; font-size:11px; font-weight:600;
+      border:1px solid var(--border); background:rgba(255,255,255,.05);
+      color:var(--text-sec); cursor:pointer; font-family:inherit;
+    }
+    .supplier-actions button:hover { background:rgba(59,130,246,.15); color:var(--accent); }
+    .supplier-list { display:flex; flex-direction:column; gap:4px; max-height:320px; overflow-y:auto; }
+    .supplier-item {
+      display:flex; align-items:flex-start; gap:10px; padding:10px 12px;
+      border-radius:var(--radius-sm); cursor:pointer; transition:background .15s;
+    }
+    .supplier-item:hover { background:rgba(255,255,255,.04); }
+    .supplier-item input { margin-top:3px; accent-color:var(--accent); }
+    .supplier-info { display:flex; flex-direction:column; gap:2px; }
+    .supplier-info strong { font-size:13px; font-weight:600; }
+    .supplier-info small { font-size:11px; color:var(--text-muted); }
+    .modal-footer {
+      display:flex; justify-content:flex-end; gap:10px;
+      padding:14px 20px; border-top:1px solid var(--border);
+    }
+    .btn-cancel {
+      padding:8px 16px; border-radius:var(--radius-sm); font-size:12px; font-weight:600;
+      border:1px solid var(--border); background:transparent; color:var(--text-sec);
+      cursor:pointer; font-family:inherit;
+    }
+    .btn-cancel:hover { background:rgba(255,255,255,.05); }
+    .btn-confirm {
+      padding:8px 16px; border-radius:var(--radius-sm); font-size:12px; font-weight:600;
+      border:1px solid rgba(59,130,246,.4); background:rgba(59,130,246,.2);
+      color:var(--accent); cursor:pointer; font-family:inherit;
+      display:inline-flex; align-items:center; gap:6px;
+    }
+    .btn-confirm:hover { background:rgba(59,130,246,.35); }
+
+    /* === PDF EXPORT THEME (scoped capture) === */
+    .pdf-export-target {
+      --bg: #f8fafc; --bg-card: #ffffff; --bg-card-hover: #f1f5f9;
+      --text: #1e293b; --text-sec: #475569; --text-muted: #64748b;
+      --border: rgba(0,0,0,0.12);
+      background: #f8fafc !important; color: #1e293b !important;
+      padding: 20px; opacity: 1 !important; filter: none !important; animation: none !important;
+    }
+    .pdf-export-target * { opacity: 1 !important; filter: none !important; }
+    .pdf-export-target .sec-title, .pdf-export-target .kpi-val, .pdf-export-target .chart-ttl,
+    .pdf-export-target .margin-val, .pdf-export-target .ind-val, .pdf-export-target .tax-cur,
+    .pdf-export-target .table-head .ttl, .pdf-export-target tbody td, .pdf-export-target td,
+    .pdf-export-target .kpi-lbl, .pdf-export-target .mem-row .lbl, .pdf-export-target .mem-row .val,
+    .pdf-export-target .fw7, .pdf-export-target .fw8 { color: #1e293b !important; }
+    .pdf-export-target .sec-sub, .pdf-export-target .kpi-sub, .pdf-export-target .chart-sub,
+    .pdf-export-target .table-head .sub, .pdf-export-target .td-mute, .pdf-export-target .sec-title small,
+    .pdf-export-target .margin-sub, .pdf-export-target .tax-prev, .pdf-export-target .ind-formula {
+      color: #475569 !important;
+    }
+    .pdf-export-target .kpi-card, .pdf-export-target .chart-card, .pdf-export-target .table-card,
+    .pdf-export-target .margin-card, .pdf-export-target .tax-card, .pdf-export-target .mem-card,
+    .pdf-export-target .ind-card, .pdf-export-target .alert-box {
+      background: #ffffff !important; border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+    }
+    .pdf-export-target .t-success { color: #059669 !important; }
+    .pdf-export-target .t-warning { color: #d97706 !important; }
+    .pdf-export-target .t-danger  { color: #dc2626 !important; }
+    .pdf-export-target .t-accent  { color: #2563eb !important; }
+    .pdf-export-target .t-muted   { color: #64748b !important; }
+    .pdf-export-target .kpi-ico.c-blue   { background: rgba(59,130,246,.22) !important; color: #2563eb !important; }
+    .pdf-export-target .kpi-ico.c-green  { background: rgba(16,185,129,.22) !important; color: #059669 !important; }
+    .pdf-export-target .kpi-ico.c-yellow { background: rgba(245,158,11,.22) !important; color: #d97706 !important; }
+    .pdf-export-target .kpi-ico.c-purple { background: rgba(139,92,246,.22) !important; color: #7c3aed !important; }
+    .pdf-export-target .export-bar { display: none !important; }
+    .pdf-export-target thead th { background: #f1f5f9 !important; color: #475569 !important; }
+    .pdf-export-target .dre-tbl .dre-group td { background: #f1f5f9 !important; color: #475569 !important; }
+    .pdf-export-target .dre-tbl .dre-total td { background: #ecfdf5 !important; }
+    .pdf-export-target .dre-tbl .dre-lucro td { background: #ecfdf5 !important; color: #059669 !important; }
+    .tab-section.export-capture {
+      display: block !important;
+      position: fixed;
+      top: 0; left: 0;
+      width: 1200px;
+      z-index: 10000;
+      max-height: none;
+      overflow: visible;
+    }
+    body.pdf-capturing { overflow: hidden; }
+
+    #print-supplier-report { display:none; }
+    body.supplier-printing #app, body.supplier-printing #overlay { display:none !important; }
+    body.supplier-printing #print-supplier-report { display:block !important; }
+
+    @media print {
+      body { background:#fff !important; color:#1a1a2e !important; }
+      .sidebar, .top-header, .export-bar, .btn-export, .modal-overlay, #overlay { display:none !important; }
+      body.supplier-printing #app { display:none !important; }
+      body.supplier-printing #print-supplier-report { display:block !important; position:static !important; }
+      .main-wrapper { margin-left:0 !important; }
+      .tab-section { display:none !important; }
+      .kpi-card, .chart-card, .table-card, .ind-card, .tax-card, .mem-card {
+        background:#fff !important; border:1px solid #ddd !important; color:#1a1a2e !important;
+      }
+      table th { background:#f0f0f0 !important; color:#1a1a2e !important; }
+      table td { color:#333 !important; border-color:#ddd !important; }
+      canvas { max-width:100% !important; }
+    }
+  </style>
+</head>
+<body>
+<div id="overlay" class="overlay hidden" onclick="closeMob()"></div>
+<div id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="fas fa-leaf"></i></div>
+      <div class="logo-text">
+        <div class="company" id="logoCompany">JPG</div>
+        <div class="subtitle" id="logoSubtitle">—</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sec-label">Principal</div>
+      <div class="nav-item active" id="nav-visao-geral" onclick="showTab('visao-geral')"><div class="nav-ico"><i class="fas fa-gauge-high"></i></div><span class="nav-label">Visão Geral</span></div>
+      <div class="sec-label">Movimentação</div>
+      <div class="nav-item" id="nav-entradas" onclick="showTab('entradas')"><div class="nav-ico"><i class="fas fa-cart-shopping"></i></div><span class="nav-label">Entradas</span></div>
+      <div class="nav-item" id="nav-finalidade" onclick="showTab('finalidade')"><div class="nav-ico"><i class="fas fa-tags"></i></div><span class="nav-label">Finalidade Entradas</span></div>
+      <div class="nav-item" id="nav-vendas" onclick="showTab('vendas')"><div class="nav-ico"><i class="fas fa-store"></i></div><span class="nav-label">Vendas</span></div>
+      <div class="sec-label">Financeiro</div>
+      <div class="nav-item" id="nav-dre" onclick="showTab('dre')"><div class="nav-ico"><i class="fas fa-chart-line"></i></div><span class="nav-label">DRE</span></div>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="sidebar-foot-info">
+        <div class="lbl">Competência</div>
+        <div class="val" id="sidebarPeriodo">—</div>
+      </div>
+    </div>
+  </aside>
+  <div class="main-wrapper" id="mainWrapper">
+    <header class="top-header">
+      <button class="btn-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <div class="header-title" id="headerTitle">Dashboard</div>
+      <div class="header-actions">
+        <div class="regime-badge" id="headerBadge"><i class="fas fa-building" style="font-size:7px;margin-right:5px;"></i>ICMS</div>
+        <a href="index.html" class="btn-export" style="text-decoration:none"><i class="fas fa-th-large"></i> Filiais</a>
+      </div>
+    </header>
+    <main class="content">
+      <section id="tab-visao-geral" class="tab-section active">
+        <div class="sec-header"><div><div class="sec-title">Visão Geral <small id="vgPeriodo"></small></div><div class="sec-sub" id="vgSub"></div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-visao-geral','Visao_Geral')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div id="alertBox" class="alert-box" style="display:none"></div>
+        <div class="kpi-grid kpi-grid-4" id="kpiVisao"></div>
+        <div class="charts-row cr-2col">
+          <div class="chart-card"><div class="chart-ttl">Entradas × Vendas</div><div class="chart-sub">Valor contábil total do período</div><div class="chart-wrap h260"><canvas id="chartCompBar"></canvas></div></div>
+          <div class="chart-card"><div class="chart-ttl">CFOP — Saídas</div><div class="chart-sub">Participação por CFOP nas vendas</div><div class="chart-wrap h260"><canvas id="chartCfopSai"></canvas></div></div>
+        </div>
+        <div class="charts-row cr-1col">
+          <div class="chart-card"><div class="chart-ttl">Movimentação Diária</div><div class="chart-sub">Entradas e vendas por data de emissão</div><div class="chart-wrap h220"><canvas id="chartDaily"></canvas></div></div>
+        </div>
+      </section>
+      <section id="tab-entradas" class="tab-section">
+        <div class="sec-header"><div><div class="sec-title">Entradas <small id="entPeriodo"></small></div><div class="sec-sub">Aquisições e recebimentos — relatório ICMS</div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-entradas','Entradas')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div class="kpi-grid kpi-grid-3" id="kpiEntradas"></div>
+        <div class="charts-row cr-2col">
+          <div class="chart-card"><div class="chart-ttl">Ranking de Fornecedores</div><div class="chart-sub">Valor contábil por fornecedor</div><div class="chart-wrap h300"><canvas id="chartFornecedores"></canvas></div></div>
+          <div class="chart-card"><div class="chart-ttl">Entradas por UF de Origem</div><div class="chart-sub">Participação por estado</div><div class="chart-wrap h300"><canvas id="chartUfEnt"></canvas></div></div>
+        </div>
+        <div class="table-card"><div class="table-head"><div><div class="ttl">Ranking de Fornecedores</div><div class="sub">Detalhamento por participação</div></div></div>
+          <div class="tbl-scroll"><table><thead><tr><th>#</th><th>Fornecedor</th><th>UF</th><th class="r">Valor</th><th>Participação</th><th class="r">NF</th></tr></thead><tbody id="tblFornecedores"></tbody></table></div>
+        </div>
+      </section>
+      <section id="tab-finalidade" class="tab-section">
+        <div class="sec-header"><div><div class="sec-title">Finalidade de Entradas <small id="finPeriodo"></small></div><div class="sec-sub">Classificação por CFOP das entradas</div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-finalidade','Finalidade')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div class="kpi-grid kpi-grid-4" id="kpiFinalidade"></div>
+        <div class="charts-row cr-2col">
+          <div class="chart-card"><div class="chart-ttl">Entradas por Finalidade</div><div class="chart-sub">Agrupamento fiscal CFOP</div><div class="chart-wrap h260"><canvas id="chartFinalidade"></canvas></div></div>
+          <div class="chart-card"><div class="chart-ttl">Entradas por CFOP</div><div class="chart-sub">Valor contábil por código fiscal</div><div class="chart-wrap h260"><canvas id="chartCfopEnt"></canvas></div></div>
+        </div>
+        <div class="table-card"><div class="table-head"><div><div class="ttl">Detalhamento por CFOP</div></div></div>
+          <div class="tbl-scroll"><table><thead><tr><th>CFOP</th><th>Descrição</th><th>Finalidade</th><th class="r">Qtd NF</th><th class="r">Valor</th><th>Participação</th></tr></thead><tbody id="tblCfopEnt"></tbody></table></div>
+        </div>
+      </section>
+      <section id="tab-vendas" class="tab-section">
+        <div class="sec-header"><div><div class="sec-title">Vendas <small id="vndPeriodo"></small></div><div class="sec-sub">Faturamento por cliente — relatório ICMS saídas</div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-vendas','Vendas')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div class="kpi-grid kpi-grid-3" id="kpiVendas"></div>
+        <div class="charts-row cr-2col">
+          <div class="chart-card"><div class="chart-ttl">Ranking de Clientes</div><div class="chart-sub">Valor contábil por cliente</div><div class="chart-wrap h300"><canvas id="chartClientes"></canvas></div></div>
+          <div class="chart-card"><div class="chart-ttl">Vendas por CFOP</div><div class="chart-sub">Distribuição fiscal das saídas</div><div class="chart-wrap h300"><canvas id="chartCfopVendas"></canvas></div></div>
+        </div>
+        <div class="table-card"><div class="table-head"><div><div class="ttl">Ranking de Clientes</div></div></div>
+          <div class="tbl-scroll"><table><thead><tr><th>#</th><th>Cliente</th><th>UF</th><th class="r">Valor</th><th>Participação</th><th class="r">NF</th></tr></thead><tbody id="tblClientes"></tbody></table></div>
+        </div>
+      </section>
+      <section id="tab-dre" class="tab-section">
+        <div class="sec-header"><div><div class="sec-title">DRE <small id="drePeriodo"></small></div><div class="sec-sub">Demonstrativo derivado dos relatórios ICMS (sem PIS/COFINS/IRPJ)</div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-dre','DRE')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div class="formula-box"><div class="fttl">Metodologia</div><div class="fline">Receita = Σ Valor Contábil (Saídas ICMS) · CMV = Σ Valor Contábil (Entradas ICMS)<br>Resultado = Lucro Bruto − Saldo ICMS (Débito Saídas − Crédito Entradas)</div></div>
+        <div class="margin-grid" id="dreMargins"></div>
+        <div class="table-card"><div class="table-head"><div><div class="ttl">Demonstrativo do Resultado</div></div></div>
+          <div class="tbl-scroll"><table class="dre-tbl"><tbody id="tblDre"></tbody></table></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<script>
+const FILIAL_DATA = {
+  "meta": {
+    "codigo": "712",
+    "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS",
+    "cnpj": "21.051.983/0003-27",
+    "ie": "0769567200215",
+    "periodo": "01/05/2026 até 31/05/2026",
+    "uf": "PR",
+    "filial_key": "MATRIZ",
+    "filial_label": "Matriz DF",
+    "alerta": "Receita consolidada inclui remessas inter-filiais (CFOP 6914/6152). Veja linha 'Receita Externa' no DRE."
+  },
+  "kpis": {
+    "entradas": 77484.5,
+    "saidas": 2770103.57,
+    "icms_credito": 5390.77,
+    "icms_debito": 119033.38,
+    "saldo_icms": 113642.61,
+    "n_nf_ent": 9,
+    "n_nf_sai": 385,
+    "n_fornecedores": 7,
+    "n_clientes": 219
+  },
+  "cfop_entradas": [
+    {
+      "cfop": "1-202",
+      "descricao": "Devolução de venda (intraestadual)",
+      "finalidade": "Devolução Venda",
+      "qtd": 3,
+      "total": 22979.3,
+      "icms": 4513.0,
+      "pct": 29.7,
+      "parties": [
+        {
+          "nome": "DHR COMERCIO DE PRODUTOS COSMETICOS",
+          "total": 21805.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "35.955.098/0001-15"
+        },
+        {
+          "nome": "KARLA SATO SAUDE E ESTETICA AVANCADA LTDA",
+          "total": 737.2,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "45.119.210/0001-31"
+        },
+        {
+          "nome": "BARBARA BRITO",
+          "total": 437.1,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "01005745137"
+        }
+      ]
+    },
+    {
+      "cfop": "2-914",
+      "descricao": "Retorno de industrialização",
+      "finalidade": "Retorno Ind.",
+      "qtd": 2,
+      "total": 20254.3,
+      "icms": 0.0,
+      "pct": 26.1,
+      "parties": [
+        {
+          "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+          "total": 20254.3,
+          "qtd": 2,
+          "uf": "DF",
+          "cnpj": "21.051.983/0003-27"
+        }
+      ]
+    },
+    {
+      "cfop": "2-202",
+      "descricao": "Devolução de venda (interestadual)",
+      "finalidade": "Devolução Venda",
+      "qtd": 3,
+      "total": 18088.0,
+      "icms": 877.77,
+      "pct": 23.3,
+      "parties": [
+        {
+          "nome": "TASCA FERRARINI LTDA",
+          "total": 9920.0,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "61.023.260/0001-77"
+        },
+        {
+          "nome": "PATRICIA MOCCINI LOPES",
+          "total": 7169.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "00602855756"
+        },
+        {
+          "nome": "JESSICA PEREIRA DE BRITO IMOTO",
+          "total": 999.0,
+          "qtd": 1,
+          "uf": "SP",
+          "cnpj": "34630005803"
+        }
+      ]
+    },
+    {
+      "cfop": "1-914",
+      "descricao": "Retorno de industrialização",
+      "finalidade": "Retorno Ind.",
+      "qtd": 1,
+      "total": 16162.9,
+      "icms": 0.0,
+      "pct": 20.9,
+      "parties": [
+        {
+          "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+          "total": 16162.9,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "21.051.983/0003-27"
+        }
+      ]
+    }
+  ],
+  "cfop_saidas": [
+    {
+      "cfop": "6-914",
+      "descricao": "Remessa p/ filial (interestadual)",
+      "finalidade": "Remessa p/ filial (interestadual)",
+      "qtd": 2,
+      "total": 1596429.1,
+      "icms": 0.0,
+      "pct": 57.6,
+      "parties": [
+        {
+          "nome": "SPE GL EVENTS CENTRO DE CONVENCOES ANHEMBI S.A.",
+          "total": 1596429.1,
+          "qtd": 2,
+          "uf": "SP",
+          "cnpj": "41.542.832/0001-17"
+        }
+      ]
+    },
+    {
+      "cfop": "6-102",
+      "descricao": "Venda p/ comercialização (interestadual)",
+      "finalidade": "Venda p/ comercialização (interestadual)",
+      "qtd": 153,
+      "total": 627869.08,
+      "icms": 29739.08,
+      "pct": 22.7,
+      "parties": [
+        {
+          "nome": "FARMAHOF",
+          "total": 47736.0,
+          "qtd": 1,
+          "uf": "SC",
+          "cnpj": "48.326.073/0001-02"
+        },
+        {
+          "nome": "BUY EVOLUTION LTDA",
+          "total": 40183.0,
+          "qtd": 2,
+          "uf": "RJ",
+          "cnpj": "46.926.338/0001-70"
+        },
+        {
+          "nome": "BARBHARA GIRAO COSTA RODRIGUES",
+          "total": 36000.0,
+          "qtd": 1,
+          "uf": "CE",
+          "cnpj": "06525831300"
+        },
+        {
+          "nome": "ESSENZZIALE MATERIAL MEDICO E SERVICO LTDA",
+          "total": 28403.57,
+          "qtd": 1,
+          "uf": "ES",
+          "cnpj": "34.133.640/0001-91"
+        },
+        {
+          "nome": "PATRICIA MOCCINI LOPES",
+          "total": 24397.28,
+          "qtd": 5,
+          "uf": "RJ",
+          "cnpj": "00602855756"
+        },
+        {
+          "nome": "CENTRO DE ESTETICA CARIA VASCONCELOS LTDA",
+          "total": 20505.6,
+          "qtd": 1,
+          "uf": "CE",
+          "cnpj": "33.296.394/0001-26"
+        },
+        {
+          "nome": "MEDICSKIN SAUDE E ESTETICA AVANCADA LTDA",
+          "total": 17535.0,
+          "qtd": 1,
+          "uf": "MT",
+          "cnpj": "33.372.926/0001-67"
+        },
+        {
+          "nome": "BELACRIO E INOVA LASER EQUIPAMENTOS LTDA",
+          "total": 17000.9,
+          "qtd": 3,
+          "uf": "RJ",
+          "cnpj": "29.711.263/0001-90"
+        },
+        {
+          "nome": "DANIELA DE ABREU",
+          "total": 14280.0,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "30621646890"
+        },
+        {
+          "nome": "CLARA HERMINIA DIAS BARBOSA",
+          "total": 13267.68,
+          "qtd": 1,
+          "uf": "CE",
+          "cnpj": "48.927.706/0001-20"
+        },
+        {
+          "nome": "MARIA ISABEL ALVES QUERINO",
+          "total": 11847.2,
+          "qtd": 1,
+          "uf": "SC",
+          "cnpj": "01458143945"
+        },
+        {
+          "nome": "ELLEN CORREA HARMONIZACAO OROFACIAL LTDA",
+          "total": 11389.64,
+          "qtd": 2,
+          "uf": "GO",
+          "cnpj": "59.192.966/0001-10"
+        },
+        {
+          "nome": "PRO HARMONY LTDA",
+          "total": 10575.0,
+          "qtd": 1,
+          "uf": "ES",
+          "cnpj": "49.650.894/0001-54"
+        },
+        {
+          "nome": "JULIANA ALMEIDA REZENDE CAMPOS",
+          "total": 9848.05,
+          "qtd": 2,
+          "uf": "BA",
+          "cnpj": "05707572589"
+        },
+        {
+          "nome": "ACG CLINIC LTDA",
+          "total": 9450.0,
+          "qtd": 2,
+          "uf": "GO",
+          "cnpj": "60.259.169/0001-92"
+        },
+        {
+          "nome": "OZANA VALE VARGAS",
+          "total": 9335.91,
+          "qtd": 1,
+          "uf": "ES",
+          "cnpj": "15577563763"
+        },
+        {
+          "nome": "JOAO PAULO MONTEIRO YAMAGATA",
+          "total": 9333.0,
+          "qtd": 2,
+          "uf": "RJ",
+          "cnpj": "05832965728"
+        },
+        {
+          "nome": "NEUMA ROCHA DE SA",
+          "total": 9136.75,
+          "qtd": 1,
+          "uf": "MA",
+          "cnpj": "40921786387"
+        },
+        {
+          "nome": "GEISA NOVAIS TOME VELLOSO",
+          "total": 8949.9,
+          "qtd": 2,
+          "uf": "BA",
+          "cnpj": "80014070553"
+        },
+        {
+          "nome": "DERMAKS - CLINICA MEDICA DERMATOLOGIA ESTETICA ESPECIALI...",
+          "total": 8640.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "36.516.432/0001-05"
+        },
+        {
+          "nome": "TATIANE LAIS ROCHA RIOS",
+          "total": 8562.4,
+          "qtd": 2,
+          "uf": "BA",
+          "cnpj": "03483384570"
+        },
+        {
+          "nome": "THAIS CARIBE MENESES ODONTOLOGIA LTDA",
+          "total": 8265.0,
+          "qtd": 2,
+          "uf": "BA",
+          "cnpj": "36.581.493/0001-48"
+        },
+        {
+          "nome": "NC HEALTH SOLUTIONS LTDA",
+          "total": 7438.5,
+          "qtd": 1,
+          "uf": "RR",
+          "cnpj": "55.146.560/0001-40"
+        },
+        {
+          "nome": "JESSICA L. M. KRAUSS &AMP; NILCELINA DE A. CARDOSO LTDA",
+          "total": 7180.2,
+          "qtd": 1,
+          "uf": "AM",
+          "cnpj": "30.741.349/0001-45"
+        },
+        {
+          "nome": "TASCA FERRARINI LTDA",
+          "total": 7000.0,
+          "qtd": 2,
+          "uf": "GO",
+          "cnpj": "61.023.260/0001-77"
+        },
+        {
+          "nome": "DERMEMED PRODUTOS ESTETICOS LTDA",
+          "total": 6930.0,
+          "qtd": 1,
+          "uf": "RS",
+          "cnpj": "38.192.286/0001-27"
+        },
+        {
+          "nome": "DANIELA BENITES ROSITO",
+          "total": 6840.0,
+          "qtd": 1,
+          "uf": "SC",
+          "cnpj": "55852858072"
+        },
+        {
+          "nome": "INDIAMARA BORTOLON",
+          "total": 6775.77,
+          "qtd": 1,
+          "uf": "SC",
+          "cnpj": "02788855940"
+        },
+        {
+          "nome": "ALINE ROSA DE SOUZA",
+          "total": 6315.5,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "00939975157"
+        },
+        {
+          "nome": "FRANCIELE TOMAZIA DE SOUZA",
+          "total": 5619.0,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "04658603110"
+        },
+        {
+          "nome": "NAYANA COSTA SANTOS FIALHO",
+          "total": 5430.4,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "00029278104"
+        },
+        {
+          "nome": "ANDREIA ELLERY FROTA",
+          "total": 4950.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "05565276748"
+        },
+        {
+          "nome": "QUELEN BERTOLDI",
+          "total": 4910.0,
+          "qtd": 1,
+          "uf": "RS",
+          "cnpj": "00035541040"
+        },
+        {
+          "nome": "PEROLA PERES DA FONSECA E COSTA",
+          "total": 4888.8,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "10964071754"
+        },
+        {
+          "nome": "CLINICA BOGO &AMP; GALINDO LTDA",
+          "total": 4457.0,
+          "qtd": 1,
+          "uf": "SC",
+          "cnpj": "08.563.034/0001-04"
+        },
+        {
+          "nome": "RENATA SIMONE SANTIAGO BAYMA",
+          "total": 4419.0,
+          "qtd": 1,
+          "uf": "PE",
+          "cnpj": "79968880434"
+        },
+        {
+          "nome": "JAMILLY CARNEIRO COLLYER",
+          "total": 4320.0,
+          "qtd": 1,
+          "uf": "CE",
+          "cnpj": "93337612253"
+        },
+        {
+          "nome": "RAFAELA BARBOSA LEITE DE ANDRADE",
+          "total": 4320.0,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "01790488133"
+        },
+        {
+          "nome": "COELHO E SILVA CLINICA OROFACIAL, SAUDE E BELEZA LTDA",
+          "total": 4104.0,
+          "qtd": 1,
+          "uf": "TO",
+          "cnpj": "50.738.791/0001-20"
+        },
+        {
+          "nome": "GERSICA SAMPAIO SILVA",
+          "total": 4074.4,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "01720770522"
+        },
+        {
+          "nome": "CARLA DAYANE TARDIVO AGUIAR",
+          "total": 4071.5,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "10595729746"
+        },
+        {
+          "nome": "CRISTINA COAN ESTETICA FACIAL LTDA",
+          "total": 3888.0,
+          "qtd": 1,
+          "uf": "SC",
+          "cnpj": "31.127.892/0001-10"
+        },
+        {
+          "nome": "PELLEMED COMERCIO DE MEDICAMENTOS EIRELI ME",
+          "total": 3861.0,
+          "qtd": 1,
+          "uf": "RS",
+          "cnpj": "27.000.924/0001-44"
+        },
+        {
+          "nome": "DR LASER NATAL LTDA",
+          "total": 3795.9,
+          "qtd": 1,
+          "uf": "RN",
+          "cnpj": "64.024.993/0001-14"
+        },
+        {
+          "nome": "JULIENY AVELINA DE ASSUNCAO CRUVINEL",
+          "total": 3690.0,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "91350018104"
+        },
+        {
+          "nome": "IZADORA MEIRELES NASCIMENTO",
+          "total": 3485.0,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "70838206190"
+        },
+        {
+          "nome": "BRILHANTE DEPILACAO A LASER LTDA",
+          "total": 3300.29,
+          "qtd": 2,
+          "uf": "MS",
+          "cnpj": "45.083.843/0001-37"
+        },
+        {
+          "nome": "JULIANA PINAUD CONFALONIERI",
+          "total": 3240.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "07577804746"
+        },
+        {
+          "nome": "MARCIA DE SOUZA BRITTO",
+          "total": 3130.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "13.101.222/0001-42"
+        },
+        {
+          "nome": "VIVIANNE MONTEIRO",
+          "total": 2993.14,
+          "qtd": 2,
+          "uf": "RJ",
+          "cnpj": "07374180799"
+        },
+        {
+          "nome": "MC GALIZA DE ALMEIDA SERVICOS MEDICOS LTDA",
+          "total": 2970.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "38.324.016/0001-22"
+        },
+        {
+          "nome": "JOANA LUZ DA ROSA CORANDINI",
+          "total": 2958.8,
+          "qtd": 1,
+          "uf": "RS",
+          "cnpj": "01263728022"
+        },
+        {
+          "nome": "JHESSICA FERNANDA GOMES",
+          "total": 2940.0,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "37.554.133/0001-10"
+        },
+        {
+          "nome": "LETICIA UMINO ODONTOLOGIA E ESTETICA ESPECIALIZADA LTDA",
+          "total": 2870.45,
+          "qtd": 1,
+          "uf": "TO",
+          "cnpj": "45.355.412/0001-82"
+        },
+        {
+          "nome": "BIANCA BUSATTO",
+          "total": 2821.5,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "14018587759"
+        },
+        {
+          "nome": "SPIPE DEPILACAO A LASER LTDA",
+          "total": 2766.0,
+          "qtd": 2,
+          "uf": "MS",
+          "cnpj": "55.605.314/0001-00"
+        },
+        {
+          "nome": "MATHEUS LISBOA CONSULTORIA CLINICA LTDA",
+          "total": 2707.2,
+          "qtd": 1,
+          "uf": "AL",
+          "cnpj": "46.389.347/0001-79"
+        },
+        {
+          "nome": "DAYVIANE PORTELA CARVALHO ATAIDE COSTA",
+          "total": 2625.0,
+          "qtd": 1,
+          "uf": "MA",
+          "cnpj": "00254566367"
+        },
+        {
+          "nome": "LARISSA SANTOS MORAIS",
+          "total": 2608.5,
+          "qtd": 2,
+          "uf": "GO",
+          "cnpj": "87908450130"
+        },
+        {
+          "nome": "C D OLIVEIRA",
+          "total": 2585.0,
+          "qtd": 1,
+          "uf": "TO",
+          "cnpj": "47.952.362/0001-46"
+        },
+        {
+          "nome": "GRAZIELE TALIA PEREIRA DA SILVA",
+          "total": 2480.3,
+          "qtd": 1,
+          "uf": "PA",
+          "cnpj": "02811306200"
+        },
+        {
+          "nome": "P O M TEIXEIRA",
+          "total": 2399.0,
+          "qtd": 1,
+          "uf": "TO",
+          "cnpj": "65.312.356/0001-06"
+        },
+        {
+          "nome": "JARDIM DOS ESTADOS DEPILACAO A LASER LTDA",
+          "total": 2367.0,
+          "qtd": 2,
+          "uf": "MS",
+          "cnpj": "43.398.484/0001-81"
+        },
+        {
+          "nome": "DENISE COSTA WILTGEN PARODI",
+          "total": 2322.5,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "09929257705"
+        },
+        {
+          "nome": "TALITA JULIETH PEZZINI",
+          "total": 2282.5,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "01873852118"
+        },
+        {
+          "nome": "PASQUINI COMERCIO DE MEDICAMENTOS LTDA",
+          "total": 2203.34,
+          "qtd": 1,
+          "uf": "SC",
+          "cnpj": "31.587.446/0001-98"
+        },
+        {
+          "nome": "MINELLY EBY MUNIZ MACHADO",
+          "total": 2010.01,
+          "qtd": 1,
+          "uf": "TO",
+          "cnpj": "92242863134"
+        },
+        {
+          "nome": "GUSTAVO LOTFI DA COSTA",
+          "total": 1980.0,
+          "qtd": 1,
+          "uf": "MS",
+          "cnpj": "50691988153"
+        },
+        {
+          "nome": "DERMVASC SERVICOS MEDICOS LTDA",
+          "total": 1931.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "25.213.123/0001-31"
+        },
+        {
+          "nome": "LIDIANE DA SILVA LOBO",
+          "total": 1891.4,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "01345675100"
+        },
+        {
+          "nome": "INSTITUTO DE BELEZA DEFLEUR LTDA",
+          "total": 1869.3,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "53.575.055/0001-96"
+        },
+        {
+          "nome": "FRAN MED SERVICOS MEDICOS LTDA",
+          "total": 1864.5,
+          "qtd": 1,
+          "uf": "RS",
+          "cnpj": "46.780.586/0001-55"
+        },
+        {
+          "nome": "CASSIA MATANHES MOTHE",
+          "total": 1832.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "10348117701"
+        },
+        {
+          "nome": "BFF SERVICOS EM TRATAMENTOS ESTETICOS LTDA",
+          "total": 1782.0,
+          "qtd": 1,
+          "uf": "RO",
+          "cnpj": "30.755.641/0001-17"
+        },
+        {
+          "nome": "INSTITUTO DE ODONTOLOGIA DR KARINA DORO LTDA",
+          "total": 1683.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "44.934.729/0001-00"
+        },
+        {
+          "nome": "DEBORAH VICTORIA DOMINGUES DE OLIVEIRA",
+          "total": 1667.9,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "70643004190"
+        },
+        {
+          "nome": "THAINA AFONSO IGREJA",
+          "total": 1659.03,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "18201099761"
+        },
+        {
+          "nome": "ANA CLAUDIA FEDI",
+          "total": 1646.23,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "83644067015"
+        },
+        {
+          "nome": "AMANDA MOITA CARNEIRO",
+          "total": 1591.7,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "04991160383"
+        },
+        {
+          "nome": "VERA ALGUSTA DE SANTANA BARRETO",
+          "total": 1566.55,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "29604338153"
+        },
+        {
+          "nome": "YASNAYA NOGUEIRA PINHEIRO",
+          "total": 1562.6,
+          "qtd": 1,
+          "uf": "BA",
+          "cnpj": "01260341410"
+        },
+        {
+          "nome": "ANA CAROLINA RUSSO BISPO",
+          "total": 1551.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "10258608706"
+        },
+        {
+          "nome": "IARA DOS SANTOS",
+          "total": 1497.03,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "28223270846"
+        },
+        {
+          "nome": "ELIENE MARQUES GOMES",
+          "total": 1431.33,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "03427276139"
+        },
+        {
+          "nome": "RECIFE SERVICOS DE DEPILACAO A LASER LTDA",
+          "total": 1421.0,
+          "qtd": 1,
+          "uf": "PE",
+          "cnpj": "47.085.851/0001-48"
+        },
+        {
+          "nome": "HELOA TEREZINHA HONORATO BARREIROS TURRA",
+          "total": 1410.0,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "01311600108"
+        },
+        {
+          "nome": "ROSEANE CABRAL PAIS",
+          "total": 1379.08,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "77214404249"
+        },
+        {
+          "nome": "GRACY MARA SILVA BARBOSA",
+          "total": 1339.0,
+          "qtd": 1,
+          "uf": "AM",
+          "cnpj": "57865981287"
+        },
+        {
+          "nome": "LEONORA CRISTINA DA SILVA PARENTE MACEDO",
+          "total": 1296.16,
+          "qtd": 2,
+          "uf": "RJ",
+          "cnpj": "81240210159"
+        },
+        {
+          "nome": "ANDREIA LOPES ARRUDA SOUZA",
+          "total": 1164.0,
+          "qtd": 1,
+          "uf": "BA",
+          "cnpj": "92828248534"
+        },
+        {
+          "nome": "OLGA SAMARA ARAUJO DE SOUZA",
+          "total": 1164.0,
+          "qtd": 1,
+          "uf": "BA",
+          "cnpj": "00495783595"
+        },
+        {
+          "nome": "VANESSA BITENCOURT DE BESSA CICARELLI",
+          "total": 1094.05,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "01556613610"
+        },
+        {
+          "nome": "PEDRO ANDRE ALVES PEREIRA",
+          "total": 1080.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "07887271762"
+        },
+        {
+          "nome": "MIRELA SECUNDO MELO",
+          "total": 1060.0,
+          "qtd": 1,
+          "uf": "SE",
+          "cnpj": "83849300587"
+        },
+        {
+          "nome": "CENTRO INTEGRADO DE SAUDE ARPINI LTDA",
+          "total": 1059.1,
+          "qtd": 1,
+          "uf": "RS",
+          "cnpj": "09.588.610/0001-22"
+        },
+        {
+          "nome": "MARIA INES DE MENDONCA BARROS",
+          "total": 1051.0,
+          "qtd": 1,
+          "uf": "RN",
+          "cnpj": "98637665420"
+        },
+        {
+          "nome": "DAY HOSPITAL DERMATOLOGIA AVANCADA LTDA",
+          "total": 1040.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "26.887.863/0001-16"
+        },
+        {
+          "nome": "ELLEVA SERVICOS MEDICOS LTDA",
+          "total": 1040.0,
+          "qtd": 1,
+          "uf": "SC",
+          "cnpj": "31.467.156/0001-00"
+        },
+        {
+          "nome": "INGRID LUCKMANN CIRURGIA PLASTICA LTDA",
+          "total": 1040.0,
+          "qtd": 1,
+          "uf": "SC",
+          "cnpj": "27.436.404/0001-89"
+        },
+        {
+          "nome": "M. L. MEDICOS ASSOCIADOS",
+          "total": 1030.0,
+          "qtd": 1,
+          "uf": "AM",
+          "cnpj": "33.013.896/0001-00"
+        },
+        {
+          "nome": "MARCELLA MARIA DE SOUZA ARAUJO",
+          "total": 1022.3,
+          "qtd": 1,
+          "uf": "PE",
+          "cnpj": "03934913407"
+        },
+        {
+          "nome": "VALERIA ROSSATO",
+          "total": 1021.8,
+          "qtd": 1,
+          "uf": "RS",
+          "cnpj": "03094684009"
+        },
+        {
+          "nome": "EDMARA BRUFATO TORRES CASTELLINI",
+          "total": 1019.1,
+          "qtd": 1,
+          "uf": "MS",
+          "cnpj": "02259282130"
+        },
+        {
+          "nome": "SUSANA FREIRE SERVICOS MEDICOS",
+          "total": 1017.3,
+          "qtd": 1,
+          "uf": "CE",
+          "cnpj": "38.541.382/0001-33"
+        },
+        {
+          "nome": "EDUARDO MIRANDA ALVARES",
+          "total": 1010.3,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "88263746191"
+        },
+        {
+          "nome": "LUCIANA PIMENTA E SILVA",
+          "total": 1010.3,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "87156520172"
+        },
+        {
+          "nome": "LARYSSA CAROLINE DOS REIS SILVA",
+          "total": 1000.3,
+          "qtd": 1,
+          "uf": "AC",
+          "cnpj": "13745331737"
+        },
+        {
+          "nome": "VICTORIA REGINA S REIS",
+          "total": 1000.3,
+          "qtd": 1,
+          "uf": "TO",
+          "cnpj": "06884150165"
+        },
+        {
+          "nome": "EMILY SOUZA",
+          "total": 990.5,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "43849337898"
+        },
+        {
+          "nome": "RENATA DO VAL GUIMARAES",
+          "total": 990.5,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "13041931796"
+        },
+        {
+          "nome": "A. R. SERVICOS MEDICOS LTDA",
+          "total": 990.3,
+          "qtd": 1,
+          "uf": "MS",
+          "cnpj": "23.130.969/0001-82"
+        },
+        {
+          "nome": "DAIANA ANTONELLO MARCHEZAN",
+          "total": 990.3,
+          "qtd": 1,
+          "uf": "RS",
+          "cnpj": "00449442098"
+        },
+        {
+          "nome": "BFF4 SERVI?OS EM TRATAMENTO ESTETICO LTDA",
+          "total": 984.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "37.535.677/0001-34"
+        },
+        {
+          "nome": "IRBA - INSTITUTO RADIODIAGNOSTICO DA BAHIA LTDA",
+          "total": 977.29,
+          "qtd": 1,
+          "uf": "BA",
+          "cnpj": "15.173.727/0001-48"
+        },
+        {
+          "nome": "LARA FRANCESCHETTO MILLERI",
+          "total": 962.29,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "10990182770"
+        },
+        {
+          "nome": "NEUMANN E FARIA CLINICA MEDICA LTDA",
+          "total": 907.78,
+          "qtd": 1,
+          "uf": "TO",
+          "cnpj": "24.408.014/0001-07"
+        },
+        {
+          "nome": "ANTONIO ALEXANDRE VASCONCELLOS DE ANDDRADE BASTOS",
+          "total": 819.3,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "07341267780"
+        },
+        {
+          "nome": "BEST ESTETICA LTDA",
+          "total": 819.3,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "48.708.297/0001-70"
+        },
+        {
+          "nome": "ERIKA LINHARES DA SILVA",
+          "total": 819.3,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "75040140100"
+        },
+        {
+          "nome": "THALITA LORRAYNE DE OLIVEIRA COSTA",
+          "total": 810.0,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "03374561195"
+        },
+        {
+          "nome": "GUSTAVO COUTINHO MEDEIROS DE ANDRADE",
+          "total": 790.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "03810652784"
+        },
+        {
+          "nome": "ANA CLAUDIA GONCALVES DE SOUSA",
+          "total": 760.0,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "03337268129"
+        },
+        {
+          "nome": "LANA CRISTHINA DA SILVA BATISTA",
+          "total": 755.0,
+          "qtd": 1,
+          "uf": "AM",
+          "cnpj": "80832920282"
+        },
+        {
+          "nome": "SUZANE FERREIRA DE CARVALHO LEMGRUBER",
+          "total": 730.0,
+          "qtd": 1,
+          "uf": "SC",
+          "cnpj": "08022533777"
+        },
+        {
+          "nome": "NUBIA RODRIGUES DA SILVA",
+          "total": 720.0,
+          "qtd": 1,
+          "uf": "MT",
+          "cnpj": "02475273194"
+        },
+        {
+          "nome": "BFF6 SERVICOS EM TRATAMENTOS ESTETICOS LTDA",
+          "total": 699.0,
+          "qtd": 1,
+          "uf": "MT",
+          "cnpj": "43.651.481/0001-08"
+        },
+        {
+          "nome": "JOTAS SERVICOS EM TRATAMENTOS ESTETICOS LTDA",
+          "total": 699.0,
+          "qtd": 1,
+          "uf": "AM",
+          "cnpj": "53.671.215/0001-09"
+        },
+        {
+          "nome": "RICABO DEPILACAO ESTETICA E SERVICOS LTDA",
+          "total": 640.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "42.725.757/0001-92"
+        },
+        {
+          "nome": "VIVIAN LOUREIRO LIMA",
+          "total": 593.69,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "50831933291"
+        },
+        {
+          "nome": "SAO LUIS SERVICOS DE DEPILACAO",
+          "total": 359.49,
+          "qtd": 1,
+          "uf": "MA",
+          "cnpj": "47.087.751/0001-50"
+        },
+        {
+          "nome": "PRISCILLA VELASCO P DE S RODOVALHO",
+          "total": 300.0,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "30.577.081/0001-58"
+        },
+        {
+          "nome": "CLINICA ODONTOLOGICA DOVALLE LIMITADA",
+          "total": 0.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "57.634.298/0001-09"
+        }
+      ]
+    },
+    {
+      "cfop": "5-102",
+      "descricao": "Venda p/ comercialização (intraestadual)",
+      "finalidade": "Venda p/ comercialização (intraestadual)",
+      "qtd": 92,
+      "total": 380084.45,
+      "icms": 84267.58,
+      "pct": 13.7,
+      "parties": [
+        {
+          "nome": "VELLOZIA PRODUTOS HOSPITALARES EIRELI",
+          "total": 114517.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "16.918.361/0001-51"
+        },
+        {
+          "nome": "RDL MEDICAL LTDA",
+          "total": 34723.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "55.847.801/0001-89"
+        },
+        {
+          "nome": "AESTHESIS ESTETICA E HARMONIZACAO FACIAL LTDA",
+          "total": 26769.3,
+          "qtd": 3,
+          "uf": "DF",
+          "cnpj": "43.037.666/0001-27"
+        },
+        {
+          "nome": "YURI NUNES DE SA",
+          "total": 25164.6,
+          "qtd": 3,
+          "uf": "DF",
+          "cnpj": "99868210100"
+        },
+        {
+          "nome": "CHRIS MEDI PRODUTOS MEDICOS E HOSPITALARES LTDA",
+          "total": 21060.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "54.288.917/0001-62"
+        },
+        {
+          "nome": "CLINICA PRISCILLA PROENCA E INSTITUTO DO EMAGRECIMENTO E...",
+          "total": 12123.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "36.920.210/0001-45"
+        },
+        {
+          "nome": "ML DISTRIBUICAO DE PRODUTOS FARMACEUTICOS E HOSPITALARES...",
+          "total": 11830.0,
+          "qtd": 2,
+          "uf": "DF",
+          "cnpj": "37.912.770/0001-10"
+        },
+        {
+          "nome": "THAIS BITTENCOURT G. TELES",
+          "total": 7776.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "01739323122"
+        },
+        {
+          "nome": "GRUPO HARMONITTA SERVICOS MEDICOS LTDA",
+          "total": 7009.48,
+          "qtd": 2,
+          "uf": "DF",
+          "cnpj": "37.179.894/0001-39"
+        },
+        {
+          "nome": "INSTITUTO MATHEUS RIBEIRO LTDA",
+          "total": 6619.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "66.652.289/0001-31"
+        },
+        {
+          "nome": "DENISE LIMA CLINICA DE REJUVENESCIMENTO LTDA",
+          "total": 5719.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "58.352.285/0001-00"
+        },
+        {
+          "nome": "SHIRLEY GURGEL PENAFORTE",
+          "total": 5681.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "56807678304"
+        },
+        {
+          "nome": "MIRIAM GONTIJO MORAES PEREIRA 03015984608",
+          "total": 5619.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "35.270.351/0001-05"
+        },
+        {
+          "nome": "CURANTE FARMACIA DE MANIPULACAO LTDA ME",
+          "total": 4286.1,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "05.639.032/0003-17"
+        },
+        {
+          "nome": "MAYARA THANNYRES MOREIRA DA CUNHA",
+          "total": 4222.3,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "05165170152"
+        },
+        {
+          "nome": "CM SERVICOS MEDICOS LTDA",
+          "total": 4104.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "28.804.239/0001-33"
+        },
+        {
+          "nome": "CRISTINA PEREIRA SANTOS",
+          "total": 3980.88,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "70887047149"
+        },
+        {
+          "nome": "GRACE CALDAS DERMATOLOGIA E COSMIATRIA LTDA",
+          "total": 3980.88,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "10.315.153/0001-81"
+        },
+        {
+          "nome": "DAYANE GONCALVES DE ARAUJO",
+          "total": 3686.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "01340084139"
+        },
+        {
+          "nome": "VISTA ODONTOLOGIA LTDA",
+          "total": 3181.6,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "36.070.938/0001-25"
+        },
+        {
+          "nome": "KF ESTETICA AVANCADA LTDA",
+          "total": 3147.9,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "20.098.094/0001-90"
+        },
+        {
+          "nome": "GRAZIELLE DE CARVALHO",
+          "total": 2989.2,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "01141216132"
+        },
+        {
+          "nome": "BOTOCLINC BSBS ESTETICA LTDA",
+          "total": 2415.3,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "38.595.007/0001-76"
+        },
+        {
+          "nome": "KARLA SATO SAUDE E ESTETICA AVANCADA LTDA",
+          "total": 2046.7,
+          "qtd": 2,
+          "uf": "DF",
+          "cnpj": "45.119.210/0001-31"
+        },
+        {
+          "nome": "INDERMA INSTITUTO DE DERMATOLOGIA AVANCADA LTDA",
+          "total": 1980.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "05.780.368/0001-33"
+        },
+        {
+          "nome": "LUCAS SANTANA DE MIRANDA",
+          "total": 1841.4,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "11811724620"
+        },
+        {
+          "nome": "JANINE FRANCA DERMATOLOGIA INDIVIDUALIZADA LTDA",
+          "total": 1824.57,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "48.533.253/0001-57"
+        },
+        {
+          "nome": "CRISTIANO RIBEIRO VELASCO",
+          "total": 1719.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "82999309104"
+        },
+        {
+          "nome": "MAURO ROGERIO DINIZ",
+          "total": 1668.0,
+          "qtd": 3,
+          "uf": "DF",
+          "cnpj": "26645939191"
+        },
+        {
+          "nome": "WILLAN SOUSA DA SILVA ALENCAR",
+          "total": 1648.03,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "00082459169"
+        },
+        {
+          "nome": "GISELLE FRATTINI VIEIRA",
+          "total": 1584.6,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "21430560100"
+        },
+        {
+          "nome": "NAGILA FERNANDA MOREIRA MELO",
+          "total": 1529.7,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "09849166606"
+        },
+        {
+          "nome": "NADIA STELLA ALVES RIBEIRO",
+          "total": 1499.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "11945141115"
+        },
+        {
+          "nome": "SANDRA TAIA",
+          "total": 1499.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "61017671168"
+        },
+        {
+          "nome": "JOAN SANTANA DO NASCIMENTO",
+          "total": 1469.3,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "04334212409"
+        },
+        {
+          "nome": "DANIELA FORMIGA SABINO DE FREITAS",
+          "total": 1425.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "90050983687"
+        },
+        {
+          "nome": "ROSANA BARROS DA CUNHA",
+          "total": 1400.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "70143234153"
+        },
+        {
+          "nome": "LEISE REIS",
+          "total": 1349.1,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "72600756191"
+        },
+        {
+          "nome": "LAILA BRITO DE MEDEIROS",
+          "total": 1250.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "95239170134"
+        },
+        {
+          "nome": "LORENA TOLEDO DE ARAUJO MELO",
+          "total": 1250.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "00549590129"
+        },
+        {
+          "nome": "RENATA ARAUJO GOMES FONCECA",
+          "total": 1250.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "83115056168"
+        },
+        {
+          "nome": "ROSANGELA MARCIA MAGALHAIS DE TOLEDO",
+          "total": 1250.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "07942900789"
+        },
+        {
+          "nome": "PERFECTOUS SAUDE E ESTETICA LTDA",
+          "total": 1234.05,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "36.566.307/0001-00"
+        },
+        {
+          "nome": "SERENDIPITY CLINICA DE MEDICINA ESTETIC LTDA",
+          "total": 1197.03,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "23.361.474/0001-64"
+        },
+        {
+          "nome": "REGINA BEZERRA DA SILVA FONTE",
+          "total": 1187.5,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "63398990568"
+        },
+        {
+          "nome": "FLAVIA MARIA COUTINHO SANTOS ROSSIGNEUX VIEIRA",
+          "total": 1150.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "41721845100"
+        },
+        {
+          "nome": "DENISE NEVES CELESTINO DE JESUS",
+          "total": 1124.25,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "71466690178"
+        },
+        {
+          "nome": "LUCEINEDE MARQUES DA SILVA",
+          "total": 1050.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "69708517100"
+        },
+        {
+          "nome": "LORENA LEAO CONSULTORIO ODONTOLOGICO LTDA",
+          "total": 1049.3,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "04.637.016/0001-60"
+        },
+        {
+          "nome": "PALOMA PATRICIO DOS SANTOS DA CAMARA LIMA",
+          "total": 1044.05,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "05722994430"
+        },
+        {
+          "nome": "AUCINEIA XAVIER DA SILVA ARAUJO",
+          "total": 1012.73,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "86432028191"
+        },
+        {
+          "nome": "ANA CAROLINA FORTES",
+          "total": 1000.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "81167458168"
+        },
+        {
+          "nome": "FLAVIO HENRIQUE ALENCAR FERNANDES",
+          "total": 999.1,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "04667589108"
+        },
+        {
+          "nome": "ISABEL VINAGRE DA SILVA",
+          "total": 998.99,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "33901023100"
+        },
+        {
+          "nome": "AURORA WELLNESS CLINIC LTDA",
+          "total": 990.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "60.835.730/0001-34"
+        },
+        {
+          "nome": "BEATRIZ CRISTINA NEIVA ROCHA",
+          "total": 990.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "05459538122"
+        },
+        {
+          "nome": "DANIELE CHAVES KUHLEIS",
+          "total": 990.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "00801007089"
+        },
+        {
+          "nome": "INSTITUTO NERY DE MEDICINA E ESTETICA LTDA",
+          "total": 912.29,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "17.921.435/0001-71"
+        },
+        {
+          "nome": "INOVADERM MEDICINA AVANCADA LTDA",
+          "total": 910.8,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "24.923.648/0001-06"
+        },
+        {
+          "nome": "DUE PELE DERMATOLOGIA",
+          "total": 892.4,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "08.266.610/0001-43"
+        },
+        {
+          "nome": "DOMINIQUE DE OLIVEIRA DO NASCIMENTO DE LUCCA",
+          "total": 854.5,
+          "qtd": 3,
+          "uf": "DF",
+          "cnpj": "05305344107"
+        },
+        {
+          "nome": "SANDRA DE SANTIS MENDES DE FARIA MELLO",
+          "total": 850.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "09593713700"
+        },
+        {
+          "nome": "FERNANDA PAGLIA DURAN",
+          "total": 821.56,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "86714201249"
+        },
+        {
+          "nome": "BEST ESTETICA LTDA",
+          "total": 760.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "48.708.297/0001-70"
+        },
+        {
+          "nome": "MARINALDA SANTOS DE SOUZA",
+          "total": 720.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "60699825172"
+        },
+        {
+          "nome": "CENTRO DE ENSINO UNIFICADO DE BRASILIA CEUB",
+          "total": 690.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "00.059.857/0001-87"
+        },
+        {
+          "nome": "HELCIA FATIMA SOUZA PIRES",
+          "total": 690.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "72288213191"
+        },
+        {
+          "nome": "NATHALIA BATISTA SOARES",
+          "total": 690.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "03702988106"
+        },
+        {
+          "nome": "CLINICA SLIMIA",
+          "total": 655.5,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "48.244.849/0001-37"
+        },
+        {
+          "nome": "BARBARA BRITO",
+          "total": 567.3,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "01005745137"
+        },
+        {
+          "nome": "FD ASA NORTE CENTRO DE ESTETICA LTDA",
+          "total": 560.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "51.108.208/0001-60"
+        },
+        {
+          "nome": "CRISTIANE ALVES CHAVEIRO",
+          "total": 545.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "01036256154"
+        },
+        {
+          "nome": "AILDA DE OLIVEIRA CARDOSO CEMBRANEL",
+          "total": 500.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "09186930125"
+        },
+        {
+          "nome": "RONEI FARIAS DE ALMEIDA",
+          "total": 349.3,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "70281203172"
+        },
+        {
+          "nome": "EMERSON KEVINY NUNES DE ARAUJO",
+          "total": 340.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "05072129160"
+        },
+        {
+          "nome": "SOLANGE MENDEZ DE LIMA",
+          "total": 340.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "40907732453"
+        },
+        {
+          "nome": "LUANA LOPES",
+          "total": 308.56,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "31062232003"
+        },
+        {
+          "nome": "RADIANCE SKIN CENTRO DE ESTETICA AVANCADA LTDA",
+          "total": 306.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "54.327.841/0001-37"
+        },
+        {
+          "nome": "NEUSALINA RIBEIRO DA SILVA",
+          "total": 269.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "00358499160"
+        },
+        {
+          "nome": "DOUGLAS RANGEL GOULART",
+          "total": 266.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "01435182162"
+        },
+        {
+          "nome": "JOSE RENATO CUNHA BATISTA",
+          "total": 181.3,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "00375822160"
+        }
+      ]
+    },
+    {
+      "cfop": "6-152",
+      "descricao": "Transferência p/ filial",
+      "finalidade": "Transferência p/ filial",
+      "qtd": 123,
+      "total": 81470.04,
+      "icms": 2851.1,
+      "pct": 2.9,
+      "parties": [
+        {
+          "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+          "total": 81470.04,
+          "qtd": 123,
+          "uf": "SP",
+          "cnpj": "21.051.983/0007-50"
+        }
+      ]
+    },
+    {
+      "cfop": "5-914",
+      "descricao": "Remessa p/ filial (intraestadual)",
+      "finalidade": "Remessa p/ filial (intraestadual)",
+      "qtd": 1,
+      "total": 59000.0,
+      "icms": 0.0,
+      "pct": 2.1,
+      "parties": [
+        {
+          "nome": "NEWTON XISTO DE BRITO JUNIOR",
+          "total": 59000.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "41590295153"
+        }
+      ]
+    },
+    {
+      "cfop": "6-910",
+      "descricao": "Bonificação interestadual",
+      "finalidade": "Bonificação interestadual",
+      "qtd": 10,
+      "total": 17988.9,
+      "icms": 791.82,
+      "pct": 0.6,
+      "parties": [
+        {
+          "nome": "CHRIS MEDIC PRODUTOS MEDICOS HOSPITALARES E COSMETICOS LTDA",
+          "total": 5355.0,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "10.947.897/0001-19"
+        },
+        {
+          "nome": "FERNANDA SALES CASSAIN",
+          "total": 4320.0,
+          "qtd": 1,
+          "uf": "CE",
+          "cnpj": "61771392304"
+        },
+        {
+          "nome": "TASCA FERRARINI LTDA",
+          "total": 2720.0,
+          "qtd": 2,
+          "uf": "GO",
+          "cnpj": "61.023.260/0001-77"
+        },
+        {
+          "nome": "LETICIA UMINO ODONTOLOGIA E ESTETICA ESPECIALIZADA LTDA",
+          "total": 2156.0,
+          "qtd": 1,
+          "uf": "TO",
+          "cnpj": "45.355.412/0001-82"
+        },
+        {
+          "nome": "CLINICA BOGO &AMP; GALINDO LTDA",
+          "total": 920.0,
+          "qtd": 1,
+          "uf": "SC",
+          "cnpj": "08.563.034/0001-04"
+        },
+        {
+          "nome": "MARIA ISABEL ALVES QUERINO",
+          "total": 900.0,
+          "qtd": 1,
+          "uf": "SC",
+          "cnpj": "01458143945"
+        },
+        {
+          "nome": "ANA CLAUDIA FEDI",
+          "total": 760.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "83644067015"
+        },
+        {
+          "nome": "THAINA AFONSO IGREJA",
+          "total": 760.0,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "18201099761"
+        },
+        {
+          "nome": "NAYANA COSTA SANTOS FIALHO",
+          "total": 97.9,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "00029278104"
+        }
+      ]
+    },
+    {
+      "cfop": "5-910",
+      "descricao": "Bonificação / doação",
+      "finalidade": "Bonificação / doação",
+      "qtd": 3,
+      "total": 6919.0,
+      "icms": 1383.8,
+      "pct": 0.2,
+      "parties": [
+        {
+          "nome": "PATRICIA REGINA ACADEMY ODONTOLOGIA E TREINAMENTOS LTDA",
+          "total": 4589.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "41.772.562/0001-30"
+        },
+        {
+          "nome": "CLINICA AVLIS PROCEDIMENTOS ESTETICOS LTDA",
+          "total": 1630.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "38.391.310/0001-57"
+        },
+        {
+          "nome": "CLINICA PRISCILLA PROENCA E INSTITUTO DO EMAGRECIMENTO E...",
+          "total": 700.0,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "36.920.210/0001-45"
+        }
+      ]
+    },
+    {
+      "cfop": "6-949",
+      "descricao": "Outra saída não especificada",
+      "finalidade": "Outra saída não especificada",
+      "qtd": 1,
+      "total": 343.0,
+      "icms": 0.0,
+      "pct": 0.0,
+      "parties": [
+        {
+          "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+          "total": 343.0,
+          "qtd": 1,
+          "uf": "SP",
+          "cnpj": "21.051.983/0007-50"
+        }
+      ]
+    }
+  ],
+  "finalidade": [
+    {
+      "finalidade": "Devolução Venda",
+      "total": 41067.3,
+      "qtd": 6,
+      "pct": 53.0
+    },
+    {
+      "finalidade": "Retorno Ind.",
+      "total": 36417.2,
+      "qtd": 3,
+      "pct": 47.0
+    }
+  ],
+  "ranking_fornecedores": [
+    {
+      "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+      "total": 36417.2,
+      "qtd": 3,
+      "uf": "DF",
+      "cnpj": "21.051.983/0003-27",
+      "pct": 47.0
+    },
+    {
+      "nome": "DHR COMERCIO DE PRODUTOS COSMETICOS",
+      "total": 21805.0,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "35.955.098/0001-15",
+      "pct": 28.1
+    },
+    {
+      "nome": "TASCA FERRARINI LTDA",
+      "total": 9920.0,
+      "qtd": 1,
+      "uf": "GO",
+      "cnpj": "61.023.260/0001-77",
+      "pct": 12.8
+    },
+    {
+      "nome": "PATRICIA MOCCINI LOPES",
+      "total": 7169.0,
+      "qtd": 1,
+      "uf": "RJ",
+      "cnpj": "00602855756",
+      "pct": 9.3
+    },
+    {
+      "nome": "JESSICA PEREIRA DE BRITO IMOTO",
+      "total": 999.0,
+      "qtd": 1,
+      "uf": "SP",
+      "cnpj": "34630005803",
+      "pct": 1.3
+    },
+    {
+      "nome": "KARLA SATO SAUDE E ESTETICA AVANCADA LTDA",
+      "total": 737.2,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "45.119.210/0001-31",
+      "pct": 1.0
+    },
+    {
+      "nome": "BARBARA BRITO",
+      "total": 437.1,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "01005745137",
+      "pct": 0.6
+    }
+  ],
+  "ranking_clientes": [
+    {
+      "nome": "SPE GL EVENTS CENTRO DE CONVENCOES ANHEMBI S.A.",
+      "total": 1596429.1,
+      "qtd": 2,
+      "uf": "SP",
+      "cnpj": "41.542.832/0001-17",
+      "pct": 57.6
+    },
+    {
+      "nome": "VELLOZIA PRODUTOS HOSPITALARES EIRELI",
+      "total": 114517.0,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "16.918.361/0001-51",
+      "pct": 4.1
+    },
+    {
+      "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+      "total": 81813.04,
+      "qtd": 124,
+      "uf": "SP",
+      "cnpj": "21.051.983/0007-50",
+      "pct": 3.0
+    },
+    {
+      "nome": "NEWTON XISTO DE BRITO JUNIOR",
+      "total": 59000.0,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "41590295153",
+      "pct": 2.1
+    },
+    {
+      "nome": "FARMAHOF",
+      "total": 47736.0,
+      "qtd": 1,
+      "uf": "SC",
+      "cnpj": "48.326.073/0001-02",
+      "pct": 1.7
+    },
+    {
+      "nome": "BUY EVOLUTION LTDA",
+      "total": 40183.0,
+      "qtd": 2,
+      "uf": "RJ",
+      "cnpj": "46.926.338/0001-70",
+      "pct": 1.5
+    },
+    {
+      "nome": "BARBHARA GIRAO COSTA RODRIGUES",
+      "total": 36000.0,
+      "qtd": 1,
+      "uf": "CE",
+      "cnpj": "06525831300",
+      "pct": 1.3
+    },
+    {
+      "nome": "RDL MEDICAL LTDA",
+      "total": 34723.0,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "55.847.801/0001-89",
+      "pct": 1.3
+    },
+    {
+      "nome": "ESSENZZIALE MATERIAL MEDICO E SERVICO LTDA",
+      "total": 28403.57,
+      "qtd": 1,
+      "uf": "ES",
+      "cnpj": "34.133.640/0001-91",
+      "pct": 1.0
+    },
+    {
+      "nome": "AESTHESIS ESTETICA E HARMONIZACAO FACIAL LTDA",
+      "total": 26769.3,
+      "qtd": 3,
+      "uf": "DF",
+      "cnpj": "43.037.666/0001-27",
+      "pct": 1.0
+    },
+    {
+      "nome": "YURI NUNES DE SA",
+      "total": 25164.6,
+      "qtd": 3,
+      "uf": "DF",
+      "cnpj": "99868210100",
+      "pct": 0.9
+    },
+    {
+      "nome": "PATRICIA MOCCINI LOPES",
+      "total": 24397.28,
+      "qtd": 5,
+      "uf": "RJ",
+      "cnpj": "00602855756",
+      "pct": 0.9
+    },
+    {
+      "nome": "CHRIS MEDI PRODUTOS MEDICOS E HOSPITALARES LTDA",
+      "total": 21060.0,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "54.288.917/0001-62",
+      "pct": 0.8
+    },
+    {
+      "nome": "CENTRO DE ESTETICA CARIA VASCONCELOS LTDA",
+      "total": 20505.6,
+      "qtd": 1,
+      "uf": "CE",
+      "cnpj": "33.296.394/0001-26",
+      "pct": 0.7
+    },
+    {
+      "nome": "MEDICSKIN SAUDE E ESTETICA AVANCADA LTDA",
+      "total": 17535.0,
+      "qtd": 1,
+      "uf": "MT",
+      "cnpj": "33.372.926/0001-67",
+      "pct": 0.6
+    }
+  ],
+  "ufs_entradas": {
+    "DF": 55305.1,
+    "GO": 9920.0,
+    "RJ": 7169.0,
+    "MG": 4091.4,
+    "SP": 999.0
+  },
+  "ufs_saidas": {
+    "SP": 1622634.42,
+    "DF": 446822.75,
+    "RJ": 157908.35,
+    "GO": 106208.05,
+    "SC": 88377.31,
+    "CE": 79430.58,
+    "ES": 48314.48,
+    "BA": 40493.24,
+    "MG": 39361.58,
+    "RS": 23595.5,
+    "MT": 18954.0,
+    "TO": 18032.54,
+    "PR": 16246.14,
+    "MS": 12422.69,
+    "MA": 12121.24,
+    "AM": 11003.2,
+    "RR": 7438.5,
+    "PE": 6862.3,
+    "RN": 4846.9,
+    "AL": 2707.2,
+    "PA": 2480.3,
+    "RO": 1782.0,
+    "SE": 1060.0,
+    "AC": 1000.3
+  },
+  "serie_diaria": {
+    "labels": [
+      "04/05/2026",
+      "05/05/2026",
+      "06/05/2026",
+      "07/05/2026",
+      "08/05/2026",
+      "11/05/2026",
+      "12/05/2026",
+      "13/05/2026",
+      "14/05/2026",
+      "15/05/2026",
+      "18/05/2026",
+      "19/05/2026",
+      "20/05/2026",
+      "21/05/2026",
+      "22/05/2026",
+      "23/05/2026",
+      "25/05/2026",
+      "26/05/2026",
+      "27/05/2026",
+      "28/05/2026",
+      "29/05/2026"
+    ],
+    "entradas": [
+      437.1,
+      16162.9,
+      9920.0,
+      0.0,
+      0.0,
+      21805.0,
+      0.0,
+      999.0,
+      0.0,
+      0.0,
+      737.2,
+      0.0,
+      0.0,
+      0.0,
+      20254.3,
+      0.0,
+      0.0,
+      7169.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "saidas": [
+      81905.68,
+      94866.34,
+      42486.57,
+      66339.2,
+      60180.46,
+      28560.52,
+      23852.7,
+      141234.24,
+      29081.44,
+      44207.93,
+      6655.12,
+      47729.17,
+      98433.8,
+      34639.68,
+      19351.64,
+      1550049.1,
+      126734.27,
+      121026.49,
+      30761.64,
+      81382.52,
+      40625.06
+    ]
+  },
+  "dre": {
+    "receita": 2770103.57,
+    "receita_externa": 1033204.43,
+    "cmv": 77484.5,
+    "lucro_bruto": 2692619.07,
+    "margem_bruta_pct": 97.2,
+    "icms_debito": 119033.38,
+    "icms_credito": 5390.77,
+    "saldo_icms": 113642.61,
+    "resultado": 2578976.46,
+    "margem_resultado_pct": 93.1
+  }
+};
+</script>
+
+<script>
+/* Dashboard JPG — renderização dinâmica a partir de FILIAL_DATA */
+
+const D = FILIAL_DATA;
+const PAL = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#f97316','#ec4899'];
+const chartInst = {};
+const tabsInit = {};
+
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.size = 12;
+
+function brl(v) {
+  return 'R$ ' + Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function brlK(v) { return 'R$ ' + (Number(v || 0) / 1000).toFixed(1).replace('.', ',') + 'K'; }
+function pct(v) { return (v == null ? 'N/D' : Number(v).toFixed(1) + '%'); }
+function tip() {
+  return { backgroundColor:'#1e2535', borderColor:'rgba(255,255,255,0.1)', borderWidth:1, padding:12, titleColor:'#e2e8f0', bodyColor:'#94a3b8', cornerRadius:8 };
+}
+function leg() { return { labels:{ usePointStyle:true, padding:16, boxWidth:8, boxHeight:8 } }; }
+function safeChart(id, cfg) {
+  if (chartInst[id]) chartInst[id].destroy();
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  chartInst[id] = new Chart(ctx, cfg);
+}
+function rankClass(i) { return i === 0 ? 'g1' : i === 1 ? 'g2' : i === 2 ? 'g3' : 'gn'; }
+function pbRow(pctVal, color) {
+  const w = Math.min(100, Math.max(4, pctVal));
+  return '<div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:'+w+'%;background:'+(color||'var(--accent)')+'"></div></div><div class="pb-pct">'+pctVal.toFixed(1)+'%</div></div>';
+}
+
+const tabTitles = {
+  'visao-geral': ['Visão Geral', 'Resumo ICMS — ' + D.meta.filial_label],
+  'entradas': ['Entradas', 'Compras e recebimentos — ' + D.meta.filial_label],
+  'finalidade': ['Finalidade de Entradas', 'Classificação CFOP — ' + D.meta.filial_label],
+  'vendas': ['Vendas', 'Faturamento — ' + D.meta.filial_label],
+  'dre': ['DRE', 'Resultado operacional — ' + D.meta.filial_label],
+};
+
+function showTab(name) {
+  document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const sec = document.getElementById('tab-' + name);
+  const nav = document.getElementById('nav-' + name);
+  if (sec) sec.classList.add('active');
+  if (nav) nav.classList.add('active');
+  const h = tabTitles[name] || ['Dashboard',''];
+  document.getElementById('headerTitle').innerHTML = h[0] + ' <span>' + h[1] + '</span>';
+  if (!tabsInit[name]) {
+    tabsInit[name] = true;
+    setTimeout(() => ({ 'visao-geral':initVisaoGeral, entradas:initEntradas, finalidade:initFinalidade, vendas:initVendas, dre:initDRE }[name]?.()), 50);
+  }
+  if (window.innerWidth <= 768) closeMob();
+}
+
+let sbCollapsed = false;
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const mw = document.getElementById('mainWrapper');
+  if (window.innerWidth <= 768) {
+    sb.classList.toggle('mob-open');
+    document.getElementById('overlay').classList.toggle('hidden');
+  } else {
+    sbCollapsed = !sbCollapsed;
+    sb.classList.toggle('collapsed', sbCollapsed);
+    mw.classList.toggle('sb-collapsed', sbCollapsed);
+  }
+}
+function closeMob() {
+  document.getElementById('sidebar').classList.remove('mob-open');
+  document.getElementById('overlay').classList.add('hidden');
+}
+
+function kpiCard(color, icon, badge, val, lbl, sub) {
+  return '<div class="kpi-card c-'+color+'"><div class="kpi-head"><div class="kpi-ico c-'+color+'"><i class="'+icon+'"></i></div><div class="kpi-badge neutral">'+badge+'</div></div><div class="kpi-val">'+val+'</div><div class="kpi-lbl">'+lbl+'</div><div class="kpi-sub">'+sub+'</div></div>';
+}
+
+function initMeta() {
+  const m = D.meta;
+  document.title = 'Dashboard ' + m.filial_label + ' | JPG';
+  document.getElementById('logoCompany').textContent = m.filial_label;
+  document.getElementById('logoSubtitle').textContent = m.periodo;
+  document.getElementById('sidebarPeriodo').textContent = m.periodo;
+  document.getElementById('headerBadge').innerHTML = '<i class="fas fa-building" style="font-size:7px;margin-right:5px;"></i> Filial ' + m.codigo;
+  ['vgPeriodo','entPeriodo','finPeriodo','vndPeriodo','drePeriodo'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = m.periodo;
+  });
+  document.getElementById('vgSub').textContent = m.nome + ' — CNPJ ' + m.cnpj + ' — IE ' + m.ie;
+  if (m.alerta) {
+    const ab = document.getElementById('alertBox');
+    ab.style.display = 'block';
+    ab.innerHTML = '<i class="fas fa-info-circle" style="margin-right:8px;"></i><strong>Atenção:</strong> ' + m.alerta;
+  }
+}
+
+function initVisaoGeral() {
+  const k = D.kpis;
+  document.getElementById('kpiVisao').innerHTML =
+    kpiCard('green','fas fa-cart-shopping',D.meta.periodo, brl(k.entradas), 'Total Entradas', k.n_nf_ent + ' NF-e · ' + k.n_fornecedores + ' fornec.') +
+    kpiCard('blue','fas fa-store',D.meta.periodo, brl(k.saidas), 'Total Vendas', k.n_nf_sai + ' NF-e · ' + k.n_clientes + ' clientes') +
+    kpiCard('yellow','fas fa-file-invoice-dollar','ICMS', brl(k.saldo_icms), 'Saldo ICMS', 'Débito ' + brl(k.icms_debito) + ' − Crédito ' + brl(k.icms_credito)) +
+    kpiCard('purple','fas fa-chart-pie','DRE', pct(D.dre.margem_bruta_pct), 'Margem Bruta', 'Lucro bruto ' + brl(D.dre.lucro_bruto));
+
+  safeChart('chartCompBar', {
+    type:'bar',
+    data:{ labels:['Entradas','Vendas'], datasets:[{ label:'Valor Contábil', data:[k.entradas, k.saidas], backgroundColor:['rgba(16,185,129,0.7)','rgba(59,130,246,0.7)'], borderRadius:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tip(), callbacks:{ label:c=>brl(c.parsed.y)} } }, scales:{ y:{ ticks:{ callback:v=>brlK(v*1000) } } } }
+  });
+
+  const cfSai = D.cfop_saidas.slice(0,8);
+  safeChart('chartCfopSai', {
+    type:'doughnut',
+    data:{ labels: cfSai.map(c=>c.cfop), datasets:[{ data: cfSai.map(c=>c.total), backgroundColor:PAL, borderWidth:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'55%', plugins:{ legend:{...leg(), position:'right'}, tooltip:{...tip(), callbacks:{ label:c=>c.label+': '+brl(c.parsed)} } } }
+  });
+
+  const sd = D.serie_diaria;
+  safeChart('chartDaily', {
+    type:'line',
+    data:{ labels: sd.labels, datasets:[
+      { label:'Entradas', data:sd.entradas, borderColor:'#10b981', backgroundColor:'rgba(16,185,129,0.1)', fill:true, tension:0.3 },
+      { label:'Vendas', data:sd.saidas, borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.1)', fill:true, tension:0.3 }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:leg(), tooltip:{...tip(), callbacks:{ label:c=>c.dataset.label+': '+brl(c.parsed.y)} } } }
+  });
+}
+
+function initEntradas() {
+  const k = D.kpis;
+  const ufs = Object.keys(D.ufs_entradas);
+  document.getElementById('kpiEntradas').innerHTML =
+    kpiCard('green','fas fa-boxes-stacked',D.meta.periodo, brl(k.entradas), 'Total Entradas', k.n_nf_ent + ' notas fiscais') +
+    kpiCard('blue','fas fa-handshake','—', String(k.n_fornecedores), 'Fornecedores', 'Fornecedores distintos no período') +
+    kpiCard('purple','fas fa-map-location-dot','—', ufs.length + ' UF' + (ufs.length!==1?'s':''), 'Estados de Origem', ufs.slice(0,3).join(', ') || '—');
+
+  const top = D.ranking_fornecedores.slice(0,10);
+  safeChart('chartFornecedores', {
+    type:'bar',
+    data:{ labels: top.map(f=>f.nome.substring(0,22)), datasets:[{ data: top.map(f=>f.total/1000), backgroundColor:'rgba(16,185,129,0.7)', borderRadius:4 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tip(), callbacks:{ label:c=>brl(c.parsed.x*1000)} } }, scales:{ x:{ ticks:{ callback:v=>'R$'+v+'K' } } } }
+  });
+
+  const ufLabels = Object.keys(D.ufs_entradas);
+  const ufVals = ufLabels.map(u=>D.ufs_entradas[u]);
+  safeChart('chartUfEnt', {
+    type:'doughnut',
+    data:{ labels:ufLabels, datasets:[{ data:ufVals, backgroundColor:PAL, borderWidth:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{...leg(), position:'right'}, tooltip:{...tip(), callbacks:{ label:c=>c.label+': '+brl(c.parsed)} } } }
+  });
+
+  document.getElementById('tblFornecedores').innerHTML = D.ranking_fornecedores.map((f,i)=>
+    '<tr><td><div class="rank '+rankClass(i)+'">'+(i+1)+'</div></td><td><div class="fw7">'+f.nome+'</div><div class="td-mute">'+f.cnpj+'</div></td><td><span class="chip bl">'+f.uf+'</span></td><td class="r td-val">'+brl(f.total)+'</td><td>'+pbRow(f.pct)+'</td><td class="r">'+f.qtd+'</td></tr>'
+  ).join('') || '<tr><td colspan="6" class="td-mute">Sem entradas no período</td></tr>';
+}
+
+function initFinalidade() {
+  const fin = D.finalidade;
+  const colors = ['c-blue','c-green','c-orange','c-purple','c-cyan','c-yellow'];
+  document.getElementById('kpiFinalidade').innerHTML = fin.slice(0,4).map((f,i)=>
+    kpiCard(colors[i%colors.length].replace('c-',''), 'fas fa-tag', f.finalidade.substring(0,18), brl(f.total), f.finalidade, f.pct+'% do total · '+f.qtd+' NF')
+  ).join('') || kpiCard('gy','fas fa-minus','—','R$ 0,00','Sem entradas','—');
+
+  safeChart('chartFinalidade', {
+    type:'doughnut',
+    data:{ labels: fin.map(f=>f.finalidade), datasets:[{ data: fin.map(f=>f.total), backgroundColor:PAL, borderWidth:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'50%', plugins:{ legend:{...leg(), position:'right'}, tooltip:{...tip(), callbacks:{ label:c=>c.label+': '+brl(c.parsed)} } } }
+  });
+
+  const cf = D.cfop_entradas.slice(0,10);
+  safeChart('chartCfopEnt', {
+    type:'bar',
+    data:{ labels: cf.map(c=>c.cfop), datasets:[{ data: cf.map(c=>c.total/1000), backgroundColor:'rgba(59,130,246,0.7)', borderRadius:4 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tip(), callbacks:{ label:c=>brl(c.parsed.y*1000)} } }, scales:{ y:{ ticks:{ callback:v=>'R$'+v+'K' } } } }
+  });
+
+  document.getElementById('tblCfopEnt').innerHTML = D.cfop_entradas.map(c=>
+    '<tr><td><span class="chip bl">'+c.cfop+'</span></td><td style="font-size:12px">'+c.descricao+'</td><td><span class="chip pu">'+c.finalidade+'</span></td><td class="r">'+c.qtd+'</td><td class="r td-val">'+brl(c.total)+'</td><td>'+pbRow(c.pct)+'</td></tr>'
+  ).join('') || '<tr><td colspan="6" class="td-mute">Sem dados</td></tr>';
+}
+
+function initVendas() {
+  const k = D.kpis;
+  document.getElementById('kpiVendas').innerHTML =
+    kpiCard('blue','fas fa-store',D.meta.periodo, brl(k.saidas), 'Total Vendas', k.n_nf_sai + ' notas fiscais') +
+    kpiCard('green','fas fa-users','—', String(k.n_clientes), 'Clientes', 'Clientes distintos no período') +
+    kpiCard('yellow','fas fa-file-invoice','ICMS', brl(k.icms_debito), 'ICMS Débito', 'Imposto sobre saídas');
+
+  const top = D.ranking_clientes.slice(0,10);
+  safeChart('chartClientes', {
+    type:'bar',
+    data:{ labels: top.map(c=>c.nome.substring(0,22)), datasets:[{ data: top.map(c=>c.total/1000), backgroundColor:'rgba(59,130,246,0.7)', borderRadius:4 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tip(), callbacks:{ label:c=>brl(c.parsed.x*1000)} } }, scales:{ x:{ ticks:{ callback:v=>'R$'+v+'K' } } } }
+  });
+
+  const cf = D.cfop_saidas.slice(0,8);
+  safeChart('chartCfopVendas', {
+    type:'bar',
+    data:{ labels: cf.map(c=>c.cfop), datasets:[{ data: cf.map(c=>c.total/1000), backgroundColor:'rgba(139,92,246,0.7)', borderRadius:4 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tip(), callbacks:{ label:c=>brl(c.parsed.y*1000)} } }, scales:{ y:{ ticks:{ callback:v=>'R$'+v+'K' } } } }
+  });
+
+  document.getElementById('tblClientes').innerHTML = D.ranking_clientes.map((c,i)=>
+    '<tr><td><div class="rank '+rankClass(i)+'">'+(i+1)+'</div></td><td><div class="fw7">'+c.nome+'</div><div class="td-mute">'+c.cnpj+'</div></td><td><span class="chip bl">'+c.uf+'</span></td><td class="r td-val">'+brl(c.total)+'</td><td>'+pbRow(c.pct)+'</td><td class="r">'+c.qtd+'</td></tr>'
+  ).join('') || '<tr><td colspan="6" class="td-mute">Sem vendas a clientes no período</td></tr>';
+}
+
+function initDRE() {
+  const d = D.dre;
+  const isMatriz = D.meta.filial_key === 'MATRIZ';
+  document.getElementById('dreMargins').innerHTML =
+    '<div class="margin-card"><div class="margin-val t-accent">'+brl(d.receita)+'</div><div class="margin-lbl">Receita Bruta</div><div class="margin-sub">Saídas ICMS</div></div>' +
+    '<div class="margin-card"><div class="margin-val">'+brl(d.cmv)+'</div><div class="margin-lbl">CMV (Entradas)</div><div class="margin-sub">Custo das mercadorias</div></div>' +
+    '<div class="margin-card"><div class="margin-val t-success">'+pct(d.margem_bruta_pct)+'</div><div class="margin-lbl">Margem Bruta</div><div class="margin-sub">Lucro bruto '+brl(d.lucro_bruto)+'</div></div>' +
+    '<div class="margin-card"><div class="margin-val '+(d.resultado>=0?'t-success':'t-danger')+'">'+brl(d.resultado)+'</div><div class="margin-lbl">Resultado Operacional</div><div class="margin-sub">Após saldo ICMS</div></div>';
+
+  let rows = '';
+  rows += '<tr class="dre-group"><td colspan="2">RECEITAS</td></tr>';
+  rows += '<tr><td>Receita Bruta (Saídas)</td><td class="r td-val">'+brl(d.receita)+'</td></tr>';
+  if (isMatriz && d.receita_externa !== d.receita) {
+    rows += '<tr class="dre-indent"><td>Receita Externa (sem transferências)</td><td class="r">'+brl(d.receita_externa)+'</td></tr>';
+  }
+  rows += '<tr class="dre-group"><td colspan="2">CUSTOS</td></tr>';
+  rows += '<tr><td>(−) CMV — Entradas</td><td class="r dre-neg">('+brl(d.cmv).replace('R$ ','R$ ')+')</td></tr>';
+  rows += '<tr class="dre-total"><td>(=) Lucro Bruto</td><td class="r">'+brl(d.lucro_bruto)+'</td></tr>';
+  rows += '<tr class="dre-group"><td colspan="2">IMPOSTOS (ICMS)</td></tr>';
+  rows += '<tr class="dre-indent"><td>(−) ICMS Débito (Saídas)</td><td class="r">('+brl(d.icms_debito)+')</td></tr>';
+  rows += '<tr class="dre-indent"><td>(+) ICMS Crédito (Entradas)</td><td class="r t-success">'+brl(d.icms_credito)+'</td></tr>';
+  rows += '<tr><td>Saldo ICMS</td><td class="r td-val">'+brl(d.saldo_icms)+'</td></tr>';
+  rows += '<tr class="dre-lucro"><td>(=) Resultado Operacional (proxy)</td><td class="r">'+brl(d.resultado)+'</td></tr>';
+  rows += '<tr class="dre-nd"><td colspan="2">PIS, COFINS, IRPJ e CSLL não disponíveis neste relatório ICMS.</td></tr>';
+  document.getElementById('tblDre').innerHTML = rows;
+}
+
+async function exportPDF(sectionId, filename) {
+  const section = document.getElementById(sectionId);
+  if (!section || !window.html2canvas || !window.jspdf) return;
+  const btn = event?.currentTarget;
+  const orig = btn?.innerHTML;
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; }
+  try {
+    section.classList.add('pdf-export-target');
+    const canvas = await html2canvas(section, { scale:2, backgroundColor:'#f8fafc', useCORS:true });
+    section.classList.remove('pdf-export-target');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p','mm','a4');
+    const w = pdf.internal.pageSize.getWidth();
+    const h = (canvas.height * w) / canvas.width;
+    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, w, Math.min(h, 290));
+    pdf.save(filename + '_' + D.meta.filial_label.replace(/\s/g,'_') + '.pdf');
+  } catch(e) { console.error(e); }
+  finally { if (btn) { btn.disabled = false; btn.innerHTML = orig; } }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initMeta();
+  showTab('visao-geral');
+});
+
+</script>
+</body>
+</html>

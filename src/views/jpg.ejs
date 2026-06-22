@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#22a329">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <title>JPG — Filiais | Êxito</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f5612 0%, #1a8a20 30%, #22a329 60%, #2CB930 100%);
+      overflow-x: hidden;
+      position: relative;
+      color: #1a1a2e;
+    }
+
+    body::before,
+    body::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      animation: float 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    body::before {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, #4ade80, transparent 70%);
+      top: -150px; right: -100px;
+    }
+    body::after {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #86efac, transparent 70%);
+      bottom: -120px; left: -80px;
+      animation-delay: -4s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, -30px) scale(1.05); }
+    }
+
+    .dot-pattern {
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 2rem;
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.55rem 1rem;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.95);
+      color: #6b7280;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 2px solid transparent;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      transition: all 0.25s ease;
+    }
+    .btn-back:hover {
+      color: #22a329;
+      border-color: rgba(34,163,41,0.2);
+      transform: translateY(-1px);
+    }
+
+    .hero {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: #f0fdf4;
+      color: #22a329;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 0 0 8px;
+      color: #1a1a2e;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 0.9rem;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .filial-card {
+      position: relative;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.6);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+      animation: cardStagger 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .filial-card:nth-child(1) { animation-delay: 0.1s; }
+    .filial-card:nth-child(2) { animation-delay: 0.18s; }
+    .filial-card:nth-child(3) { animation-delay: 0.26s; }
+    .filial-card:nth-child(4) { animation-delay: 0.34s; }
+
+    @keyframes cardStagger {
+      from { opacity: 0; transform: translateY(20px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .filial-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #22a329, #4ade80);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .filial-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(44, 185, 48, 0.18), 0 0 0 2px rgba(44, 185, 48, 0.12);
+    }
+
+    .filial-card:hover::before { opacity: 1; }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      background: #f0fdf4;
+      color: #22a329;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .code {
+      font-size: 0.68rem;
+      color: #9ca3af;
+      font-weight: 600;
+    }
+
+    .filial-card h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.35;
+      margin: 0;
+      color: #1a1a2e;
+    }
+
+    .meta {
+      font-size: 0.72rem;
+      color: #6b7280;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid #f3f4f6;
+    }
+
+    .stat .lbl {
+      display: block;
+      font-size: 0.62rem;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .stat .val {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #22a329;
+    }
+
+    .card-foot {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #22a329;
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: all 0.3s ease;
+    }
+
+    .filial-card:hover .card-foot {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.55);
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 1.5rem; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dot-pattern"></div>
+
+  <div class="page">
+    <div class="top-bar">
+      <a href="/auth/dashboard-selector" class="btn-back">
+        <i class="fas fa-arrow-left"></i>
+        Voltar aos dashboards
+      </a>
+    </div>
+
+    <div class="hero">
+      <div class="hero-badge">
+        <i class="fas fa-leaf"></i>
+        JPG · Produtos Funcionais
+      </div>
+      <h1>Dashboards por Filial</h1>
+      <p>Relatórios ICMS · Mai/2026 — selecione a unidade para visualizar entradas, vendas e DRE.</p>
+    </div>
+
+    <div class="grid">
+      <% hub.forEach(function(item) { %>
+      <a href="<%= item.route %>" class="filial-card">
+        <div class="card-top">
+          <span class="badge"><i class="fas fa-building"></i> <%= item.badge %></span>
+          <span class="code">Cód. <%= item.code %></span>
+        </div>
+        <h2><%= item.filial_label %></h2>
+        <p class="meta"><%= item.nome %><br>CNPJ <%= item.cnpj %> · <%= item.periodo %></p>
+        <div class="stats">
+          <div class="stat">
+            <span class="lbl">Entradas</span>
+            <span class="val"><%= item.entradas_fmt %></span>
+          </div>
+          <div class="stat">
+            <span class="lbl">Vendas</span>
+            <span class="val"><%= item.saidas_fmt %></span>
+          </div>
+          <div class="stat">
+            <span class="lbl">NF Entrada</span>
+            <span class="val"><%= item.n_nf_ent %></span>
+          </div>
+          <div class="stat">
+            <span class="lbl">NF Saída</span>
+            <span class="val"><%= item.n_nf_sai %></span>
+          </div>
+        </div>
+        <div class="card-foot">
+          Acessar dashboard
+          <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i>
+        </div>
+      </a>
+      <% }); %>
+    </div>
+
+    <div class="footer">
+      © <%= new Date().getFullYear() %> Êxito · JPG Produtos Funcionais e Nutricionais
+    </div>
+  </div>
+</body>
+</html>

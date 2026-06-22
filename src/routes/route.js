@@ -12,4 +12,6 @@ router.get("/auth/UNICATINTAS",authMiddleware,authControl.UNICATINTAS)
 router.get("/auth/loja-maquinas",authMiddleware,authControl.lojamaquinas)
 router.get("/auth/baifer2trm",authMiddleware,authControl.baifer2trm)
 router.get("/auth/baifer1trm", authMiddleware, authControl.baifer1trm)
+router.get("/auth/jpg", authMiddleware, authControl.jpg)
+router.get("/auth/jpg/:filial", authMiddleware, authControl.jpgFilial)
 module.exports=router   

@@ -1,0 +1,101 @@
+<div id="overlay" class="overlay hidden" onclick="closeMob()"></div>
+<div id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="fas fa-leaf"></i></div>
+      <div class="logo-text">
+        <div class="company" id="logoCompany">JPG</div>
+        <div class="subtitle" id="logoSubtitle">—</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sec-label">Principal</div>
+      <div class="nav-item active" id="nav-visao-geral" onclick="showTab('visao-geral')"><div class="nav-ico"><i class="fas fa-gauge-high"></i></div><span class="nav-label">Visão Geral</span></div>
+      <div class="sec-label">Movimentação</div>
+      <div class="nav-item" id="nav-entradas" onclick="showTab('entradas')"><div class="nav-ico"><i class="fas fa-cart-shopping"></i></div><span class="nav-label">Entradas</span></div>
+      <div class="nav-item" id="nav-finalidade" onclick="showTab('finalidade')"><div class="nav-ico"><i class="fas fa-tags"></i></div><span class="nav-label">Finalidade Entradas</span></div>
+      <div class="nav-item" id="nav-vendas" onclick="showTab('vendas')"><div class="nav-ico"><i class="fas fa-store"></i></div><span class="nav-label">Vendas</span></div>
+      <div class="sec-label">Financeiro</div>
+      <div class="nav-item" id="nav-dre" onclick="showTab('dre')"><div class="nav-ico"><i class="fas fa-chart-line"></i></div><span class="nav-label">DRE</span></div>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="sidebar-foot-info">
+        <div class="lbl">Competência</div>
+        <div class="val" id="sidebarPeriodo">—</div>
+      </div>
+    </div>
+  </aside>
+  <div class="main-wrapper" id="mainWrapper">
+    <header class="top-header">
+      <button class="btn-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <div class="header-title" id="headerTitle">Dashboard</div>
+      <div class="header-actions">
+        <div class="regime-badge" id="headerBadge"><i class="fas fa-building" style="font-size:7px;margin-right:5px;"></i>ICMS</div>
+        <a href="index.html" class="btn-export" style="text-decoration:none"><i class="fas fa-th-large"></i> Filiais</a>
+      </div>
+    </header>
+    <main class="content">
+      <section id="tab-visao-geral" class="tab-section active">
+        <div class="sec-header"><div><div class="sec-title">Visão Geral <small id="vgPeriodo"></small></div><div class="sec-sub" id="vgSub"></div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-visao-geral','Visao_Geral')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div id="alertBox" class="alert-box" style="display:none"></div>
+        <div class="kpi-grid kpi-grid-4" id="kpiVisao"></div>
+        <div class="charts-row cr-2col">
+          <div class="chart-card"><div class="chart-ttl">Entradas × Vendas</div><div class="chart-sub">Valor contábil total do período</div><div class="chart-wrap h260"><canvas id="chartCompBar"></canvas></div></div>
+          <div class="chart-card"><div class="chart-ttl">CFOP — Saídas</div><div class="chart-sub">Participação por CFOP nas vendas</div><div class="chart-wrap h260"><canvas id="chartCfopSai"></canvas></div></div>
+        </div>
+        <div class="charts-row cr-1col">
+          <div class="chart-card"><div class="chart-ttl">Movimentação Diária</div><div class="chart-sub">Entradas e vendas por data de emissão</div><div class="chart-wrap h220"><canvas id="chartDaily"></canvas></div></div>
+        </div>
+      </section>
+      <section id="tab-entradas" class="tab-section">
+        <div class="sec-header"><div><div class="sec-title">Entradas <small id="entPeriodo"></small></div><div class="sec-sub">Aquisições e recebimentos — relatório ICMS</div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-entradas','Entradas')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div class="kpi-grid kpi-grid-3" id="kpiEntradas"></div>
+        <div class="charts-row cr-2col">
+          <div class="chart-card"><div class="chart-ttl">Ranking de Fornecedores</div><div class="chart-sub">Valor contábil por fornecedor</div><div class="chart-wrap h300"><canvas id="chartFornecedores"></canvas></div></div>
+          <div class="chart-card"><div class="chart-ttl">Entradas por UF de Origem</div><div class="chart-sub">Participação por estado</div><div class="chart-wrap h300"><canvas id="chartUfEnt"></canvas></div></div>
+        </div>
+        <div class="table-card"><div class="table-head"><div><div class="ttl">Ranking de Fornecedores</div><div class="sub">Detalhamento por participação</div></div></div>
+          <div class="tbl-scroll"><table><thead><tr><th>#</th><th>Fornecedor</th><th>UF</th><th class="r">Valor</th><th>Participação</th><th class="r">NF</th></tr></thead><tbody id="tblFornecedores"></tbody></table></div>
+        </div>
+      </section>
+      <section id="tab-finalidade" class="tab-section">
+        <div class="sec-header"><div><div class="sec-title">Finalidade de Entradas <small id="finPeriodo"></small></div><div class="sec-sub">Classificação por CFOP das entradas</div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-finalidade','Finalidade')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div class="kpi-grid kpi-grid-4" id="kpiFinalidade"></div>
+        <div class="charts-row cr-2col">
+          <div class="chart-card"><div class="chart-ttl">Entradas por Finalidade</div><div class="chart-sub">Agrupamento fiscal CFOP</div><div class="chart-wrap h260"><canvas id="chartFinalidade"></canvas></div></div>
+          <div class="chart-card"><div class="chart-ttl">Entradas por CFOP</div><div class="chart-sub">Valor contábil por código fiscal</div><div class="chart-wrap h260"><canvas id="chartCfopEnt"></canvas></div></div>
+        </div>
+        <div class="table-card"><div class="table-head"><div><div class="ttl">Detalhamento por CFOP</div></div></div>
+          <div class="tbl-scroll"><table><thead><tr><th>CFOP</th><th>Descrição</th><th>Finalidade</th><th class="r">Qtd NF</th><th class="r">Valor</th><th>Participação</th></tr></thead><tbody id="tblCfopEnt"></tbody></table></div>
+        </div>
+      </section>
+      <section id="tab-vendas" class="tab-section">
+        <div class="sec-header"><div><div class="sec-title">Vendas <small id="vndPeriodo"></small></div><div class="sec-sub">Faturamento por cliente — relatório ICMS saídas</div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-vendas','Vendas')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div class="kpi-grid kpi-grid-3" id="kpiVendas"></div>
+        <div class="charts-row cr-2col">
+          <div class="chart-card"><div class="chart-ttl">Ranking de Clientes</div><div class="chart-sub">Valor contábil por cliente</div><div class="chart-wrap h300"><canvas id="chartClientes"></canvas></div></div>
+          <div class="chart-card"><div class="chart-ttl">Vendas por CFOP</div><div class="chart-sub">Distribuição fiscal das saídas</div><div class="chart-wrap h300"><canvas id="chartCfopVendas"></canvas></div></div>
+        </div>
+        <div class="table-card"><div class="table-head"><div><div class="ttl">Ranking de Clientes</div></div></div>
+          <div class="tbl-scroll"><table><thead><tr><th>#</th><th>Cliente</th><th>UF</th><th class="r">Valor</th><th>Participação</th><th class="r">NF</th></tr></thead><tbody id="tblClientes"></tbody></table></div>
+        </div>
+      </section>
+      <section id="tab-dre" class="tab-section">
+        <div class="sec-header"><div><div class="sec-title">DRE <small id="drePeriodo"></small></div><div class="sec-sub">Demonstrativo derivado dos relatórios ICMS (sem PIS/COFINS/IRPJ)</div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-dre','DRE')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div class="formula-box"><div class="fttl">Metodologia</div><div class="fline">Receita = Σ Valor Contábil (Saídas ICMS) · CMV = Σ Valor Contábil (Entradas ICMS)<br>Resultado = Lucro Bruto − Saldo ICMS (Débito Saídas − Crédito Entradas)</div></div>
+        <div class="margin-grid" id="dreMargins"></div>
+        <div class="table-card"><div class="table-head"><div><div class="ttl">Demonstrativo do Resultado</div></div></div>
+          <div class="tbl-scroll"><table class="dre-tbl"><tbody id="tblDre"></tbody></table></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<script>
+const FILIAL_DATA = __FILIAL_DATA__;
+</script>

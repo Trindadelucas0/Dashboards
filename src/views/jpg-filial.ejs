@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard <%= filialData.meta.filial_label %> | JPG</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#0f1117; --bg-sidebar:#161b27; --bg-card:#1e2535; --bg-card-hover:#252d42;
+      --accent:#22a329; --accent-hover:#1a8a20; --success:#10b981; --danger:#ef4444;
+      --warning:#f59e0b; --purple:#8b5cf6; --cyan:#06b6d4; --orange:#f97316;
+      --text:#e2e8f0; --text-sec:#94a3b8; --text-muted:#64748b;
+      --border:rgba(255,255,255,0.07); --border-accent:rgba(34,163,41,0.35);
+      --sidebar-w:260px; --header-h:68px; --radius:12px; --radius-sm:8px;
+      --shadow:0 4px 24px rgba(0,0,0,0.35); --t:0.22s ease;
+    }
+    html { font-size:14px; scroll-behavior:smooth; }
+    body { font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+    #app { display:flex; min-height:100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width:var(--sidebar-w); background:var(--bg-sidebar); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0;left:0;bottom:0; z-index:100; transition:width var(--t),transform var(--t); overflow:hidden; }
+    .sidebar.collapsed { width:72px; }
+    .sidebar.collapsed .logo-text,.sidebar.collapsed .nav-label,.sidebar.collapsed .sec-label,.sidebar.collapsed .sidebar-foot-info { display:none; }
+    .sidebar-logo { padding:0 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; min-height:var(--header-h); flex-shrink:0; }
+    .logo-icon { width:38px;height:38px; background:linear-gradient(135deg,#22a329,#4ade80); border-radius:10px; display:flex;align-items:center;justify-content:center; font-size:16px;color:#fff; flex-shrink:0; }
+    .logo-text .company { font-size:13px;font-weight:700;color:var(--text);white-space:nowrap; }
+    .logo-text .subtitle { font-size:10px;color:var(--text-muted);margin-top:2px;white-space:nowrap; }
+    .sidebar-nav { flex:1; padding:12px 8px; overflow-y:auto; overflow-x:hidden; }
+    .sidebar-nav::-webkit-scrollbar { width:4px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+    .sec-label { font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:10px 12px 4px; }
+    .nav-item { display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--t),color var(--t);margin-bottom:2px;white-space:nowrap;user-select:none; }
+    .nav-item:hover { background:rgba(255,255,255,0.05); }
+    .nav-item.active { background:rgba(34,163,41,0.15);color:var(--accent); }
+    .nav-item.active .nav-ico { color:var(--accent); }
+    .nav-ico { width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-muted);flex-shrink:0;transition:color var(--t); }
+    .nav-item:hover .nav-ico { color:var(--text); }
+    .nav-label { font-size:13px;font-weight:500; }
+    .sidebar-foot { padding:14px 16px;border-top:1px solid var(--border);flex-shrink:0; }
+    .sidebar-foot-info .lbl { font-size:10px;color:var(--text-muted); }
+    .sidebar-foot-info .val { font-size:12px;font-weight:600;color:var(--accent);margin-top:2px; }
+
+    /* MAIN */
+    .main-wrapper { margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left var(--t); }
+    .main-wrapper.sb-collapsed { margin-left:72px; }
+    .top-header { height:var(--header-h);background:var(--bg-sidebar);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:14px;position:sticky;top:0;z-index:50; }
+    .btn-toggle { width:36px;height:36px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-sec);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:background var(--t),color var(--t); }
+    .btn-toggle:hover { background:var(--bg-card-hover);color:var(--text); }
+    .header-title { font-size:15px;font-weight:600;flex:1; }
+    .header-title span { font-size:12px;font-weight:400;color:var(--text-muted);margin-left:8px; }
+    .header-actions { display:flex;align-items:center;gap:10px;flex-shrink:0; }
+    .period-sel { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:7px 12px;font-size:12px;font-family:inherit;cursor:pointer;outline:none; }
+    .period-sel:focus { border-color:var(--border-accent); }
+    .regime-badge { background:rgba(16,185,129,0.12);color:var(--success);border:1px solid rgba(16,185,129,0.3);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600; }
+
+    /* CONTENT */
+    .content { flex:1;padding:24px;overflow-x:hidden; }
+    .tab-section { display:none;animation:fadeUp .28s ease; }
+    .tab-section.active { display:block; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .sec-header { display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap; }
+    .sec-title { font-size:18px;font-weight:700; }
+    .sec-title small { font-size:12px;font-weight:400;color:var(--text-muted);margin-left:8px; }
+    .sec-sub { font-size:12px;color:var(--text-sec);margin-top:4px; }
+
+    /* KPI CARDS */
+    .kpi-grid { display:grid;gap:16px;margin-bottom:24px; }
+    .kpi-grid-4 { grid-template-columns:repeat(4,1fr); }
+    .kpi-grid-3 { grid-template-columns:repeat(3,1fr); }
+    .kpi-grid-2 { grid-template-columns:repeat(2,1fr); }
+    .kpi-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;transition:transform var(--t),box-shadow var(--t); }
+    .kpi-card:hover { transform:translateY(-2px);box-shadow:var(--shadow); }
+    .kpi-card::before { content:'';position:absolute;top:0;left:0;right:0;height:3px; }
+    .kpi-card.c-blue::before   { background:linear-gradient(90deg,var(--accent),transparent); }
+    .kpi-card.c-green::before  { background:linear-gradient(90deg,var(--success),transparent); }
+    .kpi-card.c-red::before    { background:linear-gradient(90deg,var(--danger),transparent); }
+    .kpi-card.c-yellow::before { background:linear-gradient(90deg,var(--warning),transparent); }
+    .kpi-card.c-purple::before { background:linear-gradient(90deg,var(--purple),transparent); }
+    .kpi-card.c-cyan::before   { background:linear-gradient(90deg,var(--cyan),transparent); }
+    .kpi-card.c-orange::before { background:linear-gradient(90deg,var(--orange),transparent); }
+    .kpi-head { display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px; }
+    .kpi-ico { width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:16px; }
+    .kpi-ico.c-blue   { background:rgba(59,130,246,.15);color:var(--accent); }
+    .kpi-ico.c-green  { background:rgba(16,185,129,.15);color:var(--success); }
+    .kpi-ico.c-red    { background:rgba(239,68,68,.15); color:var(--danger); }
+    .kpi-ico.c-yellow { background:rgba(245,158,11,.15);color:var(--warning); }
+    .kpi-ico.c-purple { background:rgba(139,92,246,.15);color:var(--purple); }
+    .kpi-ico.c-cyan   { background:rgba(6,182,212,.15); color:var(--cyan); }
+    .kpi-ico.c-orange { background:rgba(249,115,22,.15);color:var(--orange); }
+    .kpi-badge { font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;display:flex;align-items:center;gap:4px; }
+    .kpi-badge.up      { background:rgba(16,185,129,.15);color:var(--success); }
+    .kpi-badge.down    { background:rgba(239,68,68,.15); color:var(--danger); }
+    .kpi-badge.neutral { background:rgba(100,116,139,.15);color:var(--text-muted); }
+    .kpi-val { font-size:22px;font-weight:800;line-height:1.1;margin-bottom:4px; }
+    .kpi-lbl { font-size:12px;color:var(--text-sec);font-weight:500; }
+    .kpi-sub { font-size:11px;color:var(--text-muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border); }
+
+    /* CHARTS */
+    .charts-row { display:grid;gap:16px;margin-bottom:24px; }
+    .cr-2col { grid-template-columns:1fr 1fr; }
+    .cr-1-2  { grid-template-columns:1fr 2fr; }
+    .cr-2-1  { grid-template-columns:2fr 1fr; }
+    .cr-1col { grid-template-columns:1fr; }
+    .chart-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px; }
+    .chart-ttl { font-size:14px;font-weight:600;margin-bottom:2px; }
+    .chart-sub { font-size:11px;color:var(--text-muted);margin-bottom:14px; }
+    .chart-wrap { position:relative; }
+    .chart-wrap.h220 { height:220px; }
+    .chart-wrap.h260 { height:260px; }
+    .chart-wrap.h300 { height:300px; }
+
+    /* TABLES */
+    .table-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px; }
+    .table-head { padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+    .table-head .ttl { font-size:14px;font-weight:600; }
+    .table-head .sub { font-size:11px;color:var(--text-muted);margin-top:2px; }
+    .tbl-scroll { overflow-x:auto; }
+    table { width:100%;border-collapse:collapse; }
+    thead th { padding:9px 16px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);background:rgba(255,255,255,0.025);border-bottom:1px solid var(--border);white-space:nowrap; }
+    thead th.r { text-align:right; }
+    tbody td { padding:11px 16px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle; }
+    tbody tr:last-child td { border-bottom:none; }
+    tbody tr:hover td { background:rgba(255,255,255,0.02); }
+    td.r { text-align:right; }
+    .td-val { font-weight:600; }
+    .td-mute { color:var(--text-muted);font-size:12px; }
+
+    /* PROGRESS */
+    .pb-wrap { display:flex;align-items:center;gap:10px; }
+    .pb-bar  { flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden; }
+    .pb-fill { height:100%;border-radius:3px;transition:width .8s ease;background:var(--accent); }
+    .pb-fill.gr { background:var(--success); }
+    .pb-fill.ye { background:var(--warning); }
+    .pb-fill.pu { background:var(--purple); }
+    .pb-fill.cy { background:var(--cyan); }
+    .pb-fill.or { background:var(--orange); }
+    .pb-fill.rd { background:var(--danger); }
+    .pb-pct { font-size:12px;font-weight:600;min-width:44px;text-align:right; }
+
+    /* RANK */
+    .rank { width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0; }
+    .rank.g1 { background:rgba(245,158,11,.2);color:var(--warning); }
+    .rank.g2 { background:rgba(148,163,184,.2);color:#94a3b8; }
+    .rank.g3 { background:rgba(180,120,80,.2);color:#c97c4a; }
+    .rank.gn { background:rgba(100,116,139,.15);color:var(--text-muted); }
+
+    /* VARIATION */
+    .var-up   { display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(16,185,129,.15);color:var(--success); }
+    .var-down { display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(239,68,68,.15); color:var(--danger); }
+    .var-neu  { display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(100,116,139,.15);color:var(--text-muted); }
+
+    /* TAX CARDS */
+    .tax-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px; }
+    .tax-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:transform var(--t); }
+    .tax-card:hover { transform:translateY(-2px); }
+    .tax-card-head { display:flex;align-items:center;justify-content:space-between;margin-bottom:14px; }
+    .tax-name { font-size:13px;font-weight:700;letter-spacing:.04em; }
+    .tax-cur  { font-size:24px;font-weight:800;margin-bottom:4px; }
+    .tax-prev { font-size:11px;color:var(--text-muted);margin-bottom:12px; }
+    .tax-foot { display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted); }
+
+    /* MEMORY */
+    .formula-box { background:rgba(34,163,41,0.07);border:1px solid rgba(34,163,41,0.2);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:20px; }
+    .formula-box .fttl { font-weight:700;color:var(--accent);margin-bottom:8px;font-size:13px; }
+    .formula-box .fline { color:var(--text-sec);line-height:1.8;font-size:12px;font-family:'Courier New',monospace; }
+    .mem-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px; }
+    .mem-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden; }
+    .mem-card-head { padding:12px 16px;font-size:13px;font-weight:700;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+    .mem-row { display:flex;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);font-size:12px; }
+    .mem-row:last-child { border-bottom:none; }
+    .mem-row.hl  { background:rgba(59,130,246,0.06); }
+    .mem-row.tot { background:rgba(16,185,129,0.08);font-weight:700; }
+    .mem-row.neg { background:rgba(239,68,68,0.05); }
+    .mem-row .lbl { color:var(--text-sec); }
+    .mem-row .val { font-weight:600; }
+    .mem-row.tot .val { color:var(--success); }
+    .mem-row.neg .val { color:var(--danger); }
+    .alert-box { background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--warning); }
+
+    /* DRE */
+    .margin-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px; }
+    .margin-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center; }
+    .margin-val { font-size:28px;font-weight:800;margin-bottom:4px; }
+    .margin-lbl { font-size:12px;color:var(--text-sec); }
+    .margin-sub { font-size:11px;color:var(--text-muted);margin-top:4px; }
+    .dre-tbl td:first-child { padding-left:16px;font-weight:500; }
+    .dre-tbl .dre-group td  { font-weight:700;background:rgba(255,255,255,0.03);color:var(--text-sec);font-size:11px;text-transform:uppercase;letter-spacing:.05em; }
+    .dre-tbl .dre-indent td:first-child { padding-left:32px;color:var(--text-sec); }
+    .dre-tbl .dre-total td  { font-weight:800;background:rgba(34,163,41,0.07);border-top:1px solid var(--border-accent); }
+    .dre-tbl .dre-lucro td  { font-weight:800;background:rgba(16,185,129,0.08);color:var(--success);font-size:14px; }
+    .dre-tbl .dre-neg td.r  { color:var(--danger); }
+    .dre-tbl .dre-subv td   { background:rgba(245,158,11,0.06); }
+    .dre-tbl .dre-nd td     { color:var(--text-muted);font-style:italic; }
+
+    /* INDICATORS */
+    .ind-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px; }
+    .ind-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:transform var(--t); }
+    .ind-card:hover { transform:translateY(-2px); }
+    .ind-head { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+    .ind-name { font-size:11px;font-weight:600;color:var(--text-sec);text-transform:uppercase;letter-spacing:.04em; }
+    .ind-val  { font-size:26px;font-weight:800;margin-bottom:6px; }
+    .ind-formula { font-size:11px;color:var(--text-muted);font-family:'Courier New',monospace;background:rgba(255,255,255,0.04);padding:6px 10px;border-radius:6px;margin-bottom:10px; }
+    .ind-interp { font-size:11px;color:var(--text-sec);line-height:1.55;padding-top:10px;border-top:1px solid var(--border); }
+    .dot { width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block; }
+    .dot.gr { background:var(--success); }
+    .dot.ye { background:var(--warning); }
+    .dot.rd { background:var(--danger); }
+    .dot.gy { background:var(--text-muted); }
+
+    /* CHIPS */
+    .chip { display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:500; }
+    .chip.bl { background:rgba(59,130,246,.15);color:var(--accent); }
+    .chip.gr { background:rgba(16,185,129,.15);color:var(--success); }
+    .chip.ye { background:rgba(245,158,11,.15);color:var(--warning); }
+    .chip.pu { background:rgba(139,92,246,.15);color:var(--purple); }
+    .chip.cy { background:rgba(6,182,212,.15); color:var(--cyan); }
+    .chip.or { background:rgba(249,115,22,.15);color:var(--orange); }
+    .chip.rd { background:rgba(239,68,68,.15); color:var(--danger); }
+    .chip.gy { background:rgba(100,116,139,.15);color:var(--text-muted); }
+
+    /* UTIL */
+    .divider { height:1px;background:var(--border);margin:20px 0; }
+    .mb-24 { margin-bottom:24px; }
+    .t-success { color:var(--success); }
+    .t-danger  { color:var(--danger); }
+    .t-warning { color:var(--warning); }
+    .t-accent  { color:var(--accent); }
+    .t-muted   { color:var(--text-muted); }
+    .fw7 { font-weight:700; }
+    .fw8 { font-weight:800; }
+
+    /* OVERLAY */
+    .overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:99; }
+    ::-webkit-scrollbar { width:6px;height:6px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:var(--border);border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover { background:var(--text-muted); }
+
+    /* RESPONSIVE */
+    @media (max-width:1300px) {
+      .tax-grid { grid-template-columns:repeat(2,1fr); }
+      .mem-grid { grid-template-columns:repeat(2,1fr); }
+      .ind-grid { grid-template-columns:repeat(2,1fr); }
+      .margin-grid { grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-width:960px) {
+      .kpi-grid-4 { grid-template-columns:repeat(2,1fr); }
+      .kpi-grid-3 { grid-template-columns:repeat(2,1fr); }
+      .cr-2col,.cr-1-2,.cr-2-1 { grid-template-columns:1fr; }
+    }
+    @media (max-width:768px) {
+      .sidebar { transform:translateX(-100%); }
+      .sidebar.mob-open { transform:translateX(0); }
+      .main-wrapper { margin-left:0 !important; }
+      .content { padding:14px; }
+      .tax-grid,.mem-grid,.ind-grid { grid-template-columns:1fr; }
+      .margin-grid { grid-template-columns:repeat(2,1fr); }
+      .overlay { display:block; }
+      .overlay.hidden { display:none; }
+      .export-bar { width:100%; justify-content:flex-end; flex-wrap:wrap; }
+      .btn-export { padding:6px 10px; font-size:.72rem; }
+    }
+
+    /* === EXPORT BUTTONS === */
+    .export-bar { display:flex; gap:8px; margin-left:auto; flex-shrink:0; }
+    .btn-export {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:7px 14px; border-radius:8px;
+      font-size:.78rem; font-weight:600;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:var(--text-sec); cursor:pointer;
+      transition:all .2s ease; font-family:inherit;
+    }
+    .btn-export:hover { background:rgba(59,130,246,.25); border-color:rgba(59,130,246,.5); color:#fff; }
+    .btn-export:disabled { opacity:.5; cursor:wait; }
+    .btn-export i { font-size:.85rem; }
+    .btn-export.pdf  i { color:#ef4444; }
+    .btn-export.xlsx i { color:#22c55e; }
+    .btn-export.print i { color:#f59e0b; }
+
+    /* === SUPPLIER MODAL === */
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(4px);
+      z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px;
+    }
+    .modal-box {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+      width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column;
+      box-shadow:var(--shadow);
+    }
+    .modal-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 20px; border-bottom:1px solid var(--border);
+    }
+    .modal-header h3 { font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px; }
+    .modal-header h3 i { color:var(--warning); }
+    .modal-close {
+      background:none; border:none; color:var(--text-muted); font-size:22px;
+      cursor:pointer; line-height:1; padding:0 4px;
+    }
+    .modal-close:hover { color:var(--text); }
+    .modal-body { padding:16px 20px; overflow-y:auto; flex:1; }
+    .search-box input {
+      width:100%; padding:9px 12px; border-radius:var(--radius-sm);
+      border:1px solid var(--border); background:var(--bg); color:var(--text);
+      font-family:inherit; font-size:13px; outline:none;
+    }
+    .search-box input:focus { border-color:var(--border-accent); }
+    .supplier-actions { display:flex; gap:8px; margin:12px 0; }
+    .supplier-actions button {
+      padding:6px 12px; border-radius:6px; font-size:11px; font-weight:600;
+      border:1px solid var(--border); background:rgba(255,255,255,.05);
+      color:var(--text-sec); cursor:pointer; font-family:inherit;
+    }
+    .supplier-actions button:hover { background:rgba(59,130,246,.15); color:var(--accent); }
+    .supplier-list { display:flex; flex-direction:column; gap:4px; max-height:320px; overflow-y:auto; }
+    .supplier-item {
+      display:flex; align-items:flex-start; gap:10px; padding:10px 12px;
+      border-radius:var(--radius-sm); cursor:pointer; transition:background .15s;
+    }
+    .supplier-item:hover { background:rgba(255,255,255,.04); }
+    .supplier-item input { margin-top:3px; accent-color:var(--accent); }
+    .supplier-info { display:flex; flex-direction:column; gap:2px; }
+    .supplier-info strong { font-size:13px; font-weight:600; }
+    .supplier-info small { font-size:11px; color:var(--text-muted); }
+    .modal-footer {
+      display:flex; justify-content:flex-end; gap:10px;
+      padding:14px 20px; border-top:1px solid var(--border);
+    }
+    .btn-cancel {
+      padding:8px 16px; border-radius:var(--radius-sm); font-size:12px; font-weight:600;
+      border:1px solid var(--border); background:transparent; color:var(--text-sec);
+      cursor:pointer; font-family:inherit;
+    }
+    .btn-cancel:hover { background:rgba(255,255,255,.05); }
+    .btn-confirm {
+      padding:8px 16px; border-radius:var(--radius-sm); font-size:12px; font-weight:600;
+      border:1px solid rgba(59,130,246,.4); background:rgba(59,130,246,.2);
+      color:var(--accent); cursor:pointer; font-family:inherit;
+      display:inline-flex; align-items:center; gap:6px;
+    }
+    .btn-confirm:hover { background:rgba(59,130,246,.35); }
+
+    /* === PDF EXPORT THEME (scoped capture) === */
+    .pdf-export-target {
+      --bg: #f8fafc; --bg-card: #ffffff; --bg-card-hover: #f1f5f9;
+      --text: #1e293b; --text-sec: #475569; --text-muted: #64748b;
+      --border: rgba(0,0,0,0.12);
+      background: #f8fafc !important; color: #1e293b !important;
+      padding: 20px; opacity: 1 !important; filter: none !important; animation: none !important;
+    }
+    .pdf-export-target * { opacity: 1 !important; filter: none !important; }
+    .pdf-export-target .sec-title, .pdf-export-target .kpi-val, .pdf-export-target .chart-ttl,
+    .pdf-export-target .margin-val, .pdf-export-target .ind-val, .pdf-export-target .tax-cur,
+    .pdf-export-target .table-head .ttl, .pdf-export-target tbody td, .pdf-export-target td,
+    .pdf-export-target .kpi-lbl, .pdf-export-target .mem-row .lbl, .pdf-export-target .mem-row .val,
+    .pdf-export-target .fw7, .pdf-export-target .fw8 { color: #1e293b !important; }
+    .pdf-export-target .sec-sub, .pdf-export-target .kpi-sub, .pdf-export-target .chart-sub,
+    .pdf-export-target .table-head .sub, .pdf-export-target .td-mute, .pdf-export-target .sec-title small,
+    .pdf-export-target .margin-sub, .pdf-export-target .tax-prev, .pdf-export-target .ind-formula {
+      color: #475569 !important;
+    }
+    .pdf-export-target .kpi-card, .pdf-export-target .chart-card, .pdf-export-target .table-card,
+    .pdf-export-target .margin-card, .pdf-export-target .tax-card, .pdf-export-target .mem-card,
+    .pdf-export-target .ind-card, .pdf-export-target .alert-box {
+      background: #ffffff !important; border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+    }
+    .pdf-export-target .t-success { color: #059669 !important; }
+    .pdf-export-target .t-warning { color: #d97706 !important; }
+    .pdf-export-target .t-danger  { color: #dc2626 !important; }
+    .pdf-export-target .t-accent  { color: #2563eb !important; }
+    .pdf-export-target .t-muted   { color: #64748b !important; }
+    .pdf-export-target .kpi-ico.c-blue   { background: rgba(59,130,246,.22) !important; color: #2563eb !important; }
+    .pdf-export-target .kpi-ico.c-green  { background: rgba(16,185,129,.22) !important; color: #059669 !important; }
+    .pdf-export-target .kpi-ico.c-yellow { background: rgba(245,158,11,.22) !important; color: #d97706 !important; }
+    .pdf-export-target .kpi-ico.c-purple { background: rgba(139,92,246,.22) !important; color: #7c3aed !important; }
+    .pdf-export-target .export-bar { display: none !important; }
+    .pdf-export-target thead th { background: #f1f5f9 !important; color: #475569 !important; }
+    .pdf-export-target .dre-tbl .dre-group td { background: #f1f5f9 !important; color: #475569 !important; }
+    .pdf-export-target .dre-tbl .dre-total td { background: #ecfdf5 !important; }
+    .pdf-export-target .dre-tbl .dre-lucro td { background: #ecfdf5 !important; color: #059669 !important; }
+    .tab-section.export-capture {
+      display: block !important;
+      position: fixed;
+      top: 0; left: 0;
+      width: 1200px;
+      z-index: 10000;
+      max-height: none;
+      overflow: visible;
+    }
+    body.pdf-capturing { overflow: hidden; }
+
+    #print-supplier-report { display:none; }
+    body.supplier-printing #app, body.supplier-printing #overlay { display:none !important; }
+    body.supplier-printing #print-supplier-report { display:block !important; }
+
+    @media print {
+      body { background:#fff !important; color:#1a1a2e !important; }
+      .sidebar, .top-header, .export-bar, .btn-export, .modal-overlay, #overlay { display:none !important; }
+      body.supplier-printing #app { display:none !important; }
+      body.supplier-printing #print-supplier-report { display:block !important; position:static !important; }
+      .main-wrapper { margin-left:0 !important; }
+      .tab-section { display:none !important; }
+      .kpi-card, .chart-card, .table-card, .ind-card, .tax-card, .mem-card {
+        background:#fff !important; border:1px solid #ddd !important; color:#1a1a2e !important;
+      }
+      table th { background:#f0f0f0 !important; color:#1a1a2e !important; }
+      table td { color:#333 !important; border-color:#ddd !important; }
+      canvas { max-width:100% !important; }
+    }
+  
+    .btn-back-hub { display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
+    .logo-icon { background:linear-gradient(135deg,#22a329,#4ade80) !important; }
+</style>
+</head>
+<body>
+<div id="overlay" class="overlay hidden" onclick="closeMob()"></div>
+<div id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="fas fa-leaf"></i></div>
+      <div class="logo-text">
+        <div class="company" id="logoCompany">JPG</div>
+        <div class="subtitle" id="logoSubtitle">—</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sec-label">Principal</div>
+      <div class="nav-item active" id="nav-visao-geral" onclick="showTab('visao-geral')"><div class="nav-ico"><i class="fas fa-gauge-high"></i></div><span class="nav-label">Visão Geral</span></div>
+      <div class="sec-label">Movimentação</div>
+      <div class="nav-item" id="nav-entradas" onclick="showTab('entradas')"><div class="nav-ico"><i class="fas fa-cart-shopping"></i></div><span class="nav-label">Entradas</span></div>
+      <div class="nav-item" id="nav-finalidade" onclick="showTab('finalidade')"><div class="nav-ico"><i class="fas fa-tags"></i></div><span class="nav-label">Finalidade Entradas</span></div>
+      <div class="nav-item" id="nav-vendas" onclick="showTab('vendas')"><div class="nav-ico"><i class="fas fa-store"></i></div><span class="nav-label">Vendas</span></div>
+      <div class="sec-label">Financeiro</div>
+      <div class="nav-item" id="nav-dre" onclick="showTab('dre')"><div class="nav-ico"><i class="fas fa-chart-line"></i></div><span class="nav-label">DRE</span></div>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="sidebar-foot-info">
+        <div class="lbl">Competência</div>
+        <div class="val" id="sidebarPeriodo">—</div>
+      </div>
+    </div>
+  </aside>
+  <div class="main-wrapper" id="mainWrapper">
+    <header class="top-header">
+      <button class="btn-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <div class="header-title" id="headerTitle">Dashboard</div>
+      <div class="header-actions"><a href="/auth/dashboard-selector" class="btn-export btn-back-hub"><i class="fas fa-arrow-left"></i> Voltar</a>
+        <div class="regime-badge" id="headerBadge"><i class="fas fa-building" style="font-size:7px;margin-right:5px;"></i>ICMS</div>
+        <a href="/auth/jpg" class="btn-export" style="text-decoration:none"><i class="fas fa-th-large"></i> Filiais</a>
+      </div>
+    </header>
+    <main class="content">
+      <section id="tab-visao-geral" class="tab-section active">
+        <div class="sec-header"><div><div class="sec-title">Visão Geral <small id="vgPeriodo"></small></div><div class="sec-sub" id="vgSub"></div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-visao-geral','Visao_Geral')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div id="alertBox" class="alert-box" style="display:none"></div>
+        <div class="kpi-grid kpi-grid-4" id="kpiVisao"></div>
+        <div class="charts-row cr-2col">
+          <div class="chart-card"><div class="chart-ttl">Entradas × Vendas</div><div class="chart-sub">Valor contábil total do período</div><div class="chart-wrap h260"><canvas id="chartCompBar"></canvas></div></div>
+          <div class="chart-card"><div class="chart-ttl">CFOP — Saídas</div><div class="chart-sub">Participação por CFOP nas vendas</div><div class="chart-wrap h260"><canvas id="chartCfopSai"></canvas></div></div>
+        </div>
+        <div class="charts-row cr-1col">
+          <div class="chart-card"><div class="chart-ttl">Movimentação Diária</div><div class="chart-sub">Entradas e vendas por data de emissão</div><div class="chart-wrap h220"><canvas id="chartDaily"></canvas></div></div>
+        </div>
+      </section>
+      <section id="tab-entradas" class="tab-section">
+        <div class="sec-header"><div><div class="sec-title">Entradas <small id="entPeriodo"></small></div><div class="sec-sub">Aquisições e recebimentos — relatório ICMS</div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-entradas','Entradas')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div class="kpi-grid kpi-grid-3" id="kpiEntradas"></div>
+        <div class="charts-row cr-2col">
+          <div class="chart-card"><div class="chart-ttl">Ranking de Fornecedores</div><div class="chart-sub">Valor contábil por fornecedor</div><div class="chart-wrap h300"><canvas id="chartFornecedores"></canvas></div></div>
+          <div class="chart-card"><div class="chart-ttl">Entradas por UF de Origem</div><div class="chart-sub">Participação por estado</div><div class="chart-wrap h300"><canvas id="chartUfEnt"></canvas></div></div>
+        </div>
+        <div class="table-card"><div class="table-head"><div><div class="ttl">Ranking de Fornecedores</div><div class="sub">Detalhamento por participação</div></div></div>
+          <div class="tbl-scroll"><table><thead><tr><th>#</th><th>Fornecedor</th><th>UF</th><th class="r">Valor</th><th>Participação</th><th class="r">NF</th></tr></thead><tbody id="tblFornecedores"></tbody></table></div>
+        </div>
+      </section>
+      <section id="tab-finalidade" class="tab-section">
+        <div class="sec-header"><div><div class="sec-title">Finalidade de Entradas <small id="finPeriodo"></small></div><div class="sec-sub">Classificação por CFOP das entradas</div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-finalidade','Finalidade')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div class="kpi-grid kpi-grid-4" id="kpiFinalidade"></div>
+        <div class="charts-row cr-2col">
+          <div class="chart-card"><div class="chart-ttl">Entradas por Finalidade</div><div class="chart-sub">Agrupamento fiscal CFOP</div><div class="chart-wrap h260"><canvas id="chartFinalidade"></canvas></div></div>
+          <div class="chart-card"><div class="chart-ttl">Entradas por CFOP</div><div class="chart-sub">Valor contábil por código fiscal</div><div class="chart-wrap h260"><canvas id="chartCfopEnt"></canvas></div></div>
+        </div>
+        <div class="table-card"><div class="table-head"><div><div class="ttl">Detalhamento por CFOP</div></div></div>
+          <div class="tbl-scroll"><table><thead><tr><th>CFOP</th><th>Descrição</th><th>Finalidade</th><th class="r">Qtd NF</th><th class="r">Valor</th><th>Participação</th></tr></thead><tbody id="tblCfopEnt"></tbody></table></div>
+        </div>
+      </section>
+      <section id="tab-vendas" class="tab-section">
+        <div class="sec-header"><div><div class="sec-title">Vendas <small id="vndPeriodo"></small></div><div class="sec-sub">Faturamento por cliente — relatório ICMS saídas</div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-vendas','Vendas')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div class="kpi-grid kpi-grid-3" id="kpiVendas"></div>
+        <div class="charts-row cr-2col">
+          <div class="chart-card"><div class="chart-ttl">Ranking de Clientes</div><div class="chart-sub">Valor contábil por cliente</div><div class="chart-wrap h300"><canvas id="chartClientes"></canvas></div></div>
+          <div class="chart-card"><div class="chart-ttl">Vendas por CFOP</div><div class="chart-sub">Distribuição fiscal das saídas</div><div class="chart-wrap h300"><canvas id="chartCfopVendas"></canvas></div></div>
+        </div>
+        <div class="table-card"><div class="table-head"><div><div class="ttl">Ranking de Clientes</div></div></div>
+          <div class="tbl-scroll"><table><thead><tr><th>#</th><th>Cliente</th><th>UF</th><th class="r">Valor</th><th>Participação</th><th class="r">NF</th></tr></thead><tbody id="tblClientes"></tbody></table></div>
+        </div>
+      </section>
+      <section id="tab-dre" class="tab-section">
+        <div class="sec-header"><div><div class="sec-title">DRE <small id="drePeriodo"></small></div><div class="sec-sub">Demonstrativo derivado dos relatórios ICMS (sem PIS/COFINS/IRPJ)</div></div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-dre','DRE')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+        <div class="formula-box"><div class="fttl">Metodologia</div><div class="fline">Receita = Σ Valor Contábil (Saídas ICMS) · CMV = Σ Valor Contábil (Entradas ICMS)<br>Resultado = Lucro Bruto − Saldo ICMS (Débito Saídas − Crédito Entradas)</div></div>
+        <div class="margin-grid" id="dreMargins"></div>
+        <div class="table-card"><div class="table-head"><div><div class="ttl">Demonstrativo do Resultado</div></div></div>
+          <div class="tbl-scroll"><table class="dre-tbl"><tbody id="tblDre"></tbody></table></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+
+<script>
+const FILIAL_DATA = <%- JSON.stringify(filialData) %>;
+/* Dashboard JPG — renderização dinâmica a partir de FILIAL_DATA */
+
+const D = FILIAL_DATA;
+const PAL = ['#22a329','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#f97316','#ec4899'];
+const chartInst = {};
+const tabsInit = {};
+
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.size = 12;
+
+function brl(v) {
+  return 'R$ ' + Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function brlK(v) { return 'R$ ' + (Number(v || 0) / 1000).toFixed(1).replace('.', ',') + 'K'; }
+function pct(v) { return (v == null ? 'N/D' : Number(v).toFixed(1) + '%'); }
+function tip() {
+  return { backgroundColor:'#1e2535', borderColor:'rgba(255,255,255,0.1)', borderWidth:1, padding:12, titleColor:'#e2e8f0', bodyColor:'#94a3b8', cornerRadius:8 };
+}
+function leg() { return { labels:{ usePointStyle:true, padding:16, boxWidth:8, boxHeight:8 } }; }
+function safeChart(id, cfg) {
+  if (chartInst[id]) chartInst[id].destroy();
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  chartInst[id] = new Chart(ctx, cfg);
+}
+function rankClass(i) { return i === 0 ? 'g1' : i === 1 ? 'g2' : i === 2 ? 'g3' : 'gn'; }
+function pbRow(pctVal, color) {
+  const w = Math.min(100, Math.max(4, pctVal));
+  return '<div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:'+w+'%;background:'+(color||'var(--accent)')+'"></div></div><div class="pb-pct">'+pctVal.toFixed(1)+'%</div></div>';
+}
+
+const tabTitles = {
+  'visao-geral': ['Visão Geral', 'Resumo ICMS — ' + D.meta.filial_label],
+  'entradas': ['Entradas', 'Compras e recebimentos — ' + D.meta.filial_label],
+  'finalidade': ['Finalidade de Entradas', 'Classificação CFOP — ' + D.meta.filial_label],
+  'vendas': ['Vendas', 'Faturamento — ' + D.meta.filial_label],
+  'dre': ['DRE', 'Resultado operacional — ' + D.meta.filial_label],
+};
+
+function showTab(name) {
+  document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const sec = document.getElementById('tab-' + name);
+  const nav = document.getElementById('nav-' + name);
+  if (sec) sec.classList.add('active');
+  if (nav) nav.classList.add('active');
+  const h = tabTitles[name] || ['Dashboard',''];
+  document.getElementById('headerTitle').innerHTML = h[0] + ' <span>' + h[1] + '</span>';
+  if (!tabsInit[name]) {
+    tabsInit[name] = true;
+    setTimeout(() => ({ 'visao-geral':initVisaoGeral, entradas:initEntradas, finalidade:initFinalidade, vendas:initVendas, dre:initDRE }[name]?.()), 50);
+  }
+  if (window.innerWidth <= 768) closeMob();
+}
+
+let sbCollapsed = false;
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const mw = document.getElementById('mainWrapper');
+  if (window.innerWidth <= 768) {
+    sb.classList.toggle('mob-open');
+    document.getElementById('overlay').classList.toggle('hidden');
+  } else {
+    sbCollapsed = !sbCollapsed;
+    sb.classList.toggle('collapsed', sbCollapsed);
+    mw.classList.toggle('sb-collapsed', sbCollapsed);
+  }
+}
+function closeMob() {
+  document.getElementById('sidebar').classList.remove('mob-open');
+  document.getElementById('overlay').classList.add('hidden');
+}
+
+function kpiCard(color, icon, badge, val, lbl, sub) {
+  return '<div class="kpi-card c-'+color+'"><div class="kpi-head"><div class="kpi-ico c-'+color+'"><i class="'+icon+'"></i></div><div class="kpi-badge neutral">'+badge+'</div></div><div class="kpi-val">'+val+'</div><div class="kpi-lbl">'+lbl+'</div><div class="kpi-sub">'+sub+'</div></div>';
+}
+
+function initMeta() {
+  const m = D.meta;
+  document.title = 'Dashboard ' + m.filial_label + ' | JPG';
+  document.getElementById('logoCompany').textContent = m.filial_label;
+  document.getElementById('logoSubtitle').textContent = m.periodo;
+  document.getElementById('sidebarPeriodo').textContent = m.periodo;
+  document.getElementById('headerBadge').innerHTML = '<i class="fas fa-building" style="font-size:7px;margin-right:5px;"></i> Filial ' + m.codigo;
+  ['vgPeriodo','entPeriodo','finPeriodo','vndPeriodo','drePeriodo'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = m.periodo;
+  });
+  document.getElementById('vgSub').textContent = m.nome + ' — CNPJ ' + m.cnpj + ' — IE ' + m.ie;
+  if (m.alerta) {
+    const ab = document.getElementById('alertBox');
+    ab.style.display = 'block';
+    ab.innerHTML = '<i class="fas fa-info-circle" style="margin-right:8px;"></i><strong>Atenção:</strong> ' + m.alerta;
+  }
+}
+
+function initVisaoGeral() {
+  const k = D.kpis;
+  document.getElementById('kpiVisao').innerHTML =
+    kpiCard('green','fas fa-cart-shopping',D.meta.periodo, brl(k.entradas), 'Total Entradas', k.n_nf_ent + ' NF-e · ' + k.n_fornecedores + ' fornec.') +
+    kpiCard('blue','fas fa-store',D.meta.periodo, brl(k.saidas), 'Total Vendas', k.n_nf_sai + ' NF-e · ' + k.n_clientes + ' clientes') +
+    kpiCard('yellow','fas fa-file-invoice-dollar','ICMS', brl(k.saldo_icms), 'Saldo ICMS', 'Débito ' + brl(k.icms_debito) + ' − Crédito ' + brl(k.icms_credito)) +
+    kpiCard('purple','fas fa-chart-pie','DRE', pct(D.dre.margem_bruta_pct), 'Margem Bruta', 'Lucro bruto ' + brl(D.dre.lucro_bruto));
+
+  safeChart('chartCompBar', {
+    type:'bar',
+    data:{ labels:['Entradas','Vendas'], datasets:[{ label:'Valor Contábil', data:[k.entradas, k.saidas], backgroundColor:['rgba(16,185,129,0.7)','rgba(59,130,246,0.7)'], borderRadius:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tip(), callbacks:{ label:c=>brl(c.parsed.y)} } }, scales:{ y:{ ticks:{ callback:v=>brlK(v*1000) } } } }
+  });
+
+  const cfSai = D.cfop_saidas.slice(0,8);
+  safeChart('chartCfopSai', {
+    type:'doughnut',
+    data:{ labels: cfSai.map(c=>c.cfop), datasets:[{ data: cfSai.map(c=>c.total), backgroundColor:PAL, borderWidth:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'55%', plugins:{ legend:{...leg(), position:'right'}, tooltip:{...tip(), callbacks:{ label:c=>c.label+': '+brl(c.parsed)} } } }
+  });
+
+  const sd = D.serie_diaria;
+  safeChart('chartDaily', {
+    type:'line',
+    data:{ labels: sd.labels, datasets:[
+      { label:'Entradas', data:sd.entradas, borderColor:'#10b981', backgroundColor:'rgba(16,185,129,0.1)', fill:true, tension:0.3 },
+      { label:'Vendas', data:sd.saidas, borderColor:'#22a329', backgroundColor:'rgba(59,130,246,0.1)', fill:true, tension:0.3 }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:leg(), tooltip:{...tip(), callbacks:{ label:c=>c.dataset.label+': '+brl(c.parsed.y)} } } }
+  });
+}
+
+function initEntradas() {
+  const k = D.kpis;
+  const ufs = Object.keys(D.ufs_entradas);
+  document.getElementById('kpiEntradas').innerHTML =
+    kpiCard('green','fas fa-boxes-stacked',D.meta.periodo, brl(k.entradas), 'Total Entradas', k.n_nf_ent + ' notas fiscais') +
+    kpiCard('blue','fas fa-handshake','—', String(k.n_fornecedores), 'Fornecedores', 'Fornecedores distintos no período') +
+    kpiCard('purple','fas fa-map-location-dot','—', ufs.length + ' UF' + (ufs.length!==1?'s':''), 'Estados de Origem', ufs.slice(0,3).join(', ') || '—');
+
+  const top = D.ranking_fornecedores.slice(0,10);
+  safeChart('chartFornecedores', {
+    type:'bar',
+    data:{ labels: top.map(f=>f.nome.substring(0,22)), datasets:[{ data: top.map(f=>f.total/1000), backgroundColor:'rgba(16,185,129,0.7)', borderRadius:4 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tip(), callbacks:{ label:c=>brl(c.parsed.x*1000)} } }, scales:{ x:{ ticks:{ callback:v=>'R$'+v+'K' } } } }
+  });
+
+  const ufLabels = Object.keys(D.ufs_entradas);
+  const ufVals = ufLabels.map(u=>D.ufs_entradas[u]);
+  safeChart('chartUfEnt', {
+    type:'doughnut',
+    data:{ labels:ufLabels, datasets:[{ data:ufVals, backgroundColor:PAL, borderWidth:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{...leg(), position:'right'}, tooltip:{...tip(), callbacks:{ label:c=>c.label+': '+brl(c.parsed)} } } }
+  });
+
+  document.getElementById('tblFornecedores').innerHTML = D.ranking_fornecedores.map((f,i)=>
+    '<tr><td><div class="rank '+rankClass(i)+'">'+(i+1)+'</div></td><td><div class="fw7">'+f.nome+'</div><div class="td-mute">'+f.cnpj+'</div></td><td><span class="chip bl">'+f.uf+'</span></td><td class="r td-val">'+brl(f.total)+'</td><td>'+pbRow(f.pct)+'</td><td class="r">'+f.qtd+'</td></tr>'
+  ).join('') || '<tr><td colspan="6" class="td-mute">Sem entradas no período</td></tr>';
+}
+
+function initFinalidade() {
+  const fin = D.finalidade;
+  const colors = ['c-blue','c-green','c-orange','c-purple','c-cyan','c-yellow'];
+  document.getElementById('kpiFinalidade').innerHTML = fin.slice(0,4).map((f,i)=>
+    kpiCard(colors[i%colors.length].replace('c-',''), 'fas fa-tag', f.finalidade.substring(0,18), brl(f.total), f.finalidade, f.pct+'% do total · '+f.qtd+' NF')
+  ).join('') || kpiCard('gy','fas fa-minus','—','R$ 0,00','Sem entradas','—');
+
+  safeChart('chartFinalidade', {
+    type:'doughnut',
+    data:{ labels: fin.map(f=>f.finalidade), datasets:[{ data: fin.map(f=>f.total), backgroundColor:PAL, borderWidth:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'50%', plugins:{ legend:{...leg(), position:'right'}, tooltip:{...tip(), callbacks:{ label:c=>c.label+': '+brl(c.parsed)} } } }
+  });
+
+  const cf = D.cfop_entradas.slice(0,10);
+  safeChart('chartCfopEnt', {
+    type:'bar',
+    data:{ labels: cf.map(c=>c.cfop), datasets:[{ data: cf.map(c=>c.total/1000), backgroundColor:'rgba(59,130,246,0.7)', borderRadius:4 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tip(), callbacks:{ label:c=>brl(c.parsed.y*1000)} } }, scales:{ y:{ ticks:{ callback:v=>'R$'+v+'K' } } } }
+  });
+
+  document.getElementById('tblCfopEnt').innerHTML = D.cfop_entradas.map(c=>
+    '<tr><td><span class="chip bl">'+c.cfop+'</span></td><td style="font-size:12px">'+c.descricao+'</td><td><span class="chip pu">'+c.finalidade+'</span></td><td class="r">'+c.qtd+'</td><td class="r td-val">'+brl(c.total)+'</td><td>'+pbRow(c.pct)+'</td></tr>'
+  ).join('') || '<tr><td colspan="6" class="td-mute">Sem dados</td></tr>';
+}
+
+function initVendas() {
+  const k = D.kpis;
+  document.getElementById('kpiVendas').innerHTML =
+    kpiCard('blue','fas fa-store',D.meta.periodo, brl(k.saidas), 'Total Vendas', k.n_nf_sai + ' notas fiscais') +
+    kpiCard('green','fas fa-users','—', String(k.n_clientes), 'Clientes', 'Clientes distintos no período') +
+    kpiCard('yellow','fas fa-file-invoice','ICMS', brl(k.icms_debito), 'ICMS Débito', 'Imposto sobre saídas');
+
+  const top = D.ranking_clientes.slice(0,10);
+  safeChart('chartClientes', {
+    type:'bar',
+    data:{ labels: top.map(c=>c.nome.substring(0,22)), datasets:[{ data: top.map(c=>c.total/1000), backgroundColor:'rgba(59,130,246,0.7)', borderRadius:4 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tip(), callbacks:{ label:c=>brl(c.parsed.x*1000)} } }, scales:{ x:{ ticks:{ callback:v=>'R$'+v+'K' } } } }
+  });
+
+  const cf = D.cfop_saidas.slice(0,8);
+  safeChart('chartCfopVendas', {
+    type:'bar',
+    data:{ labels: cf.map(c=>c.cfop), datasets:[{ data: cf.map(c=>c.total/1000), backgroundColor:'rgba(139,92,246,0.7)', borderRadius:4 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tip(), callbacks:{ label:c=>brl(c.parsed.y*1000)} } }, scales:{ y:{ ticks:{ callback:v=>'R$'+v+'K' } } } }
+  });
+
+  document.getElementById('tblClientes').innerHTML = D.ranking_clientes.map((c,i)=>
+    '<tr><td><div class="rank '+rankClass(i)+'">'+(i+1)+'</div></td><td><div class="fw7">'+c.nome+'</div><div class="td-mute">'+c.cnpj+'</div></td><td><span class="chip bl">'+c.uf+'</span></td><td class="r td-val">'+brl(c.total)+'</td><td>'+pbRow(c.pct)+'</td><td class="r">'+c.qtd+'</td></tr>'
+  ).join('') || '<tr><td colspan="6" class="td-mute">Sem vendas a clientes no período</td></tr>';
+}
+
+function initDRE() {
+  const d = D.dre;
+  const isMatriz = D.meta.filial_key === 'MATRIZ';
+  document.getElementById('dreMargins').innerHTML =
+    '<div class="margin-card"><div class="margin-val t-accent">'+brl(d.receita)+'</div><div class="margin-lbl">Receita Bruta</div><div class="margin-sub">Saídas ICMS</div></div>' +
+    '<div class="margin-card"><div class="margin-val">'+brl(d.cmv)+'</div><div class="margin-lbl">CMV (Entradas)</div><div class="margin-sub">Custo das mercadorias</div></div>' +
+    '<div class="margin-card"><div class="margin-val t-success">'+pct(d.margem_bruta_pct)+'</div><div class="margin-lbl">Margem Bruta</div><div class="margin-sub">Lucro bruto '+brl(d.lucro_bruto)+'</div></div>' +
+    '<div class="margin-card"><div class="margin-val '+(d.resultado>=0?'t-success':'t-danger')+'">'+brl(d.resultado)+'</div><div class="margin-lbl">Resultado Operacional</div><div class="margin-sub">Após saldo ICMS</div></div>';
+
+  let rows = '';
+  rows += '<tr class="dre-group"><td colspan="2">RECEITAS</td></tr>';
+  rows += '<tr><td>Receita Bruta (Saídas)</td><td class="r td-val">'+brl(d.receita)+'</td></tr>';
+  if (isMatriz && d.receita_externa !== d.receita) {
+    rows += '<tr class="dre-indent"><td>Receita Externa (sem transferências)</td><td class="r">'+brl(d.receita_externa)+'</td></tr>';
+  }
+  rows += '<tr class="dre-group"><td colspan="2">CUSTOS</td></tr>';
+  rows += '<tr><td>(−) CMV — Entradas</td><td class="r dre-neg">('+brl(d.cmv).replace('R$ ','R$ ')+')</td></tr>';
+  rows += '<tr class="dre-total"><td>(=) Lucro Bruto</td><td class="r">'+brl(d.lucro_bruto)+'</td></tr>';
+  rows += '<tr class="dre-group"><td colspan="2">IMPOSTOS (ICMS)</td></tr>';
+  rows += '<tr class="dre-indent"><td>(−) ICMS Débito (Saídas)</td><td class="r">('+brl(d.icms_debito)+')</td></tr>';
+  rows += '<tr class="dre-indent"><td>(+) ICMS Crédito (Entradas)</td><td class="r t-success">'+brl(d.icms_credito)+'</td></tr>';
+  rows += '<tr><td>Saldo ICMS</td><td class="r td-val">'+brl(d.saldo_icms)+'</td></tr>';
+  rows += '<tr class="dre-lucro"><td>(=) Resultado Operacional (proxy)</td><td class="r">'+brl(d.resultado)+'</td></tr>';
+  rows += '<tr class="dre-nd"><td colspan="2">PIS, COFINS, IRPJ e CSLL não disponíveis neste relatório ICMS.</td></tr>';
+  document.getElementById('tblDre').innerHTML = rows;
+}
+
+async function exportPDF(sectionId, filename) {
+  const section = document.getElementById(sectionId);
+  if (!section || !window.html2canvas || !window.jspdf) return;
+  const btn = event?.currentTarget;
+  const orig = btn?.innerHTML;
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; }
+  try {
+    section.classList.add('pdf-export-target');
+    const canvas = await html2canvas(section, { scale:2, backgroundColor:'#f8fafc', useCORS:true });
+    section.classList.remove('pdf-export-target');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p','mm','a4');
+    const w = pdf.internal.pageSize.getWidth();
+    const h = (canvas.height * w) / canvas.width;
+    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, w, Math.min(h, 290));
+    pdf.save(filename + '_' + D.meta.filial_label.replace(/\s/g,'_') + '.pdf');
+  } catch(e) { console.error(e); }
+  finally { if (btn) { btn.disabled = false; btn.innerHTML = orig; } }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initMeta();
+  showTab('visao-geral');
+});
+
+</script>
+</body>
+</html>
