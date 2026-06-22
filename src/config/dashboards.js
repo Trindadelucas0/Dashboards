@@ -1,0 +1,6 @@
+module.exports = [
+  { id: "unicatintas", label: "UNICATINTAS", routes: ["/auth/UNICATINTAS"] },
+  { id: "loja-maquinas", label: "Loja Máquinas", routes: ["/auth/loja-maquinas", "/auth/lojamaquinas1trm"] },
+  { id: "jpg", label: "JPG", routes: ["/auth/jpg", "/auth/jpg/:filial"] },
+  { id: "baifer", label: "BAIFER", routes: ["/auth/baifer1trm", "/auth/baifer2trm"] },
+];

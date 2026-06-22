@@ -1,43 +1,21 @@
 const jpgData = require("../data/jpg-filiais");
+const userService = require("../services/user-service");
 
-let users = [
-  { username: "lucas", password: "1234" },
-  { username: "Paulo", password: "2026" }
-];
-module.exports={
-    index:(req,res)=>{
-        res.render("index");
-    },
-//register
-  register: (req, res) => {
-    const { username, password } = req.body;
-    const userexist = users.find((user) => user.username === username);
-    if (userexist) {
-      console.log("USUARIO JA EXISTE");
-      return res.status(400).redirect("/");
-    }
-    const newUser = { username, password };
-    console.table(newUser);
-    users.push(newUser);
-    res.redirect("/");
+module.exports = {
+  index: (req, res) => {
+    res.render("index");
   },
   login: (req, res) => {
     const { username, password } = req.body;
-    const user = users.find((user) => user.username === username);
+    const user = userService.authenticate(username, password);
     if (!user) {
-      console.log("usuario não EXISTE");
+      console.log("login falhou:", username);
       return res.redirect("/");
     }
-    if (password !== user.password) {
-      console.log("senha inexistente");
-      return res.redirect("/");
-    }
-    //session
     req.session.authenticated = true;
     req.session.currentUser = user;
-
-    console.log(`BEM VINDO ${username}`);
-  res.redirect("/auth/dashboard-selector");
+    console.log(`BEM VINDO ${username} (${user.role})`);
+    res.redirect("/auth/dashboard-selector");
   },
   logout: (req, res) => {
     req.session.authenticated = false;
@@ -46,31 +24,62 @@ module.exports={
     res.redirect("/");
   },
   dashboardSelector: (req, res) => {
-    const currentUser = req.session.currentUser ? req.session.currentUser.username : 'Usuário';
-    res.render("dashboard-selector", { currentUser });
+    const user = req.session.currentUser;
+    const currentUser = user ? user.username : "Usuário";
+    const isAdmin = userService.isAdmin(user);
+    const allowedDashboards = userService.getDashboardIdsForUser(user);
+    res.render("dashboard-selector", {
+      currentUser,
+      isAdmin,
+      allowedDashboards,
+      error: req.query.error || null,
+    });
   },
-  UNICATINTAS:(req,res)=>{
-    res.render("UNICATINTAS")
+  adminPanel: (req, res) => {
+    res.render("admin", {
+      currentUser: req.session.currentUser.username,
+      dashboards: userService.getAllDashboards(),
+      appUsers: userService.listAppUsers(),
+      message: req.query.message || null,
+      error: req.query.error || null,
+    });
   },
-  lojamaquinas:(req,res)=>{
-    res.render("loja-maquinas")
+  adminCreateUser: (req, res) => {
+    const { username, password } = req.body;
+    const dashboards = [].concat(req.body.dashboards || []).filter(Boolean);
+    const result = userService.createAppUser(username, password, dashboards);
+    if (!result.ok) {
+      return res.redirect("/auth/admin?error=" + encodeURIComponent(result.error));
+    }
+    res.redirect("/auth/admin?message=" + encodeURIComponent("Usuário criado com sucesso."));
   },
-  lojamaquinas1trm:(req,res)=>{
-    res.render("lojamaquinas1trm")
+  adminDeleteUser: (req, res) => {
+    const { username } = req.body;
+    if (username) userService.deleteAppUser(username);
+    res.redirect("/auth/admin?message=" + encodeURIComponent("Usuário removido."));
   },
-  baifer2trm:(req,res)=>{
-    res.render("baifer2trm")
+  UNICATINTAS: (req, res) => {
+    res.render("UNICATINTAS");
   },
-  baifer1trm:(req,res)=>{
-    res.render("baifer1trm")
+  lojamaquinas: (req, res) => {
+    res.render("loja-maquinas");
   },
-  jpg:(req,res)=>{
+  lojamaquinas1trm: (req, res) => {
+    res.render("lojamaquinas1trm");
+  },
+  baifer2trm: (req, res) => {
+    res.render("baifer2trm");
+  },
+  baifer1trm: (req, res) => {
+    res.render("baifer1trm");
+  },
+  jpg: (req, res) => {
     res.render("jpg", { hub: jpgData.hub });
   },
-  jpgFilial:(req,res)=>{
+  jpgFilial: (req, res) => {
     const key = req.params.filial;
     const filialData = jpgData.filiais[key];
     if (!filialData) return res.redirect("/auth/jpg");
     res.render("jpg-filial", { filialData, filialKey: key });
-  }
+  },
 };

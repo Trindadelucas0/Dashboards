@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Gerenciar usuários — Êxito</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f5612 0%, #1a8a20 30%, #22a329 60%, #2CB930 100%);
+      padding: 1.5rem 1rem;
+    }
+    .page { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+    .card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+    }
+    .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 1rem; }
+    h1 { margin: 0; font-size: 1.35rem; color: #1a1a2e; }
+    .sub { margin: 4px 0 0; font-size: 0.82rem; color: #6b7280; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0.5rem 1rem; border-radius: 10px; font-size: 0.8rem;
+      font-weight: 600; text-decoration: none; border: 2px solid #e5e7eb;
+      color: #6b7280; background: #fff; font-family: inherit; cursor: pointer;
+    }
+    .btn:hover { border-color: #22a329; color: #22a329; }
+    .btn-danger { color: #ef4444; border-color: #fecaca; }
+    .btn-danger:hover { background: #fef2f2; border-color: #ef4444; }
+    .alert { padding: 10px 14px; border-radius: 10px; font-size: 0.82rem; margin-bottom: 1rem; }
+    .alert-ok { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .alert-err { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+    .form-grid { display: grid; gap: 12px; }
+    label { font-size: 0.75rem; font-weight: 600; color: #374151; display: block; margin-bottom: 4px; }
+    input[type="text"], input[type="password"] {
+      width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb;
+      border-radius: 10px; font-family: inherit; font-size: 0.9rem;
+    }
+    .checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; margin-top: 8px; }
+    .check-item {
+      display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+      border: 1px solid #e5e7eb; border-radius: 10px; font-size: 0.82rem;
+    }
+    .check-item input { accent-color: #22a329; }
+    .btn-submit {
+      margin-top: 8px; padding: 0.65rem 1.2rem; border: none; border-radius: 10px;
+      background: #22a329; color: #fff; font-weight: 700; font-family: inherit; cursor: pointer;
+    }
+    .btn-submit:hover { background: #1a8a20; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f3f4f6; }
+    th { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; }
+    .badge { display: inline-block; padding: 2px 8px; margin: 2px 4px 2px 0; border-radius: 20px; background: #f0fdf4; color: #22a329; font-size: 0.68rem; font-weight: 600; }
+    .empty { text-align: center; color: #9ca3af; padding: 1.5rem; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="top">
+      <div>
+        <h1>Gerenciar usuários</h1>
+        <p class="sub">Admin: <%= currentUser %> · usuários salvos em <code>src/data/users.json</code></p>
+      </div>
+      <a href="/auth/dashboard-selector" class="btn">Voltar ao seletor</a>
+    </div>
+
+    <% if (message) { %>
+      <div class="alert alert-ok"><%= message %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="alert alert-err"><%= error %></div>
+    <% } %>
+
+    <div class="card">
+      <h2 style="margin:0 0 12px;font-size:1rem;color:#1a1a2e;">Novo usuário</h2>
+      <form method="POST" action="/auth/admin/users" class="form-grid">
+        <div>
+          <label for="username">Usuário</label>
+          <input type="text" id="username" name="username" required autocomplete="off">
+        </div>
+        <div>
+          <label for="password">Senha</label>
+          <input type="password" id="password" name="password" required autocomplete="new-password">
+        </div>
+        <div>
+          <label>Dashboards permitidos</label>
+          <div class="checks">
+            <% dashboards.forEach(function(d) { %>
+            <label class="check-item">
+              <input type="checkbox" name="dashboards" value="<%= d.id %>">
+              <%= d.label %>
+            </label>
+            <% }); %>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit">Criar usuário</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2 style="margin:0 0 12px;font-size:1rem;color:#1a1a2e;">Usuários cadastrados</h2>
+      <% if (!appUsers.length) { %>
+        <p class="empty">Nenhum usuário cadastrado ainda.</p>
+      <% } else { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Usuário</th>
+            <th>Dashboards</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% appUsers.forEach(function(u) { %>
+          <tr>
+            <td><strong><%= u.username %></strong></td>
+            <td>
+              <% (u.dashboards || []).forEach(function(id) {
+                const dash = dashboards.find(function(d) { return d.id === id; });
+              %>
+                <span class="badge"><%= dash ? dash.label : id %></span>
+              <% }); %>
+            </td>
+            <td>
+              <form method="POST" action="/auth/admin/users/delete" style="display:inline;">
+                <input type="hidden" name="username" value="<%= u.username %>">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Remover <%= u.username %>?')">Excluir</button>
+              </form>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>
