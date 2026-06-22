@@ -55,6 +55,9 @@ module.exports={
   lojamaquinas:(req,res)=>{
     res.render("loja-maquinas")
   },
+  lojamaquinas1trm:(req,res)=>{
+    res.render("lojamaquinas1trm")
+  },
   baifer2trm:(req,res)=>{
     res.render("baifer2trm")
   },
