@@ -428,15 +428,6 @@
             </div>
           </div>
         </div>
-
-        <div class="alert-box" style="border-color:rgba(34,163,41,0.35);color:var(--text-sec);background:rgba(34,163,41,0.05);margin-top:8px;">
-          <i class="fas fa-database" style="margin-right:8px;color:var(--accent);"></i>
-          <strong>Fontes de dados — ÚNICA Comércio Atacadista de Tintas</strong> (CNPJ 36.517.206/0001-30):
-          DRE Jan–Mai = <em>Análise Vertical do D. R. E.xls</em> ·
-          Compras/Vendas Mai = <em>COMPRAS.xls</em> / <em>VENDAS.xls</em> ·
-          ICMS 5005 = <em>Apuração 5005 Contábil e Fiscal 052026 Atacadista.xlsx</em> ·
-          PIS/COFINS = <em>APURAÇÃO PIS COFINS (1).xls</em> (EFD)
-        </div>
       </section>
 
       <!-- ===============================================
@@ -577,7 +568,7 @@
         <div class="sec-header">
           <div>
             <div class="sec-title">Finalidade de Compras <small>Maio 2026 — por CFOP</small></div>
-            <div class="sec-sub">Classificação fiscal das entradas — COMPRAS.xls coluna CFOP — 206 notas fiscais únicas (Mai/2026)</div>
+            <div class="sec-sub">Classificação fiscal das entradas — COMPRAS.xls coluna C17 (CFOP) — Total 224 notas lidas</div>
           </div>
         </div>
 
@@ -728,26 +719,6 @@
             </table>
           </div>
         </div>
-
-        <!-- CFOP de Saídas -->
-        <div class="table-card">
-          <div class="table-head">
-            <div>
-              <div class="ttl">CFOP de Saídas – Mai/2026</div>
-              <div class="sub">Classificação fiscal das vendas — Apuração 5005 Contábil — Fonte: VENDAS.xls (ÚNICA)</div>
-            </div>
-          </div>
-          <div class="tbl-scroll">
-            <table>
-              <thead><tr><th>CFOP</th><th class="r">Qtd NF</th><th class="r">Valor (R$)</th><th class="r">%</th></tr></thead>
-              <tbody id="cfop-saidas-tbody"></tbody>
-            </table>
-          </div>
-          <div style="padding:10px 18px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);">
-            <i class="fas fa-info-circle" style="margin-right:6px;"></i>
-            Total de 970 NFs únicas no mês. A soma por CFOP pode exceder esse número quando uma mesma NF possui linhas em CFOPs distintos (ex.: 5-102 + 5-403).
-          </div>
-        </div>
       </section>
 
       <!-- ===============================================
@@ -831,7 +802,7 @@
         <div class="sec-header">
           <div>
             <div class="sec-title">Memória de Cálculo <small>Maio 2026</small></div>
-            <div class="sec-sub">Detalhamento da apuração de cada tributo — ÚNICA CNPJ 36.517.206/0001-30 — Fonte: Apuração 5005 + EFD PIS/COFINS</div>
+            <div class="sec-sub">Detalhamento da apuração de cada tributo — Lucro Real — Decreto 5005 (DF/GO)</div>
           </div>
         </div>
 
@@ -858,14 +829,6 @@
             <div class="mem-row"><span class="lbl">(–) Crédito ICMS Entradas</span><span class="val t-success">R$ 139.585,03</span></div>
             <div class="mem-row"><span class="lbl">(–) Crédito Devolução</span><span class="val t-success">R$ 11.134,03</span></div>
             <div class="mem-row"><span class="lbl">(–) Crédito Outorgado 3% Dec.5005</span><span class="val t-success">R$ 14.712,17</span></div>
-            <div class="mem-row"><span class="lbl">Total Vendas Tributadas 5005</span><span class="val">R$ 1.967.575,57</span></div>
-            <div class="mem-row"><span class="lbl">Débito Interno 5005 (13%)</span><span class="val">R$ 191.930,36</span></div>
-            <div class="mem-row"><span class="lbl">Débito Interestadual 5005 (12%)</span><span class="val">R$ 58.942,58</span></div>
-            <div class="mem-row"><span class="lbl">Débito Devolução 5005</span><span class="val">R$ 227,05</span></div>
-            <div class="mem-row"><span class="lbl">Proporção Crédito Interno</span><span class="val">75,04%</span></div>
-            <div class="mem-row"><span class="lbl">Proporção Crédito Interestadual</span><span class="val">24,96%</span></div>
-            <div class="mem-row"><span class="lbl">BC Entradas 5005</span><span class="val">R$ 1.918.148,02</span></div>
-            <div class="mem-row"><span class="lbl">BCO (base crédito outorgado)</span><span class="val">R$ 1.847.873,89</span></div>
             <div class="mem-row"><span class="lbl">ICMS 5005 (débito–crédito prop.)</span><span class="val">R$ 52.193,36</span></div>
             <div class="mem-row"><span class="lbl">Débito s/ Benefício 5005</span><span class="val">R$ 199.722,96</span></div>
             <div class="mem-row tot"><span class="lbl">ICMS Apuração Final</span><span class="val">R$ 26.574,21</span></div>
@@ -892,9 +855,7 @@
             <div class="mem-row"><span class="lbl">Base tributável total</span><span class="val">R$ 1.461.133,96</span></div>
             <div class="mem-row"><span class="lbl">Alíquota PIS</span><span class="val">1,65%</span></div>
             <div class="mem-row"><span class="lbl">PIS Apurado (débito)</span><span class="val t-danger">R$ 25.936,69</span></div>
-            <div class="mem-row"><span class="lbl">Base crédito EFD Mai</span><span class="val">R$ 1.779.752,82</span></div>
-            <div class="mem-row"><span class="lbl">Crédito PIS apurado no mês</span><span class="val t-success">R$ 29.365,92</span></div>
-            <div class="mem-row neg"><span class="lbl">(–) Crédito utilizado no período</span><span class="val t-danger">R$ 25.936,69</span></div>
+            <div class="mem-row neg"><span class="lbl">(–) Crédito Período Anterior</span><span class="val t-danger">R$ 25.936,69</span></div>
             <div class="mem-row tot"><span class="lbl">PIS a Recolher</span><span class="val">R$ 0,00</span></div>
             <div class="mem-row"><span class="lbl">Crédito p/ Próximo Período</span><span class="val t-warning">R$ 86.949,36</span></div>
           </div>
@@ -907,9 +868,7 @@
             <div class="mem-row"><span class="lbl">Base tributável total</span><span class="val">R$ 1.461.133,96</span></div>
             <div class="mem-row"><span class="lbl">Alíquota COFINS</span><span class="val">7,60%</span></div>
             <div class="mem-row"><span class="lbl">COFINS Apurado (débito)</span><span class="val t-danger">R$ 119.465,97</span></div>
-            <div class="mem-row"><span class="lbl">Base crédito EFD Mai</span><span class="val">R$ 1.779.752,82</span></div>
-            <div class="mem-row"><span class="lbl">Crédito COFINS apurado no mês</span><span class="val t-success">R$ 135.261,21</span></div>
-            <div class="mem-row neg"><span class="lbl">(–) Crédito utilizado no período</span><span class="val t-danger">R$ 119.465,97</span></div>
+            <div class="mem-row neg"><span class="lbl">(–) Crédito Período Anterior</span><span class="val t-danger">R$ 119.465,97</span></div>
             <div class="mem-row tot"><span class="lbl">COFINS a Recolher</span><span class="val">R$ 0,00</span></div>
             <div class="mem-row"><span class="lbl">Crédito p/ Próximo Período</span><span class="val t-warning">R$ 400.457,71</span></div>
           </div>
@@ -1206,7 +1165,7 @@
   const DED_PCT  = [24.96, 24.31, 23.77, 1.16, 13.07];
 
   // DRE – ICMS/COFINS/PIS/ICMS-ST mensais (contabilizados no resultado)
-  const ICMS_DED  = [225201, 213993, 252439, 0, 72];     // Mai: crédito ICMS R$ 72,18 (DRE)
+  const ICMS_DED  = [225201, 213993, 252439, 0, 0];      // Mai: R$72 crédito, arredondado p/ 0
   const ICMST_DED = [91234,  59351,  71713,  0, 71907];
   const COFINS_DED= [111890, 105193, 124822, 0, 119466];
   const PIS_DED   = [24292,  22838,  27100,  0, 25937];
@@ -1248,7 +1207,7 @@
 
   /* -----------------------------------------------
      DADOS DE COMPRAS POR CFOP — Mai/2026
-     Fonte: COMPRAS.xls — ÚNICA CNPJ 36.517.206/0001-30 — 206 NFs únicas
+     Fonte: COMPRAS.xls — leitura real das 224 notas
      ----------------------------------------------- */
   const CFOP_DADOS = [
     { cfop:'2-102', qtd:97,  total:1900158.26,
@@ -1297,9 +1256,9 @@
         { nome:'VICTORIA TRANSPORTES DE CARGAS',  cnpj:'06.994.544/0002-83', uf:'SP', qtd:1,  total:716.93   },
       ]
     },
-    { cfop:'2-910', qtd:4,  total:26753.95,
+    { cfop:'2-910', qtd:5,  total:26753.95,
       fornecedores:[
-        { nome:'AKZO NOBEL LTDA (retorno conserto)', cnpj:'60.561.719/0022-58', uf:'SP', qtd:2, total:23628.37 },
+        { nome:'AKZO NOBEL LTDA (retorno conserto)', cnpj:'60.561.719/0022-58', uf:'SP', qtd:3, total:23628.37 },
         { nome:'BRASILUX TINTAS TECNICAS LTDA',      cnpj:'72.770.878/0001-17', uf:'SP', qtd:1, total:2849.33  },
         { nome:'KERS IMPORTADORA LTDA',              cnpj:'03.123.344/0001-86', uf:'SC', qtd:1, total:276.25   },
       ]
@@ -1356,24 +1315,6 @@
       ]
     },
   ];
-
-  /* -----------------------------------------------
-     DADOS DE VENDAS POR CFOP — Mai/2026
-     Fonte: VENDAS.xls — ÚNICA CNPJ 36.517.206/0001-30
-     ----------------------------------------------- */
-  const CFOP_SAIDAS_DADOS = [
-    { cfop:'5-102', qtd:603, total:764361.64 },
-    { cfop:'5-403', qtd:482, total:681239.95 },
-    { cfop:'6-403', qtd:96,  total:271459.04 },
-    { cfop:'6-102', qtd:108, total:250200.57 },
-    { cfop:'5-910', qtd:6,   total:73281.93  },
-    { cfop:'5-405', qtd:27,  total:15532.37  },
-    { cfop:'6-201', qtd:2,   total:3341.93   },
-    { cfop:'6-404', qtd:5,   total:1583.52   },
-    { cfop:'6-108', qtd:4,   total:1076.19   },
-    { cfop:'6-910', qtd:1,   total:782.60    },
-  ];
-  const CFOP_SAIDAS_TOTAL = 2062859.74;
 
   const FINALIDADE_CORES = {
     'Revenda':          '#22a329',
@@ -1528,7 +1469,7 @@
     safeChart('chartComposicao', {
       type: 'doughnut',
       data: {
-        labels: ['Devoluções','ICMS ST','COFINS','PIS','ICMS crédito'],
+        labels: ['Devoluções','ICMS ST','COFINS','PIS','Outros/Ajuste'],
         datasets: [{
           data: [34390, 71907, 119466, 25937, 72],
           backgroundColor: PAL, borderWidth:0, hoverOffset:6
@@ -1597,32 +1538,6 @@
         plugins:{ legend:{ ...leg(), position:'right' }, tooltip:{ ...tip(), callbacks:{ label:c=>c.label+': '+c.parsed.toFixed(2)+'%' } } }
       }
     });
-
-    initCfopSaidas();
-  }
-
-  function initCfopSaidas() {
-    const tbody = document.getElementById('cfop-saidas-tbody');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-    CFOP_SAIDAS_DADOS.forEach(d => {
-      const pct = CFOP_SAIDAS_TOTAL > 0 ? ((d.total / CFOP_SAIDAS_TOTAL) * 100).toFixed(1) : '0.0';
-      const tr = document.createElement('tr');
-      tr.innerHTML =
-        '<td><span class="chip" style="background:rgba(255,255,255,0.07);color:var(--text);font-family:monospace;font-weight:700;">' + d.cfop + '</span></td>' +
-        '<td class="r">' + d.qtd + '</td>' +
-        '<td class="r td-val">R$ ' + d.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td>' +
-        '<td class="r"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:' + pct + '%"></div></div><div class="pb-pct">' + pct + '%</div></div></td>';
-      tbody.appendChild(tr);
-    });
-    const trTot = document.createElement('tr');
-    trTot.style.background = 'rgba(34,163,41,0.05)';
-    trTot.innerHTML =
-      '<td class="fw7">TOTAL</td>' +
-      '<td class="r fw7">970*</td>' +
-      '<td class="r fw7 td-val">R$ ' + CFOP_SAIDAS_TOTAL.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td>' +
-      '<td class="r fw7">100%</td>';
-    tbody.appendChild(trTot);
   }
 
   /* -----------------------------------------------
