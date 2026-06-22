@@ -55,5 +55,8 @@ module.exports={
   },
   baifer2trm:(req,res)=>{
     res.render("baifer2trm")
+  },
+  baifer1trm:(req,res)=>{
+    res.render("baifer1trm")
   }
 };

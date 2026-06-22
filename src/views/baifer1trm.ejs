@@ -6,9 +6,6 @@
   <title>Dashboard Tributário | BAIFER Distribuidora de Ferramentas</title>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
@@ -16,10 +13,10 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --bg:#0f1117; --bg-sidebar:#161b27; --bg-card:#1e2535; --bg-card-hover:#252d42;
-      --accent:#22a329; --accent-hover:#1a8a20; --success:#10b981; --danger:#ef4444;
+      --accent:#3b82f6; --accent-hover:#2563eb; --success:#10b981; --danger:#ef4444;
       --warning:#f59e0b; --purple:#8b5cf6; --cyan:#06b6d4; --orange:#f97316;
       --text:#e2e8f0; --text-sec:#94a3b8; --text-muted:#64748b;
-      --border:rgba(255,255,255,0.07); --border-accent:rgba(34,163,41,0.35);
+      --border:rgba(255,255,255,0.07); --border-accent:rgba(59,130,246,0.35);
       --sidebar-w:260px; --header-h:68px; --radius:12px; --radius-sm:8px;
       --shadow:0 4px 24px rgba(0,0,0,0.35); --t:0.22s ease;
     }
@@ -32,7 +29,7 @@
     .sidebar.collapsed { width:72px; }
     .sidebar.collapsed .logo-text,.sidebar.collapsed .nav-label,.sidebar.collapsed .sec-label,.sidebar.collapsed .sidebar-foot-info { display:none; }
     .sidebar-logo { padding:0 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; min-height:var(--header-h); flex-shrink:0; }
-    .logo-icon { width:38px;height:38px; background:linear-gradient(135deg,#22a329,#4ade80); border-radius:10px; display:flex;align-items:center;justify-content:center; font-size:16px;color:#fff; flex-shrink:0; }
+    .logo-icon { width:38px;height:38px; background:linear-gradient(135deg,var(--accent),var(--purple)); border-radius:10px; display:flex;align-items:center;justify-content:center; font-size:16px;color:#fff; flex-shrink:0; }
     .logo-text .company { font-size:13px;font-weight:700;color:var(--text);white-space:nowrap; }
     .logo-text .subtitle { font-size:10px;color:var(--text-muted);margin-top:2px;white-space:nowrap; }
     .sidebar-nav { flex:1; padding:12px 8px; overflow-y:auto; overflow-x:hidden; }
@@ -41,7 +38,7 @@
     .sec-label { font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:10px 12px 4px; }
     .nav-item { display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--t),color var(--t);margin-bottom:2px;white-space:nowrap;user-select:none; }
     .nav-item:hover { background:rgba(255,255,255,0.05); }
-    .nav-item.active { background:rgba(34,163,41,0.15);color:var(--accent); }
+    .nav-item.active { background:rgba(59,130,246,0.15);color:var(--accent); }
     .nav-item.active .nav-ico { color:var(--accent); }
     .nav-ico { width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-muted);flex-shrink:0;transition:color var(--t); }
     .nav-item:hover .nav-ico { color:var(--text); }
@@ -90,7 +87,7 @@
     .kpi-card.c-orange::before { background:linear-gradient(90deg,var(--orange),transparent); }
     .kpi-head { display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px; }
     .kpi-ico { width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:16px; }
-    .kpi-ico.c-blue   { background:rgba(34,163,41,.15);color:var(--accent); }
+    .kpi-ico.c-blue   { background:rgba(59,130,246,.15);color:var(--accent); }
     .kpi-ico.c-green  { background:rgba(16,185,129,.15);color:var(--success); }
     .kpi-ico.c-red    { background:rgba(239,68,68,.15); color:var(--danger); }
     .kpi-ico.c-yellow { background:rgba(245,158,11,.15);color:var(--warning); }
@@ -170,7 +167,7 @@
     .tax-foot { display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted); }
 
     /* MEMORY */
-    .formula-box { background:rgba(34,163,41,0.07);border:1px solid rgba(34,163,41,0.2);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:20px; }
+    .formula-box { background:rgba(59,130,246,0.07);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:20px; }
     .formula-box .fttl { font-weight:700;color:var(--accent);margin-bottom:8px;font-size:13px; }
     .formula-box .fline { color:var(--text-sec);line-height:1.8;font-size:12px;font-family:'Courier New',monospace; }
     .mem-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px; }
@@ -178,7 +175,7 @@
     .mem-card-head { padding:12px 16px;font-size:13px;font-weight:700;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
     .mem-row { display:flex;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);font-size:12px; }
     .mem-row:last-child { border-bottom:none; }
-    .mem-row.hl  { background:rgba(34,163,41,0.06); }
+    .mem-row.hl  { background:rgba(59,130,246,0.06); }
     .mem-row.tot { background:rgba(16,185,129,0.08);font-weight:700; }
     .mem-row.neg { background:rgba(239,68,68,0.05); }
     .mem-row .lbl { color:var(--text-sec); }
@@ -196,7 +193,7 @@
     .dre-tbl td:first-child { padding-left:16px;font-weight:500; }
     .dre-tbl .dre-group td  { font-weight:700;background:rgba(255,255,255,0.03);color:var(--text-sec);font-size:11px;text-transform:uppercase;letter-spacing:.05em; }
     .dre-tbl .dre-indent td:first-child { padding-left:32px;color:var(--text-sec); }
-    .dre-tbl .dre-total td  { font-weight:800;background:rgba(34,163,41,0.07);border-top:1px solid var(--border-accent); }
+    .dre-tbl .dre-total td  { font-weight:800;background:rgba(59,130,246,0.07);border-top:1px solid var(--border-accent); }
     .dre-tbl .dre-lucro td  { font-weight:800;background:rgba(16,185,129,0.08);color:var(--success);font-size:14px; }
     .dre-tbl .dre-neg td.r  { color:var(--danger); }
     .dre-tbl .dre-subv td   { background:rgba(245,158,11,0.06); }
@@ -219,7 +216,7 @@
 
     /* CHIPS */
     .chip { display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:500; }
-    .chip.bl { background:rgba(34,163,41,.15);color:var(--accent); }
+    .chip.bl { background:rgba(59,130,246,.15);color:var(--accent); }
     .chip.gr { background:rgba(16,185,129,.15);color:var(--success); }
     .chip.ye { background:rgba(245,158,11,.15);color:var(--warning); }
     .chip.pu { background:rgba(139,92,246,.15);color:var(--purple); }
@@ -267,158 +264,6 @@
       .margin-grid { grid-template-columns:repeat(2,1fr); }
       .overlay { display:block; }
       .overlay.hidden { display:none; }
-      .export-bar { width:100%; justify-content:flex-end; flex-wrap:wrap; }
-      .btn-export { padding:6px 10px; font-size:.72rem; }
-    }
-
-    /* === EXPORT BUTTONS === */
-    .export-bar { display:flex; gap:8px; margin-left:auto; flex-shrink:0; }
-    .btn-export {
-      display:inline-flex; align-items:center; gap:6px;
-      padding:7px 14px; border-radius:8px;
-      font-size:.78rem; font-weight:600;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06);
-      color:var(--text-sec); cursor:pointer;
-      transition:all .2s ease; font-family:inherit;
-    }
-    .btn-export:hover { background:rgba(34,163,41,.25); border-color:rgba(34,163,41,.5); color:#fff; }
-    .btn-export:disabled { opacity:.5; cursor:wait; }
-    .btn-export i { font-size:.85rem; }
-    .btn-export.pdf  i { color:#ef4444; }
-    .btn-export.xlsx i { color:#22c55e; }
-    .btn-export.print i { color:#f59e0b; }
-
-    /* === SUPPLIER MODAL === */
-    .modal-overlay {
-      position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(4px);
-      z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px;
-    }
-    .modal-box {
-      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
-      width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column;
-      box-shadow:var(--shadow);
-    }
-    .modal-header {
-      display:flex; align-items:center; justify-content:space-between;
-      padding:16px 20px; border-bottom:1px solid var(--border);
-    }
-    .modal-header h3 { font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px; }
-    .modal-header h3 i { color:var(--warning); }
-    .modal-close {
-      background:none; border:none; color:var(--text-muted); font-size:22px;
-      cursor:pointer; line-height:1; padding:0 4px;
-    }
-    .modal-close:hover { color:var(--text); }
-    .modal-body { padding:16px 20px; overflow-y:auto; flex:1; }
-    .search-box input {
-      width:100%; padding:9px 12px; border-radius:var(--radius-sm);
-      border:1px solid var(--border); background:var(--bg); color:var(--text);
-      font-family:inherit; font-size:13px; outline:none;
-    }
-    .search-box input:focus { border-color:var(--border-accent); }
-    .supplier-actions { display:flex; gap:8px; margin:12px 0; }
-    .supplier-actions button {
-      padding:6px 12px; border-radius:6px; font-size:11px; font-weight:600;
-      border:1px solid var(--border); background:rgba(255,255,255,.05);
-      color:var(--text-sec); cursor:pointer; font-family:inherit;
-    }
-    .supplier-actions button:hover { background:rgba(34,163,41,.15); color:var(--accent); }
-    .supplier-list { display:flex; flex-direction:column; gap:4px; max-height:320px; overflow-y:auto; }
-    .supplier-item {
-      display:flex; align-items:flex-start; gap:10px; padding:10px 12px;
-      border-radius:var(--radius-sm); cursor:pointer; transition:background .15s;
-    }
-    .supplier-item:hover { background:rgba(255,255,255,.04); }
-    .supplier-item input { margin-top:3px; accent-color:var(--accent); }
-    .supplier-info { display:flex; flex-direction:column; gap:2px; }
-    .supplier-info strong { font-size:13px; font-weight:600; }
-    .supplier-info small { font-size:11px; color:var(--text-muted); }
-    .modal-footer {
-      display:flex; justify-content:flex-end; gap:10px;
-      padding:14px 20px; border-top:1px solid var(--border);
-    }
-    .btn-cancel {
-      padding:8px 16px; border-radius:var(--radius-sm); font-size:12px; font-weight:600;
-      border:1px solid var(--border); background:transparent; color:var(--text-sec);
-      cursor:pointer; font-family:inherit;
-    }
-    .btn-cancel:hover { background:rgba(255,255,255,.05); }
-    .btn-confirm {
-      padding:8px 16px; border-radius:var(--radius-sm); font-size:12px; font-weight:600;
-      border:1px solid rgba(34,163,41,.4); background:rgba(34,163,41,.2);
-      color:var(--accent); cursor:pointer; font-family:inherit;
-      display:inline-flex; align-items:center; gap:6px;
-    }
-    .btn-confirm:hover { background:rgba(34,163,41,.35); }
-
-    /* === PDF EXPORT THEME (scoped capture) === */
-    .pdf-export-target {
-      --bg: #f8fafc; --bg-card: #ffffff; --bg-card-hover: #f1f5f9;
-      --text: #1e293b; --text-sec: #475569; --text-muted: #64748b;
-      --border: rgba(0,0,0,0.12);
-      background: #f8fafc !important; color: #1e293b !important;
-      padding: 20px; opacity: 1 !important; filter: none !important; animation: none !important;
-    }
-    .pdf-export-target * { opacity: 1 !important; filter: none !important; }
-    .pdf-export-target .sec-title, .pdf-export-target .kpi-val, .pdf-export-target .chart-ttl,
-    .pdf-export-target .margin-val, .pdf-export-target .ind-val, .pdf-export-target .tax-cur,
-    .pdf-export-target .table-head .ttl, .pdf-export-target tbody td, .pdf-export-target td,
-    .pdf-export-target .kpi-lbl, .pdf-export-target .mem-row .lbl, .pdf-export-target .mem-row .val,
-    .pdf-export-target .fw7, .pdf-export-target .fw8 { color: #1e293b !important; }
-    .pdf-export-target .sec-sub, .pdf-export-target .kpi-sub, .pdf-export-target .chart-sub,
-    .pdf-export-target .table-head .sub, .pdf-export-target .td-mute, .pdf-export-target .sec-title small,
-    .pdf-export-target .margin-sub, .pdf-export-target .tax-prev, .pdf-export-target .ind-formula {
-      color: #475569 !important;
-    }
-    .pdf-export-target .kpi-card, .pdf-export-target .chart-card, .pdf-export-target .table-card,
-    .pdf-export-target .margin-card, .pdf-export-target .tax-card, .pdf-export-target .mem-card,
-    .pdf-export-target .ind-card, .pdf-export-target .alert-box {
-      background: #ffffff !important; border: 1px solid #e2e8f0 !important;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
-    }
-    .pdf-export-target .t-success { color: #059669 !important; }
-    .pdf-export-target .t-warning { color: #d97706 !important; }
-    .pdf-export-target .t-danger  { color: #dc2626 !important; }
-    .pdf-export-target .t-accent  { color: #16a34a !important; }
-    .pdf-export-target .t-muted   { color: #64748b !important; }
-    .pdf-export-target .kpi-ico.c-blue   { background: rgba(34,163,41,.22) !important; color: #16a34a !important; }
-    .pdf-export-target .kpi-ico.c-green  { background: rgba(16,185,129,.22) !important; color: #059669 !important; }
-    .pdf-export-target .kpi-ico.c-yellow { background: rgba(245,158,11,.22) !important; color: #d97706 !important; }
-    .pdf-export-target .kpi-ico.c-purple { background: rgba(139,92,246,.22) !important; color: #7c3aed !important; }
-    .pdf-export-target .export-bar { display: none !important; }
-    .pdf-export-target thead th { background: #f1f5f9 !important; color: #475569 !important; }
-    .pdf-export-target .dre-tbl .dre-group td { background: #f1f5f9 !important; color: #475569 !important; }
-    .pdf-export-target .dre-tbl .dre-total td { background: #ecfdf5 !important; }
-    .pdf-export-target .dre-tbl .dre-lucro td { background: #ecfdf5 !important; color: #059669 !important; }
-    .tab-section.export-capture {
-      display: block !important;
-      position: fixed;
-      top: 0; left: 0;
-      width: 1200px;
-      z-index: 10000;
-      max-height: none;
-      overflow: visible;
-    }
-    body.pdf-capturing { overflow: hidden; }
-
-    #print-supplier-report { display:none; }
-    body.supplier-printing #app, body.supplier-printing #overlay { display:none !important; }
-    body.supplier-printing #print-supplier-report { display:block !important; }
-
-    @media print {
-      body { background:#fff !important; color:#1a1a2e !important; }
-      .sidebar, .top-header, .export-bar, .btn-export, .modal-overlay, #overlay { display:none !important; }
-      body.supplier-printing #app { display:none !important; }
-      body.supplier-printing #print-supplier-report { display:block !important; position:static !important; }
-      .main-wrapper { margin-left:0 !important; }
-      .tab-section { display:none !important; }
-      .kpi-card, .chart-card, .table-card, .ind-card, .tax-card, .mem-card {
-        background:#fff !important; border:1px solid #ddd !important; color:#1a1a2e !important;
-      }
-      table th { background:#f0f0f0 !important; color:#1a1a2e !important; }
-      table td { color:#333 !important; border-color:#ddd !important; }
-      canvas { max-width:100% !important; }
     }
   </style>
 </head>
@@ -433,7 +278,7 @@
       <div class="logo-icon"><i class="fas fa-screwdriver-wrench"></i></div>
       <div class="logo-text">
         <div class="company">BAIFER</div>
-        <div class="subtitle">Ferramentas &bull; Q2/2026</div>
+        <div class="subtitle">Ferramentas &bull; Q1/2026</div>
       </div>
     </div>
     <nav class="sidebar-nav">
@@ -469,7 +314,7 @@
     <div class="sidebar-foot">
       <div class="sidebar-foot-info">
         <div class="lbl">Competência</div>
-        <div class="val">Abril – Maio 2026</div>
+        <div class="val">Janeiro – Março 2026</div>
       </div>
     </div>
   </aside>
@@ -478,10 +323,10 @@
   <div class="main-wrapper" id="mainWrapper">
     <header class="top-header">
       <button class="btn-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-      <div class="header-title" id="headerTitle">Visão Geral <span>Resumo Executivo – 2º Trimestre 2026 (Abr–Mai)</span></div>
+      <div class="header-title" id="headerTitle">Visão Geral <span>Resumo Executivo – 1º Trimestre 2026 (Jan–Mar)</span></div>
       <div class="header-actions">
         <select class="period-sel">
-          <option>Abril – Maio 2026</option>
+          <option>Janeiro – Março 2026</option>
           <option>Anual 2025</option>
         </select>
         <div class="regime-badge"><i class="fas fa-circle" style="font-size:7px;margin-right:5px;"></i>Lucro Real</div>
@@ -496,52 +341,48 @@
       <section id="tab-visao-geral" class="tab-section active">
         <div class="sec-header">
           <div>
-            <div class="sec-title">Visão Geral <small>2º Trimestre / 2026</small></div>
+            <div class="sec-title">Visão Geral <small>1º Trimestre / 2026</small></div>
             <div class="sec-sub">BAIFER Distribuidora de Ferramentas Ltda — CNPJ 52.005.382/0001-40 — IE 0824397000136</div>
-          </div>
-          <div class="export-bar">
-            <button class="btn-export pdf" onclick="exportPDF('tab-visao-geral','Visao_Geral')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
-            <button class="btn-export xlsx" onclick="exportExcel('tab-visao-geral','Visao_Geral')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
           </div>
         </div>
 
-        <!-- KPI Cards – Mai/2026 (Q2) -->
+        <!-- KPI Cards – Mar/2026 -->
         <div class="kpi-grid kpi-grid-4">
           <div class="kpi-card c-blue">
             <div class="kpi-head">
               <div class="kpi-ico c-blue"><i class="fas fa-store"></i></div>
-              <div class="kpi-badge neutral">Mai/2026</div>
+              <div class="kpi-badge neutral">Mar/2026</div>
             </div>
-            <div class="kpi-val">R$ 416,2K</div>
+            <div class="kpi-val">R$ 547,4K</div>
             <div class="kpi-lbl">Receita Bruta de Vendas</div>
-            <div class="kpi-sub">Acumulado Abr–Mai: R$ 963,2K</div>
+            <div class="kpi-sub">Acumulado Jan–Mar: R$ 1,50M</div>
           </div>
           <div class="kpi-card c-green">
             <div class="kpi-head">
               <div class="kpi-ico c-green"><i class="fas fa-cart-shopping"></i></div>
-              <div class="kpi-badge neutral">Mai/2026</div>
+              <div class="kpi-badge neutral">Mar/2026</div>
             </div>
-            <div class="kpi-val">R$ 360,0K</div>
+            <div class="kpi-val">R$ 511,6K</div>
             <div class="kpi-lbl">Total de Compras</div>
-            <div class="kpi-sub">Fonte: ICMS – Entradas Mai/2026</div>
+            <div class="kpi-sub">Fonte: ICMS – Entradas Mar/2026</div>
           </div>
           <div class="kpi-card c-yellow">
             <div class="kpi-head">
               <div class="kpi-ico c-yellow"><i class="fas fa-file-invoice-dollar"></i></div>
-              <div class="kpi-badge down"><i class="fas fa-arrow-up"></i>24.93%</div>
+              <div class="kpi-badge down"><i class="fas fa-arrow-up"></i>27.61%</div>
             </div>
-            <div class="kpi-val">R$ 103,8K</div>
+            <div class="kpi-val">R$ 151,2K</div>
             <div class="kpi-lbl">Deduções Tributárias</div>
-            <div class="kpi-sub">Sobre receita bruta Mai/2026</div>
+            <div class="kpi-sub">Sobre receita bruta Mar/2026</div>
           </div>
           <div class="kpi-card c-purple">
             <div class="kpi-head">
               <div class="kpi-ico c-purple"><i class="fas fa-hand-holding-dollar"></i></div>
               <div class="kpi-badge up"><i class="fas fa-arrow-down"></i>ICMS Apurado</div>
             </div>
-            <div class="kpi-val t-accent">R$ 13.194</div>
-            <div class="kpi-lbl">ICMS a Recolher – Mai/2026</div>
-            <div class="kpi-sub">Subvenção Decreto 5005: R$ 26.415</div>
+            <div class="kpi-val t-accent">R$ 23.019</div>
+            <div class="kpi-lbl">ICMS a Recolher – Mar/2026</div>
+            <div class="kpi-sub">Subvenção Decreto 5005: R$ 34.574</div>
           </div>
         </div>
 
@@ -549,7 +390,7 @@
         <div class="charts-row cr-2col">
           <div class="chart-card">
             <div class="chart-ttl">Receita Bruta × Deduções Tributárias</div>
-            <div class="chart-sub">Valores mensais Abr–Mai 2026 (R$ mil) — DRE Contábil</div>
+            <div class="chart-sub">Valores mensais Jan–Mar 2026 (R$ mil) — DRE Contábil</div>
             <div class="chart-wrap h260"><canvas id="chartCompBar"></canvas></div>
           </div>
           <div class="chart-card">
@@ -562,25 +403,25 @@
         <!-- Composição Mai + tabela -->
         <div class="charts-row cr-2col">
           <div class="chart-card">
-            <div class="chart-ttl">Composição das Deduções – Mai/2026</div>
+            <div class="chart-ttl">Composição das Deduções – Mar/2026</div>
             <div class="chart-sub">Participação de cada tributo no total de deduções do mês</div>
             <div class="chart-wrap h260"><canvas id="chartComposicao"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-ttl">Análise de Impostos sobre Vendas – Mai/2026</div>
-            <div class="chart-sub">Valores apurados / % sobre Receita Bruta de R$ 416.209,96</div>
+            <div class="chart-ttl">Análise de Impostos sobre Vendas – Mar/2026</div>
+            <div class="chart-sub">Valores apurados / % sobre Receita Bruta de R$ 547.403,18</div>
             <div style="overflow-x:auto">
               <table>
                 <thead><tr><th>Tributo</th><th class="r">Apurado Bruto</th><th class="r">A Recolher</th><th class="r">% s/ RB</th></tr></thead>
                 <tbody>
-                  <tr><td>ICMS (Decreto 5005/DF)</td><td class="r">R$ 75.099</td><td class="r td-val t-accent">R$ 13.194</td><td class="r"><span class="chip bl">18.04%</span></td></tr>
+                  <tr><td>ICMS (Decreto 5005/DF)</td><td class="r">R$ 97.323</td><td class="r td-val t-accent">R$ 23.019</td><td class="r"><span class="chip bl">17.78%</span></td></tr>
                   <tr><td>ICMS ST</td><td class="r">R$ 0</td><td class="r td-val">R$ 0</td><td class="r"><span class="chip pu">0,00%</span></td></tr>
-                  <tr><td>PIS (1,65% – N. Cum.)</td><td class="r">R$ 4.204</td><td class="r td-val t-success">R$ 0,00</td><td class="r"><span class="chip gr">1.01%</span></td></tr>
-                  <tr><td>COFINS (7,60% – N. Cum.)</td><td class="r">R$ 19.366</td><td class="r td-val t-success">R$ 0,00</td><td class="r"><span class="chip ye">4.65%</span></td></tr>
+                  <tr><td>PIS (1,65% – N. Cum.)</td><td class="r">R$ 8.034</td><td class="r td-val t-success">R$ 0,00</td><td class="r"><span class="chip gr">1.36%</span></td></tr>
+                  <tr><td>COFINS (7,60% – N. Cum.)</td><td class="r">R$ 37.005</td><td class="r td-val t-success">R$ 0,00</td><td class="r"><span class="chip ye">6.26%</span></td></tr>
                   <tr><td>IRPJ</td><td class="r td-mute">Em apuração</td><td class="r td-mute">—</td><td class="r"><span class="chip gy">—</span></td></tr>
                   <tr><td>CSLL</td><td class="r td-mute">Em apuração</td><td class="r td-mute">—</td><td class="r"><span class="chip gy">—</span></td></tr>
-                  <tr style="background:rgba(34,163,41,0.05)">
-                    <td class="fw7">Total (s/ IRPJ/CSLL)</td><td class="r fw7">R$ 98.669</td><td class="r fw7">R$ 13.194</td><td class="r fw7">3.17%</td>
+                  <tr style="background:rgba(59,130,246,0.05)">
+                    <td class="fw7">Total (s/ IRPJ/CSLL)</td><td class="r fw7">R$ 142.362</td><td class="r fw7">R$ 23.019</td><td class="r fw7">3.90%</td>
                   </tr>
                 </tbody>
               </table>
@@ -595,19 +436,15 @@
       <section id="tab-compras" class="tab-section">
         <div class="sec-header">
           <div>
-            <div class="sec-title">Compras <small>Maio 2026</small></div>
-            <div class="sec-sub">Aquisições de ferramentas e equipamentos — período 01/05/2026 a 31/05/2026</div>
-          </div>
-          <div class="export-bar">
-            <button class="btn-export pdf" onclick="exportPDF('tab-compras','Compras')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
-            <button class="btn-export xlsx" onclick="exportExcel('tab-compras','Compras')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+            <div class="sec-title">Compras <small>Março 2026</small></div>
+            <div class="sec-sub">Aquisições de ferramentas e equipamentos — período 01/03/2026 a 31/03/2026</div>
           </div>
         </div>
 
         <div class="kpi-grid kpi-grid-3">
           <div class="kpi-card c-green">
-            <div class="kpi-head"><div class="kpi-ico c-green"><i class="fas fa-boxes-stacked"></i></div><div class="kpi-badge neutral">Mai/2026</div></div>
-            <div class="kpi-val">R$ 360,0K</div>
+            <div class="kpi-head"><div class="kpi-ico c-green"><i class="fas fa-boxes-stacked"></i></div><div class="kpi-badge neutral">Mar/2026</div></div>
+            <div class="kpi-val">R$ 511,6K</div>
             <div class="kpi-lbl">Total de Compras</div>
             <div class="kpi-sub">Fonte: Relatório ICMS de Entradas</div>
           </div>
@@ -615,47 +452,47 @@
             <div class="kpi-head"><div class="kpi-ico c-blue"><i class="fas fa-handshake"></i></div><div class="kpi-badge neutral">—</div></div>
             <div class="kpi-val">12+</div>
             <div class="kpi-lbl">Principais Fornecedores</div>
-            <div class="kpi-sub">O.V.D., MAKITA, BLACK e outros</div>
+            <div class="kpi-sub">O.V.D., Black&amp;Decker, Bransales, Makita</div>
           </div>
           <div class="kpi-card c-purple">
             <div class="kpi-head"><div class="kpi-ico c-purple"><i class="fas fa-map-location-dot"></i></div><div class="kpi-badge neutral">—</div></div>
-            <div class="kpi-val">9 UFs</div>
+            <div class="kpi-val">10 UFs</div>
             <div class="kpi-lbl">Estados de Origem</div>
-            <div class="kpi-sub">SP lidera com 36.0% das compras</div>
+            <div class="kpi-sub">SP lidera com 25,4% das compras</div>
           </div>
         </div>
 
         <div class="charts-row cr-2col">
           <div class="chart-card">
             <div class="chart-ttl">Ranking de Fornecedores</div>
-            <div class="chart-sub">Valor contábil de entradas por fornecedor – Mai/2026 (R$ mil)</div>
+            <div class="chart-sub">Valor contábil de entradas por fornecedor – Mar/2026 (R$ mil)</div>
             <div class="chart-wrap h300"><canvas id="chartFornecedores"></canvas></div>
           </div>
           <div class="chart-card">
             <div class="chart-ttl">Compras por Estado de Origem (UF)</div>
-            <div class="chart-sub">Participação % por UF de procedência – Mai/2026</div>
+            <div class="chart-sub">Participação % por UF de procedência – Mar/2026</div>
             <div class="chart-wrap h300"><canvas id="chartComprasUF"></canvas></div>
           </div>
         </div>
 
         <div class="table-card">
           <div class="table-head">
-            <div><div class="ttl">Ranking de Fornecedores – Mai/2026</div><div class="sub">Participação individual no volume total de compras do período</div></div>
+            <div><div class="ttl">Ranking de Fornecedores – Mar/2026</div><div class="sub">Participação individual no volume total de compras do período</div></div>
           </div>
           <div class="tbl-scroll">
             <table>
               <thead><tr><th>#</th><th>Fornecedor</th><th>UF</th><th class="r">Valor Contábil</th><th>Participação</th><th class="r">CFOP Principal</th></tr></thead>
               <tbody>
-                <tr><td><div class="rank g1">1</div></td><td><div class="fw7">O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 36.864</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill " style="width:100%"></div></div><div class="pb-pct">10.2%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
-                <tr><td><div class="rank g2">2</div></td><td><div class="fw7">MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 33.550</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill gr" style="width:90%"></div></div><div class="pb-pct">9.3%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
-                <tr><td><div class="rank g3">3</div></td><td><div class="fw7">BLACK & DECKER DO BRASIL LTDA.</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 31.173</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill ye" style="width:80%"></div></div><div class="pb-pct">8.7%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
-                <tr><td><div class="rank gn">4</div></td><td><div class="fw7">MENEGOTTI INDUSTRIAS METALURGICAS LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 26.455</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill pu" style="width:70%"></div></div><div class="pb-pct">7.3%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
-                <tr><td><div class="rank gn">5</div></td><td><div class="fw7">MARCON INDUSTRIA METALURGICA LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 21.823</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill cy" style="width:60%"></div></div><div class="pb-pct">6.1%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
-                <tr><td><div class="rank gn">6</div></td><td><div class="fw7">WELD VISION IND E COM DE EQUIP PARA SOLDA E CORTE LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 19.966</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill or" style="width:55%"></div></div><div class="pb-pct">5.5%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
-                <tr><td><div class="rank gn">7</div></td><td><div class="fw7">GALZER IMPORTACAO E EXPORTACAO LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 14.205</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill rd" style="width:50%"></div></div><div class="pb-pct">3.9%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
-                <tr><td><div class="rank gn">8</div></td><td><div class="fw7">BEL IMPORTACAO E EXPORTACAO LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 11.687</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill gr" style="width:45%"></div></div><div class="pb-pct">3.2%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
-                <tr><td><div class="rank gn">9</div></td><td><div class="fw7">KARCHER INDUSTRIA E COMERCIO LTDA.</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 11.460</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill cy" style="width:40%"></div></div><div class="pb-pct">3.2%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
-                <tr><td><div class="rank gn">10+</div></td><td><div class="fw7">Demais Fornecedores</div><div class="td-mute">Outros estados</div></td><td><span class="chip gy">—</span></td><td class="r td-val">R$ 152.853</td><td><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:42%;background:var(--text-muted)"></div></div><div class="pb-pct">42.5%</div></div></td><td class="r td-mute">vários</td></tr>
+                <tr><td><div class="rank g1">1</div></td><td><div class="fw7">O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 75.299</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill " style="width:76%"></div></div><div class="pb-pct">25.3%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
+                <tr><td><div class="rank g2">2</div></td><td><div class="fw7">BLACK & DECKER DO BRASIL LTDA.</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 35.220</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill gr" style="width:36%"></div></div><div class="pb-pct">11.9%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
+                <tr><td><div class="rank g3">3</div></td><td><div class="fw7">BRANSALES ATACADISTA LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 28.166</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill ye" style="width:28%"></div></div><div class="pb-pct">9.5%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
+                <tr><td><div class="rank gn">4</div></td><td><div class="fw7">MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 25.438</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill pu" style="width:26%"></div></div><div class="pb-pct">8.6%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
+                <tr><td><div class="rank gn">5</div></td><td><div class="fw7">CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 20.315</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill cy" style="width:21%"></div></div><div class="pb-pct">6.8%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
+                <tr><td><div class="rank gn">6</div></td><td><div class="fw7">SEMAR IMPORT ATACADISTA LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 17.735</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill or" style="width:18%"></div></div><div class="pb-pct">6.0%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
+                <tr><td><div class="rank gn">7</div></td><td><div class="fw7">PNEUBEST COMERCIAL LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 17.291</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill rd" style="width:17%"></div></div><div class="pb-pct">5.8%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
+                <tr><td><div class="rank gn">8</div></td><td><div class="fw7">POSITEC IMPORTACAO DE FERRAMENTAS LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 17.010</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill gr" style="width:17%"></div></div><div class="pb-pct">5.7%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
+                <tr><td><div class="rank gn">9</div></td><td><div class="fw7">BEL IMPORTACAO E EXPORTACAO LTDA</div><div class="td-mute">Ferramentas e equipamentos</div></td><td><span class="chip bl">—</span></td><td class="r td-val">R$ 16.306</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill cy" style="width:16%"></div></div><div class="pb-pct">5.5%</div></div></td><td class="r td-mute">2-102/1-102</td></tr>
+                <tr><td><div class="rank gn">10+</div></td><td><div class="fw7">Demais Fornecedores</div><div class="td-mute">Outros estados</div></td><td><span class="chip gy">—</span></td><td class="r td-val">R$ 44.286</td><td><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:45%;background:var(--text-muted)"></div></div><div class="pb-pct">14.9%</div></div></td><td class="r td-mute">vários</td></tr>
               </tbody>
             </table>
           </div>
@@ -668,17 +505,12 @@
       <section id="tab-finalidade" class="tab-section">
         <div class="sec-header">
           <div>
-            <div class="sec-title">Finalidade de Compras <small>Maio 2026 — por CFOP</small></div>
-            <div class="sec-sub">Classificação fiscal das entradas — Entradas 05-2026.xls — por CFOP — Mai/2026</div>
-          </div>
-          <div class="export-bar">
-            <button class="btn-export print" onclick="openSupplierModal()" title="Imprimir por Fornecedor"><i class="fas fa-truck"></i> Por Fornecedor</button>
-            <button class="btn-export pdf" onclick="exportPDF('tab-finalidade','Finalidade_Compras')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
-            <button class="btn-export xlsx" onclick="exportExcel('tab-finalidade','Finalidade_Compras')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+            <div class="sec-title">Finalidade de Compras <small>Março 2026 — por CFOP</small></div>
+            <div class="sec-sub">Classificação fiscal das entradas — Entradas 03-2026.xls — por CFOP — Mar/2026</div>
           </div>
         </div>
 
-        <div class="alert-box" style="border-color:rgba(34,163,41,0.35);color:var(--accent);background:rgba(34,163,41,0.07)">
+        <div class="alert-box" style="border-color:rgba(59,130,246,0.35);color:var(--accent);background:rgba(59,130,246,0.07)">
           <i class="fas fa-info-circle" style="margin-right:8px;"></i>
           <strong>Fonte única de dados:</strong> Cada entrada é classificada automaticamente pelo CFOP da NF-e. Nenhuma classificação manual.
           Devoluções (1.202, 1.411) reduzem o estoque e o custo mas aparecem aqui como entradas contábeis.
@@ -688,25 +520,25 @@
         <div class="kpi-grid kpi-grid-4">
           <div class="kpi-card c-blue">
             <div class="kpi-head"><div class="kpi-ico c-blue"><i class="fas fa-rotate-left"></i></div><div class="kpi-badge neutral">2.102 / 1.102 / 1.403</div></div>
-            <div class="kpi-val">R$ 351.049</div>
+            <div class="kpi-val">R$ 392.936</div>
             <div class="kpi-lbl">Revenda</div>
-            <div class="kpi-sub">Compra p/ comercialização — 97.5% do total</div>
+            <div class="kpi-sub">Compra p/ comercialização — 92.9% do total</div>
           </div>
           <div class="kpi-card c-orange">
             <div class="kpi-head"><div class="kpi-ico c-orange"><i class="fas fa-building"></i></div><div class="kpi-badge neutral">1.551</div></div>
-            <div class="kpi-val">R$ 2.548</div>
-            <div class="kpi-lbl">Bonificações Mai</div>
-            <div class="kpi-sub">Mercadorias recebidas como bonificação em Mai/2026</div>
+            <div class="kpi-val">R$ 10.656</div>
+            <div class="kpi-lbl">Bonificações Q1</div>
+            <div class="kpi-sub">Mercadorias recebidas como bonificação no Q1</div>
           </div>
           <div class="kpi-card c-purple">
             <div class="kpi-head"><div class="kpi-ico c-purple"><i class="fas fa-arrows-rotate"></i></div><div class="kpi-badge neutral">1.202 / 1.411 / 2.202 / 2.411</div></div>
-            <div class="kpi-val">R$ 5.083</div>
+            <div class="kpi-val">R$ 23.069</div>
             <div class="kpi-lbl">Devoluções / Retornos</div>
-            <div class="kpi-sub">Dev. de venda e de compra Mai/2026</div>
+            <div class="kpi-sub">Dev. de venda e de compra Mar/2026</div>
           </div>
           <div class="kpi-card c-cyan">
             <div class="kpi-head"><div class="kpi-ico c-cyan"><i class="fas fa-box-open"></i></div><div class="kpi-badge neutral">1.949 / 2.353 / 2.910 / 2.908</div></div>
-            <div class="kpi-val">R$ 1.339</div>
+            <div class="kpi-val">R$ 6.819</div>
             <div class="kpi-lbl">Bonificação / Outras</div>
             <div class="kpi-sub">Bonificação (2-910), retorno conserto (1-912), outras</div>
           </div>
@@ -716,12 +548,12 @@
         <div class="charts-row cr-2col">
           <div class="chart-card">
             <div class="chart-ttl">Distribuição por Finalidade Fiscal</div>
-            <div class="chart-sub">% do valor total de entradas — Mai/2026 (R$ 360.037 total)</div>
+            <div class="chart-sub">% do valor total de entradas — Mar/2026 (R$ 511.639 bruto)</div>
             <div class="chart-wrap h280"><canvas id="chartFinalidadeDist"></canvas></div>
           </div>
           <div class="chart-card">
             <div class="chart-ttl">Valor por Finalidade (R$ mil)</div>
-            <div class="chart-sub">Comparativo dos grupos fiscais de compras — Mai/2026</div>
+            <div class="chart-sub">Comparativo dos grupos fiscais de compras — Mar/2026</div>
             <div class="chart-wrap h280"><canvas id="chartFinalidadeBar"></canvas></div>
           </div>
         </div>
@@ -763,54 +595,50 @@
       <section id="tab-vendas" class="tab-section">
         <div class="sec-header">
           <div>
-            <div class="sec-title">Vendas &amp; Receitas <small>Maio 2026 — Q2 comparativo</small></div>
-            <div class="sec-sub">Receita fiscal (Acumulador) vs NF Saídas (Saídas.xls) — Abr a Mai/2026</div>
-          </div>
-          <div class="export-bar">
-            <button class="btn-export pdf" onclick="exportPDF('tab-vendas','Vendas')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
-            <button class="btn-export xlsx" onclick="exportExcel('tab-vendas','Vendas')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+            <div class="sec-title">Vendas & Receitas <small>Março 2026 — Q1 comparativo</small></div>
+            <div class="sec-sub">Receita fiscal (Acumulador) vs NF Saídas (Saídas.xls) — Jan a Mar/2026</div>
           </div>
         </div>
 
         <div class="kpi-grid kpi-grid-4">
           <div class="kpi-card c-blue">
-            <div class="kpi-head"><div class="kpi-ico c-blue"><i class="fas fa-file-invoice-dollar"></i></div><div class="kpi-badge neutral">Mai/2026</div></div>
-            <div class="kpi-val">R$ 416,2K</div>
+            <div class="kpi-head"><div class="kpi-ico c-blue"><i class="fas fa-file-invoice-dollar"></i></div><div class="kpi-badge neutral">Mar/2026</div></div>
+            <div class="kpi-val">R$ 547,4K</div>
             <div class="kpi-lbl">Receita Bruta Fiscal</div>
-            <div class="kpi-sub">Resumo Acumulador (205/207/237/710) — base DRE</div>
+            <div class="kpi-sub">Apuração 5005 — Contabilização Mar/2026</div>
           </div>
           <div class="kpi-card c-green">
-            <div class="kpi-head"><div class="kpi-ico c-green"><i class="fas fa-sack-dollar"></i></div><div class="kpi-badge neutral">Mai/2026</div></div>
-            <div class="kpi-val">R$ 451,7K</div>
+            <div class="kpi-head"><div class="kpi-ico c-green"><i class="fas fa-sack-dollar"></i></div><div class="kpi-badge neutral">Mar/2026</div></div>
+            <div class="kpi-val">R$ 603,3K</div>
             <div class="kpi-lbl">Total NF Saídas</div>
-            <div class="kpi-sub">Saídas 05-2026.xls — todas NF-e (+8.5% vs fiscal)</div>
+            <div class="kpi-sub">Saídas 03-2026.xls — Resumo acumulador (+10.2% vs fiscal)</div>
           </div>
           <div class="kpi-card c-yellow">
-            <div class="kpi-head"><div class="kpi-ico c-yellow"><i class="fas fa-chart-line"></i></div><div class="kpi-badge down"><i class="fas fa-arrow-down"></i>23.9%</div></div>
-            <div class="kpi-val">+-24%</div>
+            <div class="kpi-head"><div class="kpi-ico c-yellow"><i class="fas fa-chart-line"></i></div><div class="kpi-badge up"><i class="fas fa-arrow-up"></i>14.0%</div></div>
+            <div class="kpi-val">+14%</div>
             <div class="kpi-lbl">Crescimento RB</div>
-            <div class="kpi-sub">Mai vs Abr: 546.988 → 416.210</div>
+            <div class="kpi-sub">Mar vs Jan: 480.047 → 547.403</div>
           </div>
           <div class="kpi-card c-orange">
             <div class="kpi-head"><div class="kpi-ico c-orange"><i class="fas fa-ranking-star"></i></div><div class="kpi-badge neutral">—</div></div>
             <div class="kpi-val">LOJA</div>
             <div class="kpi-lbl">Principal Cliente</div>
-            <div class="kpi-sub">R$ 239.188 (53.0% do NF Saídas)</div>
+            <div class="kpi-sub">R$ 311.752 (50.8% do NF Saídas)</div>
           </div>
         </div>
 
         <div class="alert-box" style="margin-bottom:20px"><i class="fas fa-info-circle" style="margin-right:8px;"></i>
-          <strong>Reconciliação:</strong> Receita Fiscal = R$ 416.210 | Total NF Saídas = R$ 451.663 | Diferença = R$ 35.453 (outros CFOPs e ajustes).
+          <strong>Reconciliação:</strong> Receita Fiscal = R$ 547.403 | Total NF Saídas = R$ 603.307 | Diferença = R$ 55.904 (códigos acumulador 216, 218, 232 etc.).
         </div>
 
         <div class="charts-row cr-2col">
           <div class="chart-card">
-            <div class="chart-ttl">Evolução Receita — Abr a Mai/2026</div>
+            <div class="chart-ttl">Evolução Receita — Jan a Mar/2026</div>
             <div class="chart-sub">Receita Bruta Fiscal vs Total NF Saídas (R$ mil)</div>
             <div class="chart-wrap h260"><canvas id="chartVendasEvol"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-ttl">Compras × Vendas — Q2/2026</div>
+            <div class="chart-ttl">Compras × Vendas — Q1/2026</div>
             <div class="chart-sub">Entradas (compras) vs Receita Bruta Fiscal por mês</div>
             <div class="chart-wrap h260"><canvas id="chartComprasVendas"></canvas></div>
           </div>
@@ -819,40 +647,40 @@
         <div class="charts-row cr-2col">
           <div class="chart-card">
             <div class="chart-ttl">Ranking de Clientes por Faturamento</div>
-            <div class="chart-sub">Valor contábil de vendas por cliente – Mai/2026 (R$ mil)</div>
+            <div class="chart-sub">Valor contábil de vendas por cliente – Mar/2026 (R$ mil) — base NF Saídas</div>
             <div class="chart-wrap h300"><canvas id="chartClientes"></canvas></div>
           </div>
           <div class="chart-card">
             <div class="chart-ttl">Vendas por Estado de Destino (UF)</div>
-            <div class="chart-sub">Participação % por UF — Mai/2026</div>
+            <div class="chart-sub">Participação % por UF — Mar/2026</div>
             <div class="chart-wrap h300"><canvas id="chartVendasUF"></canvas></div>
           </div>
         </div>
 
         <div class="table-card">
           <div class="table-head">
-            <div><div class="ttl">Ranking de Clientes – Mai/2026</div><div class="sub">Faturamento individual e participação percentual no total do mês</div></div>
+            <div><div class="ttl">Ranking de Clientes – Mar/2026</div><div class="sub">Participação sobre Total NF Saídas (R$ 603.307)</div></div>
           </div>
           <div class="tbl-scroll">
             <table>
               <thead><tr><th>#</th><th>Cliente</th><th>UF</th><th class="r">Faturamento</th><th>Participação</th></tr></thead>
               <tbody>
-                <tr><td><div class="rank g1">1</div></td><td><div class="fw7">LOJA DAS MAQUINAS E FERRAMENTAS LTDA</div><div class="td-mute">Cliente direto Mai/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 239.188</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill " style="width:52%"></div></div><div class="pb-pct">53.0%</div></div></td></tr>
-                <tr><td><div class="rank g2">2</div></td><td><div class="fw7">COSTA MULTICANAL S/A</div><div class="td-mute">Cliente direto Mai/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 12.481</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill gr" style="width:2%"></div></div><div class="pb-pct">2.8%</div></div></td></tr>
-                <tr><td><div class="rank g3">3</div></td><td><div class="fw7">COBALTO - ENGENHARIA CONSULTORIA E PROJETOS LTDA</div><div class="td-mute">Cliente direto Mai/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 10.783</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill ye" style="width:2%"></div></div><div class="pb-pct">2.4%</div></div></td></tr>
-                <tr><td><div class="rank gn">4</div></td><td><div class="fw7">50.202.790 JOSE ROBERTO ALMEIDA DE ARAUJO</div><div class="td-mute">Cliente direto Mai/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 7.857</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill pu" style="width:1%"></div></div><div class="pb-pct">1.7%</div></div></td></tr>
-                <tr><td><div class="rank gn">5</div></td><td><div class="fw7">SERVICOS HOSPITALARES YUGE S.A</div><div class="td-mute">Cliente direto Mai/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 7.539</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill cy" style="width:1%"></div></div><div class="pb-pct">1.7%</div></div></td></tr>
-                <tr><td><div class="rank gn">6</div></td><td><div class="fw7">LOTUS TOWER PARTICIPACOES LTDA</div><div class="td-mute">Cliente direto Mai/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 6.945</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill or" style="width:1%"></div></div><div class="pb-pct">1.5%</div></div></td></tr>
-                <tr><td><div class="rank gn">7</div></td><td><div class="fw7">FV COMERCIO DE FERRAMENTAS LTDA</div><div class="td-mute">Cliente direto Mai/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 6.558</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill rd" style="width:1%"></div></div><div class="pb-pct">1.5%</div></div></td></tr>
-                <tr><td><div class="rank gn">8</div></td><td><div class="fw7">LG INDUSTRIA E COMERCIO LTDA</div><div class="td-mute">Cliente direto Mai/2026</div></td><td><span class="chip cy">MG</span></td><td class="r td-val">R$ 6.328</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill gr" style="width:1%"></div></div><div class="pb-pct">1.4%</div></div></td></tr>
-                <tr><td><div class="rank gn">9</div></td><td><div class="fw7">VINILSEG - MCA SOLUCOES IMPERMEAVEIS LTDA</div><div class="td-mute">Cliente direto Mai/2026</div></td><td><span class="chip cy">SP</span></td><td class="r td-val">R$ 5.915</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill cy" style="width:1%"></div></div><div class="pb-pct">1.3%</div></div></td></tr>
-                <tr><td><div class="rank gn">10</div></td><td><div class="fw7">LOJAO DAS FERRAMENTAS LTDA</div><div class="td-mute">Cliente direto Mai/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 5.835</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill pu" style="width:1%"></div></div><div class="pb-pct">1.3%</div></div></td></tr>
-                <tr><td><div class="rank gn">11+</div></td><td><div class="fw7">Demais Clientes</div><div class="td-mute">DF, GO e outros</div></td><td><span class="chip gy">—</span></td><td class="r td-val">R$ 142.234</td><td><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:31%;background:var(--text-muted)"></div></div><div class="pb-pct">31.5%</div></div></td></tr>
+                <tr><td><div class="rank g1">1</div></td><td><div class="fw7">LOJA DAS MAQUINAS E FERRAMENTAS LTDA</div><div class="td-mute">Cliente direto Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 311.752</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill " style="width:100%"></div></div><div class="pb-pct">50.8%</div></div></td></tr>
+                <tr><td><div class="rank g2">2</div></td><td><div class="fw7">LS INDUSTRIA E COMERCIO DE FERROS E METAIS LTDA</div><div class="td-mute">Cliente direto Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 20.019</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill gr" style="width:7%"></div></div><div class="pb-pct">3.3%</div></div></td></tr>
+                <tr><td><div class="rank g3">3</div></td><td><div class="fw7">GOLFO IMPORTACAO, EXPORTACAO E COMERCIO DE VARIEDADES LTDA</div><div class="td-mute">Cliente direto Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 18.205</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill ye" style="width:6%"></div></div><div class="pb-pct">3.0%</div></div></td></tr>
+                <tr><td><div class="rank gn">4</div></td><td><div class="fw7">LOTUS TOWER PARTICIPACOES LTDA</div><div class="td-mute">Cliente direto Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 17.386</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill pu" style="width:6%"></div></div><div class="pb-pct">2.8%</div></div></td></tr>
+                <tr><td><div class="rank gn">5</div></td><td><div class="fw7">50.202.790 JOSE ROBERTO ALMEIDA DE ARAUJO</div><div class="td-mute">Cliente direto Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 15.178</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill cy" style="width:5%"></div></div><div class="pb-pct">2.5%</div></div></td></tr>
+                <tr><td><div class="rank gn">6</div></td><td><div class="fw7">ARAUJO ABREU ENGENHARIA S/A</div><div class="td-mute">Cliente direto Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 14.058</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill or" style="width:5%"></div></div><div class="pb-pct">2.3%</div></div></td></tr>
+                <tr><td><div class="rank gn">7</div></td><td><div class="fw7">FV COMERCIO DE FERRAMENTAS LTDA</div><div class="td-mute">Cliente direto Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 13.895</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill rd" style="width:5%"></div></div><div class="pb-pct">2.3%</div></div></td></tr>
+                <tr><td><div class="rank gn">8</div></td><td><div class="fw7">REBRASCON EMPREENDIMENTOS IMOBILIARIOS E CONSTRUCOES LTDA</div><div class="td-mute">Cliente direto Mar/2026</div></td><td><span class="chip cy">GO</span></td><td class="r td-val">R$ 12.655</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill gr" style="width:4%"></div></div><div class="pb-pct">2.1%</div></div></td></tr>
+                <tr><td><div class="rank gn">9</div></td><td><div class="fw7">BRASAL REFRIGERANTES S/A</div><div class="td-mute">Cliente direto Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 7.270</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill cy" style="width:2%"></div></div><div class="pb-pct">1.2%</div></div></td></tr>
+                <tr><td><div class="rank gn">10</div></td><td><div class="fw7">ALVES GAMA ATACADISTA DE ALIMENTOS</div><div class="td-mute">Cliente direto Mar/2026</div></td><td><span class="chip cy">DF</span></td><td class="r td-val">R$ 6.680</td><td style="min-width:180px"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill pu" style="width:2%"></div></div><div class="pb-pct">1.1%</div></div></td></tr>
+                <tr><td><div class="rank gn">11+</div></td><td><div class="fw7">Demais Clientes</div><div class="td-mute">DF, GO e outros</div></td><td><span class="chip gy">—</span></td><td class="r td-val">R$ 176.716</td><td><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:58%;background:var(--text-muted)"></div></div><div class="pb-pct">28.8%</div></div></td></tr>
               </tbody>
             </table>
           </div>
         </div>
-      <div class="table-card" style="margin-top:24px"><div class="table-head"><div><div class="ttl">CFOP de Saídas – Mai/2026</div><div class="sub">Classificação fiscal das vendas — Apuração 5005 Contábil</div></div></div><div class="tbl-scroll"><table><thead><tr><th>CFOP</th><th class="r">Qtd NF</th><th class="r">Valor</th><th class="r">%</th></tr></thead><tbody id="tbl-cfop-saidas"><tr><td class="fw7">5-102</td><td class="r">373</td><td class="r td-val">R$ 383.341</td><td class="r">89.1%</td></tr><tr><td class="fw7">5-405</td><td class="r">27</td><td class="r td-val">R$ 11.675</td><td class="r">2.7%</td></tr><tr><td class="fw7">5-403</td><td class="r">43</td><td class="r td-val">R$ 11.585</td><td class="r">2.7%</td></tr><tr><td class="fw7">6-102</td><td class="r">10</td><td class="r td-val">R$ 9.608</td><td class="r">2.2%</td></tr><tr><td class="fw7">6-202</td><td class="r">8</td><td class="r td-val">R$ 7.219</td><td class="r">1.7%</td></tr><tr><td class="fw7">5-117</td><td class="r">1</td><td class="r td-val">R$ 2.970</td><td class="r">0.7%</td></tr><tr><td class="fw7">6-915</td><td class="r">2</td><td class="r td-val">R$ 2.137</td><td class="r">0.5%</td></tr><tr><td class="fw7">5-915</td><td class="r">2</td><td class="r td-val">R$ 626</td><td class="r">0.1%</td></tr><tr><td class="fw7">5-411</td><td class="r">1</td><td class="r td-val">R$ 429</td><td class="r">0.1%</td></tr><tr><td class="fw7">5-949</td><td class="r">7</td><td class="r td-val">R$ 375</td><td class="r">0.1%</td></tr><tr><td class="fw7">5-202</td><td class="r">1</td><td class="r td-val">R$ 290</td><td class="r">0.1%</td></tr></tbody></table></div></div>
+<div class="table-card"><div class="table-head"><div><div class="ttl">CFOP de Saídas – Mar/2026</div><div class="sub">Classificação fiscal das vendas — Apuração 5005</div></div></div><div class="tbl-scroll"><table><thead><tr><th>CFOP</th><th class="r">Qtd NF</th><th class="r">Valor</th><th class="r">%</th></tr></thead><tbody id="tbl-cfop-saidas"><tr><td class="fw7">5-102</td><td class="r">429</td><td class="r td-val">R$ 476.772</td><td class="r">84.7%</td></tr><tr><td class="fw7">5-403</td><td class="r">51</td><td class="r td-val">R$ 31.311</td><td class="r">5.6%</td></tr><tr><td class="fw7">5-405</td><td class="r">63</td><td class="r td-val">R$ 16.858</td><td class="r">3.0%</td></tr><tr><td class="fw7">6-102</td><td class="r">8</td><td class="r td-val">R$ 12.842</td><td class="r">2.3%</td></tr><tr><td class="fw7">6-202</td><td class="r">5</td><td class="r td-val">R$ 10.854</td><td class="r">1.9%</td></tr><tr><td class="fw7">6-404</td><td class="r">0</td><td class="r td-val">R$ 9.177</td><td class="r">1.6%</td></tr><tr><td class="fw7">5-922</td><td class="r">0</td><td class="r td-val">R$ 2.970</td><td class="r">0.5%</td></tr><tr><td class="fw7">5-949</td><td class="r">10</td><td class="r td-val">R$ 572</td><td class="r">0.1%</td></tr><tr><td class="fw7">5-202</td><td class="r">2</td><td class="r td-val">R$ 540</td><td class="r">0.1%</td></tr><tr><td class="fw7">5-411</td><td class="r">3</td><td class="r td-val">R$ 443</td><td class="r">0.1%</td></tr></tbody></table></div></div>
       </section>
 
       <!-- ===============================================
@@ -861,47 +689,43 @@
       <section id="tab-impostos" class="tab-section">
         <div class="sec-header">
           <div>
-            <div class="sec-title">Impostos <small>Competência Maio 2026</small></div>
+            <div class="sec-title">Impostos <small>Competência Março 2026</small></div>
             <div class="sec-sub">Apuração tributária — Lucro Real — PIS/COFINS Não-Cumulativo (1,65% / 7,6%)</div>
-          </div>
-          <div class="export-bar">
-            <button class="btn-export pdf" onclick="exportPDF('tab-impostos','Impostos')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
-            <button class="btn-export xlsx" onclick="exportExcel('tab-impostos','Impostos')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
           </div>
         </div>
 
         <div class="alert-box"><i class="fas fa-info-circle" style="margin-right:8px;"></i>
-          <strong>Benefício Fiscal ativo:</strong> Decreto 5005 (DF/GO) — Crédito Outorgado + Redução de débito ICMS. Receita de Subvenção reconhecida: <strong>R$ 26.414,87</strong> em Mai/2026.
+          <strong>Benefício Fiscal ativo:</strong> Decreto 5005 (DF/GO) — Crédito Outorgado + Redução de débito ICMS. Receita de Subvenção reconhecida: <strong>R$ 34.573,59</strong> em Mar/2026.
         </div>
 
         <div class="tax-grid">
           <!-- ICMS -->
           <div class="tax-card">
             <div class="tax-card-head"><div class="tax-name t-accent">ICMS</div><span class="chip bl">Decreto 5005</span></div>
-            <div class="tax-cur t-accent">R$ 13.194</div>
-            <div class="tax-prev">Débito bruto: R$ 75.099 → Créditos + Benefícios: R$ 61.905</div>
-            <div class="tax-foot"><span>Apuração final Mai/2026</span><span class="var-up"><i class="fas fa-arrow-down"></i>Redução 82.4%</span></div>
+            <div class="tax-cur t-accent">R$ 23.019</div>
+            <div class="tax-prev">Débito bruto: R$ 97.323 → Créditos + Benefícios: R$ 74.303</div>
+            <div class="tax-foot"><span>Apuração final Mar/2026</span><span class="var-up"><i class="fas fa-arrow-down"></i>Redução 76.3%</span></div>
           </div>
           <!-- ICMS ST -->
           <div class="tax-card">
             <div class="tax-card-head"><div class="tax-name" style="color:var(--purple)">ICMS ST</div><span class="chip pu">DF / GO / MG</span></div>
             <div class="tax-cur" style="color:var(--purple)">R$ 0,00</div>
             <div class="tax-prev">Substituição tributária não apurada no período</div>
-            <div class="tax-foot"><span>0,00% s/ Receita Bruta</span><span class="var-neu">Mai/2026</span></div>
+            <div class="tax-foot"><span>0,00% s/ Receita Bruta</span><span class="var-neu">Mar/2026</span></div>
           </div>
           <!-- PIS -->
           <div class="tax-card">
             <div class="tax-card-head"><div class="tax-name" style="color:var(--success)">PIS</div><span class="chip gr">Não-Cumulativo</span></div>
             <div class="tax-cur t-success">R$ 0,00</div>
-            <div class="tax-prev">Apurado bruto: R$ 4.204,48 | Crédito disponível: R$ 11.775,31</div>
-            <div class="tax-foot"><span>Crédito acumulado: R$ 11.775,31</span><span class="var-up"><i class="fas fa-check"></i>Zerado</span></div>
+            <div class="tax-prev">Apurado bruto: R$ 8.034,06 | Crédito disponível: R$ 13.992,22</div>
+            <div class="tax-foot"><span>Crédito acumulado: R$ 13.992,22</span><span class="var-up"><i class="fas fa-check"></i>Zerado</span></div>
           </div>
           <!-- COFINS -->
           <div class="tax-card">
             <div class="tax-card-head"><div class="tax-name" style="color:var(--warning)">COFINS</div><span class="chip ye">Não-Cumulativo</span></div>
             <div class="tax-cur" style="color:var(--warning)">R$ 0,00</div>
-            <div class="tax-prev">Apurado bruto: R$ 19.366,08 | Crédito disponível: R$ 54.237,88</div>
-            <div class="tax-foot"><span>Crédito acumulado: R$ 54.237,88</span><span class="var-up"><i class="fas fa-check"></i>Zerado</span></div>
+            <div class="tax-prev">Apurado bruto: R$ 37.005,35 | Crédito disponível: R$ 64.449,09</div>
+            <div class="tax-foot"><span>Crédito acumulado: R$ 64.449,09</span><span class="var-up"><i class="fas fa-check"></i>Zerado</span></div>
           </div>
           <!-- IRPJ -->
           <div class="tax-card">
@@ -922,12 +746,12 @@
         <div class="charts-row cr-2col">
           <div class="chart-card">
             <div class="chart-ttl">Evolução Mensal – Deduções por Tributo</div>
-            <div class="chart-sub">Valores debitados do resultado (DRE) por tributo – Abr a Mai/2026 (R$)</div>
+            <div class="chart-sub">Valores debitados do resultado (DRE) por tributo – Jan a Mar/2026 (R$)</div>
             <div class="chart-wrap h280"><canvas id="chartImpostosEv"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-ttl">Participação sobre Receita Bruta – Mai/2026</div>
-            <div class="chart-sub">% de cada tributo apurado bruto sobre RB de R$ 416.209,96</div>
+            <div class="chart-ttl">Participação sobre Receita Bruta – Mar/2026</div>
+            <div class="chart-sub">% de cada tributo apurado bruto sobre RB de R$ 547.403,18</div>
             <div class="chart-wrap h280"><canvas id="chartImpostosPart"></canvas></div>
           </div>
         </div>
@@ -939,12 +763,8 @@
       <section id="tab-memoria" class="tab-section">
         <div class="sec-header">
           <div>
-            <div class="sec-title">Memória de Cálculo <small>Maio 2026</small></div>
+            <div class="sec-title">Memória de Cálculo <small>Março 2026</small></div>
             <div class="sec-sub">Detalhamento da apuração de cada tributo — Lucro Real — Decreto 5005 (DF/GO)</div>
-          </div>
-          <div class="export-bar">
-            <button class="btn-export pdf" onclick="exportPDF('tab-memoria','Memoria_Calculo')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
-            <button class="btn-export xlsx" onclick="exportExcel('tab-memoria','Memoria_Calculo')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
           </div>
         </div>
 
@@ -964,12 +784,12 @@
           <!-- ICMS -->
           <div class="mem-card">
             <div class="mem-card-head"><span class="t-accent fw7">ICMS — Decreto 5005</span><span class="chip bl">Apurado</span></div>
-            <div class="mem-row hl"><span class="lbl">Débito ICMS Bruto (Normal)</span><span class="val t-danger">R$ 75.098,82</span></div>
-            <div class="mem-row"><span class="lbl">ICMS s/ Saídas 5005</span><span class="val">R$ 48.683,95</span></div>
-            <div class="mem-row"><span class="lbl">(–) Crédito ICMS 5005</span><span class="val t-success">R$ 35.489,85</span></div>
-            <div class="mem-row"><span class="lbl">Redução Decreto 5005</span><span class="val t-warning">R$ 26.414,87</span></div>
-            <div class="mem-row tot"><span class="lbl">ICMS Apuração Final</span><span class="val">R$ 13.194,11</span></div>
-            <div class="mem-row" style="background:rgba(245,158,11,0.07)"><span class="lbl">Receita de Subvenção ICMS</span><span class="val t-warning fw7">R$ 26.414,87</span></div>
+            <div class="mem-row hl"><span class="lbl">Débito ICMS Bruto (Normal)</span><span class="val t-danger">R$ 97.322,59</span></div>
+            <div class="mem-row"><span class="lbl">ICMS s/ Saídas 5005</span><span class="val">R$ 62.749,00</span></div>
+            <div class="mem-row"><span class="lbl">(–) Crédito ICMS 5005</span><span class="val t-success">R$ 39.729,56</span></div>
+            <div class="mem-row"><span class="lbl">Redução Decreto 5005</span><span class="val t-warning">R$ 34.573,59</span></div>
+            <div class="mem-row tot"><span class="lbl">ICMS Apuração Final</span><span class="val">R$ 23.019,43</span></div>
+            <div class="mem-row" style="background:rgba(245,158,11,0.07)"><span class="lbl">Receita de Subvenção ICMS</span><span class="val t-warning fw7">R$ 34.573,59</span></div>
           </div>
 
           <!-- ICMS ST -->
@@ -984,25 +804,25 @@
           <!-- PIS -->
           <div class="mem-card">
             <div class="mem-card-head"><span style="color:var(--success)" class="fw7">PIS — Não-Cumulativo</span><span class="chip gr">Zero Recolher</span></div>
-            <div class="mem-row hl"><span class="lbl">CST 01/05 – Base tributável (EFD)</span><span class="val">R$ 254.816,97</span></div>
-            <div class="mem-row"><span class="lbl">Base tributável</span><span class="val">R$ 254.816,97</span></div>
+            <div class="mem-row hl"><span class="lbl">CST 01/05 – Saídas tributáveis</span><span class="val">R$ 487.245,00</span></div>
+            <div class="mem-row"><span class="lbl">Base tributável</span><span class="val">R$ 487.245,00</span></div>
             <div class="mem-row"><span class="lbl">Alíquota PIS</span><span class="val">1,65%</span></div>
-            <div class="mem-row"><span class="lbl">PIS Apurado (débito)</span><span class="val t-danger">R$ 4.204,48</span></div>
-            <div class="mem-row neg"><span class="lbl">(–) Crédito Disponível no Período</span><span class="val t-danger">R$ 4.204,48</span></div>
+            <div class="mem-row"><span class="lbl">PIS Apurado (débito)</span><span class="val t-danger">R$ 8.034,06</span></div>
+            <div class="mem-row neg"><span class="lbl">(–) Crédito Disponível no Período</span><span class="val t-danger">R$ 8.034,06</span></div>
             <div class="mem-row tot"><span class="lbl">PIS a Recolher</span><span class="val">R$ 0,00</span></div>
-            <div class="mem-row"><span class="lbl">Crédito p/ Próximo Período</span><span class="val t-warning">R$ 11.775,31</span></div>
+            <div class="mem-row"><span class="lbl">Crédito p/ Próximo Período</span><span class="val t-warning">R$ 13.992,22</span></div>
           </div>
 
           <!-- COFINS -->
           <div class="mem-card">
             <div class="mem-card-head"><span style="color:var(--warning)" class="fw7">COFINS — Não-Cumulativo</span><span class="chip ye">Zero Recolher</span></div>
-            <div class="mem-row hl"><span class="lbl">CST 01/05 – Base tributável (EFD)</span><span class="val">R$ 254.816,84</span></div>
-            <div class="mem-row"><span class="lbl">Base tributável</span><span class="val">R$ 254.816,84</span></div>
+            <div class="mem-row hl"><span class="lbl">CST 01/05 – Saídas tributáveis</span><span class="val">R$ 487.245,00</span></div>
+            <div class="mem-row"><span class="lbl">Base tributável</span><span class="val">R$ 487.245,00</span></div>
             <div class="mem-row"><span class="lbl">Alíquota COFINS</span><span class="val">7,60%</span></div>
-            <div class="mem-row"><span class="lbl">COFINS Apurado (débito)</span><span class="val t-danger">R$ 19.366,08</span></div>
-            <div class="mem-row neg"><span class="lbl">(–) Crédito Disponível no Período</span><span class="val t-danger">R$ 19.366,08</span></div>
+            <div class="mem-row"><span class="lbl">COFINS Apurado (débito)</span><span class="val t-danger">R$ 37.005,35</span></div>
+            <div class="mem-row neg"><span class="lbl">(–) Crédito Disponível no Período</span><span class="val t-danger">R$ 37.005,35</span></div>
             <div class="mem-row tot"><span class="lbl">COFINS a Recolher</span><span class="val">R$ 0,00</span></div>
-            <div class="mem-row"><span class="lbl">Crédito p/ Próximo Período</span><span class="val t-warning">R$ 54.237,88</span></div>
+            <div class="mem-row"><span class="lbl">Crédito p/ Próximo Período</span><span class="val t-warning">R$ 64.449,09</span></div>
           </div>
 
           <!-- IRPJ -->
@@ -1032,23 +852,23 @@
 
         <!-- Resumo consolidado -->
         <div class="table-card">
-          <div class="table-head"><div><div class="ttl">Resumo Consolidado – Maio 2026</div><div class="sub">Total de obrigações tributárias apuradas e estimadas na competência</div></div></div>
+          <div class="table-head"><div><div class="ttl">Resumo Consolidado – Março 2026</div><div class="sub">Total de obrigações tributárias apuradas e estimadas na competência</div></div></div>
           <div class="tbl-scroll">
             <table>
               <thead><tr><th>Tributo</th><th>Vencimento</th><th>Apurado Bruto</th><th class="r">Créditos/Benef.</th><th class="r">A Recolher</th><th class="r">% s/ RB</th></tr></thead>
               <tbody>
-                <tr><td class="fw7 t-accent">ICMS (Decreto 5005)</td><td>20/06/2026</td><td>R$ 75.098,82</td><td class="r t-success">R$ (61.904,71)</td><td class="r td-val">R$ 13.194,11</td><td class="r"><span class="chip bl">18.04%</span></td></tr>
+                <tr><td class="fw7 t-accent">ICMS (Decreto 5005)</td><td>20/04/2026</td><td>R$ 97.322,59</td><td class="r t-success">R$ (74.303,16)</td><td class="r td-val">R$ 23.019,43</td><td class="r"><span class="chip bl">16.47%</span></td></tr>
                 <tr><td class="fw7" style="color:var(--purple)">ICMS ST</td><td>—</td><td>R$ 0,00</td><td class="r">—</td><td class="r td-val t-success">R$ 0,00</td><td class="r"><span class="chip pu">0,00%</span></td></tr>
-                <tr><td class="fw7" style="color:var(--success)">PIS (Não-Cumulativo)</td><td>25/06/2026</td><td>R$ 4.204,48</td><td class="r t-success">R$ (4.204,48)</td><td class="r td-val t-success">R$ 0,00</td><td class="r"><span class="chip gr">0,00%</span></td></tr>
-                <tr><td class="fw7" style="color:var(--warning)">COFINS (Não-Cumulativo)</td><td>25/06/2026</td><td>R$ 19.366,08</td><td class="r t-success">R$ (19.366,08)</td><td class="r td-val t-success">R$ 0,00</td><td class="r"><span class="chip ye">0,00%</span></td></tr>
+                <tr><td class="fw7" style="color:var(--success)">PIS (Não-Cumulativo)</td><td>25/04/2026</td><td>R$ 8.034,06</td><td class="r t-success">R$ (8.034,06)</td><td class="r td-val t-success">R$ 0,00</td><td class="r"><span class="chip gr">0,00%</span></td></tr>
+                <tr><td class="fw7" style="color:var(--warning)">COFINS (Não-Cumulativo)</td><td>25/04/2026</td><td>R$ 37.005,35</td><td class="r t-success">R$ (37.005,35)</td><td class="r td-val t-success">R$ 0,00</td><td class="r"><span class="chip ye">0,00%</span></td></tr>
                 <tr><td class="fw7" style="color:var(--cyan)">IRPJ</td><td>30/07/2026</td><td class="td-mute">Em apuração Q2</td><td class="r">—</td><td class="r td-mute">Em apuração</td><td class="r"><span class="chip gy">—</span></td></tr>
                 <tr><td class="fw7" style="color:var(--orange)">CSLL</td><td>30/07/2026</td><td class="td-mute">Em apuração Q2</td><td class="r">—</td><td class="r td-mute">Em apuração</td><td class="r"><span class="chip gy">—</span></td></tr>
-                <tr style="background:rgba(34,163,41,0.07)">
+                <tr style="background:rgba(59,130,246,0.07)">
                   <td colspan="2" class="fw8">TOTAL (ICMS + PIS + COFINS)</td>
-                  <td class="fw8">R$ 98.669,38</td>
-                  <td class="r fw8 t-success">R$ (85.475,27)</td>
-                  <td class="r fw8 t-accent">R$ 13.194,11</td>
-                  <td class="r fw8">3.17%</td>
+                  <td class="fw8">R$ 142.362,00</td>
+                  <td class="r fw8 t-success">R$ (119.342,57)</td>
+                  <td class="r fw8 t-accent">R$ 23.019,43</td>
+                  <td class="r fw8">3.90%</td>
                 </tr>
               </tbody>
             </table>
@@ -1062,98 +882,97 @@
       <section id="tab-dre" class="tab-section">
         <div class="sec-header">
           <div>
-            <div class="sec-title">DRE – Demonstrativo do Resultado <small>Abr – Mai 2026 (Q2)</small></div>
-            <div class="sec-sub">Dados das planilhas fiscais — Resumo Acumulador, EFD, Apuração 5005 e Balancete (quando disponível).</div>
-          </div>
-          <div class="export-bar">
-            <button class="btn-export pdf" onclick="exportPDF('tab-dre','DRE')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
-            <button class="btn-export xlsx" onclick="exportExcel('tab-dre','DRE')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+            <div class="sec-title">DRE – Demonstrativo do Resultado <small>Jan – Mar 2026 (Q1)</small></div>
+            <div class="sec-sub">Dados das planilhas fiscais — Resumo Acumulador + Balancete Jan–Mar/2026.</div>
           </div>
         </div>
 
         <!-- Margin cards (Q1 Jan-Mar – período com CMV lançado) -->
         <div class="margin-grid">
           <div class="margin-card">
-            <div class="margin-val" style="color:var(--success)">48.5%</div>
+            <div class="margin-val" style="color:var(--success)">46,6%</div>
             <div class="margin-lbl">Margem Bruta</div>
-            <div class="margin-sub">Abr–Mai — somente meses com CMV no Balancete</div>
+            <div class="margin-sub">Média Q1 (Jan–Mar) — CMV estimado</div>
           </div>
           <div class="margin-card">
-            <div class="margin-val t-accent">47.6%</div>
-            <div class="margin-lbl">Margem Bruta (Mai)</div>
-            <div class="margin-sub">Fonte: Balancete na Apuração 5005</div>
+            <div class="margin-val t-muted" style="font-size:20px">—</div>
+            <div class="margin-lbl">Margem Operacional</div>
+            <div class="margin-sub">Q1 encerrado — aguarda balancete completo Fev/Mar</div>
           </div>
           <div class="margin-card">
-            <div class="margin-val t-accent">59.3%</div>
+            <div class="margin-val t-accent">54,3%</div>
             <div class="margin-lbl">Margem Líquida</div>
-            <div class="margin-sub">Abr–Mai — inclui Subvenção ICMS (planilha)</div>
+            <div class="margin-sub">Média Q1 (Jan–Mar) — inclui Subvenção ICMS</div>
           </div>
           <div class="margin-card">
-            <div class="margin-val t-warning">24.93%</div>
-            <div class="margin-lbl">Carga Trib. (Mai/2026)</div>
-            <div class="margin-sub">Deduções s/ Receita Bruta Mai</div>
+            <div class="margin-val t-warning">4,20%</div>
+            <div class="margin-lbl">Carga Trib. (Mar/2026)</div>
+            <div class="margin-sub">ICMS a recolher s/ Receita Bruta Mar</div>
           </div>
         </div>
 
         <!-- DRE Table -->
         <div class="table-card mb-24">
-          <div class="table-head"><div><div class="ttl">Demonstrativo do Resultado – Abr a Mai / 2026 (Q2)</div><div class="sub">Valores em R$ — Fonte: planilhas 04-2026 e 05-2026. Campos sem dado na planilha aparecem como —.</div></div></div>
+          <div class="table-head"><div><div class="ttl">Demonstrativo do Resultado – Jan a Mar / 2026</div><div class="sub">Valores em R$ — Fonte: Balancete + Apuração 5005 (Jan–Mar/2026) — CMV Fev/Mar estimado</div></div></div>
           <div class="tbl-scroll">
             <table class="dre-tbl">
               <thead>
                 <tr>
                   <th style="min-width:240px">Descrição</th>
-                  <th class="r">Abr/2026</th><th class="r">Mai/2026</th>
-                  <th class="r fw7">Acum. Q2</th>
+                  <th class="r">Jan/2026</th><th class="r">Fev/2026</th><th class="r">Mar/2026</th>
+                  <th class="r fw7">Acum. Q1</th>
                 </tr>
               </thead>
               <tbody>
                 <tr class="dre-group"><td colspan="6">Receitas</td></tr>
-                <tr class="dre-indent"><td>(+) Receita Bruta de Vendas</td><td class="r">546.988</td><td class="r">416.210</td><td class="r fw7">963.198</td></tr>
+                <tr class="dre-indent"><td>(+) Receita Bruta de Vendas</td><td class="r">480.047</td><td class="r">468.726</td><td class="r">547.403</td><td class="r fw7">1.496.176</td></tr>
 
                 <tr class="dre-group"><td colspan="6">Deduções da Receita Bruta</td></tr>
-                <tr class="dre-indent dre-neg"><td>(–) Devoluções de Vendas</td><td class="r">(24.107)</td><td class="r">(5.083)</td><td class="r fw7">(29.190)</td></tr>
-                <tr class="dre-indent dre-neg"><td>(–) ICMS s/ Vendas</td><td class="r">(97.323)</td><td class="r">(75.099)</td><td class="r fw7">(172.421)</td></tr>
-                <tr class="dre-indent dre-neg"><td>(–) COFINS</td><td class="r">(34.504)</td><td class="r">(19.366)</td><td class="r fw7">(53.870)</td></tr>
-                <tr class="dre-indent dre-neg"><td>(–) PIS</td><td class="r">(7.491)</td><td class="r">(4.204)</td><td class="r fw7">(11.696)</td></tr>
-                <tr class="dre-indent dre-neg"><td>(–) Substituição Tributária</td><td class="r">(0)</td><td class="r">(0)</td><td class="r fw7">(0)</td></tr>
-                <tr class="dre-total"><td>(=) Receita Líquida</td><td class="r">383.563</td><td class="r">312.457</td><td class="r fw7">696.021</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) Devoluções de Vendas</td><td class="r">(27.782)</td><td class="r">(18.396)</td><td class="r">(8.789)</td><td class="r fw7">(54.966)</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) ICMS s/ Vendas</td><td class="r">(85.763)</td><td class="r">(75.512)</td><td class="r">(97.323)</td><td class="r fw7">(258.598)</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) COFINS</td><td class="r">(30.254)</td><td class="r">(29.991)</td><td class="r">(37.005)</td><td class="r fw7">(97.250)</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) PIS</td><td class="r">(6.568)</td><td class="r">(6.511)</td><td class="r">(8.034)</td><td class="r fw7">(21.113)</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) Substituição Tributária</td><td class="r">(0)</td><td class="r">(0)</td><td class="r">(0)</td><td class="r fw7">(0)</td></tr>
+                <tr class="dre-total"><td>(=) Receita Líquida</td><td class="r">329.680</td><td class="r">338.315</td><td class="r">396.252</td><td class="r fw7">1.064.247</td></tr>
 
                 <tr class="dre-group"><td colspan="6">Custos</td></tr>
-                <tr class="dre-indent dre-neg"><td>(–) CMV – Custo das Mercadorias Vendidas</td><td class="r">(114.490)</td><td class="r">(114.490)</td><td class="r fw7">(228.981)</td></tr>
-                <tr class="dre-total"><td>(=) Lucro Bruto</td><td class="r">269.073</td><td class="r">197.967</td><td class="r fw7">467.040</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) CMV – Custo das Mercadorias Vendidas</td><td class="r">(114.490)</td><td class="r">(111.790)</td><td class="r">(140.925)</td><td class="r fw7">(367.206)</td></tr>
+                <tr class="dre-total"><td>(=) Lucro Bruto</td><td class="r">215.190</td><td class="r">226.525</td><td class="r">255.327</td><td class="r fw7">697.042</td></tr>
 
                 <tr class="dre-group"><td colspan="6">Despesas</td></tr>
-                <tr class="dre-indent"><td>(+) Receitas Financeiras / Diversas</td><td class="r">24.917</td><td class="r td-mute">—</td><td class="r fw7">24.917</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) Despesas Financeiras</td><td class="r">(5.697)</td><td class="r">(5.697)</td><td class="r">(5.697)</td><td class="r fw7">(17.091)</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) Despesas com Pessoal</td><td class="r">(17.504)</td><td class="r">(17.504)</td><td class="r">(17.504)</td><td class="r fw7">(52.512)</td></tr>
+                <tr class="dre-indent dre-neg"><td>(–) Outras Despesas Operacionais</td><td class="r">(2.155)</td><td class="r">(2.155)</td><td class="r">(2.155)</td><td class="r fw7">(6.465)</td></tr>
+                <tr class="dre-indent"><td>(+) Receitas Financeiras / Diversas</td><td class="r">24.917</td><td class="r">—</td><td class="r">—</td><td class="r fw7">24.917</td></tr>
                 
 
                 <tr class="dre-group"><td colspan="6">Outras Receitas</td></tr>
-                <tr class="dre-indent dre-subv"><td>(+) Bonificação Recebida</td><td class="r">6.164</td><td class="r">2.548</td><td class="r fw7">8.713</td></tr>
-                <tr class="dre-indent dre-subv"><td>(+) Receita de Subvenção ICMS (Dec. 5005)</td><td class="r t-warning">34.574</td><td class="r t-warning">26.415</td><td class="r t-warning fw7">60.988</td></tr>
+                <tr class="dre-indent dre-subv"><td>(+) Bonificação Recebida</td><td class="r">4.823</td><td class="r">1.766</td><td class="r">4.066</td><td class="r fw7">10.656</td></tr>
+                <tr class="dre-indent dre-subv"><td>(+) Receita de Subvenção ICMS (Dec. 5005)</td><td class="r t-warning">32.351</td><td class="r t-warning">25.662</td><td class="r t-warning">34.574</td><td class="r t-warning fw7">92.587</td></tr>
 
-                <tr class="dre-lucro"><td>(=) LUCRO / PREJUÍZO DO EXERCÍCIO</td><td class="r">325.293</td><td class="r">246.028</td><td class="r fw7">571.321</td></tr>
+                <tr class="dre-lucro"><td>(=) LUCRO / PREJUÍZO DO EXERCÍCIO</td><td class="r">269.187</td><td class="r">273.834</td><td class="r">268.611</td><td class="r fw7">811.632</td></tr>
                 <tr style="background:rgba(255,255,255,0.02)">
                   <td class="td-mute" style="font-size:11px">% s/ Receita Bruta</td>
-                  <td class="r td-mute">59.47%</td><td class="r td-mute">59.11%</td><td class="r td-mute fw7">59.32%</td>
+                  <td class="r td-mute">56.08%</td><td class="r td-mute">58.42%</td><td class="r td-mute">49.07%</td><td class="r td-mute fw7">54.25%</td>
                 </tr>
                 </tbody>
             </table>
           </div>
         </div>
         <div class="alert-box"><i class="fas fa-triangle-exclamation" style="margin-right:8px;"></i>
-          * Dados exibidos somente das planilhas 04-2026 e 05-2026. CMV e lucro de Mai dependem do Balancete na Apuração 5005.
+          * CMV estimado com base na proporção do Balancete de Janeiro (23,85% da Receita Bruta).
         </div>
 
         <!-- DRE Charts -->
         <div class="charts-row cr-2col">
           <div class="chart-card">
-            <div class="chart-ttl">Receita Bruta e Resultado – Abr a Mai/2026</div>
-            <div class="chart-sub">Receita bruta × Lucro bruto × Lucro líquido — Q2/2026</div>
+            <div class="chart-ttl">Receita Bruta e Resultado – Jan a Mar/2026</div>
+            <div class="chart-sub">Receita bruta × Lucro bruto × Lucro líquido — Q1/2026</div>
             <div class="chart-wrap h260"><canvas id="chartDRE"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-ttl">Margens de Rentabilidade (%) – Q2 2026</div>
-            <div class="chart-sub">Margem bruta e margem líquida — Abril–Maio 2026</div>
+            <div class="chart-ttl">Margens de Rentabilidade (%) – Q1 2026</div>
+            <div class="chart-sub">Margem bruta e margem líquida — Janeiro a Março 2026</div>
             <div class="chart-wrap h260"><canvas id="chartMargens"></canvas></div>
           </div>
         </div>
@@ -1165,47 +984,43 @@
       <section id="tab-indicadores" class="tab-section">
         <div class="sec-header">
           <div>
-            <div class="sec-title">Indicadores Financeiros <small>Referência Q2 2026 – Abr a Mai</small></div>
+            <div class="sec-title">Indicadores Financeiros <small>Referência Q1 2026 – Jan a Mar</small></div>
             <div class="sec-sub">Margens calculadas com dados do DRE contábil. Indicadores de balanço dependem de dados patrimoniais não fornecidos.</div>
-          </div>
-          <div class="export-bar">
-            <button class="btn-export pdf" onclick="exportPDF('tab-indicadores','Indicadores')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
-            <button class="btn-export xlsx" onclick="exportExcel('tab-indicadores','Indicadores')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
           </div>
         </div>
 
         <div class="alert-box"><i class="fas fa-info-circle" style="margin-right:8px;"></i>
-          Indicadores de liquidez requerem o <strong>Balanço Patrimonial</strong> completo. As margens usam somente dados das planilhas 04-2026 e 05-2026 (CMV do Balancete quando disponível).
+          Indicadores de liquidez requerem o <strong>Balanço Patrimonial</strong> completo. As margens são calculadas a partir do DRE Q1/2026. CMV estimado com base na proporção do Balancete de Janeiro.
         </div>
 
         <!-- Margens reais -->
         <div class="sec-title" style="font-size:13px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px;">
-          <i class="fas fa-chart-line" style="margin-right:8px;color:var(--success)"></i>Margens de Rentabilidade — Q2 2026 (Abr–Mai)
+          <i class="fas fa-chart-line" style="margin-right:8px;color:var(--success)"></i>Margens de Rentabilidade — Q1 2026 (Jan–Mar)
         </div>
         <div class="ind-grid">
           <div class="ind-card">
-            <div class="ind-head"><div class="ind-name">Margem Bruta Q2</div><span class="dot gr"></span></div>
-            <div class="ind-val t-success">48.5%</div>
-            <div class="ind-formula">MB = Lucro Bruto / Rec. Bruta = 467.040 / 963.198</div>
-            <div class="ind-interp"><strong>Somente planilhas.</strong> CMV de Abr no Balancete. Mai sem CMV na planilha.</div>
+            <div class="ind-head"><div class="ind-name">Margem Bruta Q1</div><span class="dot gr"></span></div>
+            <div class="ind-val t-success">46.6%</div>
+            <div class="ind-formula">MB = Lucro Bruto / Rec. Bruta = 697.042 / 1.496.176</div>
+            <div class="ind-interp"><strong>Margem estável no Q1.</strong> Após CMV estimado, sobram R$47 por R$100 faturados. A margem evoluiu de 44.8% (Jan) para 46.6% (Mar).</div>
           </div>
           <div class="ind-card">
-            <div class="ind-head"><div class="ind-name">Margem Líquida Q2</div><span class="dot ye"></span></div>
-            <div class="ind-val t-accent">59.3%</div>
-            <div class="ind-formula">ML = Lucro Líq. / Rec. Bruta = 571.321 / 963.198</div>
-            <div class="ind-interp"><strong>Planilhas 04+05.</strong> Subvenção ICMS Q2: R$ 60.988.</div>
+            <div class="ind-head"><div class="ind-name">Margem Líquida Q1</div><span class="dot ye"></span></div>
+            <div class="ind-val t-accent">54.3%</div>
+            <div class="ind-formula">ML = Lucro Líq. / Rec. Bruta = 811.632 / 1.496.176</div>
+            <div class="ind-interp"><strong>Inclui benefício Dec. 5005.</strong> Q1 recebeu R$ 92.587 de Receita de Subvenção ICMS. A receita cresceu de 480.047 (Jan) para 547.403 (Mar), +14%.</div>
           </div>
           <div class="ind-card">
-            <div class="ind-head"><div class="ind-name">Margem Bruta – Abr</div><span class="dot ye"></span></div>
-            <div class="ind-val" style="color:var(--success)">49.2%</div>
-            <div class="ind-formula">MB = 269.073 / 546.988</div>
-            <div class="ind-interp">Abril — CMV 114.490 do Balancete (Apuração 04-2026).</div>
+            <div class="ind-head"><div class="ind-name">Margem Bruta – Jan</div><span class="dot ye"></span></div>
+            <div class="ind-val" style="color:var(--success)">44.8%</div>
+            <div class="ind-formula">MB = 215.190 / 480.047</div>
+            <div class="ind-interp">Janeiro com boa margem bruta inicial. CMV estimado em 23.8% da receita. Base sólida para crescimento no trimestre.</div>
           </div>
           <div class="ind-card">
-            <div class="ind-head"><div class="ind-name">Margem Bruta – Mai</div><span class="dot gr"></span></div>
-            <div class="ind-val t-success">47.6%</div>
-            <div class="ind-formula">MB = 197.967 / 416.210</div>
-            <div class="ind-interp">Maio — CMV 114.490 do Balancete (Apuração 05-2026).</div>
+            <div class="ind-head"><div class="ind-name">Margem Bruta – Mar</div><span class="dot gr"></span></div>
+            <div class="ind-val t-success">46.6%</div>
+            <div class="ind-formula">MB = 255.327 / 547.403</div>
+            <div class="ind-interp">Margem bruta de março alinhada à receita contábil (Apuração 5005). CMV estimado em 23,8% da receita.</div>
           </div>
         </div>
 
@@ -1217,16 +1032,16 @@
         </div>
         <div class="ind-grid" style="grid-template-columns:repeat(2,1fr)">
           <div class="ind-card">
-            <div class="ind-head"><div class="ind-name">Carga Tributária Efetiva – Mai/2026</div><span class="dot gr"></span></div>
-            <div class="ind-val t-success">3.17%</div>
-            <div class="ind-formula">CT = ICMS R$ 13.194 / RB R$ 416.210</div>
-            <div class="ind-interp"><strong>Benefício Decreto 5005 ativo.</strong> ICMS efetivo = 3.17% da RB. Sem o benefício, ICMS seria R$ 75.099 — subvenção de R$ 26.415/mês.</div>
+            <div class="ind-head"><div class="ind-name">Carga Tributária Efetiva – Mar/2026</div><span class="dot gr"></span></div>
+            <div class="ind-val t-success">4.20%</div>
+            <div class="ind-formula">CT = ICMS R$ 23.019 / RB R$ 547.403</div>
+            <div class="ind-interp"><strong>Benefício Decreto 5005 ativo.</strong> ICMS efetivo = 3.90% da RB. Sem o benefício, ICMS seria R$ 97.323 — subvenção de R$ 34.574/mês.</div>
           </div>
           <div class="ind-card">
-            <div class="ind-head"><div class="ind-name">Deduções sobre Receita – Abr/2026</div><span class="dot rd"></span></div>
-            <div class="ind-val t-warning">29.88%</div>
-            <div class="ind-formula">Ded% = 163.425 / 546.988 (DRE Abr/2026)</div>
-            <div class="ind-interp">Abril apresentou 29.88% de deduções sobre RB. ICMS (97.323), COFINS (34.504), PIS (7.491) e Devoluções (24.107).</div>
+            <div class="ind-head"><div class="ind-name">Deduções sobre Receita – Jan/2026</div><span class="dot rd"></span></div>
+            <div class="ind-val t-warning">31.32%</div>
+            <div class="ind-formula">Ded% = 150.367 / 480.047 (DRE Jan/2026)</div>
+            <div class="ind-interp">Janeiro apresentou 31.32% de deduções sobre RB. ICMS (85.763), COFINS (30.254), PIS (6.568) e Devoluções (27.782) são os componentes principais.</div>
           </div>
         </div>
 
@@ -1266,8 +1081,8 @@
         <!-- Indicadores chart -->
         <div class="charts-row cr-1col">
           <div class="chart-card">
-            <div class="chart-ttl">Evolução das Margens e Carga Tributária – Q2 2026 (Abr–Mai)</div>
-            <div class="chart-sub">Margem bruta e líquida | Deduções s/ receita bruta — Q2/2026</div>
+            <div class="chart-ttl">Evolução das Margens e Carga Tributária – Q1 2026 (Jan–Mar)</div>
+            <div class="chart-sub">Margem bruta e líquida | Deduções s/ receita bruta — Q1/2026</div>
             <div class="chart-wrap h220"><canvas id="chartIndicadores"></canvas></div>
           </div>
         </div>
@@ -1277,75 +1092,50 @@
   </div>
 </div>
 
-<!-- MODAL: Impressão por Fornecedor -->
-<div class="modal-overlay" id="supplierModal" style="display:none;" onclick="if(event.target===this)closeSupplierModal()">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3><i class="fas fa-truck"></i> Imprimir por Fornecedor</h3>
-      <button onclick="closeSupplierModal()" class="modal-close">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div class="search-box">
-        <input type="text" id="supplierSearch" placeholder="Buscar fornecedor..." oninput="filterSuppliers(this.value)">
-      </div>
-      <div class="supplier-actions">
-        <button type="button" onclick="toggleAllSuppliers(true)">Selecionar Todos</button>
-        <button type="button" onclick="toggleAllSuppliers(false)">Limpar Seleção</button>
-      </div>
-      <div class="supplier-list" id="supplierList"></div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn-cancel" onclick="closeSupplierModal()">Cancelar</button>
-      <button type="button" class="btn-confirm" onclick="printBySupplier()"><i class="fas fa-print"></i> Imprimir Selecionados</button>
-    </div>
-  </div>
-</div>
-
 <script>
-    /* -----------------------------------------------
+      /* -----------------------------------------------
      DADOS REAIS – BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA
-     CNPJ: 52.005.382/0001-40 — Competência Q2/2026 (Abr–Mai)
-     Fonte: Resumo Acumulador + EFD PIS/COFINS + Apuração 5005 + Entradas/Saídas
-     Planilhas: 04-2026 e 05-2026 em 11-BAIFER 2° TRIM
+     CNPJ: 52.005.382/0001-40 — Competência Q1/2026 (Jan–Mar)
+     Fonte: DRE contábil (Jan–Mar) + Apuração ICMS/PIS/COFINS
      ----------------------------------------------- */
 
-  const MONTHS = ['Abr', 'Mai'];
+  const MONTHS = ['Jan', 'Fev', 'Mar'];
 
-  // DRE – Receita Bruta (Abr–Mai/2026)
-  const VENDAS = [546988, 416210];
+  // DRE – Receita Bruta (Jan–Mar/2026)
+  const VENDAS = [480047, 468726, 547403];
 
   // DRE – Deduções Tributárias totais por mês
-  const DEDUCOES = [163425, 103753];
-  const DED_PCT  = [29.88, 24.93];
+  const DEDUCOES = [150367, 130410, 151151];
+  const DED_PCT  = [31.32, 27.82, 27.61];
 
   // DRE – ICMS/COFINS/PIS/ICMS-ST mensais
-  const ICMS_DED  = [97323, 75099];
-  const ICMST_DED = [0, 0];
-  const COFINS_DED= [34504, 19366];
-  const PIS_DED   = [7491, 4204];
-  const DEV_DED   = [24107, 5083];
+  const ICMS_DED  = [85763, 75512, 97323];
+  const ICMST_DED = [0, 0, 0];
+  const COFINS_DED= [30254, 29991, 37005];
+  const PIS_DED   = [6568, 6511, 8034];
+  const DEV_DED   = [27782, 18396, 8789];
 
   // DRE – CMV
-  const CMV       = [114490.5, 114490.5];
+  const CMV       = [114490, 111790, 140925];
 
   // DRE – Lucro
-  const LUC_BRUTO = [269072.6000000001, 197966.95];
-  const LUC_LIQ   = [325292.74390000006, 246028.3655];
-
-  // Total NF Saídas (Saídas.xls — operacional)
-  const TOTAL_SAIDAS_NF = [609796, 451663];
-
-  // Compras por mês (Entradas.xls)
-  const COMPRAS_MES = [430116, 360037];
-  const MARG_MB   = [49.19, 47.56];
-  const MARG_ML   = [59.47, 59.11];
+  const LUC_BRUTO = [215190, 226525, 255327];
+  const LUC_LIQ   = [269187, 273834, 268611];
+  const MARG_MB   = [44.83, 48.33, 46.64];
+  const MARG_ML   = [56.08, 58.42, 49.07];
 
   // Subvenção ICMS (Decreto 5005)
-  const SUBV = [34574, 26415];
+  const SUBV = [32351, 25662, 34574];
+
+  // Total NF Saídas (Saídas.xls — operacional)
+  const TOTAL_SAIDAS_NF = [515052, 479928, 603307];
+
+  // Compras por mês (Resumo acumulador + Entradas.xls)
+  const COMPRAS_MES = [606047, 214452, 511639];
 
   /* -----------------------------------------------
      TABELA CFOP → FINALIDADE
-     Fonte: COMPRAS.xls coluna C17 — Mar/2026
+     Fonte: Entradas 03-2026.xls — CFOP col. 16, valor col. 19
      Regra: segundo dígito define grupo; X.10x = Revenda
      ----------------------------------------------- */
   const CFOP_FINALIDADE = {
@@ -1363,93 +1153,126 @@
     '1-910': { descricao:'Entrada para conserto ou industrialização',          finalidade:'Retorno Conserto', creditoPisCofins:false, debitaIcms:false },
     '2-911': { descricao:'Retorno de remessa p/ industrialização',             finalidade:'Retorno Ind.',     creditoPisCofins:false, debitaIcms:false },
     '2-916': { descricao:'Entrada de bem para arrendamento mercantil',         finalidade:'Arrendamento',     creditoPisCofins:false, debitaIcms:false },
+    '5-102': { descricao:'Venda p/ comercialização (intraestadual)',           finalidade:'Venda',            creditoPisCofins:true,  debitaIcms:true  },
+    '5-403': { descricao:'Venda com ST (intraestadual)',                       finalidade:'Venda c/ ST',      creditoPisCofins:true,  debitaIcms:false },
+    '5-405': { descricao:'Venda com ST (interestadual)',                       finalidade:'Venda c/ ST',      creditoPisCofins:true,  debitaIcms:false },
+    '5-202': { descricao:'Devolução de compra (intraestadual)',                finalidade:'Devol. Compra',    creditoPisCofins:false, debitaIcms:false },
+    '6-102': { descricao:'Venda p/ comercialização (interestadual)',           finalidade:'Venda',            creditoPisCofins:true,  debitaIcms:true  },
+    '6-202': { descricao:'Devolução de compra (interestadual)',                finalidade:'Devol. Compra',    creditoPisCofins:false, debitaIcms:false },
+    '5-411': { descricao:'Devolução de venda (intraestadual)',                 finalidade:'Devolução Venda',  creditoPisCofins:false, debitaIcms:false },
+    '5-949': { descricao:'Outra saída — não especificada',                     finalidade:'Outras Saídas',    creditoPisCofins:false, debitaIcms:false },
+    '5-922': { descricao:'Lançamento efetuado a título de simples faturamento',finalidade:'Simples Fat.',     creditoPisCofins:false, debitaIcms:false },
   };
 
-    /* -----------------------------------------------
+      /* -----------------------------------------------
      DADOS DE COMPRAS POR CFOP — Mar/2026
      Fonte: Entradas 03-2026.xls — leitura real das NF-e
      ----------------------------------------------- */
   const CFOP_DADOS = [
-    { cfop:'2-102', qtd:78,  total:323377.81,
+    { cfop:'2-102', qtd:149,  total:339688.95,
       /* Compra p/ comercialização (interestadual) */
       fornecedores:[
-        { nome:'O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA', cnpj:'—', uf:'—', qtd:1, total:36863.84 },
-        { nome:'MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA', cnpj:'—', uf:'—', qtd:1, total:33550.11 },
-        { nome:'BLACK & DECKER DO BRASIL LTDA.', cnpj:'—', uf:'—', qtd:1, total:31172.67 },
-        { nome:'MENEGOTTI INDUSTRIAS METALURGICAS LTDA', cnpj:'—', uf:'—', qtd:1, total:26455.46 },
-        { nome:'MARCON INDUSTRIA METALURGICA LTDA', cnpj:'—', uf:'—', qtd:1, total:21822.95 },
-        { nome:'WELD VISION IND E COM DE EQUIP PARA SOLDA E CORTE ', cnpj:'—', uf:'—', qtd:1, total:19966.19 },
-        { nome:'Demais fornecedores', cnpj:'—', uf:'—', qtd:5, total:153546.59 }
+        { nome:'O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA', cnpj:'76.635.689/0013-26', uf:'GO', qtd:14, total:74980.79 },
+        { nome:'BLACK & DECKER DO BRASIL LTDA.', cnpj:'53.296.273/0032-98', uf:'MG', qtd:7, total:35220.04 },
+        { nome:'MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA', cnpj:'45.865.920/0001-00', uf:'SP', qtd:6, total:23633.88 },
+        { nome:'SEMAR IMPORT ATACADISTA LTDA', cnpj:'07.075.388/0001-39', uf:'SP', qtd:2, total:17735.05 },
+        { nome:'PNEUBEST COMERCIAL LTDA', cnpj:'36.996.649/0001-51', uf:'SC', qtd:9, total:17290.72 },
+        { nome:'POSITEC IMPORTACAO DE FERRAMENTAS LTDA', cnpj:'17.835.389/0001-98', uf:'SP', qtd:1, total:16422.91 },
+        { nome:'Demais fornecedores', cnpj:'—', uf:'—', qtd:110, total:249078.19 }
       ]
     },
-    { cfop:'1-102', qtd:38,  total:26540.88,
+    { cfop:'1-102', qtd:29,  total:48215.07,
       /* Compra p/ comercialização (intraestadual) */
       fornecedores:[
-        { nome:'O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA', cnpj:'—', uf:'—', qtd:1, total:14597.48 },
-        { nome:'MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA', cnpj:'—', uf:'—', qtd:1, total:14597.48 }
+        { nome:'NOVA CASA DIST MAT CONST S/A DF FL 02', cnpj:'74.200.403/0002-00', uf:'DF', qtd:11, total:15679.46 },
+        { nome:'CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A', cnpj:'03.261.204/0001-74', uf:'DF', qtd:8, total:11196.03 },
+        { nome:'TERRA UTIL COMERCIO DE FERRAMENTAS E UTILIDADES LTDA', cnpj:'07.144.507/0001-68', uf:'DF', qtd:1, total:4551.0 },
+        { nome:'LOJA DAS MAQUINAS E FERRAMENTAS LTDA', cnpj:'13.983.066/0001-90', uf:'DF', qtd:4, total:2526.44 },
+        { nome:'AMAZONAS COMERCIAL DE ALUMINIOS E LONAS LTDA', cnpj:'56.136.486/0001-44', uf:'DF', qtd:1, total:1100.0 },
+        { nome:'R7X INDUSTRIA DE EMBALAGENS LTDA', cnpj:'31.648.232/0001-84', uf:'DF', qtd:1, total:960.0 },
+        { nome:'Demais fornecedores', cnpj:'—', uf:'—', qtd:3, total:1257.65 }
       ]
     },
-    { cfop:'1-202', qtd:13,  total:5083.13,
+    { cfop:'1-202', qtd:11,  total:13626.63,
       /* Devolução de venda (intraestadual) */
       fornecedores:[
-        { nome:'O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA', cnpj:'—', uf:'—', qtd:1, total:2795.72 },
-        { nome:'MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA', cnpj:'—', uf:'—', qtd:1, total:2795.72 }
+        { nome:'LS INDUSTRIA E COMERCIO DE FERROS E METAIS LTDA', cnpj:'20.395.291/0001-71', uf:'DF', qtd:1, total:3659.6 },
+        { nome:'ARAUJO ABREU ENGENHARIA S/A', cnpj:'33.373.325/0006-83', uf:'DF', qtd:2, total:2298.36 },
+        { nome:'LOJA DAS MAQUINAS E FERRAMENTAS LTDA', cnpj:'13.983.066/0001-90', uf:'DF', qtd:3, total:452.93 },
+        { nome:'FV COMERCIO DE FERRAMENTAS LTDA', cnpj:'36.874.433/0001-13', uf:'DF', qtd:1, total:445.86 },
+        { nome:'DNP CHURRASQUEIRA LTDA', cnpj:'50.705.619/0001-70', uf:'DF', qtd:1, total:376.78 },
+        { nome:'MULTIPLAN EMPREENDIMENTOS IMOBILIARIOS S/A', cnpj:'07.816.890/0007-49', uf:'DF', qtd:1, total:288.5 },
+        { nome:'Demais fornecedores', cnpj:'—', uf:'—', qtd:2, total:276.64 }
       ]
     },
-    { cfop:'2-910', qtd:5,  total:2548.50,
+    { cfop:'2-202', qtd:0,  total:9177.0,
+      /* Devolução de venda (interestadual) — Apuração 5005 */
+      fornecedores:[]
+    },
+    { cfop:'2-910', qtd:5,  total:6164.15,
       /* Bonificação recebida */
       fornecedores:[
-        { nome:'O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA', cnpj:'—', uf:'—', qtd:1, total:1401.68 },
-        { nome:'MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA', cnpj:'—', uf:'—', qtd:1, total:1401.68 }
+        { nome:'MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA', cnpj:'45.865.920/0001-00', uf:'SP', qtd:2, total:1803.79 },
+        { nome:'ESFERA ESTAMPARIA DE FERRO E AÇO LTDA', cnpj:'21.260.419/0001-52', uf:'MG', qtd:1, total:929.25 },
+        { nome:'POSITEC IMPORTACAO DE FERRAMENTAS LTDA', cnpj:'17.835.389/0001-98', uf:'SP', qtd:1, total:587.05 },
+        { nome:'AMATOOLS COML. E IMPORTADORA LTDA', cnpj:'07.228.424/0001-57', uf:'SP', qtd:1, total:490.06 }
       ]
     },
-    { cfop:'1-652', qtd:1,  total:1141.20,
-      /* Entrada de mercadoria */
-      fornecedores:[
-        { nome:'O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA', cnpj:'—', uf:'—', qtd:1, total:627.66 },
-        { nome:'MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA', cnpj:'—', uf:'—', qtd:1, total:627.66 }
-      ]
-    },
-    { cfop:'1-403', qtd:5,  total:980.86,
-      /* Compra com ST (intraestadual) */
-      fornecedores:[
-        { nome:'O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA', cnpj:'—', uf:'—', qtd:1, total:539.47 },
-        { nome:'MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA', cnpj:'—', uf:'—', qtd:1, total:539.47 }
-      ]
-    },
-    { cfop:'2-949', qtd:2,  total:198.17,
-      /* Outras entradas não especificadas */
-      fornecedores:[
-        { nome:'O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA', cnpj:'—', uf:'—', qtd:1, total:108.99 },
-        { nome:'MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA', cnpj:'—', uf:'—', qtd:1, total:108.99 }
-      ]
-    },
-    { cfop:'2-403', qtd:1,  total:149.50,
+    { cfop:'2-403', qtd:5,  total:2922.54,
       /* Compra com ST (interestadual) */
       fornecedores:[
-        { nome:'O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA', cnpj:'—', uf:'—', qtd:1, total:82.23 },
-        { nome:'MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA', cnpj:'—', uf:'—', qtd:1, total:82.23 }
+        { nome:'BRANSALES ATACADISTA LTDA', cnpj:'41.415.094/0001-47', uf:'SC', qtd:1, total:13868.1 },
+        { nome:'TECIDOS E ARMARINHOS MIGUEL BARTOLOMEU S/A', cnpj:'17.359.233/0001-88', uf:'MG', qtd:2, total:1207.09 },
+        { nome:'FRIGELAR COMERCIO E INDUSTRIA LTDA', cnpj:'92.660.406/0002-08', uf:'SP', qtd:1, total:327.43 },
+        { nome:'O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA', cnpj:'76.635.689/0013-26', uf:'GO', qtd:1, total:82.93 }
+      ]
+    },
+    { cfop:'1-403', qtd:11,  total:2109.08,
+      /* Compra com ST (intraestadual) */
+      fornecedores:[
+        { nome:'CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A', cnpj:'03.261.204/0001-74', uf:'DF', qtd:6, total:9118.96 },
+        { nome:'MAXXIDIESEL COMERCIO DE PECAS PARA VEICULOS LTDA', cnpj:'03.078.365/0001-27', uf:'DF', qtd:1, total:820.0 },
+        { nome:'OPCAO ATACADISTA', cnpj:'17.244.285/0001-09', uf:'DF', qtd:1, total:311.55 },
+        { nome:'VGS COMERCIO VAREJISTA DE MATERIAL DE CONSTRUCAO LTDA', cnpj:'34.903.950/0001-48', uf:'DF', qtd:2, total:242.09 },
+        { nome:'NOVA CASA DIST MAT CONST S/A DF FL 02', cnpj:'74.200.403/0002-00', uf:'DF', qtd:1, total:129.86 }
+      ]
+    },
+    { cfop:'1-912', qtd:0,  total:495.0,
+      /* Retorno para conserto — Apuração 5005 */
+      fornecedores:[]
+    },
+    { cfop:'1-411', qtd:2,  total:265.6,
+      /* Devolução de compra (intraestadual) */
+      fornecedores:[
+        { nome:'FV COMERCIO DE FERRAMENTAS LTDA', cnpj:'36.874.433/0001-13', uf:'DF', qtd:1, total:670.0 },
+        { nome:'ARAUJO ABREU ENGENHARIA S/A', cnpj:'33.373.325/0006-83', uf:'DF', qtd:1, total:319.9 }
+      ]
+    },
+    { cfop:'2-949', qtd:1,  total:159.64,
+      /* Outras entradas não especificadas */
+      fornecedores:[
+        { nome:'O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA', cnpj:'76.635.689/0013-26', uf:'GO', qtd:1, total:96.62 }
       ]
     }
   ];
 
-  /* CFOP Saídas — Mai/2026 (Apuração 5005 + Saídas.xls) */
-    const CFOP_SAIDAS_DADOS = [
-    { cfop:'5-102', qtd:373, total:383341.22, descricao:'Venda p/ comercialização (intraestadual)' },
-    { cfop:'5-405', qtd:27, total:11675.00, descricao:'Venda com ST (interestadual)' },
-    { cfop:'5-403', qtd:43, total:11585.20, descricao:'Venda com ST (intraestadual)' },
-    { cfop:'6-102', qtd:10, total:9607.55, descricao:'Venda p/ comercialização (interestadual)' },
-    { cfop:'6-202', qtd:8, total:7218.73, descricao:'Devolução de compra (interestadual)' },
-    { cfop:'5-117', qtd:1, total:2970.00, descricao:'Simples faturamento' },
-    { cfop:'6-915', qtd:2, total:2136.68, descricao:'Remessa p/ conserto (interestadual)' },
-    { cfop:'5-915', qtd:2, total:626.38, descricao:'Remessa p/ conserto' },
-    { cfop:'5-411', qtd:1, total:428.58, descricao:'Devolução de venda (intraestadual)' },
-    { cfop:'5-949', qtd:7, total:374.51, descricao:'Outra saída não especificada' },
-    { cfop:'5-202', qtd:1, total:289.88, descricao:'Devolução de compra (intraestadual)' }
+  /* CFOP Saídas — Mar/2026 (Apuração 5005 + Saídas.xls) */
+  const CFOP_SAIDAS_DADOS = [
+    { cfop:'5-102', qtd:429, total:476772.02, descricao:'Venda p/ comercialização (intraestadual)' },
+    { cfop:'5-403', qtd:51, total:31310.86, descricao:'Venda com ST (intraestadual)' },
+    { cfop:'5-405', qtd:63, total:16857.98, descricao:'Venda com ST (interestadual)' },
+    { cfop:'6-102', qtd:8, total:12842.50, descricao:'Venda p/ comercialização (interestadual)' },
+    { cfop:'6-202', qtd:5, total:10854.10, descricao:'Devolução de compra (interestadual)' },
+    { cfop:'6-404', qtd:0, total:9177.00, descricao:'Saída de mercadoria' },
+    { cfop:'5-922', qtd:0, total:2970.00, descricao:'Simples faturamento' },
+    { cfop:'5-949', qtd:10, total:571.85, descricao:'Outra saída não especificada' },
+    { cfop:'5-202', qtd:2, total:539.75, descricao:'Devolução de compra (intraestadual)' },
+    { cfop:'5-411', qtd:3, total:442.82, descricao:'Devolução de venda (intraestadual)' },
+    { cfop:'6-949', qtd:0, total:361.47, descricao:'Saída de mercadoria' }
   ];
 
   const FINALIDADE_CORES = {
-    'Revenda':          '#22a329',
+    'Revenda':          '#3b82f6',
     'Revenda c/ ST':    '#06b6d4',
     'Ativo Imobilizado':'#f97316',
     'Uso e Consumo':    '#10b981',
@@ -1468,7 +1291,7 @@
   Chart.defaults.font.family = "'Inter', sans-serif";
   Chart.defaults.font.size   = 12;
 
-  const PAL = ['#22a329','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#f97316','#ec4899'];
+  const PAL = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#f97316','#ec4899'];
 
   function tip() {
     return {
@@ -1492,14 +1315,14 @@
      TAB NAVIGATION
      ----------------------------------------------- */
   const tabTitles = {
-    'visao-geral':  ['Visão Geral',             'Resumo Executivo – 2º Trimestre 2026 (Abr–Mai)'],
-    'compras':      ['Compras',                 'Aquisições Mai/2026 — BAIFER Ferramentas'],
-    'finalidade':   ['Finalidade de Compras',   'Classificação por CFOP — Mai/2026'],
-    'vendas':       ['Vendas',                  'Faturamento Q2 Mai/2026 — BAIFER Ferramentas'],
-    'impostos':     ['Impostos',                'Apuração Tributária Mai/2026 — Lucro Real'],
+    'visao-geral':  ['Visão Geral',             'Resumo Executivo – 1º Trimestre 2026 (Jan–Mar)'],
+    'compras':      ['Compras',                 'Aquisições Mar/2026 — BAIFER Ferramentas'],
+    'finalidade':   ['Finalidade de Compras',   'Classificação por CFOP — Mar/2026'],
+    'vendas':       ['Vendas',                  'Faturamento Mar/2026 — BAIFER Ferramentas'],
+    'impostos':     ['Impostos',                'Apuração Tributária Mar/2026 — Lucro Real'],
     'memoria':      ['Memória de Cálculo',      'ICMS Decreto 5005 + PIS/COFINS Não-Cumulativo'],
-    'dre':          ['DRE',                     'Demonstrativo do Resultado Abr–Mai 2026 (Q2)'],
-    'indicadores':  ['Indicadores',             'Análise de Margens Q2 2026 (Abr–Mai)'],
+    'dre':          ['DRE',                     'Demonstrativo do Resultado Jan–Mar 2026 (Q1)'],
+    'indicadores':  ['Indicadores',             'Análise de Margens Q1 2026 (Jan–Mar)'],
   };
 
   function showTab(name) {
@@ -1560,7 +1383,7 @@
       data: {
         labels: MONTHS,
         datasets: [
-          { label:'Receita Bruta (R$ mil)', data: VENDAS.map(v=>+(v/1000).toFixed(1)),   backgroundColor:'rgba(34,163,41,0.7)',  borderRadius:4 },
+          { label:'Receita Bruta (R$ mil)', data: VENDAS.map(v=>+(v/1000).toFixed(1)),   backgroundColor:'rgba(59,130,246,0.7)',  borderRadius:4 },
           { label:'Deduções Trib. (R$ mil)', data: DEDUCOES.map(v=>+(v/1000).toFixed(1)), backgroundColor:'rgba(239,68,68,0.65)',  borderRadius:4 },
         ]
       },
@@ -1603,7 +1426,7 @@
       data: {
         labels: ['Devoluções','ICMS ST','COFINS','PIS','Outros/Ajuste'],
         datasets: [{
-          data: [5083, 0, 19366, 4204, 0],
+          data: [8789, 0, 37005, 8034, 0],
           backgroundColor: PAL, borderWidth:0, hoverOffset:6
         }]
       },
@@ -1625,8 +1448,8 @@
      ----------------------------------------------- */
   function initCompras() {
     const forn = {
-      nomes: ['O.V.D.','MAKITA','BLACK','MENEGOTTI','MARCON','WELD','GALZER','BEL'],
-      vals:  [36864,33550,31173,26455,21823,19966,14205,11687],
+      nomes: ['O.V.D.','BLACK','BRANSALES','MAKITA','CONDOR','SEMAR','PNEUBEST','POSITEC'],
+      vals:  [75299,35220,28166,25438,20315,17735,17291,17010],
     };
     safeChart('chartFornecedores', {
       type:'bar',
@@ -1651,20 +1474,21 @@
      ----------------------------------------------- */
   function initVendas() {
     if (document.getElementById('chartVendasEvol')) {
-      safeChart('chartVendasEvol', { type:'bar', data:{ labels:MONTHS, datasets:[
-        { label:'Receita Fiscal (R$ mil)', data:VENDAS.map(v=>+(v/1000).toFixed(1)), backgroundColor:'rgba(34,163,41,0.7)', borderRadius:4 },
-        { label:'Total NF Saídas (R$ mil)', data:TOTAL_SAIDAS_NF.map(v=>+(v/1000).toFixed(1)), backgroundColor:'rgba(16,185,129,0.65)', borderRadius:4 },
-      ]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:leg() }, scales:{ y:{ ticks:{ callback:v=>'R$'+v+'K' } } } } });
+    safeChart('chartVendasEvol', { type:'bar', data:{ labels:MONTHS, datasets:[
+      { label:'Receita Fiscal (R$ mil)', data:VENDAS.map(v=>+(v/1000).toFixed(1)), backgroundColor:'rgba(59,130,246,0.7)', borderRadius:4 },
+      { label:'Total NF Saídas (R$ mil)', data:TOTAL_SAIDAS_NF.map(v=>+(v/1000).toFixed(1)), backgroundColor:'rgba(16,185,129,0.65)', borderRadius:4 },
+    ]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:leg() }, scales:{ y:{ ticks:{ callback:v=>'R$'+v+'K' } } } } });
     }
     if (document.getElementById('chartComprasVendas')) {
-      safeChart('chartComprasVendas', { type:'bar', data:{ labels:MONTHS, datasets:[
-        { label:'Compras (R$ mil)', data:COMPRAS_MES.map(v=>+(v/1000).toFixed(0)), backgroundColor:'rgba(249,115,22,0.65)', borderRadius:4 },
-        { label:'Receita Fiscal (R$ mil)', data:VENDAS.map(v=>+(v/1000).toFixed(0)), backgroundColor:'rgba(34,163,41,0.65)', borderRadius:4 },
-      ]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:leg() }, scales:{ y:{ ticks:{ callback:v=>'R$'+v+'K' } } } } });
+    safeChart('chartComprasVendas', { type:'bar', data:{ labels:MONTHS, datasets:[
+      { label:'Compras (R$ mil)', data:COMPRAS_MES.map(v=>+(v/1000).toFixed(0)), backgroundColor:'rgba(249,115,22,0.65)', borderRadius:4 },
+      { label:'Receita Fiscal (R$ mil)', data:VENDAS.map(v=>+(v/1000).toFixed(0)), backgroundColor:'rgba(59,130,246,0.65)', borderRadius:4 },
+    ]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:leg() }, scales:{ y:{ ticks:{ callback:v=>'R$'+v+'K' } } } } });
     }
+
     const cli = {
-      nomes: ['LOJA','COSTA MULTICANAL S','COBALTO','50.202.790','SERVICOS','LOTUS','FV','LG','VINILSEG','LOJAO','Demais'],
-      vals:  [239188,12481,10783,7857,7539,6945,6558,6328,5915,5835,142234],
+      nomes: ['LOJA','LS','GOLFO','LOTUS','50.202.790','ARAUJO','FV','REBRASCON','BRASAL','ALVES','Demais'],
+      vals:  [311752,20019,18205,17386,15178,14058,13895,12655,7270,6680,163394],
     };
     safeChart('chartClientes', {
       type:'bar',
@@ -1712,7 +1536,7 @@
       type:'bar',
       data:{
         labels:['ICMS','ICMS ST','PIS','COFINS'],
-        datasets:[{ label:'% s/ Receita Bruta (Mai)', data:[18.04, 0.0, 1.01, 4.65], backgroundColor:PAL, borderRadius:5 }]
+        datasets:[{ label:'% s/ Receita Bruta (Mar)', data:[16.47, 0.00, 1.36, 6.26], backgroundColor:PAL, borderRadius:5 }]
       },
       options:{
         indexAxis:'y', responsive:true, maintainAspectRatio:false,
@@ -1730,11 +1554,11 @@
     safeChart('chartDRE', {
       type:'bar',
       data:{
-        labels:['Abr', 'Mai'],
+        labels:['Jan','Fev','Mar'],
         datasets:[
-          { label:'Receita Bruta',  data:VENDAS.map(v=>v!=null?+(v/1000).toFixed(0):null), backgroundColor:'rgba(34,163,41,0.6)',  borderRadius:4 },
-          { label:'Lucro Bruto',    data:LUC_BRUTO.map(v=>v!=null?+(v/1000).toFixed(0):null),       backgroundColor:'rgba(16,185,129,0.6)',  borderRadius:4 },
-          { label:'Lucro Líquido',  data:LUC_LIQ.map(v=>v!=null?+(v/1000).toFixed(0):null),       backgroundColor:'rgba(6,182,212,0.6)',   borderRadius:4 },
+          { label:'Receita Bruta',  data:VENDAS.map(v=>+(v/1000).toFixed(0)), backgroundColor:'rgba(59,130,246,0.6)',  borderRadius:4 },
+          { label:'Lucro Bruto',    data:LUC_BRUTO.map(v=>+(v/1000).toFixed(0)),       backgroundColor:'rgba(16,185,129,0.6)',  borderRadius:4 },
+          { label:'Lucro Líquido',  data:LUC_LIQ.map(v=>+(v/1000).toFixed(0)),       backgroundColor:'rgba(6,182,212,0.6)',   borderRadius:4 },
         ]
       },
       options:{
@@ -1744,20 +1568,20 @@
       }
     });
 
-    // Line: margens % (Abr–Mai)
+    // Line: margens % (Jan–Mar)
     safeChart('chartMargens', {
       type:'line',
       data:{
-        labels:['Abr', 'Mai'],
+        labels:['Jan','Fev','Mar'],
         datasets:[
-          { label:'Margem Bruta (%)',  data:MARG_MB, borderColor:PAL[1], backgroundColor:'rgba(16,185,129,0.08)',  borderWidth:2.5, pointRadius:5, fill:true, tension:0.3 },
-          { label:'Margem Líquida (%)',data:MARG_ML, borderColor:PAL[0], backgroundColor:'rgba(34,163,41,0.08)',  borderWidth:2.5, pointRadius:5, fill:true, tension:0.3 },
+          { label:'Margem Bruta (%)',  data:MARG_MB.slice(0,3), borderColor:PAL[1], backgroundColor:'rgba(16,185,129,0.08)',  borderWidth:2.5, pointRadius:5, fill:true, tension:0.3 },
+          { label:'Margem Líquida (%)',data:MARG_ML.slice(0,3), borderColor:PAL[0], backgroundColor:'rgba(59,130,246,0.08)',  borderWidth:2.5, pointRadius:5, fill:true, tension:0.3 },
         ]
       },
       options:{
-        responsive:true, maintainAspectRatio:false, spanGaps:false,
+        responsive:true, maintainAspectRatio:false,
         plugins:{ legend:leg(), tooltip:{ ...tip(), callbacks:{ label:c=>c.dataset.label+': '+c.parsed.y.toFixed(2)+'%' } } },
-        scales:{ y:{ ticks:{ callback:v=>v+'%' }, grid:{ color:'rgba(255,255,255,0.05)' }, min:0, max:8 }, x:{ grid:{ color:'rgba(255,255,255,0.03)' } } }
+        scales:{ y:{ ticks:{ callback:v=>v+'%' }, grid:{ color:'rgba(255,255,255,0.05)' }, min:0, max:68 }, x:{ grid:{ color:'rgba(255,255,255,0.03)' } } }
       }
     });
   }
@@ -1821,7 +1645,7 @@
         '<td><span class="chip ' + (f.uf==='DF'?'cy':f.uf==='SP'?'bl':f.uf==='GO'?'or':f.uf==='PR'?'pu':f.uf==='MG'?'gr':'gy') + '">' + f.uf + '</span></td>' +
         '<td class="r">' + f.qtd + '</td>' +
         '<td class="r td-val">R$ ' + f.total.toLocaleString('pt-BR',{minimumFractionDigits:2}) + '</td>' +
-        '<td class="r"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:' + pct + '%;background:' + (FINALIDADE_CORES[info.finalidade]||'#22a329') + '"></div></div><div class="pb-pct">' + pct + '%</div></div></td>';
+        '<td class="r"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:' + pct + '%;background:' + (FINALIDADE_CORES[info.finalidade]||'#3b82f6') + '"></div></div><div class="pb-pct">' + pct + '%</div></div></td>';
       tbody.appendChild(tr);
     });
     const panel = document.getElementById('drilldown-panel');
@@ -1890,368 +1714,9 @@
         '<td class="r">' + d.qtd + '</td>' +
         '<td class="r td-val">R$ ' + d.total.toLocaleString('pt-BR',{minimumFractionDigits:2}) + '</td>' +
         '<td class="r"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:'+((d.total/1900158)*100).toFixed(0)+'%;background:'+cor+'"></div></div><div class="pb-pct">'+pct+'%</div></div></td>' +
-        '<td class="c"><button onclick="openDrilldown(\''+d.cfop+'\')" style="background:rgba(34,163,41,0.12);border:1px solid rgba(34,163,41,0.3);color:var(--accent);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;">Ver <i class="fas fa-chevron-down"></i></button></td>';
+        '<td class="c"><button onclick="openDrilldown(\''+d.cfop+'\')" style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);color:var(--accent);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;">Ver <i class="fas fa-chevron-down"></i></button></td>';
       tbody.appendChild(tr);
     });
-  }
-
-  /* -----------------------------------------------
-     EXPORTAÇÃO PDF / EXCEL / IMPRESSÃO FORNECEDOR
-     ----------------------------------------------- */
-  function getCompanyName() {
-    return document.querySelector('.logo-text .company')?.textContent?.trim() || 'Dashboard';
-  }
-  function getExportDate() {
-    return new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
-  }
-
-  const PDF_CLONE_CSS = `
-    .pdf-export-target {
-      --bg:#f8fafc; --bg-card:#fff; --bg-card-hover:#f1f5f9;
-      --text:#1e293b; --text-sec:#475569; --text-muted:#64748b;
-      --border:rgba(0,0,0,.12);
-      background:#f8fafc !important; color:#1e293b !important;
-      padding:20px; opacity:1 !important; filter:none !important; animation:none !important;
-    }
-    .pdf-export-target * { opacity:1 !important; filter:none !important; }
-    .pdf-export-target .sec-title,.pdf-export-target .kpi-val,.pdf-export-target .chart-ttl,
-    .pdf-export-target .margin-val,.pdf-export-target .ind-val,.pdf-export-target .tax-cur,
-    .pdf-export-target .table-head .ttl,.pdf-export-target tbody td,.pdf-export-target td,
-    .pdf-export-target .kpi-lbl,.pdf-export-target .mem-row .lbl,.pdf-export-target .mem-row .val,
-    .pdf-export-target .fw7,.pdf-export-target .fw8 { color:#1e293b !important; }
-    .pdf-export-target .sec-sub,.pdf-export-target .kpi-sub,.pdf-export-target .chart-sub,
-    .pdf-export-target .table-head .sub,.pdf-export-target .td-mute,.pdf-export-target .sec-title small,
-    .pdf-export-target .margin-sub,.pdf-export-target .tax-prev,.pdf-export-target .ind-formula {
-      color:#475569 !important;
-    }
-    .pdf-export-target .kpi-card,.pdf-export-target .chart-card,.pdf-export-target .table-card,
-    .pdf-export-target .margin-card,.pdf-export-target .tax-card,.pdf-export-target .mem-card,
-    .pdf-export-target .ind-card,.pdf-export-target .alert-box {
-      background:#fff !important; border:1px solid #e2e8f0 !important;
-      box-shadow:0 1px 3px rgba(0,0,0,.06) !important;
-    }
-    .pdf-export-target .t-success{color:#059669!important}
-    .pdf-export-target .t-warning{color:#d97706!important}
-    .pdf-export-target .t-danger{color:#dc2626!important}
-    .pdf-export-target .t-accent{color:#16a34a!important}
-    .pdf-export-target .t-muted{color:#64748b!important}
-    .pdf-export-target .kpi-ico.c-blue{background:rgba(34,163,41,.22)!important;color:#16a34a!important}
-    .pdf-export-target .kpi-ico.c-green{background:rgba(16,185,129,.22)!important;color:#059669!important}
-    .pdf-export-target .kpi-ico.c-yellow{background:rgba(245,158,11,.22)!important;color:#d97706!important}
-    .pdf-export-target .kpi-ico.c-purple{background:rgba(139,92,246,.22)!important;color:#7c3aed!important}
-    .pdf-export-target thead th{background:#f1f5f9!important;color:#475569!important}
-    .pdf-export-target .dre-tbl .dre-group td{background:#f1f5f9!important;color:#475569!important}
-    .pdf-export-target .dre-tbl .dre-total td{background:#ecfdf5!important}
-    .pdf-export-target .dre-tbl .dre-lucro td{background:#ecfdf5!important;color:#059669!important}
-    .pdf-export-target .export-bar{display:none!important}
-  `;
-
-  function applyPdfLiveTheme(el) {
-    el.style.setProperty('--text', '#1e293b');
-    el.style.setProperty('--text-sec', '#475569');
-    el.style.setProperty('--text-muted', '#64748b');
-    el.style.setProperty('--bg-card', '#ffffff');
-    el.style.setProperty('--border', 'rgba(0,0,0,0.12)');
-    el.style.opacity = '1';
-    el.style.animation = 'none';
-  }
-
-  function clearPdfLiveTheme(el) {
-    ['--text','--text-sec','--text-muted','--bg-card','--border','opacity','animation'].forEach(p => el.style.removeProperty(p));
-  }
-
-  function applyPdfCloneTheme(doc, el) {
-    el.classList.add('pdf-export-target');
-    applyPdfLiveTheme(el);
-    const bar = el.querySelector('.export-bar');
-    if (bar) bar.style.display = 'none';
-    const style = doc.createElement('style');
-    style.textContent = PDF_CLONE_CSS;
-    el.insertBefore(style, el.firstChild);
-  }
-
-  function solidifyRgba(color) {
-    if (typeof color !== 'string' || !color.startsWith('rgba')) return color;
-    return color.replace(/,\s*[\d.]+\)\s*$/, ', 1)');
-  }
-
-  function prepareChartsForPdf(section) {
-    const saved = [];
-    Object.entries(chartInst).forEach(([id, chart]) => {
-      if (!chart?.canvas || !section.contains(chart.canvas)) return;
-      const snap = { id, ticks: [], grids: [], legend: null, datasets: [] };
-      if (chart.options.scales) {
-        Object.keys(chart.options.scales).forEach(key => {
-          const s = chart.options.scales[key];
-          if (!s) return;
-          if (s.ticks) { snap.ticks.push({ key, color: s.ticks.color }); s.ticks.color = '#475569'; }
-          if (s.grid)  { snap.grids.push({ key, color: s.grid.color });  s.grid.color = 'rgba(0,0,0,0.1)'; }
-        });
-      }
-      if (chart.options.plugins?.legend?.labels) {
-        snap.legend = chart.options.plugins.legend.labels.color;
-        chart.options.plugins.legend.labels.color = '#475569';
-      }
-      chart.data.datasets.forEach((d, i) => {
-        snap.datasets.push({ backgroundColor: d.backgroundColor, borderColor: d.borderColor, fill: d.fill });
-        if (d.fill && typeof d.backgroundColor === 'string' && d.backgroundColor.startsWith('rgba')) {
-          d.backgroundColor = d.backgroundColor.replace(/,\s*[\d.]+\)/, ', 0.18)');
-        } else {
-          d.backgroundColor = solidifyRgba(d.backgroundColor);
-        }
-        if (d.borderColor) d.borderColor = solidifyRgba(d.borderColor) || d.borderColor;
-      });
-      chart.update('none');
-      saved.push(snap);
-    });
-    return saved;
-  }
-
-  function restoreChartsFromPdf(saved) {
-    saved.forEach(snap => {
-      const chart = chartInst[snap.id];
-      if (!chart) return;
-      snap.ticks.forEach(({ key, color }) => { if (chart.options.scales?.[key]?.ticks) chart.options.scales[key].ticks.color = color; });
-      snap.grids.forEach(({ key, color }) => { if (chart.options.scales?.[key]?.grid) chart.options.scales[key].grid.color = color; });
-      if (snap.legend != null && chart.options.plugins?.legend?.labels) chart.options.plugins.legend.labels.color = snap.legend;
-      snap.datasets.forEach((orig, i) => {
-        const d = chart.data.datasets[i];
-        if (!d) return;
-        d.backgroundColor = orig.backgroundColor;
-        d.borderColor = orig.borderColor;
-        d.fill = orig.fill;
-      });
-      chart.update('none');
-    });
-  }
-
-  async function exportPDF(sectionId, filename) {
-    const section = document.getElementById(sectionId);
-    if (!section) return;
-    const btn = event?.currentTarget;
-    const origHtml = btn?.innerHTML;
-    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...'; }
-
-    const wasHidden = !section.classList.contains('active');
-    if (wasHidden) section.classList.add('export-capture');
-    section.classList.add('pdf-export-target');
-    document.body.classList.add('pdf-capturing');
-    section.scrollTop = 0;
-    applyPdfLiveTheme(section);
-    const chartSnap = prepareChartsForPdf(section);
-
-    try {
-      await new Promise(r => setTimeout(r, 500));
-      const canvas = await html2canvas(section, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#f8fafc',
-        logging: false,
-        onclone: (doc, el) => applyPdfCloneTheme(doc, el)
-      });
-      const imgData = canvas.toDataURL('image/png');
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      const pageW = pdf.internal.pageSize.getWidth();
-      const pageH = pdf.internal.pageSize.getHeight();
-      const margin = 10;
-      const headerH = 12;
-      const contentW = pageW - margin * 2;
-      const pdfHeight = (canvas.height * contentW) / canvas.width;
-      let heightLeft = pdfHeight;
-      let position = margin + headerH;
-
-      const addHeader = () => {
-        pdf.setFontSize(10);
-        pdf.setTextColor(26, 26, 46);
-        pdf.text(getCompanyName() + ' — ' + new Date().toLocaleDateString('pt-BR'), margin, margin + 4);
-        pdf.setDrawColor(200);
-        pdf.line(margin, margin + 7, pageW - margin, margin + 7);
-      };
-
-      addHeader();
-      pdf.addImage(imgData, 'PNG', margin, position, contentW, pdfHeight);
-      heightLeft -= (pageH - margin - headerH);
-
-      while (heightLeft > 0) {
-        position = margin + headerH - (pdfHeight - heightLeft);
-        pdf.addPage();
-        addHeader();
-        pdf.addImage(imgData, 'PNG', margin, position, contentW, pdfHeight);
-        heightLeft -= (pageH - margin - headerH);
-      }
-
-      pdf.save(filename + '_' + getExportDate() + '.pdf');
-    } catch (err) {
-      console.error(err);
-      alert('Erro ao gerar PDF. Tente novamente.');
-    } finally {
-      restoreChartsFromPdf(chartSnap);
-      clearPdfLiveTheme(section);
-      document.body.classList.remove('pdf-capturing');
-      section.classList.remove('pdf-export-target', 'export-capture');
-      if (btn) { btn.disabled = false; btn.innerHTML = origHtml; }
-    }
-  }
-
-  function exportExcel(sectionId, filename) {
-    const section = document.getElementById(sectionId);
-    if (!section) return;
-    const tables = section.querySelectorAll('table');
-    const wb = XLSX.utils.book_new();
-
-    if (tables.length > 0) {
-      tables.forEach((tbl, i) => {
-        const ws = XLSX.utils.table_to_sheet(tbl);
-        const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
-        const colWidths = [];
-        for (let C = range.s.c; C <= range.e.c; C++) {
-          let max = 10;
-          for (let R = range.s.r; R <= range.e.r; R++) {
-            const cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
-            if (cell && cell.v != null) max = Math.max(max, String(cell.v).length + 2);
-          }
-          colWidths.push({ wch: Math.min(max, 50) });
-        }
-        ws['!cols'] = colWidths;
-        XLSX.utils.book_append_sheet(wb, ws, 'Tabela_' + (i + 1));
-      });
-    } else {
-      const cards = section.querySelectorAll('.ind-card');
-      const rows = [['Indicador', 'Valor', 'Fórmula', 'Interpretação']];
-      cards.forEach(card => {
-        rows.push([
-          card.querySelector('.ind-name')?.textContent?.trim() || '',
-          card.querySelector('.ind-val')?.textContent?.trim() || '',
-          card.querySelector('.ind-formula')?.textContent?.trim() || '',
-          card.querySelector('.ind-interp')?.textContent?.trim() || ''
-        ]);
-      });
-      const ws = XLSX.utils.aoa_to_sheet(rows);
-      ws['!cols'] = [{ wch: 30 }, { wch: 15 }, { wch: 40 }, { wch: 60 }];
-      XLSX.utils.book_append_sheet(wb, ws, 'Indicadores');
-    }
-
-    if (!wb.SheetNames.length) {
-      alert('Nenhum dado encontrado para exportar.');
-      return;
-    }
-    XLSX.writeFile(wb, filename + '_' + getExportDate() + '.xlsx');
-  }
-
-  function collectUniqueSuppliers() {
-    const map = new Map();
-    (CFOP_DADOS || []).forEach(cfop => {
-      (cfop.fornecedores || []).forEach(f => {
-        const key = f.cnpj || f.nome;
-        if (!map.has(key)) map.set(key, { nome: f.nome, cnpj: f.cnpj, uf: f.uf });
-      });
-    });
-    return Array.from(map.values()).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
-  }
-
-  function openSupplierModal() {
-    const list = document.getElementById('supplierList');
-    const suppliers = collectUniqueSuppliers();
-    list.innerHTML = suppliers.map(s => {
-      const search = (s.nome + ' ' + s.cnpj).toLowerCase();
-      const esc = v => v.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-      return '<label class="supplier-item" data-search="' + esc(search) + '">' +
-        '<input type="checkbox" value="' + esc(s.cnpj) + '" data-nome="' + esc(s.nome) + '">' +
-        '<span class="supplier-info"><strong>' + esc(s.nome) + '</strong>' +
-        '<small>' + esc(s.cnpj) + ' · ' + esc(s.uf) + '</small></span></label>';
-    }).join('');
-    document.getElementById('supplierSearch').value = '';
-    document.getElementById('supplierModal').style.display = 'flex';
-  }
-
-  function closeSupplierModal() {
-    document.getElementById('supplierModal').style.display = 'none';
-    const search = document.getElementById('supplierSearch');
-    if (search) search.value = '';
-  }
-
-  function filterSuppliers(query) {
-    const q = query.toLowerCase();
-    document.querySelectorAll('#supplierList .supplier-item').forEach(el => {
-      el.style.display = el.dataset.search.includes(q) ? '' : 'none';
-    });
-  }
-
-  function toggleAllSuppliers(state) {
-    document.querySelectorAll('#supplierList .supplier-item').forEach(el => {
-      if (el.style.display === 'none') return;
-      const cb = el.querySelector('input');
-      if (cb) cb.checked = state;
-    });
-  }
-
-  function printBySupplier() {
-    const selected = Array.from(document.querySelectorAll('#supplierList input:checked'));
-    if (!selected.length) { alert('Selecione ao menos um fornecedor.'); return; }
-
-    closeSupplierModal();
-    let totalGeral = 0;
-    let html = '<div style="font-family:Inter,sans-serif;padding:24px;color:#1a1a2e;background:#fff;">';
-    html += '<h1 style="font-size:18px;margin-bottom:4px;">Relatório por Fornecedor</h1>';
-    html += '<p style="font-size:12px;color:#555;margin-bottom:24px;">' + getCompanyName() + ' — ' + new Date().toLocaleDateString('pt-BR') + '</p>';
-
-    selected.forEach(cb => {
-      const cnpj = cb.value;
-      const nome = cb.dataset.nome;
-      const rows = [];
-      let subtotal = 0;
-      let uf = '—';
-
-      (CFOP_DADOS || []).forEach(cfop => {
-        const f = (cfop.fornecedores || []).find(x => x.cnpj === cnpj);
-        if (f) {
-          const info = (CFOP_FINALIDADE[cfop.cfop] || {});
-          rows.push({ cfop: cfop.cfop, desc: info.descricao || '—', fin: info.finalidade || '—', qtd: f.qtd, total: f.total });
-          subtotal += f.total;
-          uf = f.uf;
-        }
-      });
-
-      totalGeral += subtotal;
-      html += '<div style="margin-bottom:28px;page-break-inside:avoid;">';
-      html += '<h2 style="font-size:14px;border-bottom:2px solid #22a329;padding-bottom:6px;">' + nome + '</h2>';
-      html += '<p style="font-size:11px;color:#555;">CNPJ: ' + cnpj + ' · UF: ' + uf + '</p>';
-      html += '<table style="width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;">';
-      html += '<thead><tr style="background:#f0f0f0;"><th style="padding:8px;text-align:left;">CFOP</th>';
-      html += '<th style="padding:8px;text-align:left;">Descrição</th><th style="padding:8px;text-align:left;">Finalidade</th>';
-      html += '<th style="padding:8px;text-align:right;">Qtd NFs</th><th style="padding:8px;text-align:right;">Valor (R$)</th></tr></thead><tbody>';
-      rows.forEach(r => {
-        html += '<tr><td style="padding:8px;border-bottom:1px solid #ddd;">' + r.cfop + '</td>';
-        html += '<td style="padding:8px;border-bottom:1px solid #ddd;">' + r.desc + '</td>';
-        html += '<td style="padding:8px;border-bottom:1px solid #ddd;">' + r.fin + '</td>';
-        html += '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;">' + r.qtd + '</td>';
-        html += '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;font-weight:600;">' +
-          r.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr>';
-      });
-      html += '</tbody><tfoot><tr><td colspan="4" style="padding:10px;text-align:right;font-weight:700;">Subtotal:</td>';
-      html += '<td style="padding:10px;text-align:right;font-weight:700;">R$ ' +
-        subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr></tfoot></table></div>';
-    });
-
-    html += '<div style="border-top:2px solid #1a1a2e;padding-top:12px;margin-top:16px;text-align:right;font-size:14px;font-weight:700;">';
-    html += 'Total Geral: R$ ' + totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</div></div>';
-
-    const old = document.getElementById('print-supplier-report');
-    if (old) old.remove();
-    const div = document.createElement('div');
-    div.id = 'print-supplier-report';
-    div.innerHTML = html;
-    document.body.appendChild(div);
-    document.body.classList.add('supplier-printing');
-
-    const cleanup = () => {
-      document.body.classList.remove('supplier-printing');
-      div.remove();
-      window.removeEventListener('afterprint', cleanup);
-    };
-    window.addEventListener('afterprint', cleanup);
-    window.print();
   }
 
   /* -----------------------------------------------

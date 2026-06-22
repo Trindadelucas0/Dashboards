@@ -11,4 +11,5 @@ router.get("/auth/dashboard-selector", authMiddleware, authControl.dashboardSele
 router.get("/auth/UNICATINTAS",authMiddleware,authControl.UNICATINTAS)
 router.get("/auth/loja-maquinas",authMiddleware,authControl.lojamaquinas)
 router.get("/auth/baifer2trm",authMiddleware,authControl.baifer2trm)
+router.get("/auth/baifer1trm", authMiddleware, authControl.baifer1trm)
 module.exports=router   

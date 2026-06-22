@@ -352,26 +352,55 @@
     }
     .btn-confirm:hover { background:rgba(34,163,41,.35); }
 
-    /* === PRINT MODE (PDF capture) === */
-    body.print-mode { background:#fff !important; color:#1a1a2e !important; }
+    /* === PDF EXPORT THEME (scoped capture) === */
+    .pdf-export-target {
+      --bg: #f8fafc; --bg-card: #ffffff; --bg-card-hover: #f1f5f9;
+      --text: #1e293b; --text-sec: #475569; --text-muted: #64748b;
+      --border: rgba(0,0,0,0.12);
+      background: #f8fafc !important; color: #1e293b !important;
+      padding: 20px; opacity: 1 !important; filter: none !important; animation: none !important;
+    }
+    .pdf-export-target * { opacity: 1 !important; filter: none !important; }
+    .pdf-export-target .sec-title, .pdf-export-target .kpi-val, .pdf-export-target .chart-ttl,
+    .pdf-export-target .margin-val, .pdf-export-target .ind-val, .pdf-export-target .tax-cur,
+    .pdf-export-target .table-head .ttl, .pdf-export-target tbody td, .pdf-export-target td,
+    .pdf-export-target .kpi-lbl, .pdf-export-target .mem-row .lbl, .pdf-export-target .mem-row .val,
+    .pdf-export-target .fw7, .pdf-export-target .fw8 { color: #1e293b !important; }
+    .pdf-export-target .sec-sub, .pdf-export-target .kpi-sub, .pdf-export-target .chart-sub,
+    .pdf-export-target .table-head .sub, .pdf-export-target .td-mute, .pdf-export-target .sec-title small,
+    .pdf-export-target .margin-sub, .pdf-export-target .tax-prev, .pdf-export-target .ind-formula {
+      color: #475569 !important;
+    }
+    .pdf-export-target .kpi-card, .pdf-export-target .chart-card, .pdf-export-target .table-card,
+    .pdf-export-target .margin-card, .pdf-export-target .tax-card, .pdf-export-target .mem-card,
+    .pdf-export-target .ind-card, .pdf-export-target .alert-box {
+      background: #ffffff !important; border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+    }
+    .pdf-export-target .t-success { color: #059669 !important; }
+    .pdf-export-target .t-warning { color: #d97706 !important; }
+    .pdf-export-target .t-danger  { color: #dc2626 !important; }
+    .pdf-export-target .t-accent  { color: #16a34a !important; }
+    .pdf-export-target .t-muted   { color: #64748b !important; }
+    .pdf-export-target .kpi-ico.c-blue   { background: rgba(34,163,41,.22) !important; color: #16a34a !important; }
+    .pdf-export-target .kpi-ico.c-green  { background: rgba(16,185,129,.22) !important; color: #059669 !important; }
+    .pdf-export-target .kpi-ico.c-yellow { background: rgba(245,158,11,.22) !important; color: #d97706 !important; }
+    .pdf-export-target .kpi-ico.c-purple { background: rgba(139,92,246,.22) !important; color: #7c3aed !important; }
+    .pdf-export-target .export-bar { display: none !important; }
+    .pdf-export-target thead th { background: #f1f5f9 !important; color: #475569 !important; }
+    .pdf-export-target .dre-tbl .dre-group td { background: #f1f5f9 !important; color: #475569 !important; }
+    .pdf-export-target .dre-tbl .dre-total td { background: #ecfdf5 !important; }
+    .pdf-export-target .dre-tbl .dre-lucro td { background: #ecfdf5 !important; color: #059669 !important; }
     .tab-section.export-capture {
-      display:block !important; position:absolute; left:-9999px; top:0;
-      width:1200px; z-index:-1;
+      display: block !important;
+      position: fixed;
+      top: 0; left: 0;
+      width: 1200px;
+      z-index: 10000;
+      max-height: none;
+      overflow: visible;
     }
-    body.print-mode .tab-section.export-capture,
-    body.print-mode .tab-section.active {
-      background:#fff !important; color:#1a1a2e !important;
-    }
-    body.print-mode .kpi-card, body.print-mode .chart-card, body.print-mode .table-card,
-    body.print-mode .ind-card, body.print-mode .alert-box, body.print-mode .tax-card, body.print-mode .mem-card {
-      background:#fff !important; border:1px solid #ddd !important; color:#1a1a2e !important;
-    }
-    body.print-mode .kpi-lbl, body.print-mode .kpi-sub, body.print-mode .chart-sub,
-    body.print-mode .sec-sub, body.print-mode .td-mute, body.print-mode .table-head .sub { color:#555 !important; }
-    body.print-mode .sec-title, body.print-mode .kpi-val, body.print-mode .chart-ttl,
-    body.print-mode .table-head .ttl { color:#1a1a2e !important; }
-    body.print-mode thead th { background:#f0f0f0 !important; color:#1a1a2e !important; }
-    body.print-mode tbody td { color:#333 !important; border-color:#ddd !important; }
+    body.pdf-capturing { overflow: hidden; }
 
     #print-supplier-report { display:none; }
     body.supplier-printing #app, body.supplier-printing #overlay { display:none !important; }
@@ -2029,6 +2058,126 @@
     return new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
   }
 
+  const PDF_CLONE_CSS = `
+    .pdf-export-target {
+      --bg:#f8fafc; --bg-card:#fff; --bg-card-hover:#f1f5f9;
+      --text:#1e293b; --text-sec:#475569; --text-muted:#64748b;
+      --border:rgba(0,0,0,.12);
+      background:#f8fafc !important; color:#1e293b !important;
+      padding:20px; opacity:1 !important; filter:none !important; animation:none !important;
+    }
+    .pdf-export-target * { opacity:1 !important; filter:none !important; }
+    .pdf-export-target .sec-title,.pdf-export-target .kpi-val,.pdf-export-target .chart-ttl,
+    .pdf-export-target .margin-val,.pdf-export-target .ind-val,.pdf-export-target .tax-cur,
+    .pdf-export-target .table-head .ttl,.pdf-export-target tbody td,.pdf-export-target td,
+    .pdf-export-target .kpi-lbl,.pdf-export-target .mem-row .lbl,.pdf-export-target .mem-row .val,
+    .pdf-export-target .fw7,.pdf-export-target .fw8 { color:#1e293b !important; }
+    .pdf-export-target .sec-sub,.pdf-export-target .kpi-sub,.pdf-export-target .chart-sub,
+    .pdf-export-target .table-head .sub,.pdf-export-target .td-mute,.pdf-export-target .sec-title small,
+    .pdf-export-target .margin-sub,.pdf-export-target .tax-prev,.pdf-export-target .ind-formula {
+      color:#475569 !important;
+    }
+    .pdf-export-target .kpi-card,.pdf-export-target .chart-card,.pdf-export-target .table-card,
+    .pdf-export-target .margin-card,.pdf-export-target .tax-card,.pdf-export-target .mem-card,
+    .pdf-export-target .ind-card,.pdf-export-target .alert-box {
+      background:#fff !important; border:1px solid #e2e8f0 !important;
+      box-shadow:0 1px 3px rgba(0,0,0,.06) !important;
+    }
+    .pdf-export-target .t-success{color:#059669!important}
+    .pdf-export-target .t-warning{color:#d97706!important}
+    .pdf-export-target .t-danger{color:#dc2626!important}
+    .pdf-export-target .t-accent{color:#16a34a!important}
+    .pdf-export-target .t-muted{color:#64748b!important}
+    .pdf-export-target .kpi-ico.c-blue{background:rgba(34,163,41,.22)!important;color:#16a34a!important}
+    .pdf-export-target .kpi-ico.c-green{background:rgba(16,185,129,.22)!important;color:#059669!important}
+    .pdf-export-target .kpi-ico.c-yellow{background:rgba(245,158,11,.22)!important;color:#d97706!important}
+    .pdf-export-target .kpi-ico.c-purple{background:rgba(139,92,246,.22)!important;color:#7c3aed!important}
+    .pdf-export-target thead th{background:#f1f5f9!important;color:#475569!important}
+    .pdf-export-target .dre-tbl .dre-group td{background:#f1f5f9!important;color:#475569!important}
+    .pdf-export-target .dre-tbl .dre-total td{background:#ecfdf5!important}
+    .pdf-export-target .dre-tbl .dre-lucro td{background:#ecfdf5!important;color:#059669!important}
+    .pdf-export-target .export-bar{display:none!important}
+  `;
+
+  function applyPdfLiveTheme(el) {
+    el.style.setProperty('--text', '#1e293b');
+    el.style.setProperty('--text-sec', '#475569');
+    el.style.setProperty('--text-muted', '#64748b');
+    el.style.setProperty('--bg-card', '#ffffff');
+    el.style.setProperty('--border', 'rgba(0,0,0,0.12)');
+    el.style.opacity = '1';
+    el.style.animation = 'none';
+  }
+
+  function clearPdfLiveTheme(el) {
+    ['--text','--text-sec','--text-muted','--bg-card','--border','opacity','animation'].forEach(p => el.style.removeProperty(p));
+  }
+
+  function applyPdfCloneTheme(doc, el) {
+    el.classList.add('pdf-export-target');
+    applyPdfLiveTheme(el);
+    const bar = el.querySelector('.export-bar');
+    if (bar) bar.style.display = 'none';
+    const style = doc.createElement('style');
+    style.textContent = PDF_CLONE_CSS;
+    el.insertBefore(style, el.firstChild);
+  }
+
+  function solidifyRgba(color) {
+    if (typeof color !== 'string' || !color.startsWith('rgba')) return color;
+    return color.replace(/,\s*[\d.]+\)\s*$/, ', 1)');
+  }
+
+  function prepareChartsForPdf(section) {
+    const saved = [];
+    Object.entries(chartInst).forEach(([id, chart]) => {
+      if (!chart?.canvas || !section.contains(chart.canvas)) return;
+      const snap = { id, ticks: [], grids: [], legend: null, datasets: [] };
+      if (chart.options.scales) {
+        Object.keys(chart.options.scales).forEach(key => {
+          const s = chart.options.scales[key];
+          if (!s) return;
+          if (s.ticks) { snap.ticks.push({ key, color: s.ticks.color }); s.ticks.color = '#475569'; }
+          if (s.grid)  { snap.grids.push({ key, color: s.grid.color });  s.grid.color = 'rgba(0,0,0,0.1)'; }
+        });
+      }
+      if (chart.options.plugins?.legend?.labels) {
+        snap.legend = chart.options.plugins.legend.labels.color;
+        chart.options.plugins.legend.labels.color = '#475569';
+      }
+      chart.data.datasets.forEach((d, i) => {
+        snap.datasets.push({ backgroundColor: d.backgroundColor, borderColor: d.borderColor, fill: d.fill });
+        if (d.fill && typeof d.backgroundColor === 'string' && d.backgroundColor.startsWith('rgba')) {
+          d.backgroundColor = d.backgroundColor.replace(/,\s*[\d.]+\)/, ', 0.18)');
+        } else {
+          d.backgroundColor = solidifyRgba(d.backgroundColor);
+        }
+        if (d.borderColor) d.borderColor = solidifyRgba(d.borderColor) || d.borderColor;
+      });
+      chart.update('none');
+      saved.push(snap);
+    });
+    return saved;
+  }
+
+  function restoreChartsFromPdf(saved) {
+    saved.forEach(snap => {
+      const chart = chartInst[snap.id];
+      if (!chart) return;
+      snap.ticks.forEach(({ key, color }) => { if (chart.options.scales?.[key]?.ticks) chart.options.scales[key].ticks.color = color; });
+      snap.grids.forEach(({ key, color }) => { if (chart.options.scales?.[key]?.grid) chart.options.scales[key].grid.color = color; });
+      if (snap.legend != null && chart.options.plugins?.legend?.labels) chart.options.plugins.legend.labels.color = snap.legend;
+      snap.datasets.forEach((orig, i) => {
+        const d = chart.data.datasets[i];
+        if (!d) return;
+        d.backgroundColor = orig.backgroundColor;
+        d.borderColor = orig.borderColor;
+        d.fill = orig.fill;
+      });
+      chart.update('none');
+    });
+  }
+
   async function exportPDF(sectionId, filename) {
     const section = document.getElementById(sectionId);
     if (!section) return;
@@ -2038,11 +2187,21 @@
 
     const wasHidden = !section.classList.contains('active');
     if (wasHidden) section.classList.add('export-capture');
-    document.body.classList.add('print-mode');
+    section.classList.add('pdf-export-target');
+    document.body.classList.add('pdf-capturing');
+    section.scrollTop = 0;
+    applyPdfLiveTheme(section);
+    const chartSnap = prepareChartsForPdf(section);
 
     try {
-      await new Promise(r => setTimeout(r, 350));
-      const canvas = await html2canvas(section, { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false });
+      await new Promise(r => setTimeout(r, 500));
+      const canvas = await html2canvas(section, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#f8fafc',
+        logging: false,
+        onclone: (doc, el) => applyPdfCloneTheme(doc, el)
+      });
       const imgData = canvas.toDataURL('image/png');
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -2080,8 +2239,10 @@
       console.error(err);
       alert('Erro ao gerar PDF. Tente novamente.');
     } finally {
-      document.body.classList.remove('print-mode');
-      if (wasHidden) section.classList.remove('export-capture');
+      restoreChartsFromPdf(chartSnap);
+      clearPdfLiveTheme(section);
+      document.body.classList.remove('pdf-capturing');
+      section.classList.remove('pdf-export-target', 'export-capture');
       if (btn) { btn.disabled = false; btn.innerHTML = origHtml; }
     }
   }
