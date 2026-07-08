@@ -73,6 +73,15 @@ module.exports = {
   baifer1trm: (req, res) => {
     res.render("baifer1trm");
   },
+  schumacher: (req, res) => {
+    res.render("schumacher");
+  },
+  egaplast: (req, res) => {
+    res.render("egaplast");
+  },
+  duLanche: (req, res) => {
+    res.render("du-lanche");
+  },
   jpg: (req, res) => {
     res.render("jpg", { hub: jpgData.hub });
   },

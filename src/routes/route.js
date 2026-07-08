@@ -17,6 +17,9 @@ router.get("/auth/loja-maquinas", authMiddleware, requireDashboard("loja-maquina
 router.get("/auth/lojamaquinas1trm", authMiddleware, requireDashboard("loja-maquinas"), authControl.lojamaquinas1trm);
 router.get("/auth/baifer2trm", authMiddleware, requireDashboard("baifer"), authControl.baifer2trm);
 router.get("/auth/baifer1trm", authMiddleware, requireDashboard("baifer"), authControl.baifer1trm);
+router.get("/auth/schumacher", authMiddleware, requireDashboard("schumacher"), authControl.schumacher);
+router.get("/auth/egaplast", authMiddleware, requireDashboard("egaplast"), authControl.egaplast);
+router.get("/auth/du-lanche", authMiddleware, requireDashboard("du-lanche"), authControl.duLanche);
 router.get("/auth/jpg", authMiddleware, requireDashboard("jpg"), authControl.jpg);
 router.get("/auth/jpg/:filial", authMiddleware, requireDashboard("jpg"), authControl.jpgFilial);
 module.exports = router;

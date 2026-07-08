@@ -3,4 +3,7 @@ module.exports = [
   { id: "loja-maquinas", label: "Loja Máquinas", routes: ["/auth/loja-maquinas", "/auth/lojamaquinas1trm"] },
   { id: "jpg", label: "JPG", routes: ["/auth/jpg", "/auth/jpg/:filial"] },
   { id: "baifer", label: "BAIFER", routes: ["/auth/baifer1trm", "/auth/baifer2trm"] },
+  { id: "schumacher", label: "Schumacher", routes: ["/auth/schumacher"] },
+  { id: "egaplast", label: "Egaplast", routes: ["/auth/egaplast"] },
+  { id: "du-lanche", label: "Du Lanches", routes: ["/auth/du-lanche"] },
 ];

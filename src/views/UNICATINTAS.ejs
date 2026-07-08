@@ -420,6 +420,9 @@
       table td { color:#333 !important; border-color:#ddd !important; }
       canvas { max-width:100% !important; }
     }
+  
+    .btn-back-hub { display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
+
   </style>
 </head>
 <body>
@@ -479,7 +482,7 @@
     <header class="top-header">
       <button class="btn-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
       <div class="header-title" id="headerTitle">Visão Geral <span>Resumo Executivo – Competência Maio 2026</span></div>
-      <div class="header-actions">
+      <div class="header-actions"><a href="/auth/dashboard-selector" class="btn-export btn-back-hub"><i class="fas fa-arrow-left"></i> Voltar</a>
         <select class="period-sel">
           <option>Janeiro – Maio 2026</option>
           <option>Janeiro – Dezembro 2025</option>
