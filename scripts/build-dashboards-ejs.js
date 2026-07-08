@@ -4,6 +4,7 @@ const vm = require("vm");
 
 const dashboardsRoot = path.join(__dirname, "..");
 const dashRoot = path.join(dashboardsRoot, "..", "DASH");
+const workspaceRoot = path.join(dashboardsRoot, "..");
 const viewsDir = path.join(dashboardsRoot, "src", "views");
 
 const BACK_BUTTON =
@@ -43,6 +44,11 @@ const DASHBOARDS = [
     id: "du-lanche",
     html: path.join(dashRoot, "du lanches", "du-lanche.html"),
     outputs: ["du-lanche.ejs"],
+  },
+  {
+    id: "jpg",
+    html: path.join(workspaceRoot, "JPG.html"),
+    outputs: ["jpg.ejs"],
   },
 ];
 
@@ -114,15 +120,30 @@ function validateInlineJs(html, sourceLabel) {
   });
 }
 
+function patchJpgLinks(html) {
+  return html.replace(
+    /<a href="index\.html" class="btn-export"[^>]*>[\s\S]*?<\/a>\s*/i,
+    ""
+  );
+}
+
+function patchDashboardHtml(html, config) {
+  html = inlineLocalScripts(html, config.html);
+  html = patchBackButton(html);
+  html = patchExtraCss(html);
+  if (config.id === "jpg") {
+    html = patchJpgLinks(html);
+  }
+  return html;
+}
+
 function buildDashboard(config) {
   if (!fs.existsSync(config.html)) {
     throw new Error(`HTML nao encontrado: ${config.html}`);
   }
 
   let html = fs.readFileSync(config.html, "utf8");
-  html = inlineLocalScripts(html, config.html);
-  html = patchBackButton(html);
-  html = patchExtraCss(html);
+  html = patchDashboardHtml(html, config);
   validateInlineJs(html, config.id);
 
   for (const output of config.outputs) {
@@ -134,10 +155,10 @@ function buildDashboard(config) {
 }
 
 function main() {
-  console.log("Gerando views EJS a partir de DASH/\n");
+  console.log("Gerando views EJS a partir das fontes HTML\n");
 
   for (const config of DASHBOARDS) {
-    console.log(`[${config.id}] ${path.relative(dashRoot, config.html)}`);
+    console.log(`[${config.id}] ${path.relative(workspaceRoot, config.html)}`);
     buildDashboard(config);
   }
 

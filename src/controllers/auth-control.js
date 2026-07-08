@@ -1,4 +1,3 @@
-const jpgData = require("../data/jpg-filiais");
 const userService = require("../services/user-service");
 
 module.exports = {
@@ -83,12 +82,9 @@ module.exports = {
     res.render("du-lanche");
   },
   jpg: (req, res) => {
-    res.render("jpg", { hub: jpgData.hub });
+    res.render("jpg");
   },
   jpgFilial: (req, res) => {
-    const key = req.params.filial;
-    const filialData = jpgData.filiais[key];
-    if (!filialData) return res.redirect("/auth/jpg");
-    res.render("jpg-filial", { filialData, filialKey: key });
+    res.redirect("/auth/jpg");
   },
 };
