@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const vm = require("vm");
 
 const dashboardsRoot = path.join(__dirname, "..");
 const dashRoot = path.join(dashboardsRoot, "..", "DASH");
@@ -90,6 +91,29 @@ function patchExtraCss(html) {
   return html;
 }
 
+function extractInlineScripts(html) {
+  const scripts = [];
+  const re = /<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    scripts.push(m[1]);
+  }
+  return scripts;
+}
+
+function validateInlineJs(html, sourceLabel) {
+  const scripts = extractInlineScripts(html);
+  scripts.forEach((js, i) => {
+    const trimmed = js.trim();
+    if (!trimmed) return;
+    try {
+      new vm.Script(trimmed);
+    } catch (err) {
+      throw new Error(`${sourceLabel}: erro de sintaxe no script inline #${i + 1}: ${err.message}`);
+    }
+  });
+}
+
 function buildDashboard(config) {
   if (!fs.existsSync(config.html)) {
     throw new Error(`HTML nao encontrado: ${config.html}`);
@@ -99,6 +123,7 @@ function buildDashboard(config) {
   html = inlineLocalScripts(html, config.html);
   html = patchBackButton(html);
   html = patchExtraCss(html);
+  validateInlineJs(html, config.id);
 
   for (const output of config.outputs) {
     const outPath = path.join(viewsDir, output);
