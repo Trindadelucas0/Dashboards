@@ -76,6 +76,7 @@
     /* KPI CARDS */
     .kpi-grid { display:grid;gap:16px;margin-bottom:24px; }
     .kpi-grid-4 { grid-template-columns:repeat(4,1fr); }
+    .kpi-grid-5 { grid-template-columns:repeat(5,1fr); }
     .kpi-grid-3 { grid-template-columns:repeat(3,1fr); }
     .kpi-grid-2 { grid-template-columns:repeat(2,1fr); }
     .kpi-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;transition:transform var(--t),box-shadow var(--t); }
@@ -255,6 +256,7 @@
     }
     @media (max-width:960px) {
       .kpi-grid-4 { grid-template-columns:repeat(2,1fr); }
+      .kpi-grid-5 { grid-template-columns:repeat(2,1fr); }
       .kpi-grid-3 { grid-template-columns:repeat(2,1fr); }
       .cr-2col,.cr-1-2,.cr-2-1 { grid-template-columns:1fr; }
     }
@@ -713,7 +715,13 @@
         </div>
 
         <!-- KPI por finalidade -->
-        <div class="kpi-grid kpi-grid-4" id="fin-kpi-grid">
+        <div class="kpi-grid kpi-grid-5" id="fin-kpi-grid">
+          <div class="kpi-card c-green">
+            <div class="kpi-head"><div class="kpi-ico c-green"><i class="fas fa-cart-shopping"></i></div><div class="kpi-badge neutral" data-month-label>—</div></div>
+            <div class="kpi-val" id="fin-kpi-total">—</div>
+            <div class="kpi-lbl">Total de Compras</div>
+            <div class="kpi-sub" id="fin-sub-total">Valor total do período (CFOP)</div>
+          </div>
           <div class="kpi-card c-blue">
             <div class="kpi-head"><div class="kpi-ico c-blue"><i class="fas fa-rotate-left"></i></div><div class="kpi-badge neutral" data-month-label>—</div></div>
             <div class="kpi-val" id="fin-kpi-revenda">—</div>
@@ -744,12 +752,12 @@
         <div class="charts-row cr-2col">
           <div class="chart-card">
             <div class="chart-ttl">Distribuição por Finalidade Fiscal</div>
-            <div class="chart-sub">% do valor total de entradas — Mai/2026 (R$ 2.364.567 bruto)</div>
+            <div class="chart-sub" id="fn-chart-dist-sub">% do valor total de entradas —</div>
             <div class="chart-wrap h280"><canvas id="chartFinalidadeDist"></canvas></div>
           </div>
           <div class="chart-card">
             <div class="chart-ttl">Valor por Finalidade (R$ mil)</div>
-            <div class="chart-sub">Comparativo dos grupos fiscais de compras — Mai/2026</div>
+            <div class="chart-sub" id="fn-chart-bar-sub">Comparativo dos grupos fiscais de compras —</div>
             <div class="chart-wrap h280"><canvas id="chartFinalidadeBar"></canvas></div>
           </div>
         </div>
@@ -8308,6 +8316,7 @@
 
   function updateFinalidadeKpis() {
     const totalGeral = CFOP_DADOS.reduce((a,b)=>a+b.total,0);
+    const totalCompras = getPack().totalCompras || totalGeral;
     const grupos = { revenda: 0, ativo: 0, devol: 0, outros: 0 };
     CFOP_DADOS.forEach(d => {
       const fin = (CFOP_FINALIDADE[d.cfop] || {}).finalidade || 'Outros';
@@ -8316,13 +8325,15 @@
       else if (fin.includes('Devol') || fin === 'Devolução Venda' || fin === 'Retorno Conserto') grupos.devol += d.total;
       else grupos.outros += d.total;
     });
-    const pct = (v) => totalGeral > 0 ? ((v/totalGeral)*100).toFixed(1) + '% do total' : '—';
+    const pct = (v) => totalCompras > 0 ? ((v/totalCompras)*100).toFixed(1) + '% do total' : '—';
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = fmtK(v); };
+    set('fin-kpi-total', totalCompras);
     set('fin-kpi-revenda', grupos.revenda);
     set('fin-kpi-ativo', grupos.ativo);
     set('fin-kpi-devol', grupos.devol);
     set('fin-kpi-outros', grupos.outros);
     const ss = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+    ss('fin-sub-total', CFOP_DADOS.length + ' CFOPs · valor total do período');
     ss('fin-sub-revenda', 'Compra p/ comercialização — ' + pct(grupos.revenda));
     ss('fin-sub-ativo', 'Bens para o ativo — ' + pct(grupos.ativo));
     ss('fin-sub-devol', 'Devoluções e retornos — ' + pct(grupos.devol));
@@ -8332,6 +8343,16 @@
   function initFinalidade() {
     updateFinalidadeKpis();
     const totalGeral = CFOP_DADOS.reduce((a,b)=>a+b.total,0);
+    const totalCompras = getPack().totalCompras || totalGeral;
+    const totalBase = totalCompras > 0 ? totalCompras : totalGeral;
+
+    const finDistSub = document.getElementById('fn-chart-dist-sub');
+    const finBarSub = document.getElementById('fn-chart-bar-sub');
+    if (finDistSub) {
+      finDistSub.textContent = '% do valor total de entradas — ' + getPeriodHeaderLabel() +
+        ' (R$ ' + totalCompras.toLocaleString('pt-BR', { maximumFractionDigits: 0 }) + ' bruto)';
+    }
+    if (finBarSub) finBarSub.textContent = 'Comparativo dos grupos fiscais de compras — ' + getPeriodHeaderLabel();
 
     // Agregar por finalidade para gráficos
     const finalGrupos = {};
@@ -8352,7 +8373,7 @@
         plugins:{
           legend:{ ...leg(), position:'right' },
           tooltip:{ ...tip(), callbacks:{ label:c=>{
-            const pct = ((c.parsed/totalGeral)*100).toFixed(1);
+            const pct = totalBase > 0 ? ((c.parsed/totalBase)*100).toFixed(1) : '0.0';
             return c.label+': R$ '+c.parsed.toLocaleString('pt-BR',{minimumFractionDigits:0})+' ('+pct+'%)';
           }}}
         }
@@ -8375,7 +8396,7 @@
     tbody.innerHTML = '';
     CFOP_DADOS.forEach(d => {
       const info = CFOP_FINALIDADE[d.cfop] || {};
-      const pct  = totalGeral > 0 ? ((d.total/totalGeral)*100).toFixed(1) : '0.0';
+      const pct  = totalBase > 0 ? ((d.total/totalBase)*100).toFixed(1) : '0.0';
       const cor  = FINALIDADE_CORES[info.finalidade] || '#64748b';
       const credChip = info.creditoPisCofins
         ? '<span class="chip gr"><i class="fas fa-check"></i> Sim</span>'
@@ -8390,10 +8411,22 @@
         '<td>' + credChip + '</td>' +
         '<td class="r">' + d.qtd + '</td>' +
         '<td class="r td-val">R$ ' + d.total.toLocaleString('pt-BR',{minimumFractionDigits:2}) + '</td>' +
-        '<td class="r"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:'+((d.total/totalGeral)*100).toFixed(0)+'%;background:'+cor+'"></div></div><div class="pb-pct">'+pct+'%</div></div></td>' +
+        '<td class="r"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:'+(totalBase > 0 ? ((d.total/totalBase)*100).toFixed(0) : '0')+'%;background:'+cor+'"></div></div><div class="pb-pct">'+pct+'%</div></div></td>' +
         '<td class="c"><button onclick="openDrilldown(\''+d.cfop+'\')" style="background:rgba(34,163,41,0.12);border:1px solid rgba(34,163,41,0.3);color:var(--accent);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;">Ver <i class="fas fa-chevron-down"></i></button></td>';
       tbody.appendChild(tr);
     });
+    if (CFOP_DADOS.length) {
+      const totalNfs = CFOP_DADOS.reduce((a, d) => a + (d.qtd || 0), 0);
+      const trTot = document.createElement('tr');
+      trTot.style.background = 'rgba(34,163,41,0.05)';
+      trTot.innerHTML =
+        '<td class="fw7" colspan="4">TOTAL DE CFOP</td>' +
+        '<td class="r fw7">' + totalNfs + '</td>' +
+        '<td class="r fw7 td-val">R$ ' + totalCompras.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td>' +
+        '<td class="r fw7">100%</td>' +
+        '<td></td>';
+      tbody.appendChild(trTot);
+    }
   }
 
   /* -----------------------------------------------

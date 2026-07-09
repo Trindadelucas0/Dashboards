@@ -679,7 +679,7 @@
         </div>
 
         <!-- KPI por finalidade -->
-        <div class="kpi-grid kpi-grid-4" id="fin-kpi-grid"></div>
+        <div class="kpi-grid kpi-grid-5" id="fin-kpi-grid"></div>
 
         <!-- Gráfico de distribuição -->
         <div class="charts-row cr-2col">
@@ -23986,14 +23986,18 @@ const DASHBOARD_DATA = {
       finSub.textContent = sub;
     }
 
-    const total = pack.totalCompras || 1;
+    const total = pack.totalCompras || 0;
     const tops = topFinalidades(pack.cfopEntradas, 4);
     const finGrid = document.getElementById('fin-kpi-grid');
     if (finGrid) {
-      finGrid.innerHTML = tops.map(([fin, val], i) => {
-        const cor = ['green', 'cyan', 'orange', 'purple'][i] || 'blue';
-        return kpiCard(cor, 'layer-group', periodLbl(), fmtBRL(val, true), fin, pct1(val, total) + '% do total');
-      }).join('') || kpiCard('blue', 'info-circle', '', '—', 'Sem entradas', '');
+      const totalCard = total
+        ? kpiCard('green', 'cart-shopping', periodLbl(), fmtBRL(total, true), 'Total de Compras', v.n + ' CFOPs · valor total do período')
+        : '';
+      const finCards = tops.map(([fin, val], i) => {
+        const cor = ['cyan', 'orange', 'purple', 'blue'][i] || 'blue';
+        return kpiCard(cor, 'layer-group', periodLbl(), fmtBRL(val, true), fin, pct1(val, total || 1) + '% do total');
+      }).join('');
+      finGrid.innerHTML = (totalCard + finCards) || kpiCard('blue', 'info-circle', '', '—', 'Sem entradas', '');
     }
 
     const finDistSub = document.getElementById('fn-chart-dist-sub');
@@ -24017,21 +24021,35 @@ const DASHBOARD_DATA = {
     if (tbody) {
       const totalCf = pack.totalCompras || 1;
       const sorted = (pack.cfopEntradas || []).slice().sort((a, b) => (b.total || 0) - (a.total || 0));
-      tbody.innerHTML = sorted.map((c) => {
-        const fin = cfopFinalidadeFromItem(c);
-        const desc = cfopDescricaoFromItem(c);
-        const cor = FINALIDADE_CORES[fin] || '#64748b';
-        const cred = cfopCreditoFromItem(c);
-        const credChip = cred
-          ? '<span class="chip gr"><i class="fas fa-check"></i> Sim</span>'
-          : '<span class="chip rd"><i class="fas fa-times"></i> Não</span>';
-        const p = pct1(c.total, totalCf);
-        return '<tr><td><span class="chip" style="font-family:monospace;font-weight:700">' + c.cfop + '</span></td><td style="font-size:12px;color:var(--text-sec)">' + escHtml(desc) +
-          '</td><td><span class="chip" style="background:' + cor + '22;color:' + cor + '">' + escHtml(fin) + '</span></td>' +
-          '<td>' + credChip + '</td><td class="r">' + (c.qtd || 0) + '</td>' +
-          '<td class="r td-val">' + fmtBRL(c.total) + '</td><td class="r">' + pbBar(p) + '</td>' +
-          '<td class="c"><button type="button" onclick="openDrilldown(\'' + c.cfop.replace(/'/g, "\\'") + '\')" style="background:var(--bg-card-hover);border:1px solid var(--border);color:var(--accent);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;">Detalhes</button></td></tr>';
-      }).join('') || '<tr><td colspan="8" class="td-mute">Sem entradas no período</td></tr>';
+      if (!sorted.length) {
+        tbody.innerHTML = '<tr><td colspan="8" class="td-mute">Sem entradas no período</td></tr>';
+      } else {
+        const rows = sorted.map((c) => {
+          const fin = cfopFinalidadeFromItem(c);
+          const desc = cfopDescricaoFromItem(c);
+          const cor = FINALIDADE_CORES[fin] || '#64748b';
+          const cred = cfopCreditoFromItem(c);
+          const credChip = cred
+            ? '<span class="chip gr"><i class="fas fa-check"></i> Sim</span>'
+            : '<span class="chip rd"><i class="fas fa-times"></i> Não</span>';
+          const p = pct1(c.total, totalCf);
+          return '<tr><td><span class="chip" style="font-family:monospace;font-weight:700">' + c.cfop + '</span></td><td style="font-size:12px;color:var(--text-sec)">' + escHtml(desc) +
+            '</td><td><span class="chip" style="background:' + cor + '22;color:' + cor + '">' + escHtml(fin) + '</span></td>' +
+            '<td>' + credChip + '</td><td class="r">' + (c.qtd || 0) + '</td>' +
+            '<td class="r td-val">' + fmtBRL(c.total) + '</td><td class="r">' + pbBar(p) + '</td>' +
+            '<td class="c"><button type="button" onclick="openDrilldown(\'' + c.cfop.replace(/'/g, "\\'") + '\')" style="background:var(--bg-card-hover);border:1px solid var(--border);color:var(--accent);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;">Detalhes</button></td></tr>';
+        }).join('');
+        const totalNfs = sorted.reduce((a, c) => a + (c.qtd || 0), 0);
+        const totalCompras = pack.totalCompras || sorted.reduce((a, c) => a + (c.total || 0), 0);
+        const totalRow =
+          '<tr style="background:rgba(34,163,41,0.05)">' +
+          '<td class="fw7" colspan="4">TOTAL DE CFOP</td>' +
+          '<td class="r fw7">' + totalNfs + '</td>' +
+          '<td class="r fw7 td-val">' + fmtBRL(totalCompras) + '</td>' +
+          '<td class="r fw7">100%</td>' +
+          '<td></td></tr>';
+        tbody.innerHTML = rows + totalRow;
+      }
     }
 
     if (isFornecedorPanelOpen()) renderFornecedorPanel();
