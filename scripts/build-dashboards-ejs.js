@@ -17,7 +17,7 @@ const EXTRA_CSS = `
 const DASHBOARDS = [
   {
     id: "unicatintas",
-    html: path.join(dashRoot, "Unica", "UNICATINTAS.html"),
+    html: path.join(workspaceRoot, "Unica 09", "07", "UNICATINTAS.html"),
     outputs: ["UNICATINTAS.ejs"],
   },
   {
@@ -47,7 +47,7 @@ const DASHBOARDS = [
   },
   {
     id: "jpg",
-    html: path.join(workspaceRoot, "JPG.html"),
+    html: path.join(workspaceRoot, "jpg", "JPG.html"),
     outputs: ["jpg.ejs"],
   },
 ];
