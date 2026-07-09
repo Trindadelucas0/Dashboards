@@ -1221,6 +1221,13 @@
         <button type="button" onclick="toggleAllSuppliers(true)">Selecionar Todos</button>
         <button type="button" onclick="toggleAllSuppliers(false)">Limpar Seleção</button>
       </div>
+      <label class="supplier-item supplier-item-demais" id="demaisFornecedoresOption">
+        <input type="checkbox" id="includeDemaisFornecedores" checked>
+        <span class="supplier-info">
+          <strong>Demais fornecedores</strong>
+          <small>Agrupa fornecedores não selecionados por CFOP</small>
+        </span>
+      </label>
       <div class="supplier-list" id="supplierList"></div>
     </div>
     <div class="modal-footer">
@@ -8172,42 +8179,203 @@ const DASHBOARD_DATA = {
     XLSX.writeFile(wb, filename + '.xlsx');
   };
 
-  window.openSupplierModal = function () {
-    const pack = getPack();
-    const list = document.getElementById('supplierList');
-    if (!list) return;
-    const seen = {};
-    list.innerHTML = '';
-    (pack.cfopDados || []).forEach(cfop => {
-      (cfop.fornecedores || []).forEach(f => {
-        if (!f.cnpj || seen[f.cnpj]) return;
-        seen[f.cnpj] = true;
-        const div = document.createElement('div');
-        div.className = 'supplier-item';
-        div.dataset.search = (f.nome + ' ' + f.cnpj).toLowerCase();
-        div.innerHTML = '<input type="checkbox" value="' + f.cnpj + '" data-nome="' + f.nome.replace(/"/g, '') + '"><div class="supplier-info"><strong>' + f.nome + '</strong><small>' + f.cnpj + '</small></div>';
-        list.appendChild(div);
+  function escHtml(v) {
+    return String(v ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function supplierKey(f) {
+    return (f.cnpj && String(f.cnpj).trim()) || f.nome;
+  }
+
+  function getCfopDadosForPrint() {
+    return enrichMovementPack(getPack()).cfopDados || [];
+  }
+
+  function collectUniqueSuppliers() {
+    const map = new Map();
+    getCfopDadosForPrint().forEach((cfop) => {
+      (cfop.fornecedores || []).forEach((f) => {
+        const key = supplierKey(f);
+        if (!key || map.has(key)) return;
+        map.set(key, { nome: f.nome, cnpj: f.cnpj || '—', uf: f.uf || '—', key });
       });
     });
+    return Array.from(map.values()).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  }
+
+  function findFornecedorInCfop(cfop, key, nome) {
+    return (cfop.fornecedores || []).find((f) => supplierKey(f) === key || (nome && f.nome === nome));
+  }
+
+  function rowsForSupplier(cfopDados, key, nome) {
+    const rows = [];
+    cfopDados.forEach((cfop) => {
+      const f = findFornecedorInCfop(cfop, key, nome);
+      if (!f) return;
+      const info = CFOP_FINALIDADE[cfop.cfop] || {};
+      rows.push({
+        cfop: cfop.cfop,
+        desc: info.descricao || '—',
+        fin: info.finalidade || '—',
+        qtd: f.qtd || 0,
+        total: f.total || 0,
+      });
+    });
+    return rows;
+  }
+
+  function aggregateDemaisByCfop(cfopDados, selectedKeys) {
+    const map = {};
+    cfopDados.forEach((cfop) => {
+      (cfop.fornecedores || []).forEach((f) => {
+        const key = supplierKey(f);
+        if (!key || selectedKeys.has(key)) return;
+        if (!map[cfop.cfop]) map[cfop.cfop] = { cfop: cfop.cfop, qtd: 0, total: 0 };
+        map[cfop.cfop].qtd += f.qtd || 0;
+        map[cfop.cfop].total += f.total || 0;
+      });
+    });
+    return Object.values(map)
+      .filter((r) => r.total > 0)
+      .map((r) => {
+        const info = CFOP_FINALIDADE[r.cfop] || {};
+        return {
+          cfop: r.cfop,
+          desc: info.descricao || '—',
+          fin: info.finalidade || '—',
+          qtd: r.qtd,
+          total: Math.round(r.total * 100) / 100,
+        };
+      })
+      .sort((a, b) => b.total - a.total);
+  }
+
+  function renderSupplierTableRows(rows) {
+    return rows.map((r) =>
+      '<tr><td style="padding:8px;border-bottom:1px solid #ddd;">' + escHtml(r.cfop) + '</td>' +
+      '<td style="padding:8px;border-bottom:1px solid #ddd;">' + escHtml(r.desc) + '</td>' +
+      '<td style="padding:8px;border-bottom:1px solid #ddd;">' + escHtml(r.fin) + '</td>' +
+      '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;">' + r.qtd + '</td>' +
+      '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;font-weight:600;">' +
+      r.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr>'
+    ).join('');
+  }
+
+  function renderSupplierSection(nome, cnpj, uf, rows) {
+    const subtotal = rows.reduce((s, r) => s + r.total, 0);
+    if (!rows.length) return { html: '', subtotal: 0 };
+
+    let html = '<div style="margin-bottom:28px;page-break-inside:avoid;">';
+    html += '<h2 style="font-size:14px;border-bottom:2px solid #22a329;padding-bottom:6px;">' + escHtml(nome) + '</h2>';
+    html += '<p style="font-size:11px;color:#555;">CNPJ: ' + escHtml(cnpj) + ' · UF: ' + escHtml(uf) + '</p>';
+    html += '<table style="width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;">';
+    html += '<thead><tr style="background:#f0f0f0;"><th style="padding:8px;text-align:left;">CFOP</th>';
+    html += '<th style="padding:8px;text-align:left;">Descrição</th><th style="padding:8px;text-align:left;">Finalidade</th>';
+    html += '<th style="padding:8px;text-align:right;">Qtd NFs</th><th style="padding:8px;text-align:right;">Valor (R$)</th></tr></thead><tbody>';
+    html += renderSupplierTableRows(rows);
+    html += '</tbody><tfoot><tr><td colspan="4" style="padding:10px;text-align:right;font-weight:700;">Subtotal:</td>';
+    html += '<td style="padding:10px;text-align:right;font-weight:700;">R$ ' +
+      subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr></tfoot></table></div>';
+    return { html, subtotal };
+  }
+
+  window.openSupplierModal = function () {
+    const list = document.getElementById('supplierList');
+    if (!list) return;
+    const suppliers = collectUniqueSuppliers();
+    list.innerHTML = suppliers.map((s) => {
+      const search = (s.nome + ' ' + s.cnpj + ' ' + s.uf).toLowerCase();
+      return '<label class="supplier-item" data-search="' + escHtml(search) + '">' +
+        '<input type="checkbox" value="' + escHtml(s.cnpj) + '" data-key="' + escHtml(s.key) + '" data-nome="' + escHtml(s.nome) + '" data-uf="' + escHtml(s.uf) + '">' +
+        '<span class="supplier-info"><strong>' + escHtml(s.nome) + '</strong>' +
+        '<small>' + escHtml(s.cnpj) + ' · ' + escHtml(s.uf) + '</small></span></label>';
+    }).join('');
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+    const demais = document.getElementById('includeDemaisFornecedores');
+    if (demais) demais.checked = true;
     document.getElementById('supplierModal').style.display = 'flex';
   };
-  window.closeSupplierModal = function () { document.getElementById('supplierModal').style.display = 'none'; };
+  window.closeSupplierModal = function () {
+    document.getElementById('supplierModal').style.display = 'none';
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+  };
   window.filterSuppliers = function (q) {
-    document.querySelectorAll('#supplierList .supplier-item').forEach(el => {
-      el.style.display = el.dataset.search.includes(q.toLowerCase()) ? '' : 'none';
+    const term = (q || '').toLowerCase();
+    document.querySelectorAll('#supplierList .supplier-item').forEach((el) => {
+      el.style.display = el.dataset.search.includes(term) ? '' : 'none';
     });
   };
   window.toggleAllSuppliers = function (st) {
-    document.querySelectorAll('#supplierList .supplier-item').forEach(el => {
-      if (el.style.display === 'none') return;
-      const cb = el.querySelector('input');
-      if (cb) cb.checked = st;
+    document.querySelectorAll('#supplierList .supplier-item input[type="checkbox"]').forEach((cb) => {
+      const row = cb.closest('.supplier-item');
+      if (row && row.style.display === 'none') return;
+      cb.checked = st;
     });
   };
   window.printBySupplier = function () {
-    const selected = Array.from(document.querySelectorAll('#supplierList input:checked'));
-    if (!selected.length) { alert('Selecione ao menos um fornecedor.'); return; }
+    const selected = Array.from(document.querySelectorAll('#supplierList input[type="checkbox"]:checked'));
+    const includeDemais = document.getElementById('includeDemaisFornecedores')?.checked;
+    if (!selected.length && !includeDemais) {
+      alert('Selecione ao menos um fornecedor ou marque "Demais fornecedores".');
+      return;
+    }
+
+    const cfopDados = getCfopDadosForPrint();
+    const selectedKeys = new Set(selected.map((cb) => cb.dataset.key || cb.dataset.nome || cb.value));
+    let totalGeral = 0;
+    let html = '<div style="font-family:Inter,sans-serif;padding:24px;color:#1a1a2e;background:#fff;">';
+    html += '<h1 style="font-size:18px;margin-bottom:4px;">Relatório por Fornecedor</h1>';
+    html += '<p style="font-size:12px;color:#555;margin-bottom:24px;">' +
+      escHtml(getCompanyName()) + ' — ' + escHtml(periodFull()) + ' — ' +
+      new Date().toLocaleDateString('pt-BR') + '</p>';
+
+    selected.forEach((cb) => {
+      const key = cb.dataset.key || cb.dataset.nome || cb.value;
+      const nome = cb.dataset.nome || '';
+      const cnpj = cb.value || '—';
+      const uf = cb.dataset.uf || '—';
+      const rows = rowsForSupplier(cfopDados, key, nome);
+      const section = renderSupplierSection(nome, cnpj, uf, rows);
+      html += section.html;
+      totalGeral += section.subtotal;
+    });
+
+    if (includeDemais) {
+      const demaisRows = aggregateDemaisByCfop(cfopDados, selectedKeys);
+      const section = renderSupplierSection('Demais fornecedores', '—', '—', demaisRows);
+      html += section.html;
+      totalGeral += section.subtotal;
+    }
+
+    if (totalGeral <= 0) {
+      alert('Nenhum dado encontrado para os fornecedores selecionados neste período.');
+      return;
+    }
+
+    html += '<div style="border-top:2px solid #1a1a2e;padding-top:12px;margin-top:16px;text-align:right;font-size:14px;font-weight:700;">';
+    html += 'Total Geral: R$ ' + totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</div></div>';
+
     closeSupplierModal();
+    const old = document.getElementById('print-supplier-report');
+    if (old) old.remove();
+    const div = document.createElement('div');
+    div.id = 'print-supplier-report';
+    div.innerHTML = html;
+    document.body.appendChild(div);
+    document.body.classList.add('supplier-printing');
+
+    const cleanup = () => {
+      document.body.classList.remove('supplier-printing');
+      div.remove();
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
     window.print();
   };
 
