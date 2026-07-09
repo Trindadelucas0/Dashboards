@@ -1400,147 +1400,183 @@
   ];
   const CFOP_FINALIDADE = {
     "1-102": {
-      "descricao": "Compra p/ comercialização (intraestadual)",
-      "finalidade": "Revenda",
-      "creditoPisCofins": true,
-      "debitaIcms": true
-    },
-    "2-102": {
-      "descricao": "Compra p/ comercialização (interestadual)",
+      "descricao": "Compra para comercialização",
       "finalidade": "Revenda",
       "creditoPisCofins": true,
       "debitaIcms": true
     },
     "1-202": {
-      "descricao": "Devolução de venda (intraestadual)",
+      "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas nos códigos 1.503, 1.504, 1.505 e 1.506",
       "finalidade": "Devolução Venda",
       "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "2-202": {
-      "descricao": "Devolução de venda (interestadual)",
-      "finalidade": "Devolução Venda",
-      "creditoPisCofins": false,
-      "debitaIcms": false
+      "debitaIcms": true
     },
     "1-403": {
-      "descricao": "Compra p/ comercialização com ST (intraest.)",
+      "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
       "finalidade": "Revenda c/ ST",
       "creditoPisCofins": true,
       "debitaIcms": false
     },
     "1-407": {
-      "descricao": "Compra p/ uso e consumo com ST (intraest.)",
-      "finalidade": "Uso e Consumo",
+      "descricao": "Compra de mercadoria para uso ou consumo cuja mercadoria está sujeita ao regime de substituição tributária",
+      "finalidade": "Uso e Consumo c/ ST",
       "creditoPisCofins": false,
       "debitaIcms": false
     },
     "1-411": {
-      "descricao": "Devolução de compra p/ uso e consumo",
-      "finalidade": "Devol. Compra",
+      "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária",
+      "finalidade": "Devolução Venda",
       "creditoPisCofins": false,
       "debitaIcms": false
-    },
-    "2-411": {
-      "descricao": "Devolução de compra p/ uso e consumo (interest.)",
-      "finalidade": "Devol. Compra",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "1-551": {
-      "descricao": "Compra de bem para o ativo imobilizado",
-      "finalidade": "Ativo Imobilizado",
-      "creditoPisCofins": true,
-      "debitaIcms": true
     },
     "1-556": {
-      "descricao": "Compra de material para uso e consumo",
+      "descricao": "Compra de material para uso ou consumo",
       "finalidade": "Uso e Consumo",
       "creditoPisCofins": false,
       "debitaIcms": true
     },
-    "2-407": {
-      "descricao": "Compra p/ uso e consumo (interestadual)",
-      "finalidade": "Uso e Consumo",
+    "1-652": {
+      "descricao": "Compra de combustíveis ou lubrificantes para comercialização",
+      "finalidade": "Revenda",
+      "creditoPisCofins": true,
+      "debitaIcms": true
+    },
+    "1-910": {
+      "descricao": "Entrada de bonificação, doação ou brinde",
+      "finalidade": "Bonificação",
       "creditoPisCofins": false,
       "debitaIcms": true
     },
-    "1-949": {
-      "descricao": "Outra entrada — não especificada",
+    "1-912": {
+      "descricao": "Entrada de mercadoria ou bem recebido para demonstração ou mostruário",
       "finalidade": "Outras Entradas",
       "creditoPisCofins": false,
       "debitaIcms": false
-    },
-    "2-908": {
-      "descricao": "Entrada p/ conta e ordem de terceiros",
-      "finalidade": "Outras Entradas",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "2-910": {
-      "descricao": "Entrada para conserto ou reparo",
-      "finalidade": "Retorno Conserto",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "2-353": {
-      "descricao": "Aquisição serviço transporte (substituto)",
-      "finalidade": "Serviço Transp.",
-      "creditoPisCofins": true,
-      "debitaIcms": false
-    },
-    "2-556": {
-      "descricao": "Compra material uso/consumo (interest.)",
-      "finalidade": "Uso e Consumo",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-101": {
-      "descricao": "Compra p/ industrialização (intraest.)",
-      "finalidade": "Industrializacao",
-      "creditoPisCofins": true,
-      "debitaIcms": true
-    },
-    "2-101": {
-      "descricao": "Compra p/ industrialização (interest.)",
-      "finalidade": "Industrializacao",
-      "creditoPisCofins": true,
-      "debitaIcms": true
     },
     "1-933": {
-      "descricao": "Aquisição de serviço tributado pelo ISSQN (intraest.)",
+      "descricao": "Aquisição de serviço sujeito ao ISSQN",
       "finalidade": "Serviço ISSQN",
       "creditoPisCofins": false,
       "debitaIcms": false
     },
-    "2-933": {
-      "descricao": "Aquisição de serviço tributado pelo ISSQN (interest.)",
-      "finalidade": "Serviço ISSQN",
-      "creditoPisCofins": false,
-      "debitaIcms": false
+    "2-102": {
+      "descricao": "Compra para comercialização",
+      "finalidade": "Revenda",
+      "creditoPisCofins": true,
+      "debitaIcms": true
     },
-    "5-202": {
-      "descricao": "Devolução de compra para comercialização",
-      "finalidade": "Devol. Compra",
+    "2-202": {
+      "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas nos códigos 2.503, 2.504, 2.505 e 2.506",
+      "finalidade": "Devolução Venda",
       "creditoPisCofins": false,
-      "debitaIcms": false
+      "debitaIcms": true
     },
-    "2-932": {
+    "2-353": {
       "descricao": "Aquisição de serviço de transporte por estabelecimento comercial",
       "finalidade": "Serviço Transp.",
       "creditoPisCofins": true,
       "debitaIcms": false
     },
+    "2-403": {
+      "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+      "finalidade": "Revenda c/ ST",
+      "creditoPisCofins": true,
+      "debitaIcms": false
+    },
+    "2-652": {
+      "descricao": "Compra de combustíveis ou lubrificantes para comercialização",
+      "finalidade": "Revenda",
+      "creditoPisCofins": true,
+      "debitaIcms": true
+    },
     "2-911": {
-      "descricao": "Retorno de mercadoria remetida para demonstração",
+      "descricao": "Entrada de amostra grátis",
       "finalidade": "Outras Entradas",
       "creditoPisCofins": false,
       "debitaIcms": false
     },
-    "2-403": {
-      "descricao": "Compra p/ comercialização com ST (interestadual)",
-      "finalidade": "Revenda c/ ST",
+    "2-932": {
+      "descricao": "Aquisição de serviço de transporte iniciado em unidade da Federação diversa daquela onde inscrito o prestador",
+      "finalidade": "Serviço Transp.",
       "creditoPisCofins": true,
+      "debitaIcms": false
+    },
+    "2-933": {
+      "descricao": "Aquisição de serviço sujeito ao ISSQN",
+      "finalidade": "Serviço ISSQN",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "5-102": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+      "finalidade": "Venda",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "5-202": {
+      "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadorias efetuada pelo MEI com exceção das classificadas no código 5.503",
+      "finalidade": "Devol. Compra",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "5-403": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "5-405": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "5-411": {
+      "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "5-910": {
+      "descricao": "Remessa em bonificação, doação ou brinde",
+      "finalidade": "Bonificação",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "5-929": {
+      "descricao": "Lançamento efetuado em decorrência de emissão de documento fiscal relativo a operação ou prestação também acobertada por documento fiscal do varejo",
+      "finalidade": "Outras Saídas",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "5-949": {
+      "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+      "finalidade": "Outras Saídas",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "6-102": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+      "finalidade": "Venda",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "6-108": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, destinada a não contribuinte",
+      "finalidade": "Venda",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "6-202": {
+      "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+      "finalidade": "Devol. Compra",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "6-403": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
       "debitaIcms": false
     }
   };

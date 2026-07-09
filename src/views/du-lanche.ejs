@@ -1300,7 +1300,7 @@ const DASHBOARD_DATA = {
   "cfopEntradas": [
     {
       "cfop": "2-102",
-      "descricao": "Compra para comercialização (interestadual)",
+      "descricao": "Compra para comercialização",
       "qtd": 8,
       "contabil": 269697.5,
       "fiscal": 269697.5,
@@ -1631,7 +1631,7 @@ const DASHBOARD_DATA = {
         "cfopEntradas": [
           {
             "cfop": "2-102",
-            "descricao": "Compra para comercialização (interestadual)",
+            "descricao": "Compra para comercialização",
             "qtd": 8,
             "contabil": 280159.34,
             "fiscal": 280159.34,
@@ -2021,7 +2021,7 @@ const DASHBOARD_DATA = {
         "cfopEntradas": [
           {
             "cfop": "2-102",
-            "descricao": "Compra para comercialização (interestadual)",
+            "descricao": "Compra para comercialização",
             "qtd": 7,
             "contabil": 208859.62,
             "fiscal": 208859.62,
@@ -2361,7 +2361,7 @@ const DASHBOARD_DATA = {
         "cfopEntradas": [
           {
             "cfop": "2-102",
-            "descricao": "Compra para comercialização (interestadual)",
+            "descricao": "Compra para comercialização",
             "qtd": 8,
             "contabil": 360073.2,
             "fiscal": 360073.2,
@@ -2727,7 +2727,7 @@ const DASHBOARD_DATA = {
         "cfopEntradas": [
           {
             "cfop": "2-102",
-            "descricao": "Compra para comercialização (interestadual)",
+            "descricao": "Compra para comercialização",
             "qtd": 12,
             "contabil": 363612.21,
             "fiscal": 363612.21,
@@ -3090,7 +3090,7 @@ const DASHBOARD_DATA = {
         "cfopEntradas": [
           {
             "cfop": "2-102",
-            "descricao": "Compra para comercialização (interestadual)",
+            "descricao": "Compra para comercialização",
             "qtd": 8,
             "contabil": 269697.5,
             "fiscal": 269697.5,
@@ -13430,50 +13430,26 @@ const DASHBOARD_DATA = {
     }
   },
   "cfopFinalidade": {
-    "1102": {
-      "descricao": "Compra para comercialização",
-      "finalidade": "Revenda",
-      "creditoPisCofins": true,
-      "debitaIcms": true
-    },
     "1-102": {
       "descricao": "Compra para comercialização",
       "finalidade": "Revenda",
       "creditoPisCofins": true,
       "debitaIcms": true
     },
-    "2102": {
-      "descricao": "Compra para comercialização (interestadual)",
-      "finalidade": "Revenda",
-      "creditoPisCofins": true,
-      "debitaIcms": true
-    },
     "2-102": {
-      "descricao": "Compra para comercialização (interestadual)",
+      "descricao": "Compra para comercialização",
       "finalidade": "Revenda",
       "creditoPisCofins": true,
-      "debitaIcms": true
-    },
-    "5102": {
-      "descricao": "Venda mercadoria adq. terceiros",
-      "finalidade": "Venda",
-      "creditoPisCofins": false,
       "debitaIcms": true
     },
     "5-102": {
-      "descricao": "Venda mercadoria adq. terceiros",
-      "finalidade": "Venda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "6102": {
-      "descricao": "Venda mercadoria interestadual",
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
       "finalidade": "Venda",
       "creditoPisCofins": false,
       "debitaIcms": true
     },
     "6-102": {
-      "descricao": "Venda mercadoria interestadual",
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
       "finalidade": "Venda",
       "creditoPisCofins": false,
       "debitaIcms": true
@@ -13481,17 +13457,26 @@ const DASHBOARD_DATA = {
   },
   "finalidadeCores": {
     "Industrializacao": "#22a329",
+    "Industrializacao terceiros": "#10b981",
+    "Industrializacao c/ ST": "#06b6d4",
     "Revenda": "#22a329",
     "Revenda c/ ST": "#10b981",
     "Uso e Consumo": "#10b981",
+    "Uso e Consumo c/ ST": "#06b6d4",
     "Ativo Imobilizado": "#f97316",
     "Outras Entradas": "#64748b",
     "Devolução Venda": "#ef4444",
     "Devol. Compra": "#f59e0b",
     "Transferência": "#8b5cf6",
     "Serviço Transp.": "#06b6d4",
+    "Serviço ISSQN": "#64748b",
     "Bonificação": "#ec4899",
-    "Venda": "#22a329"
+    "Venda": "#22a329",
+    "Energia": "#f59e0b",
+    "Servico": "#f97316",
+    "Combustivel": "#ef4444",
+    "Retorno Industrializacao": "#8b5cf6",
+    "Retorno Conserto": "#ef4444"
   },
   "fontes": {
     "trimestre1": "94-DU LANCHE 1° TRIM/94-DU LANCHE — Jan, Fev, Mar/2026",
@@ -14062,10 +14047,14 @@ const DASHBOARD_DATA = {
   }
 
   function cfopFinalidadeFromItem(c) {
+    const fromMap = CFOP_FINALIDADE[c.cfop] || CFOP_FINALIDADE[String(c.cfop || '').replace(/-/g, '')];
+    if (fromMap && fromMap.finalidade) return fromMap.finalidade;
     return c.finalidade || getCfopInfo(c.cfop).finalidade;
   }
 
   function cfopDescricaoFromItem(c) {
+    const fromMap = CFOP_FINALIDADE[c.cfop] || CFOP_FINALIDADE[String(c.cfop || '').replace(/-/g, '')];
+    if (fromMap && fromMap.descricao) return fromMap.descricao;
     return c.descricao || getCfopInfo(c.cfop).descricao;
   }
 
@@ -15260,19 +15249,31 @@ const DASHBOARD_DATA = {
 
 </script>
 <script>
-/* Relatório Gerencial PDF — DU LANCHE */
+/* Relatório Gerencial PDF — DU LANCHE (descrições CFOP via mapa oficial) */
 function exportRelatorioGerencial() {
   if (typeof DASHBOARD_DATA === 'undefined' || typeof jspdf === 'undefined') {
     alert('Dados ou jsPDF não carregados.');
     return;
   }
   const D = DASHBOARD_DATA;
-  const pack = D.fiscalPorMes.porMes[D.competencia.split('-')[1]] || D.fiscalPorMes.porMes[D.meta.meses[D.meta.meses.length - 1]];
+  const catalog = D.cfopFinalidade || {};
+  const mm = D.competencia.split('-')[1];
+  const pack = D.fiscalPorMes.porMes[mm] || D.fiscalPorMes.porMes[D.meta.meses[D.meta.meses.length - 1]];
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
+  function cfopDesc(c) {
+    const fromMap = catalog[c.cfop] || catalog[String(c.cfop || '').replace(/-/g, '')];
+    return (fromMap && fromMap.descricao) || c.descricao || ('CFOP ' + c.cfop);
+  }
+
+  function cfopFin(c) {
+    const fromMap = catalog[c.cfop] || catalog[String(c.cfop || '').replace(/-/g, '')];
+    return (fromMap && fromMap.finalidade) || c.finalidade || '—';
+  }
+
   doc.setFontSize(18);
-  doc.text('Relatório Gerencial', 14, 20);
+  doc.text('Relatório Gerencial — DU LANCHE', 14, 20);
   doc.setFontSize(11);
   doc.text(D.empresa.nome, 14, 28);
   doc.text('CNPJ: ' + D.empresa.cnpj, 14, 34);
@@ -15293,18 +15294,41 @@ function exportRelatorioGerencial() {
   const impBody = pack.impostosTabela.map((r) => [r.tributo, 'R$ ' + r.recolher.toLocaleString('pt-BR', { minimumFractionDigits: 2 }), r.pctRb + '%']);
   doc.autoTable({ startY: doc.lastAutoTable.finalY + 16, head: [['Tributo', 'A Recolher', '% RB']], body: impBody, theme: 'striped', styles: { fontSize: 9 } });
 
-  if (pack.cfopEntradas.length) {
+  if (pack.cfopEntradas && pack.cfopEntradas.length) {
     doc.addPage();
+    doc.setFontSize(13);
     doc.text('Top CFOPs — Entradas', 14, 20);
     doc.autoTable({
       startY: 24,
+      head: [['CFOP', 'Descrição', 'Finalidade', 'Valor']],
+      body: pack.cfopEntradas.slice(0, 15).map((c) => [
+        c.cfop,
+        cfopDesc(c).slice(0, 48),
+        cfopFin(c).slice(0, 22),
+        'R$ ' + (c.total || c.contabil || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+      ]),
+      styles: { fontSize: 7 },
+      columnStyles: { 1: { cellWidth: 70 }, 2: { cellWidth: 35 } },
+    });
+  }
+
+  if (pack.cfopSaidas && pack.cfopSaidas.length) {
+    doc.addPage();
+    doc.setFontSize(13);
+    doc.text('Top CFOPs — Saídas', 14, 20);
+    doc.autoTable({
+      startY: 24,
       head: [['CFOP', 'Descrição', 'Valor']],
-      body: pack.cfopEntradas.slice(0, 15).map((c) => [c.cfop, (c.descricao || '').slice(0, 40), 'R$ ' + c.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })]),
+      body: pack.cfopSaidas.slice(0, 15).map((c) => [
+        c.cfop,
+        cfopDesc(c).slice(0, 55),
+        'R$ ' + (c.total || c.contabil || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+      ]),
       styles: { fontSize: 8 },
     });
   }
 
-  if (pack.sped.clientes && pack.sped.clientes.length) {
+  if (pack.sped && pack.sped.clientes && pack.sped.clientes.length) {
     doc.text('Top Clientes', 14, doc.lastAutoTable.finalY + 12);
     doc.autoTable({
       startY: doc.lastAutoTable.finalY + 16,

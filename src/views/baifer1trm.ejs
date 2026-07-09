@@ -1384,7 +1384,7 @@ const DASHBOARD_DATA = {
   "cfopEntradas": [
     {
       "cfop": "2-102",
-      "descricao": "Compra para comercializacao (interest.)",
+      "descricao": "Compra para comercialização",
       "qtd": 131,
       "contabil": 598343.3500000001,
       "fiscal": 598343.3500000001,
@@ -1482,7 +1482,7 @@ const DASHBOARD_DATA = {
     },
     {
       "cfop": "1-102",
-      "descricao": "Compra para comercializacao",
+      "descricao": "Compra para comercialização",
       "qtd": 40,
       "contabil": 25839.620000000006,
       "fiscal": 25839.620000000006,
@@ -1580,7 +1580,7 @@ const DASHBOARD_DATA = {
     },
     {
       "cfop": "1-403",
-      "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+      "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
       "qtd": 9,
       "contabil": 7362.82,
       "fiscal": 7362.82,
@@ -1643,7 +1643,7 @@ const DASHBOARD_DATA = {
     },
     {
       "cfop": "1-202",
-      "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+      "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
       "qtd": 12,
       "contabil": 7259.120000000001,
       "fiscal": 7259.120000000001,
@@ -1720,7 +1720,7 @@ const DASHBOARD_DATA = {
     },
     {
       "cfop": "2-910",
-      "descricao": "Entrada de bonificacao, doacao ou brinde",
+      "descricao": "Entrada de bonificação, doação ou brinde",
       "qtd": 9,
       "contabil": 6929.91,
       "fiscal": 6929.91,
@@ -1769,7 +1769,7 @@ const DASHBOARD_DATA = {
     },
     {
       "cfop": "2-403",
-      "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+      "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
       "qtd": 6,
       "contabil": 6202.31,
       "fiscal": 6202.31,
@@ -1816,9 +1816,9 @@ const DASHBOARD_DATA = {
       "contabil": 2136.68,
       "fiscal": 2136.68,
       "imposto": 0,
-      "finalidade": "Revenda",
+      "finalidade": "Retorno Conserto",
       "creditoPisCofins": false,
-      "debitaIcms": true,
+      "debitaIcms": false,
       "total": 2136.68,
       "fornecedores": [
         {
@@ -1839,14 +1839,14 @@ const DASHBOARD_DATA = {
     },
     {
       "cfop": "2-923",
-      "descricao": "Entrada de mercadoria ou bem recebido para deposito em deposito fechado",
+      "descricao": "Entrada de mercadoria recebida do vendedor remetente, em venda à ordem",
       "qtd": 1,
       "contabil": 1778.0,
       "fiscal": 1778.0,
       "imposto": 0,
-      "finalidade": "Revenda",
+      "finalidade": "Outras Entradas",
       "creditoPisCofins": false,
-      "debitaIcms": true,
+      "debitaIcms": false,
       "total": 1778.0,
       "fornecedores": [
         {
@@ -1860,12 +1860,12 @@ const DASHBOARD_DATA = {
     },
     {
       "cfop": "1-411",
-      "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros em operacao ",
+      "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação ",
       "qtd": 1,
       "contabil": 432.13,
       "fiscal": 432.13,
       "imposto": 0,
-      "finalidade": "Devol. Compra",
+      "finalidade": "Devolução Venda",
       "creditoPisCofins": false,
       "debitaIcms": false,
       "total": 432.13,
@@ -1881,12 +1881,12 @@ const DASHBOARD_DATA = {
     },
     {
       "cfop": "2-949",
-      "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
+      "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
       "qtd": 1,
       "contabil": 221.94,
       "fiscal": 221.94,
       "imposto": 0,
-      "finalidade": "Revenda c/ ST",
+      "finalidade": "Outras Entradas",
       "creditoPisCofins": false,
       "debitaIcms": false,
       "total": 221.94,
@@ -1902,12 +1902,12 @@ const DASHBOARD_DATA = {
     },
     {
       "cfop": "2-933",
-      "descricao": "Aquisicao de servico tributado pelo ISSQN",
+      "descricao": "Aquisição de serviço sujeito ao ISSQN",
       "qtd": 1,
       "contabil": 150.0,
       "fiscal": 150.0,
       "imposto": 0,
-      "finalidade": "Revenda",
+      "finalidade": "Serviço ISSQN",
       "creditoPisCofins": false,
       "debitaIcms": false,
       "total": 150.0,
@@ -1923,12 +1923,12 @@ const DASHBOARD_DATA = {
     },
     {
       "cfop": "1-933",
-      "descricao": "Aquisicao de servico tributado pelo ISSQN",
+      "descricao": "Aquisição de serviço sujeito ao ISSQN",
       "qtd": 2,
       "contabil": 26.67,
       "fiscal": 26.67,
       "imposto": 0,
-      "finalidade": "Revenda",
+      "finalidade": "Serviço ISSQN",
       "creditoPisCofins": false,
       "debitaIcms": false,
       "total": 26.67,
@@ -1953,67 +1953,99 @@ const DASHBOARD_DATA = {
   "cfopSaidas": [
     {
       "cfop": "5-102",
-      "descricao": "Venda de mercadoria",
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+      "finalidade": "Venda",
+      "creditoPisCofins": false,
+      "debitaIcms": true,
       "qtd": 383,
       "contabil": 609401.0900000001,
       "fiscal": 609401.0900000001,
-      "imposto": 0
+      "imposto": 0,
+      "total": 609401.0900000001
     },
     {
       "cfop": "6-102",
-      "descricao": "Venda interestadual",
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+      "finalidade": "Venda",
+      "creditoPisCofins": false,
+      "debitaIcms": true,
       "qtd": 9,
       "contabil": 30834.230000000003,
       "fiscal": 30834.230000000003,
-      "imposto": 0
+      "imposto": 0,
+      "total": 30834.230000000003
     },
     {
       "cfop": "5-405",
-      "descricao": "Venda c/ ST retido",
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false,
       "qtd": 37,
       "contabil": 15209.69,
       "fiscal": 15209.69,
-      "imposto": 0
+      "imposto": 0,
+      "total": 15209.69
     },
     {
       "cfop": "5-403",
-      "descricao": "Venda ST",
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false,
       "qtd": 32,
       "contabil": 4763.700000000001,
       "fiscal": 4763.700000000001,
-      "imposto": 0
+      "imposto": 0,
+      "total": 4763.700000000001
     },
     {
       "cfop": "5-949",
-      "descricao": "CFOP 5949",
+      "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+      "finalidade": "Outras Saídas",
+      "creditoPisCofins": false,
+      "debitaIcms": false,
       "qtd": 4,
       "contabil": 458.37,
       "fiscal": 458.37,
-      "imposto": 0
+      "imposto": 0,
+      "total": 458.37
     },
     {
       "cfop": "6-202",
-      "descricao": "Devolucao interestadual",
+      "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+      "finalidade": "Devol. Compra",
+      "creditoPisCofins": false,
+      "debitaIcms": true,
       "qtd": 3,
       "contabil": 421.89000000000004,
       "fiscal": 421.89000000000004,
-      "imposto": 0
+      "imposto": 0,
+      "total": 421.89000000000004
     },
     {
       "cfop": "5-910",
-      "descricao": "CFOP 5910",
+      "descricao": "Remessa em bonificação, doação ou brinde",
+      "finalidade": "Bonificação",
+      "creditoPisCofins": false,
+      "debitaIcms": true,
       "qtd": 2,
       "contabil": 134.99,
       "fiscal": 134.99,
-      "imposto": 0
+      "imposto": 0,
+      "total": 134.99
     },
     {
       "cfop": "6-949",
-      "descricao": "Outras saidas",
+      "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+      "finalidade": "Outras Saídas",
+      "creditoPisCofins": false,
+      "debitaIcms": false,
       "qtd": 1,
       "contabil": 93.04,
       "fiscal": 93.04,
-      "imposto": 0
+      "imposto": 0,
+      "total": 93.04
     }
   ],
   "cfopSaidasTotal": 661317.0,
@@ -2319,7 +2351,7 @@ const DASHBOARD_DATA = {
         "cfopEntradas": [
           {
             "cfop": "2-102",
-            "descricao": "Compra para comercializacao (interest.)",
+            "descricao": "Compra para comercialização",
             "qtd": 154,
             "contabil": 513039.72,
             "fiscal": 475922.69,
@@ -2417,7 +2449,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-102",
-            "descricao": "Compra para comercializacao",
+            "descricao": "Compra para comercialização",
             "qtd": 29,
             "contabil": 43682.0,
             "fiscal": 38379.83,
@@ -2508,7 +2540,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-202",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
             "qtd": 13,
             "contabil": 19483.87,
             "fiscal": 19378.86,
@@ -2606,7 +2638,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-403",
-            "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+            "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
             "qtd": 15,
             "contabil": 9252.55,
             "fiscal": 0.0,
@@ -2676,12 +2708,12 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-411",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros em operacao ",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação ",
             "qtd": 1,
             "contabil": 8297.9,
             "fiscal": 540.8,
             "imposto": 108.16,
-            "finalidade": "Devol. Compra",
+            "finalidade": "Devolução Venda",
             "creditoPisCofins": false,
             "debitaIcms": false,
             "total": 8297.9,
@@ -2697,7 +2729,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-910",
-            "descricao": "Entrada de bonificacao, doacao ou brinde",
+            "descricao": "Entrada de bonificação, doação ou brinde",
             "qtd": 4,
             "contabil": 4823.33,
             "fiscal": 4039.31,
@@ -2732,7 +2764,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-403",
-            "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+            "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
             "qtd": 8,
             "contabil": 4408.66,
             "fiscal": 0.0,
@@ -2793,9 +2825,9 @@ const DASHBOARD_DATA = {
             "contabil": 2791.92,
             "fiscal": 0.0,
             "imposto": 0.0,
-            "finalidade": "Revenda",
+            "finalidade": "Retorno Conserto",
             "creditoPisCofins": false,
-            "debitaIcms": true,
+            "debitaIcms": false,
             "total": 2791.92,
             "fornecedores": [
               {
@@ -2809,12 +2841,12 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-949",
-            "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
+            "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
             "qtd": 1,
             "contabil": 266.58,
             "fiscal": 0.0,
             "imposto": 0.0,
-            "finalidade": "Revenda c/ ST",
+            "finalidade": "Outras Entradas",
             "creditoPisCofins": false,
             "debitaIcms": false,
             "total": 266.58,
@@ -2832,83 +2864,123 @@ const DASHBOARD_DATA = {
         "cfopSaidas": [
           {
             "cfop": "5-102",
-            "descricao": "Venda de mercadoria",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 336,
             "contabil": 445440.48,
             "fiscal": 392635.99,
-            "imposto": 78527.43
+            "imposto": 78527.43,
+            "total": 445440.48
           },
           {
             "cfop": "6-202",
-            "descricao": "Devolucao interestadual",
+            "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+            "finalidade": "Devol. Compra",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 12,
             "contabil": 24182.84,
             "fiscal": 23477.83,
-            "imposto": 3075.01
+            "imposto": 3075.01,
+            "total": 24182.84
           },
           {
             "cfop": "5-405",
-            "descricao": "Venda c/ ST retido",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 26,
             "contabil": 15397.69,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 15397.69
           },
           {
             "cfop": "5-403",
-            "descricao": "Venda ST",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 53,
             "contabil": 10737.58,
             "fiscal": 10405.26,
-            "imposto": 2081.0
+            "imposto": 2081.0,
+            "total": 10737.58
           },
           {
             "cfop": "6-102",
-            "descricao": "Venda interestadual",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 3,
             "contabil": 8471.7,
             "fiscal": 8471.7,
-            "imposto": 1016.61
+            "imposto": 1016.61,
+            "total": 8471.7
           },
           {
             "cfop": "5-202",
-            "descricao": "Devolucao de compra",
+            "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadorias efetuada pelo MEI com exceção das classificadas no código 5.503",
+            "finalidade": "Devol. Compra",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 3,
             "contabil": 5315.61,
             "fiscal": 5315.61,
-            "imposto": 1063.13
+            "imposto": 1063.13,
+            "total": 5315.61
           },
           {
             "cfop": "5-005",
-            "descricao": "CFOP 5005",
+            "descricao": "Operacao fiscal 5-005",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 0,
             "contabil": 4116.55,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 4116.55
           },
           {
             "cfop": "6-949",
-            "descricao": "Outras saidas",
+            "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 3,
             "contabil": 2847.36,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 2847.36
           },
           {
             "cfop": "5-411",
-            "descricao": "CFOP 5411",
+            "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 2,
             "contabil": 2220.79,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 2220.79
           },
           {
             "cfop": "5-949",
-            "descricao": "CFOP 5949",
+            "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 5,
             "contabil": 437.84,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 437.84
           }
         ],
         "cfopSaidasTotal": 519168.44,
@@ -3332,7 +3404,7 @@ const DASHBOARD_DATA = {
         "cfopEntradas": [
           {
             "cfop": "2-102",
-            "descricao": "Compra para comercializacao (interest.)",
+            "descricao": "Compra para comercialização",
             "qtd": 71,
             "contabil": 157736.74,
             "fiscal": 140689.22,
@@ -3430,7 +3502,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-102",
-            "descricao": "Compra para comercializacao",
+            "descricao": "Compra para comercialização",
             "qtd": 27,
             "contabil": 22932.83,
             "fiscal": 20267.98,
@@ -3528,7 +3600,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-202",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
             "qtd": 3,
             "contabil": 9816.12,
             "fiscal": 9816.12,
@@ -3556,7 +3628,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-403",
-            "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+            "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
             "qtd": 7,
             "contabil": 9661.85,
             "fiscal": 0.0,
@@ -3598,7 +3670,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-202",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
             "qtd": 6,
             "contabil": 8579.91,
             "fiscal": 6658.18,
@@ -3647,12 +3719,12 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-949",
-            "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
+            "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
             "qtd": 3,
             "contabil": 2847.36,
             "fiscal": 2844.62,
             "imposto": 113.78,
-            "finalidade": "Revenda c/ ST",
+            "finalidade": "Outras Entradas",
             "creditoPisCofins": false,
             "debitaIcms": false,
             "total": 2847.36,
@@ -3668,7 +3740,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-910",
-            "descricao": "Entrada de bonificacao, doacao ou brinde",
+            "descricao": "Entrada de bonificação, doação ou brinde",
             "qtd": 2,
             "contabil": 1432.48,
             "fiscal": 1364.88,
@@ -3696,7 +3768,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-403",
-            "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+            "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
             "qtd": 3,
             "contabil": 1110.75,
             "fiscal": 0.0,
@@ -3724,14 +3796,14 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-911",
-            "descricao": "Remessa em bonificacao, doacao ou brinde",
+            "descricao": "Entrada de amostra grátis",
             "qtd": 1,
             "contabil": 182.47,
             "fiscal": 182.47,
             "imposto": 12.77,
-            "finalidade": "Bonificação",
+            "finalidade": "Outras Entradas",
             "creditoPisCofins": false,
-            "debitaIcms": true,
+            "debitaIcms": false,
             "total": 182.47,
             "fornecedores": [
               {
@@ -3745,7 +3817,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-910",
-            "descricao": "Entrada de bonificacao, doacao ou brinde",
+            "descricao": "Entrada de bonificação, doação ou brinde",
             "qtd": 1,
             "contabil": 151.52,
             "fiscal": 151.52,
@@ -3768,83 +3840,123 @@ const DASHBOARD_DATA = {
         "cfopSaidas": [
           {
             "cfop": "5-102",
-            "descricao": "Venda de mercadoria",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 277,
             "contabil": 371058.42,
             "fiscal": 336663.58,
-            "imposto": 67332.98
+            "imposto": 67332.98,
+            "total": 371058.42
           },
           {
             "cfop": "5-405",
-            "descricao": "Venda c/ ST retido",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 60,
             "contabil": 47939.55,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 47939.55
           },
           {
             "cfop": "6-102",
-            "descricao": "Venda interestadual",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 12,
             "contabil": 34485.8,
             "fiscal": 34485.8,
-            "imposto": 4138.32
+            "imposto": 4138.32,
+            "total": 34485.8
           },
           {
             "cfop": "6-108",
-            "descricao": "CFOP 6108",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, destinada a não contribuinte",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 2,
             "contabil": 8445.32,
             "fiscal": 8445.32,
-            "imposto": 1013.44
+            "imposto": 1013.44,
+            "total": 8445.32
           },
           {
             "cfop": "5-403",
-            "descricao": "Venda ST",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 32,
             "contabil": 6796.48,
             "fiscal": 6519.95,
-            "imposto": 1303.99
+            "imposto": 1303.99,
+            "total": 6796.48
           },
           {
             "cfop": "5-202",
-            "descricao": "Devolucao de compra",
+            "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadorias efetuada pelo MEI com exceção das classificadas no código 5.503",
+            "finalidade": "Devol. Compra",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 5,
             "contabil": 6037.5,
             "fiscal": 6037.5,
-            "imposto": 1207.51
+            "imposto": 1207.51,
+            "total": 6037.5
           },
           {
             "cfop": "6-202",
-            "descricao": "Devolucao interestadual",
+            "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+            "finalidade": "Devol. Compra",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 4,
             "contabil": 4479.4,
             "fiscal": 4301.98,
-            "imposto": 516.25
+            "imposto": 516.25,
+            "total": 4479.4
           },
           {
             "cfop": "5-005",
-            "descricao": "CFOP 5005",
+            "descricao": "Operacao fiscal 5-005",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 0,
             "contabil": 3514.64,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 3514.64
           },
           {
             "cfop": "5-949",
-            "descricao": "CFOP 5949",
+            "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 7,
             "contabil": 588.92,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 588.92
           },
           {
             "cfop": "6-949",
-            "descricao": "Outras saidas",
+            "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 1,
             "contabil": 96.62,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 96.62
           }
         ],
         "cfopSaidasTotal": 483442.65,
@@ -4269,7 +4381,7 @@ const DASHBOARD_DATA = {
         "cfopEntradas": [
           {
             "cfop": "2-102",
-            "descricao": "Compra para comercializacao (interest.)",
+            "descricao": "Compra para comercialização",
             "qtd": 151,
             "contabil": 339688.95,
             "fiscal": 311607.79,
@@ -4367,7 +4479,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-102",
-            "descricao": "Compra para comercializacao",
+            "descricao": "Compra para comercialização",
             "qtd": 31,
             "contabil": 48215.07,
             "fiscal": 43743.25,
@@ -4451,7 +4563,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-202",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
             "qtd": 11,
             "contabil": 13626.63,
             "fiscal": 13326.55,
@@ -4521,7 +4633,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-202",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
             "qtd": 0,
             "contabil": 9177.0,
             "fiscal": 9177.0,
@@ -4534,7 +4646,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-910",
-            "descricao": "Entrada de bonificacao, doacao ou brinde",
+            "descricao": "Entrada de bonificação, doação ou brinde",
             "qtd": 5,
             "contabil": 6164.15,
             "fiscal": 5726.93,
@@ -4576,7 +4688,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-403",
-            "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+            "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
             "qtd": 5,
             "contabil": 2922.54,
             "fiscal": 0.0,
@@ -4618,7 +4730,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-403",
-            "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+            "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
             "qtd": 11,
             "contabil": 2109.08,
             "fiscal": 0.0,
@@ -4667,13 +4779,13 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-652",
-            "descricao": "Compra de combustivel ou lubrificante para comercializacao",
+            "descricao": "Compra de combustíveis ou lubrificantes para comercialização",
             "qtd": 4,
             "contabil": 947.56,
             "fiscal": 947.56,
             "imposto": 0,
             "finalidade": "Revenda",
-            "creditoPisCofins": false,
+            "creditoPisCofins": true,
             "debitaIcms": true,
             "total": 947.56,
             "fornecedores": [
@@ -4695,25 +4807,25 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-912",
-            "descricao": "Importacao de mercadoria recebida em consignacao mercantil",
+            "descricao": "Entrada de mercadoria ou bem recebido para demonstração ou mostruário",
             "qtd": 0,
             "contabil": 495.0,
             "fiscal": 0.0,
             "imposto": 0.0,
-            "finalidade": "Revenda",
+            "finalidade": "Outras Entradas",
             "creditoPisCofins": false,
-            "debitaIcms": true,
+            "debitaIcms": false,
             "total": 495.0,
             "fornecedores": []
           },
           {
             "cfop": "1-411",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros em operacao ",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação ",
             "qtd": 2,
             "contabil": 265.6,
             "fiscal": 235.9,
             "imposto": 47.18,
-            "finalidade": "Devol. Compra",
+            "finalidade": "Devolução Venda",
             "creditoPisCofins": false,
             "debitaIcms": false,
             "total": 265.6,
@@ -4736,7 +4848,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-910",
-            "descricao": "Entrada de bonificacao, doacao ou brinde",
+            "descricao": "Entrada de bonificação, doação ou brinde",
             "qtd": 1,
             "contabil": 248.61,
             "fiscal": 248.61,
@@ -4757,12 +4869,12 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-949",
-            "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
+            "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
             "qtd": 1,
             "contabil": 159.64,
             "fiscal": 156.18,
             "imposto": 6.25,
-            "finalidade": "Revenda c/ ST",
+            "finalidade": "Outras Entradas",
             "creditoPisCofins": false,
             "debitaIcms": false,
             "total": 159.64,
@@ -4778,14 +4890,14 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-911",
-            "descricao": "Remessa em bonificacao, doacao ou brinde",
+            "descricao": "Entrada de amostra grátis",
             "qtd": 1,
             "contabil": 7.2,
             "fiscal": 7.2,
             "imposto": 0,
-            "finalidade": "Bonificação",
+            "finalidade": "Outras Entradas",
             "creditoPisCofins": false,
-            "debitaIcms": true,
+            "debitaIcms": false,
             "total": 7.2,
             "fornecedores": [
               {
@@ -4801,115 +4913,171 @@ const DASHBOARD_DATA = {
         "cfopSaidas": [
           {
             "cfop": "5-102",
-            "descricao": "Venda de mercadoria",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 429,
             "contabil": 476772.02,
             "fiscal": 439759.82,
-            "imposto": 87951.88
+            "imposto": 87951.88,
+            "total": 476772.02
           },
           {
             "cfop": "5-403",
-            "descricao": "Venda ST",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 51,
             "contabil": 31310.86,
             "fiscal": 31070.15,
-            "imposto": 6214.03
+            "imposto": 6214.03,
+            "total": 31310.86
           },
           {
             "cfop": "5-405",
-            "descricao": "Venda c/ ST retido",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 63,
             "contabil": 16857.98,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 16857.98
           },
           {
             "cfop": "6-102",
-            "descricao": "Venda interestadual",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 8,
             "contabil": 12842.5,
             "fiscal": 12842.5,
-            "imposto": 1541.11
+            "imposto": 1541.11,
+            "total": 12842.5
           },
           {
             "cfop": "6-202",
-            "descricao": "Devolucao interestadual",
+            "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+            "finalidade": "Devol. Compra",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 5,
             "contabil": 10854.1,
             "fiscal": 8796.38,
-            "imposto": 1504.5
+            "imposto": 1504.5,
+            "total": 10854.1
           },
           {
             "cfop": "6-404",
-            "descricao": "CFOP 6404",
+            "descricao": "Venda de mercadoria sujeita ao regime de substituição tributária, cujo imposto já tenha sido retido anteriormente",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 0,
             "contabil": 9177.0,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 9177.0
           },
           {
             "cfop": "5-005",
-            "descricao": "CFOP 5005",
+            "descricao": "Operacao fiscal 5-005",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 0,
             "contabil": 3848.82,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 3848.82
           },
           {
             "cfop": "5-922",
-            "descricao": "CFOP 5922",
+            "descricao": "Lançamento efetuado a título de simples faturamento decorrente de venda para entrega futura",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 0,
             "contabil": 2970.0,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 2970.0
           },
           {
             "cfop": "5-949",
-            "descricao": "CFOP 5949",
+            "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 10,
             "contabil": 571.85,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 571.85
           },
           {
             "cfop": "5-202",
-            "descricao": "Devolucao de compra",
+            "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadorias efetuada pelo MEI com exceção das classificadas no código 5.503",
+            "finalidade": "Devol. Compra",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 2,
             "contabil": 539.75,
             "fiscal": 539.75,
-            "imposto": 107.95
+            "imposto": 107.95,
+            "total": 539.75
           },
           {
             "cfop": "5-411",
-            "descricao": "CFOP 5411",
+            "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 3,
             "contabil": 442.82,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 442.82
           },
           {
             "cfop": "6-949",
-            "descricao": "Outras saidas",
+            "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 0,
             "contabil": 361.47,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 361.47
           },
           {
             "cfop": "6-411",
-            "descricao": "CFOP 6411",
+            "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 1,
             "contabil": 59.87,
             "fiscal": 59.87,
-            "imposto": 0
+            "imposto": 0,
+            "total": 59.87
           },
           {
             "cfop": "6-403",
-            "descricao": "CFOP 6403",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 0,
             "contabil": 27.82,
             "fiscal": 27.82,
-            "imposto": 3.12
+            "imposto": 3.12,
+            "total": 27.82
           }
         ],
         "cfopSaidasTotal": 566636.86,
@@ -5357,7 +5525,7 @@ const DASHBOARD_DATA = {
         "cfopEntradas": [
           {
             "cfop": "2-102",
-            "descricao": "Compra para comercializacao (interest.)",
+            "descricao": "Compra para comercialização",
             "qtd": 114,
             "contabil": 339688.95,
             "fiscal": 311607.79,
@@ -5455,7 +5623,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-102",
-            "descricao": "Compra para comercializacao",
+            "descricao": "Compra para comercialização",
             "qtd": 30,
             "contabil": 48215.07,
             "fiscal": 43743.25,
@@ -5553,7 +5721,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-202",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
             "qtd": 18,
             "contabil": 13626.63,
             "fiscal": 13326.55,
@@ -5651,7 +5819,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-202",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
             "qtd": 1,
             "contabil": 9177.0,
             "fiscal": 9177.0,
@@ -5672,7 +5840,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-910",
-            "descricao": "Entrada de bonificacao, doacao ou brinde",
+            "descricao": "Entrada de bonificação, doação ou brinde",
             "qtd": 6,
             "contabil": 6164.15,
             "fiscal": 5726.93,
@@ -5728,14 +5896,14 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-353",
-            "descricao": "Compra para comercializacao",
+            "descricao": "Aquisição de serviço de transporte por estabelecimento comercial",
             "qtd": 7,
             "contabil": 2948.85,
             "fiscal": 2948.85,
             "imposto": 0,
-            "finalidade": "Revenda",
-            "creditoPisCofins": false,
-            "debitaIcms": true,
+            "finalidade": "Serviço Transp.",
+            "creditoPisCofins": true,
+            "debitaIcms": false,
             "total": 2948.85,
             "fornecedores": [
               {
@@ -5770,7 +5938,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-403",
-            "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+            "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
             "qtd": 7,
             "contabil": 2922.54,
             "fiscal": 0.0,
@@ -5840,7 +6008,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-403",
-            "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+            "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
             "qtd": 6,
             "contabil": 2109.08,
             "fiscal": 0.0,
@@ -5910,14 +6078,14 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-912",
-            "descricao": "Importacao de mercadoria recebida em consignacao mercantil",
+            "descricao": "Entrada de mercadoria ou bem recebido para demonstração ou mostruário",
             "qtd": 1,
             "contabil": 495.0,
             "fiscal": 0.0,
             "imposto": 0.0,
-            "finalidade": "Revenda",
+            "finalidade": "Outras Entradas",
             "creditoPisCofins": false,
-            "debitaIcms": true,
+            "debitaIcms": false,
             "total": 495.0,
             "fornecedores": [
               {
@@ -5931,12 +6099,12 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-411",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros em operacao ",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação ",
             "qtd": 3,
             "contabil": 265.6,
             "fiscal": 235.9,
             "imposto": 47.18,
-            "finalidade": "Devol. Compra",
+            "finalidade": "Devolução Venda",
             "creditoPisCofins": false,
             "debitaIcms": false,
             "total": 265.6,
@@ -5966,12 +6134,12 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-949",
-            "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
+            "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
             "qtd": 2,
             "contabil": 159.64,
             "fiscal": 156.18,
             "imposto": 6.25,
-            "finalidade": "Revenda c/ ST",
+            "finalidade": "Outras Entradas",
             "creditoPisCofins": false,
             "debitaIcms": false,
             "total": 159.64,
@@ -5989,107 +6157,159 @@ const DASHBOARD_DATA = {
         "cfopSaidas": [
           {
             "cfop": "5-102",
-            "descricao": "Venda de mercadoria",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 400,
             "contabil": 476772.02,
             "fiscal": 439759.82,
-            "imposto": 87951.88
+            "imposto": 87951.88,
+            "total": 476772.02
           },
           {
             "cfop": "5-403",
-            "descricao": "Venda ST",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 44,
             "contabil": 31310.86,
             "fiscal": 31070.15,
-            "imposto": 6214.03
+            "imposto": 6214.03,
+            "total": 31310.86
           },
           {
             "cfop": "5-405",
-            "descricao": "Venda c/ ST retido",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 51,
             "contabil": 16857.98,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 16857.98
           },
           {
             "cfop": "6-102",
-            "descricao": "Venda interestadual",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 6,
             "contabil": 12842.5,
             "fiscal": 12842.5,
-            "imposto": 1541.11
+            "imposto": 1541.11,
+            "total": 12842.5
           },
           {
             "cfop": "6-202",
-            "descricao": "Devolucao interestadual",
+            "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+            "finalidade": "Devol. Compra",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 12,
             "contabil": 10854.1,
             "fiscal": 8796.38,
-            "imposto": 1504.5
+            "imposto": 1504.5,
+            "total": 10854.1
           },
           {
             "cfop": "6-404",
-            "descricao": "CFOP 6404",
+            "descricao": "Venda de mercadoria sujeita ao regime de substituição tributária, cujo imposto já tenha sido retido anteriormente",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 1,
             "contabil": 9177.0,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 9177.0
           },
           {
             "cfop": "5-005",
-            "descricao": "CFOP 5005",
+            "descricao": "Operacao fiscal 5-005",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 0,
             "contabil": 3848.82,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 3848.82
           },
           {
             "cfop": "5-922",
-            "descricao": "CFOP 5922",
+            "descricao": "Lançamento efetuado a título de simples faturamento decorrente de venda para entrega futura",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 1,
             "contabil": 2970.0,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 2970.0
           },
           {
             "cfop": "5-949",
-            "descricao": "CFOP 5949",
+            "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 9,
             "contabil": 571.85,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 571.85
           },
           {
             "cfop": "5-202",
-            "descricao": "Devolucao de compra",
+            "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadorias efetuada pelo MEI com exceção das classificadas no código 5.503",
+            "finalidade": "Devol. Compra",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 1,
             "contabil": 539.75,
             "fiscal": 539.75,
-            "imposto": 107.95
+            "imposto": 107.95,
+            "total": 539.75
           },
           {
             "cfop": "5-411",
-            "descricao": "CFOP 5411",
+            "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 2,
             "contabil": 442.82,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 442.82
           },
           {
             "cfop": "6-949",
-            "descricao": "Outras saidas",
+            "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 4,
             "contabil": 361.47,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 361.47
           },
           {
             "cfop": "6-403",
-            "descricao": "CFOP 6403",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 1,
             "contabil": 27.82,
             "fiscal": 27.82,
-            "imposto": 3.12
+            "imposto": 3.12,
+            "total": 27.82
           }
         ],
         "cfopSaidasTotal": 566576.99,
@@ -6529,7 +6749,7 @@ const DASHBOARD_DATA = {
         "cfopEntradas": [
           {
             "cfop": "2-102",
-            "descricao": "Compra para comercializacao (interest.)",
+            "descricao": "Compra para comercialização",
             "qtd": 79,
             "contabil": 323377.81,
             "fiscal": 298404.59,
@@ -6627,7 +6847,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-102",
-            "descricao": "Compra para comercializacao",
+            "descricao": "Compra para comercialização",
             "qtd": 38,
             "contabil": 26540.88,
             "fiscal": 24048.97,
@@ -6725,7 +6945,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-202",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
             "qtd": 13,
             "contabil": 5083.13,
             "fiscal": 4508.88,
@@ -6795,7 +7015,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-910",
-            "descricao": "Entrada de bonificacao, doacao ou brinde",
+            "descricao": "Entrada de bonificação, doação ou brinde",
             "qtd": 5,
             "contabil": 2548.5,
             "fiscal": 2376.05,
@@ -6844,7 +7064,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-202",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
             "qtd": 1,
             "contabil": 2202.0,
             "fiscal": 2202.0,
@@ -6865,13 +7085,13 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-652",
-            "descricao": "Compra de combustivel ou lubrificante para comercializacao",
+            "descricao": "Compra de combustíveis ou lubrificantes para comercialização",
             "qtd": 1,
             "contabil": 1141.2,
             "fiscal": 0.0,
             "imposto": 0.0,
             "finalidade": "Revenda",
-            "creditoPisCofins": false,
+            "creditoPisCofins": true,
             "debitaIcms": true,
             "total": 1141.2,
             "fornecedores": [
@@ -6886,7 +7106,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-403",
-            "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+            "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
             "qtd": 5,
             "contabil": 980.86,
             "fiscal": 0.0,
@@ -6921,12 +7141,12 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-949",
-            "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
+            "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
             "qtd": 2,
             "contabil": 198.17,
             "fiscal": 117.85,
             "imposto": 4.71,
-            "finalidade": "Revenda c/ ST",
+            "finalidade": "Outras Entradas",
             "creditoPisCofins": false,
             "debitaIcms": false,
             "total": 198.17,
@@ -6949,7 +7169,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-403",
-            "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+            "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
             "qtd": 1,
             "contabil": 149.5,
             "fiscal": 0.0,
@@ -6970,12 +7190,12 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-933",
-            "descricao": "Aquisicao de servico tributado pelo ISSQN",
+            "descricao": "Aquisição de serviço sujeito ao ISSQN",
             "qtd": 2,
             "contabil": 16.89,
             "fiscal": 16.89,
             "imposto": 0,
-            "finalidade": "Revenda",
+            "finalidade": "Serviço ISSQN",
             "creditoPisCofins": false,
             "debitaIcms": false,
             "total": 16.89,
@@ -7000,99 +7220,147 @@ const DASHBOARD_DATA = {
         "cfopSaidas": [
           {
             "cfop": "5-102",
-            "descricao": "Venda de mercadoria",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 373,
             "contabil": 383341.22,
             "fiscal": 353242.34,
-            "imposto": 70648.6
+            "imposto": 70648.6,
+            "total": 383341.22
           },
           {
             "cfop": "5-405",
-            "descricao": "Venda c/ ST retido",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 27,
             "contabil": 11675.0,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 11675.0
           },
           {
             "cfop": "5-403",
-            "descricao": "Venda ST",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 43,
             "contabil": 11585.2,
             "fiscal": 11143.51,
-            "imposto": 2227.53
+            "imposto": 2227.53,
+            "total": 11585.2
           },
           {
             "cfop": "6-102",
-            "descricao": "Venda interestadual",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 10,
             "contabil": 9607.55,
             "fiscal": 9607.55,
-            "imposto": 1152.92
+            "imposto": 1152.92,
+            "total": 9607.55
           },
           {
             "cfop": "6-202",
-            "descricao": "Devolucao interestadual",
+            "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+            "finalidade": "Devol. Compra",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 8,
             "contabil": 7218.73,
             "fiscal": 6368.85,
-            "imposto": 764.27
+            "imposto": 764.27,
+            "total": 7218.73
           },
           {
             "cfop": "5-117",
-            "descricao": "CFOP 5117",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, originada de encomenda para entrega futura",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 1,
             "contabil": 2970.0,
             "fiscal": 1237.6,
-            "imposto": 247.52
+            "imposto": 247.52,
+            "total": 2970.0
           },
           {
             "cfop": "6-915",
-            "descricao": "CFOP 6915",
+            "descricao": "Remessa de mercadoria ou bem para conserto ou reparo",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 2,
             "contabil": 2136.68,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 2136.68
           },
           {
             "cfop": "5-005",
-            "descricao": "CFOP 5005",
+            "descricao": "Operacao fiscal 5-005",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 0,
             "contabil": 1433.38,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 1433.38
           },
           {
             "cfop": "5-915",
-            "descricao": "CFOP 5915",
+            "descricao": "Remessa de mercadoria ou bem para conserto ou reparo",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 2,
             "contabil": 626.38,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 626.38
           },
           {
             "cfop": "5-411",
-            "descricao": "CFOP 5411",
+            "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 1,
             "contabil": 428.58,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 428.58
           },
           {
             "cfop": "5-949",
-            "descricao": "CFOP 5949",
+            "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 7,
             "contabil": 374.51,
             "fiscal": 0.0,
-            "imposto": 0.0
+            "imposto": 0.0,
+            "total": 374.51
           },
           {
             "cfop": "5-202",
-            "descricao": "Devolucao de compra",
+            "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadorias efetuada pelo MEI com exceção das classificadas no código 5.503",
+            "finalidade": "Devol. Compra",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 1,
             "contabil": 289.88,
             "fiscal": 289.22,
-            "imposto": 57.98
+            "imposto": 57.98,
+            "total": 289.88
           }
         ],
         "cfopSaidasTotal": 431687.11,
@@ -7533,7 +7801,7 @@ const DASHBOARD_DATA = {
         "cfopEntradas": [
           {
             "cfop": "2-102",
-            "descricao": "Compra para comercializacao (interest.)",
+            "descricao": "Compra para comercialização",
             "qtd": 131,
             "contabil": 598343.3500000001,
             "fiscal": 598343.3500000001,
@@ -7631,7 +7899,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-102",
-            "descricao": "Compra para comercializacao",
+            "descricao": "Compra para comercialização",
             "qtd": 40,
             "contabil": 25839.620000000006,
             "fiscal": 25839.620000000006,
@@ -7729,7 +7997,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-403",
-            "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+            "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
             "qtd": 9,
             "contabil": 7362.82,
             "fiscal": 7362.82,
@@ -7792,7 +8060,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-202",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
             "qtd": 12,
             "contabil": 7259.120000000001,
             "fiscal": 7259.120000000001,
@@ -7869,7 +8137,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-910",
-            "descricao": "Entrada de bonificacao, doacao ou brinde",
+            "descricao": "Entrada de bonificação, doação ou brinde",
             "qtd": 9,
             "contabil": 6929.91,
             "fiscal": 6929.91,
@@ -7918,7 +8186,7 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-403",
-            "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+            "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
             "qtd": 6,
             "contabil": 6202.31,
             "fiscal": 6202.31,
@@ -7965,9 +8233,9 @@ const DASHBOARD_DATA = {
             "contabil": 2136.68,
             "fiscal": 2136.68,
             "imposto": 0,
-            "finalidade": "Revenda",
+            "finalidade": "Retorno Conserto",
             "creditoPisCofins": false,
-            "debitaIcms": true,
+            "debitaIcms": false,
             "total": 2136.68,
             "fornecedores": [
               {
@@ -7988,14 +8256,14 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-923",
-            "descricao": "Entrada de mercadoria ou bem recebido para deposito em deposito fechado",
+            "descricao": "Entrada de mercadoria recebida do vendedor remetente, em venda à ordem",
             "qtd": 1,
             "contabil": 1778.0,
             "fiscal": 1778.0,
             "imposto": 0,
-            "finalidade": "Revenda",
+            "finalidade": "Outras Entradas",
             "creditoPisCofins": false,
-            "debitaIcms": true,
+            "debitaIcms": false,
             "total": 1778.0,
             "fornecedores": [
               {
@@ -8009,12 +8277,12 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-411",
-            "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros em operacao ",
+            "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação ",
             "qtd": 1,
             "contabil": 432.13,
             "fiscal": 432.13,
             "imposto": 0,
-            "finalidade": "Devol. Compra",
+            "finalidade": "Devolução Venda",
             "creditoPisCofins": false,
             "debitaIcms": false,
             "total": 432.13,
@@ -8030,12 +8298,12 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-949",
-            "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
+            "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
             "qtd": 1,
             "contabil": 221.94,
             "fiscal": 221.94,
             "imposto": 0,
-            "finalidade": "Revenda c/ ST",
+            "finalidade": "Outras Entradas",
             "creditoPisCofins": false,
             "debitaIcms": false,
             "total": 221.94,
@@ -8051,12 +8319,12 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "2-933",
-            "descricao": "Aquisicao de servico tributado pelo ISSQN",
+            "descricao": "Aquisição de serviço sujeito ao ISSQN",
             "qtd": 1,
             "contabil": 150.0,
             "fiscal": 150.0,
             "imposto": 0,
-            "finalidade": "Revenda",
+            "finalidade": "Serviço ISSQN",
             "creditoPisCofins": false,
             "debitaIcms": false,
             "total": 150.0,
@@ -8072,12 +8340,12 @@ const DASHBOARD_DATA = {
           },
           {
             "cfop": "1-933",
-            "descricao": "Aquisicao de servico tributado pelo ISSQN",
+            "descricao": "Aquisição de serviço sujeito ao ISSQN",
             "qtd": 2,
             "contabil": 26.67,
             "fiscal": 26.67,
             "imposto": 0,
-            "finalidade": "Revenda",
+            "finalidade": "Serviço ISSQN",
             "creditoPisCofins": false,
             "debitaIcms": false,
             "total": 26.67,
@@ -8102,67 +8370,99 @@ const DASHBOARD_DATA = {
         "cfopSaidas": [
           {
             "cfop": "5-102",
-            "descricao": "Venda de mercadoria",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 383,
             "contabil": 609401.0900000001,
             "fiscal": 609401.0900000001,
-            "imposto": 0
+            "imposto": 0,
+            "total": 609401.0900000001
           },
           {
             "cfop": "6-102",
-            "descricao": "Venda interestadual",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+            "finalidade": "Venda",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 9,
             "contabil": 30834.230000000003,
             "fiscal": 30834.230000000003,
-            "imposto": 0
+            "imposto": 0,
+            "total": 30834.230000000003
           },
           {
             "cfop": "5-405",
-            "descricao": "Venda c/ ST retido",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 37,
             "contabil": 15209.69,
             "fiscal": 15209.69,
-            "imposto": 0
+            "imposto": 0,
+            "total": 15209.69
           },
           {
             "cfop": "5-403",
-            "descricao": "Venda ST",
+            "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+            "finalidade": "Venda c/ ST",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 32,
             "contabil": 4763.700000000001,
             "fiscal": 4763.700000000001,
-            "imposto": 0
+            "imposto": 0,
+            "total": 4763.700000000001
           },
           {
             "cfop": "5-949",
-            "descricao": "CFOP 5949",
+            "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 4,
             "contabil": 458.37,
             "fiscal": 458.37,
-            "imposto": 0
+            "imposto": 0,
+            "total": 458.37
           },
           {
             "cfop": "6-202",
-            "descricao": "Devolucao interestadual",
+            "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+            "finalidade": "Devol. Compra",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 3,
             "contabil": 421.89000000000004,
             "fiscal": 421.89000000000004,
-            "imposto": 0
+            "imposto": 0,
+            "total": 421.89000000000004
           },
           {
             "cfop": "5-910",
-            "descricao": "CFOP 5910",
+            "descricao": "Remessa em bonificação, doação ou brinde",
+            "finalidade": "Bonificação",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
             "qtd": 2,
             "contabil": 134.99,
             "fiscal": 134.99,
-            "imposto": 0
+            "imposto": 0,
+            "total": 134.99
           },
           {
             "cfop": "6-949",
-            "descricao": "Outras saidas",
+            "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+            "finalidade": "Outras Saídas",
+            "creditoPisCofins": false,
+            "debitaIcms": false,
             "qtd": 1,
             "contabil": 93.04,
             "fiscal": 93.04,
-            "imposto": 0
+            "imposto": 0,
+            "total": 93.04
           }
         ],
         "cfopSaidasTotal": 661317.0,
@@ -8601,7 +8901,7 @@ const DASHBOARD_DATA = {
             "cfopEntradas": [
               {
                 "cfop": "2-102",
-                "descricao": "Compra para comercializacao (interest.)",
+                "descricao": "Compra para comercialização",
                 "qtd": 154,
                 "contabil": 513039.72,
                 "fiscal": 475922.69,
@@ -8699,7 +8999,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-102",
-                "descricao": "Compra para comercializacao",
+                "descricao": "Compra para comercialização",
                 "qtd": 29,
                 "contabil": 43682.0,
                 "fiscal": 38379.83,
@@ -8790,7 +9090,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-202",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
                 "qtd": 13,
                 "contabil": 19483.87,
                 "fiscal": 19378.86,
@@ -8888,7 +9188,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-403",
-                "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+                "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
                 "qtd": 15,
                 "contabil": 9252.55,
                 "fiscal": 0.0,
@@ -8958,12 +9258,12 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-411",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros em operacao ",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação ",
                 "qtd": 1,
                 "contabil": 8297.9,
                 "fiscal": 540.8,
                 "imposto": 108.16,
-                "finalidade": "Devol. Compra",
+                "finalidade": "Devolução Venda",
                 "creditoPisCofins": false,
                 "debitaIcms": false,
                 "total": 8297.9,
@@ -8979,7 +9279,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-910",
-                "descricao": "Entrada de bonificacao, doacao ou brinde",
+                "descricao": "Entrada de bonificação, doação ou brinde",
                 "qtd": 4,
                 "contabil": 4823.33,
                 "fiscal": 4039.31,
@@ -9014,7 +9314,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-403",
-                "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+                "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
                 "qtd": 8,
                 "contabil": 4408.66,
                 "fiscal": 0.0,
@@ -9075,9 +9375,9 @@ const DASHBOARD_DATA = {
                 "contabil": 2791.92,
                 "fiscal": 0.0,
                 "imposto": 0.0,
-                "finalidade": "Revenda",
+                "finalidade": "Retorno Conserto",
                 "creditoPisCofins": false,
-                "debitaIcms": true,
+                "debitaIcms": false,
                 "total": 2791.92,
                 "fornecedores": [
                   {
@@ -9091,12 +9391,12 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-949",
-                "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
+                "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
                 "qtd": 1,
                 "contabil": 266.58,
                 "fiscal": 0.0,
                 "imposto": 0.0,
-                "finalidade": "Revenda c/ ST",
+                "finalidade": "Outras Entradas",
                 "creditoPisCofins": false,
                 "debitaIcms": false,
                 "total": 266.58,
@@ -9114,83 +9414,123 @@ const DASHBOARD_DATA = {
             "cfopSaidas": [
               {
                 "cfop": "5-102",
-                "descricao": "Venda de mercadoria",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 336,
                 "contabil": 445440.48,
                 "fiscal": 392635.99,
-                "imposto": 78527.43
+                "imposto": 78527.43,
+                "total": 445440.48
               },
               {
                 "cfop": "6-202",
-                "descricao": "Devolucao interestadual",
+                "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+                "finalidade": "Devol. Compra",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 12,
                 "contabil": 24182.84,
                 "fiscal": 23477.83,
-                "imposto": 3075.01
+                "imposto": 3075.01,
+                "total": 24182.84
               },
               {
                 "cfop": "5-405",
-                "descricao": "Venda c/ ST retido",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 26,
                 "contabil": 15397.69,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 15397.69
               },
               {
                 "cfop": "5-403",
-                "descricao": "Venda ST",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 53,
                 "contabil": 10737.58,
                 "fiscal": 10405.26,
-                "imposto": 2081.0
+                "imposto": 2081.0,
+                "total": 10737.58
               },
               {
                 "cfop": "6-102",
-                "descricao": "Venda interestadual",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 3,
                 "contabil": 8471.7,
                 "fiscal": 8471.7,
-                "imposto": 1016.61
+                "imposto": 1016.61,
+                "total": 8471.7
               },
               {
                 "cfop": "5-202",
-                "descricao": "Devolucao de compra",
+                "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadorias efetuada pelo MEI com exceção das classificadas no código 5.503",
+                "finalidade": "Devol. Compra",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 3,
                 "contabil": 5315.61,
                 "fiscal": 5315.61,
-                "imposto": 1063.13
+                "imposto": 1063.13,
+                "total": 5315.61
               },
               {
                 "cfop": "5-005",
-                "descricao": "CFOP 5005",
+                "descricao": "Operacao fiscal 5-005",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 0,
                 "contabil": 4116.55,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 4116.55
               },
               {
                 "cfop": "6-949",
-                "descricao": "Outras saidas",
+                "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 3,
                 "contabil": 2847.36,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 2847.36
               },
               {
                 "cfop": "5-411",
-                "descricao": "CFOP 5411",
+                "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 2,
                 "contabil": 2220.79,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 2220.79
               },
               {
                 "cfop": "5-949",
-                "descricao": "CFOP 5949",
+                "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 5,
                 "contabil": 437.84,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 437.84
               }
             ],
             "cfopSaidasTotal": 519168.44,
@@ -9614,7 +9954,7 @@ const DASHBOARD_DATA = {
             "cfopEntradas": [
               {
                 "cfop": "2-102",
-                "descricao": "Compra para comercializacao (interest.)",
+                "descricao": "Compra para comercialização",
                 "qtd": 71,
                 "contabil": 157736.74,
                 "fiscal": 140689.22,
@@ -9712,7 +10052,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-102",
-                "descricao": "Compra para comercializacao",
+                "descricao": "Compra para comercialização",
                 "qtd": 27,
                 "contabil": 22932.83,
                 "fiscal": 20267.98,
@@ -9810,7 +10150,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-202",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
                 "qtd": 3,
                 "contabil": 9816.12,
                 "fiscal": 9816.12,
@@ -9838,7 +10178,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-403",
-                "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+                "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
                 "qtd": 7,
                 "contabil": 9661.85,
                 "fiscal": 0.0,
@@ -9880,7 +10220,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-202",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
                 "qtd": 6,
                 "contabil": 8579.91,
                 "fiscal": 6658.18,
@@ -9929,12 +10269,12 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-949",
-                "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
+                "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
                 "qtd": 3,
                 "contabil": 2847.36,
                 "fiscal": 2844.62,
                 "imposto": 113.78,
-                "finalidade": "Revenda c/ ST",
+                "finalidade": "Outras Entradas",
                 "creditoPisCofins": false,
                 "debitaIcms": false,
                 "total": 2847.36,
@@ -9950,7 +10290,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-910",
-                "descricao": "Entrada de bonificacao, doacao ou brinde",
+                "descricao": "Entrada de bonificação, doação ou brinde",
                 "qtd": 2,
                 "contabil": 1432.48,
                 "fiscal": 1364.88,
@@ -9978,7 +10318,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-403",
-                "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+                "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
                 "qtd": 3,
                 "contabil": 1110.75,
                 "fiscal": 0.0,
@@ -10006,14 +10346,14 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-911",
-                "descricao": "Remessa em bonificacao, doacao ou brinde",
+                "descricao": "Entrada de amostra grátis",
                 "qtd": 1,
                 "contabil": 182.47,
                 "fiscal": 182.47,
                 "imposto": 12.77,
-                "finalidade": "Bonificação",
+                "finalidade": "Outras Entradas",
                 "creditoPisCofins": false,
-                "debitaIcms": true,
+                "debitaIcms": false,
                 "total": 182.47,
                 "fornecedores": [
                   {
@@ -10027,7 +10367,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-910",
-                "descricao": "Entrada de bonificacao, doacao ou brinde",
+                "descricao": "Entrada de bonificação, doação ou brinde",
                 "qtd": 1,
                 "contabil": 151.52,
                 "fiscal": 151.52,
@@ -10050,83 +10390,123 @@ const DASHBOARD_DATA = {
             "cfopSaidas": [
               {
                 "cfop": "5-102",
-                "descricao": "Venda de mercadoria",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 277,
                 "contabil": 371058.42,
                 "fiscal": 336663.58,
-                "imposto": 67332.98
+                "imposto": 67332.98,
+                "total": 371058.42
               },
               {
                 "cfop": "5-405",
-                "descricao": "Venda c/ ST retido",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 60,
                 "contabil": 47939.55,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 47939.55
               },
               {
                 "cfop": "6-102",
-                "descricao": "Venda interestadual",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 12,
                 "contabil": 34485.8,
                 "fiscal": 34485.8,
-                "imposto": 4138.32
+                "imposto": 4138.32,
+                "total": 34485.8
               },
               {
                 "cfop": "6-108",
-                "descricao": "CFOP 6108",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, destinada a não contribuinte",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 2,
                 "contabil": 8445.32,
                 "fiscal": 8445.32,
-                "imposto": 1013.44
+                "imposto": 1013.44,
+                "total": 8445.32
               },
               {
                 "cfop": "5-403",
-                "descricao": "Venda ST",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 32,
                 "contabil": 6796.48,
                 "fiscal": 6519.95,
-                "imposto": 1303.99
+                "imposto": 1303.99,
+                "total": 6796.48
               },
               {
                 "cfop": "5-202",
-                "descricao": "Devolucao de compra",
+                "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadorias efetuada pelo MEI com exceção das classificadas no código 5.503",
+                "finalidade": "Devol. Compra",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 5,
                 "contabil": 6037.5,
                 "fiscal": 6037.5,
-                "imposto": 1207.51
+                "imposto": 1207.51,
+                "total": 6037.5
               },
               {
                 "cfop": "6-202",
-                "descricao": "Devolucao interestadual",
+                "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+                "finalidade": "Devol. Compra",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 4,
                 "contabil": 4479.4,
                 "fiscal": 4301.98,
-                "imposto": 516.25
+                "imposto": 516.25,
+                "total": 4479.4
               },
               {
                 "cfop": "5-005",
-                "descricao": "CFOP 5005",
+                "descricao": "Operacao fiscal 5-005",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 0,
                 "contabil": 3514.64,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 3514.64
               },
               {
                 "cfop": "5-949",
-                "descricao": "CFOP 5949",
+                "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 7,
                 "contabil": 588.92,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 588.92
               },
               {
                 "cfop": "6-949",
-                "descricao": "Outras saidas",
+                "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 1,
                 "contabil": 96.62,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 96.62
               }
             ],
             "cfopSaidasTotal": 483442.65,
@@ -10551,7 +10931,7 @@ const DASHBOARD_DATA = {
             "cfopEntradas": [
               {
                 "cfop": "2-102",
-                "descricao": "Compra para comercializacao (interest.)",
+                "descricao": "Compra para comercialização",
                 "qtd": 151,
                 "contabil": 339688.95,
                 "fiscal": 311607.79,
@@ -10649,7 +11029,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-102",
-                "descricao": "Compra para comercializacao",
+                "descricao": "Compra para comercialização",
                 "qtd": 31,
                 "contabil": 48215.07,
                 "fiscal": 43743.25,
@@ -10733,7 +11113,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-202",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
                 "qtd": 11,
                 "contabil": 13626.63,
                 "fiscal": 13326.55,
@@ -10803,7 +11183,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-202",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
                 "qtd": 0,
                 "contabil": 9177.0,
                 "fiscal": 9177.0,
@@ -10816,7 +11196,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-910",
-                "descricao": "Entrada de bonificacao, doacao ou brinde",
+                "descricao": "Entrada de bonificação, doação ou brinde",
                 "qtd": 5,
                 "contabil": 6164.15,
                 "fiscal": 5726.93,
@@ -10858,7 +11238,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-403",
-                "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+                "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
                 "qtd": 5,
                 "contabil": 2922.54,
                 "fiscal": 0.0,
@@ -10900,7 +11280,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-403",
-                "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+                "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
                 "qtd": 11,
                 "contabil": 2109.08,
                 "fiscal": 0.0,
@@ -10949,13 +11329,13 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-652",
-                "descricao": "Compra de combustivel ou lubrificante para comercializacao",
+                "descricao": "Compra de combustíveis ou lubrificantes para comercialização",
                 "qtd": 4,
                 "contabil": 947.56,
                 "fiscal": 947.56,
                 "imposto": 0,
                 "finalidade": "Revenda",
-                "creditoPisCofins": false,
+                "creditoPisCofins": true,
                 "debitaIcms": true,
                 "total": 947.56,
                 "fornecedores": [
@@ -10977,25 +11357,25 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-912",
-                "descricao": "Importacao de mercadoria recebida em consignacao mercantil",
+                "descricao": "Entrada de mercadoria ou bem recebido para demonstração ou mostruário",
                 "qtd": 0,
                 "contabil": 495.0,
                 "fiscal": 0.0,
                 "imposto": 0.0,
-                "finalidade": "Revenda",
+                "finalidade": "Outras Entradas",
                 "creditoPisCofins": false,
-                "debitaIcms": true,
+                "debitaIcms": false,
                 "total": 495.0,
                 "fornecedores": []
               },
               {
                 "cfop": "1-411",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros em operacao ",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação ",
                 "qtd": 2,
                 "contabil": 265.6,
                 "fiscal": 235.9,
                 "imposto": 47.18,
-                "finalidade": "Devol. Compra",
+                "finalidade": "Devolução Venda",
                 "creditoPisCofins": false,
                 "debitaIcms": false,
                 "total": 265.6,
@@ -11018,7 +11398,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-910",
-                "descricao": "Entrada de bonificacao, doacao ou brinde",
+                "descricao": "Entrada de bonificação, doação ou brinde",
                 "qtd": 1,
                 "contabil": 248.61,
                 "fiscal": 248.61,
@@ -11039,12 +11419,12 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-949",
-                "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
+                "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
                 "qtd": 1,
                 "contabil": 159.64,
                 "fiscal": 156.18,
                 "imposto": 6.25,
-                "finalidade": "Revenda c/ ST",
+                "finalidade": "Outras Entradas",
                 "creditoPisCofins": false,
                 "debitaIcms": false,
                 "total": 159.64,
@@ -11060,14 +11440,14 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-911",
-                "descricao": "Remessa em bonificacao, doacao ou brinde",
+                "descricao": "Entrada de amostra grátis",
                 "qtd": 1,
                 "contabil": 7.2,
                 "fiscal": 7.2,
                 "imposto": 0,
-                "finalidade": "Bonificação",
+                "finalidade": "Outras Entradas",
                 "creditoPisCofins": false,
-                "debitaIcms": true,
+                "debitaIcms": false,
                 "total": 7.2,
                 "fornecedores": [
                   {
@@ -11083,115 +11463,171 @@ const DASHBOARD_DATA = {
             "cfopSaidas": [
               {
                 "cfop": "5-102",
-                "descricao": "Venda de mercadoria",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 429,
                 "contabil": 476772.02,
                 "fiscal": 439759.82,
-                "imposto": 87951.88
+                "imposto": 87951.88,
+                "total": 476772.02
               },
               {
                 "cfop": "5-403",
-                "descricao": "Venda ST",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 51,
                 "contabil": 31310.86,
                 "fiscal": 31070.15,
-                "imposto": 6214.03
+                "imposto": 6214.03,
+                "total": 31310.86
               },
               {
                 "cfop": "5-405",
-                "descricao": "Venda c/ ST retido",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 63,
                 "contabil": 16857.98,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 16857.98
               },
               {
                 "cfop": "6-102",
-                "descricao": "Venda interestadual",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 8,
                 "contabil": 12842.5,
                 "fiscal": 12842.5,
-                "imposto": 1541.11
+                "imposto": 1541.11,
+                "total": 12842.5
               },
               {
                 "cfop": "6-202",
-                "descricao": "Devolucao interestadual",
+                "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+                "finalidade": "Devol. Compra",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 5,
                 "contabil": 10854.1,
                 "fiscal": 8796.38,
-                "imposto": 1504.5
+                "imposto": 1504.5,
+                "total": 10854.1
               },
               {
                 "cfop": "6-404",
-                "descricao": "CFOP 6404",
+                "descricao": "Venda de mercadoria sujeita ao regime de substituição tributária, cujo imposto já tenha sido retido anteriormente",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 0,
                 "contabil": 9177.0,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 9177.0
               },
               {
                 "cfop": "5-005",
-                "descricao": "CFOP 5005",
+                "descricao": "Operacao fiscal 5-005",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 0,
                 "contabil": 3848.82,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 3848.82
               },
               {
                 "cfop": "5-922",
-                "descricao": "CFOP 5922",
+                "descricao": "Lançamento efetuado a título de simples faturamento decorrente de venda para entrega futura",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 0,
                 "contabil": 2970.0,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 2970.0
               },
               {
                 "cfop": "5-949",
-                "descricao": "CFOP 5949",
+                "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 10,
                 "contabil": 571.85,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 571.85
               },
               {
                 "cfop": "5-202",
-                "descricao": "Devolucao de compra",
+                "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadorias efetuada pelo MEI com exceção das classificadas no código 5.503",
+                "finalidade": "Devol. Compra",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 2,
                 "contabil": 539.75,
                 "fiscal": 539.75,
-                "imposto": 107.95
+                "imposto": 107.95,
+                "total": 539.75
               },
               {
                 "cfop": "5-411",
-                "descricao": "CFOP 5411",
+                "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 3,
                 "contabil": 442.82,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 442.82
               },
               {
                 "cfop": "6-949",
-                "descricao": "Outras saidas",
+                "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 0,
                 "contabil": 361.47,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 361.47
               },
               {
                 "cfop": "6-411",
-                "descricao": "CFOP 6411",
+                "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 1,
                 "contabil": 59.87,
                 "fiscal": 59.87,
-                "imposto": 0
+                "imposto": 0,
+                "total": 59.87
               },
               {
                 "cfop": "6-403",
-                "descricao": "CFOP 6403",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 0,
                 "contabil": 27.82,
                 "fiscal": 27.82,
-                "imposto": 3.12
+                "imposto": 3.12,
+                "total": 27.82
               }
             ],
             "cfopSaidasTotal": 566636.86,
@@ -11639,7 +12075,7 @@ const DASHBOARD_DATA = {
             "cfopEntradas": [
               {
                 "cfop": "2-102",
-                "descricao": "Compra para comercializacao (interest.)",
+                "descricao": "Compra para comercialização",
                 "qtd": 114,
                 "contabil": 339688.95,
                 "fiscal": 311607.79,
@@ -11737,7 +12173,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-102",
-                "descricao": "Compra para comercializacao",
+                "descricao": "Compra para comercialização",
                 "qtd": 30,
                 "contabil": 48215.07,
                 "fiscal": 43743.25,
@@ -11835,7 +12271,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-202",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
                 "qtd": 18,
                 "contabil": 13626.63,
                 "fiscal": 13326.55,
@@ -11933,7 +12369,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-202",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
                 "qtd": 1,
                 "contabil": 9177.0,
                 "fiscal": 9177.0,
@@ -11954,7 +12390,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-910",
-                "descricao": "Entrada de bonificacao, doacao ou brinde",
+                "descricao": "Entrada de bonificação, doação ou brinde",
                 "qtd": 6,
                 "contabil": 6164.15,
                 "fiscal": 5726.93,
@@ -12010,14 +12446,14 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-353",
-                "descricao": "Compra para comercializacao",
+                "descricao": "Aquisição de serviço de transporte por estabelecimento comercial",
                 "qtd": 7,
                 "contabil": 2948.85,
                 "fiscal": 2948.85,
                 "imposto": 0,
-                "finalidade": "Revenda",
-                "creditoPisCofins": false,
-                "debitaIcms": true,
+                "finalidade": "Serviço Transp.",
+                "creditoPisCofins": true,
+                "debitaIcms": false,
                 "total": 2948.85,
                 "fornecedores": [
                   {
@@ -12052,7 +12488,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-403",
-                "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+                "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
                 "qtd": 7,
                 "contabil": 2922.54,
                 "fiscal": 0.0,
@@ -12122,7 +12558,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-403",
-                "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+                "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
                 "qtd": 6,
                 "contabil": 2109.08,
                 "fiscal": 0.0,
@@ -12192,14 +12628,14 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-912",
-                "descricao": "Importacao de mercadoria recebida em consignacao mercantil",
+                "descricao": "Entrada de mercadoria ou bem recebido para demonstração ou mostruário",
                 "qtd": 1,
                 "contabil": 495.0,
                 "fiscal": 0.0,
                 "imposto": 0.0,
-                "finalidade": "Revenda",
+                "finalidade": "Outras Entradas",
                 "creditoPisCofins": false,
-                "debitaIcms": true,
+                "debitaIcms": false,
                 "total": 495.0,
                 "fornecedores": [
                   {
@@ -12213,12 +12649,12 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-411",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros em operacao ",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação ",
                 "qtd": 3,
                 "contabil": 265.6,
                 "fiscal": 235.9,
                 "imposto": 47.18,
-                "finalidade": "Devol. Compra",
+                "finalidade": "Devolução Venda",
                 "creditoPisCofins": false,
                 "debitaIcms": false,
                 "total": 265.6,
@@ -12248,12 +12684,12 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-949",
-                "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
+                "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
                 "qtd": 2,
                 "contabil": 159.64,
                 "fiscal": 156.18,
                 "imposto": 6.25,
-                "finalidade": "Revenda c/ ST",
+                "finalidade": "Outras Entradas",
                 "creditoPisCofins": false,
                 "debitaIcms": false,
                 "total": 159.64,
@@ -12271,107 +12707,159 @@ const DASHBOARD_DATA = {
             "cfopSaidas": [
               {
                 "cfop": "5-102",
-                "descricao": "Venda de mercadoria",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 400,
                 "contabil": 476772.02,
                 "fiscal": 439759.82,
-                "imposto": 87951.88
+                "imposto": 87951.88,
+                "total": 476772.02
               },
               {
                 "cfop": "5-403",
-                "descricao": "Venda ST",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 44,
                 "contabil": 31310.86,
                 "fiscal": 31070.15,
-                "imposto": 6214.03
+                "imposto": 6214.03,
+                "total": 31310.86
               },
               {
                 "cfop": "5-405",
-                "descricao": "Venda c/ ST retido",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 51,
                 "contabil": 16857.98,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 16857.98
               },
               {
                 "cfop": "6-102",
-                "descricao": "Venda interestadual",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 6,
                 "contabil": 12842.5,
                 "fiscal": 12842.5,
-                "imposto": 1541.11
+                "imposto": 1541.11,
+                "total": 12842.5
               },
               {
                 "cfop": "6-202",
-                "descricao": "Devolucao interestadual",
+                "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+                "finalidade": "Devol. Compra",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 12,
                 "contabil": 10854.1,
                 "fiscal": 8796.38,
-                "imposto": 1504.5
+                "imposto": 1504.5,
+                "total": 10854.1
               },
               {
                 "cfop": "6-404",
-                "descricao": "CFOP 6404",
+                "descricao": "Venda de mercadoria sujeita ao regime de substituição tributária, cujo imposto já tenha sido retido anteriormente",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 1,
                 "contabil": 9177.0,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 9177.0
               },
               {
                 "cfop": "5-005",
-                "descricao": "CFOP 5005",
+                "descricao": "Operacao fiscal 5-005",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 0,
                 "contabil": 3848.82,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 3848.82
               },
               {
                 "cfop": "5-922",
-                "descricao": "CFOP 5922",
+                "descricao": "Lançamento efetuado a título de simples faturamento decorrente de venda para entrega futura",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 1,
                 "contabil": 2970.0,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 2970.0
               },
               {
                 "cfop": "5-949",
-                "descricao": "CFOP 5949",
+                "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 9,
                 "contabil": 571.85,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 571.85
               },
               {
                 "cfop": "5-202",
-                "descricao": "Devolucao de compra",
+                "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadorias efetuada pelo MEI com exceção das classificadas no código 5.503",
+                "finalidade": "Devol. Compra",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 1,
                 "contabil": 539.75,
                 "fiscal": 539.75,
-                "imposto": 107.95
+                "imposto": 107.95,
+                "total": 539.75
               },
               {
                 "cfop": "5-411",
-                "descricao": "CFOP 5411",
+                "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 2,
                 "contabil": 442.82,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 442.82
               },
               {
                 "cfop": "6-949",
-                "descricao": "Outras saidas",
+                "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 4,
                 "contabil": 361.47,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 361.47
               },
               {
                 "cfop": "6-403",
-                "descricao": "CFOP 6403",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 1,
                 "contabil": 27.82,
                 "fiscal": 27.82,
-                "imposto": 3.12
+                "imposto": 3.12,
+                "total": 27.82
               }
             ],
             "cfopSaidasTotal": 566576.99,
@@ -12811,7 +13299,7 @@ const DASHBOARD_DATA = {
             "cfopEntradas": [
               {
                 "cfop": "2-102",
-                "descricao": "Compra para comercializacao (interest.)",
+                "descricao": "Compra para comercialização",
                 "qtd": 79,
                 "contabil": 323377.81,
                 "fiscal": 298404.59,
@@ -12909,7 +13397,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-102",
-                "descricao": "Compra para comercializacao",
+                "descricao": "Compra para comercialização",
                 "qtd": 38,
                 "contabil": 26540.88,
                 "fiscal": 24048.97,
@@ -13007,7 +13495,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-202",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
                 "qtd": 13,
                 "contabil": 5083.13,
                 "fiscal": 4508.88,
@@ -13077,7 +13565,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-910",
-                "descricao": "Entrada de bonificacao, doacao ou brinde",
+                "descricao": "Entrada de bonificação, doação ou brinde",
                 "qtd": 5,
                 "contabil": 2548.5,
                 "fiscal": 2376.05,
@@ -13126,7 +13614,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-202",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
                 "qtd": 1,
                 "contabil": 2202.0,
                 "fiscal": 2202.0,
@@ -13147,13 +13635,13 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-652",
-                "descricao": "Compra de combustivel ou lubrificante para comercializacao",
+                "descricao": "Compra de combustíveis ou lubrificantes para comercialização",
                 "qtd": 1,
                 "contabil": 1141.2,
                 "fiscal": 0.0,
                 "imposto": 0.0,
                 "finalidade": "Revenda",
-                "creditoPisCofins": false,
+                "creditoPisCofins": true,
                 "debitaIcms": true,
                 "total": 1141.2,
                 "fornecedores": [
@@ -13168,7 +13656,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-403",
-                "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+                "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
                 "qtd": 5,
                 "contabil": 980.86,
                 "fiscal": 0.0,
@@ -13203,12 +13691,12 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-949",
-                "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
+                "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
                 "qtd": 2,
                 "contabil": 198.17,
                 "fiscal": 117.85,
                 "imposto": 4.71,
-                "finalidade": "Revenda c/ ST",
+                "finalidade": "Outras Entradas",
                 "creditoPisCofins": false,
                 "debitaIcms": false,
                 "total": 198.17,
@@ -13231,7 +13719,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-403",
-                "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+                "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
                 "qtd": 1,
                 "contabil": 149.5,
                 "fiscal": 0.0,
@@ -13252,12 +13740,12 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-933",
-                "descricao": "Aquisicao de servico tributado pelo ISSQN",
+                "descricao": "Aquisição de serviço sujeito ao ISSQN",
                 "qtd": 2,
                 "contabil": 16.89,
                 "fiscal": 16.89,
                 "imposto": 0,
-                "finalidade": "Revenda",
+                "finalidade": "Serviço ISSQN",
                 "creditoPisCofins": false,
                 "debitaIcms": false,
                 "total": 16.89,
@@ -13282,99 +13770,147 @@ const DASHBOARD_DATA = {
             "cfopSaidas": [
               {
                 "cfop": "5-102",
-                "descricao": "Venda de mercadoria",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 373,
                 "contabil": 383341.22,
                 "fiscal": 353242.34,
-                "imposto": 70648.6
+                "imposto": 70648.6,
+                "total": 383341.22
               },
               {
                 "cfop": "5-405",
-                "descricao": "Venda c/ ST retido",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 27,
                 "contabil": 11675.0,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 11675.0
               },
               {
                 "cfop": "5-403",
-                "descricao": "Venda ST",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 43,
                 "contabil": 11585.2,
                 "fiscal": 11143.51,
-                "imposto": 2227.53
+                "imposto": 2227.53,
+                "total": 11585.2
               },
               {
                 "cfop": "6-102",
-                "descricao": "Venda interestadual",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 10,
                 "contabil": 9607.55,
                 "fiscal": 9607.55,
-                "imposto": 1152.92
+                "imposto": 1152.92,
+                "total": 9607.55
               },
               {
                 "cfop": "6-202",
-                "descricao": "Devolucao interestadual",
+                "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+                "finalidade": "Devol. Compra",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 8,
                 "contabil": 7218.73,
                 "fiscal": 6368.85,
-                "imposto": 764.27
+                "imposto": 764.27,
+                "total": 7218.73
               },
               {
                 "cfop": "5-117",
-                "descricao": "CFOP 5117",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, originada de encomenda para entrega futura",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 1,
                 "contabil": 2970.0,
                 "fiscal": 1237.6,
-                "imposto": 247.52
+                "imposto": 247.52,
+                "total": 2970.0
               },
               {
                 "cfop": "6-915",
-                "descricao": "CFOP 6915",
+                "descricao": "Remessa de mercadoria ou bem para conserto ou reparo",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 2,
                 "contabil": 2136.68,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 2136.68
               },
               {
                 "cfop": "5-005",
-                "descricao": "CFOP 5005",
+                "descricao": "Operacao fiscal 5-005",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 0,
                 "contabil": 1433.38,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 1433.38
               },
               {
                 "cfop": "5-915",
-                "descricao": "CFOP 5915",
+                "descricao": "Remessa de mercadoria ou bem para conserto ou reparo",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 2,
                 "contabil": 626.38,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 626.38
               },
               {
                 "cfop": "5-411",
-                "descricao": "CFOP 5411",
+                "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 1,
                 "contabil": 428.58,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 428.58
               },
               {
                 "cfop": "5-949",
-                "descricao": "CFOP 5949",
+                "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 7,
                 "contabil": 374.51,
                 "fiscal": 0.0,
-                "imposto": 0.0
+                "imposto": 0.0,
+                "total": 374.51
               },
               {
                 "cfop": "5-202",
-                "descricao": "Devolucao de compra",
+                "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadorias efetuada pelo MEI com exceção das classificadas no código 5.503",
+                "finalidade": "Devol. Compra",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 1,
                 "contabil": 289.88,
                 "fiscal": 289.22,
-                "imposto": 57.98
+                "imposto": 57.98,
+                "total": 289.88
               }
             ],
             "cfopSaidasTotal": 431687.11,
@@ -13815,7 +14351,7 @@ const DASHBOARD_DATA = {
             "cfopEntradas": [
               {
                 "cfop": "2-102",
-                "descricao": "Compra para comercializacao (interest.)",
+                "descricao": "Compra para comercialização",
                 "qtd": 131,
                 "contabil": 598343.3500000001,
                 "fiscal": 598343.3500000001,
@@ -13913,7 +14449,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-102",
-                "descricao": "Compra para comercializacao",
+                "descricao": "Compra para comercialização",
                 "qtd": 40,
                 "contabil": 25839.620000000006,
                 "fiscal": 25839.620000000006,
@@ -14011,7 +14547,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-403",
-                "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+                "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
                 "qtd": 9,
                 "contabil": 7362.82,
                 "fiscal": 7362.82,
@@ -14074,7 +14610,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-202",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
                 "qtd": 12,
                 "contabil": 7259.120000000001,
                 "fiscal": 7259.120000000001,
@@ -14151,7 +14687,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-910",
-                "descricao": "Entrada de bonificacao, doacao ou brinde",
+                "descricao": "Entrada de bonificação, doação ou brinde",
                 "qtd": 9,
                 "contabil": 6929.91,
                 "fiscal": 6929.91,
@@ -14200,7 +14736,7 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-403",
-                "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
+                "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
                 "qtd": 6,
                 "contabil": 6202.31,
                 "fiscal": 6202.31,
@@ -14247,9 +14783,9 @@ const DASHBOARD_DATA = {
                 "contabil": 2136.68,
                 "fiscal": 2136.68,
                 "imposto": 0,
-                "finalidade": "Revenda",
+                "finalidade": "Retorno Conserto",
                 "creditoPisCofins": false,
-                "debitaIcms": true,
+                "debitaIcms": false,
                 "total": 2136.68,
                 "fornecedores": [
                   {
@@ -14270,14 +14806,14 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-923",
-                "descricao": "Entrada de mercadoria ou bem recebido para deposito em deposito fechado",
+                "descricao": "Entrada de mercadoria recebida do vendedor remetente, em venda à ordem",
                 "qtd": 1,
                 "contabil": 1778.0,
                 "fiscal": 1778.0,
                 "imposto": 0,
-                "finalidade": "Revenda",
+                "finalidade": "Outras Entradas",
                 "creditoPisCofins": false,
-                "debitaIcms": true,
+                "debitaIcms": false,
                 "total": 1778.0,
                 "fornecedores": [
                   {
@@ -14291,12 +14827,12 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-411",
-                "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros em operacao ",
+                "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação ",
                 "qtd": 1,
                 "contabil": 432.13,
                 "fiscal": 432.13,
                 "imposto": 0,
-                "finalidade": "Devol. Compra",
+                "finalidade": "Devolução Venda",
                 "creditoPisCofins": false,
                 "debitaIcms": false,
                 "total": 432.13,
@@ -14312,12 +14848,12 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-949",
-                "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
+                "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
                 "qtd": 1,
                 "contabil": 221.94,
                 "fiscal": 221.94,
                 "imposto": 0,
-                "finalidade": "Revenda c/ ST",
+                "finalidade": "Outras Entradas",
                 "creditoPisCofins": false,
                 "debitaIcms": false,
                 "total": 221.94,
@@ -14333,12 +14869,12 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "2-933",
-                "descricao": "Aquisicao de servico tributado pelo ISSQN",
+                "descricao": "Aquisição de serviço sujeito ao ISSQN",
                 "qtd": 1,
                 "contabil": 150.0,
                 "fiscal": 150.0,
                 "imposto": 0,
-                "finalidade": "Revenda",
+                "finalidade": "Serviço ISSQN",
                 "creditoPisCofins": false,
                 "debitaIcms": false,
                 "total": 150.0,
@@ -14354,12 +14890,12 @@ const DASHBOARD_DATA = {
               },
               {
                 "cfop": "1-933",
-                "descricao": "Aquisicao de servico tributado pelo ISSQN",
+                "descricao": "Aquisição de serviço sujeito ao ISSQN",
                 "qtd": 2,
                 "contabil": 26.67,
                 "fiscal": 26.67,
                 "imposto": 0,
-                "finalidade": "Revenda",
+                "finalidade": "Serviço ISSQN",
                 "creditoPisCofins": false,
                 "debitaIcms": false,
                 "total": 26.67,
@@ -14384,67 +14920,99 @@ const DASHBOARD_DATA = {
             "cfopSaidas": [
               {
                 "cfop": "5-102",
-                "descricao": "Venda de mercadoria",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 383,
                 "contabil": 609401.0900000001,
                 "fiscal": 609401.0900000001,
-                "imposto": 0
+                "imposto": 0,
+                "total": 609401.0900000001
               },
               {
                 "cfop": "6-102",
-                "descricao": "Venda interestadual",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+                "finalidade": "Venda",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 9,
                 "contabil": 30834.230000000003,
                 "fiscal": 30834.230000000003,
-                "imposto": 0
+                "imposto": 0,
+                "total": 30834.230000000003
               },
               {
                 "cfop": "5-405",
-                "descricao": "Venda c/ ST retido",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 37,
                 "contabil": 15209.69,
                 "fiscal": 15209.69,
-                "imposto": 0
+                "imposto": 0,
+                "total": 15209.69
               },
               {
                 "cfop": "5-403",
-                "descricao": "Venda ST",
+                "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+                "finalidade": "Venda c/ ST",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 32,
                 "contabil": 4763.700000000001,
                 "fiscal": 4763.700000000001,
-                "imposto": 0
+                "imposto": 0,
+                "total": 4763.700000000001
               },
               {
                 "cfop": "5-949",
-                "descricao": "CFOP 5949",
+                "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 4,
                 "contabil": 458.37,
                 "fiscal": 458.37,
-                "imposto": 0
+                "imposto": 0,
+                "total": 458.37
               },
               {
                 "cfop": "6-202",
-                "descricao": "Devolucao interestadual",
+                "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas no código 6.503",
+                "finalidade": "Devol. Compra",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 3,
                 "contabil": 421.89000000000004,
                 "fiscal": 421.89000000000004,
-                "imposto": 0
+                "imposto": 0,
+                "total": 421.89000000000004
               },
               {
                 "cfop": "5-910",
-                "descricao": "CFOP 5910",
+                "descricao": "Remessa em bonificação, doação ou brinde",
+                "finalidade": "Bonificação",
+                "creditoPisCofins": false,
+                "debitaIcms": true,
                 "qtd": 2,
                 "contabil": 134.99,
                 "fiscal": 134.99,
-                "imposto": 0
+                "imposto": 0,
+                "total": 134.99
               },
               {
                 "cfop": "6-949",
-                "descricao": "Outras saidas",
+                "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+                "finalidade": "Outras Saídas",
+                "creditoPisCofins": false,
+                "debitaIcms": false,
                 "qtd": 1,
                 "contabil": 93.04,
                 "fiscal": 93.04,
-                "imposto": 0
+                "imposto": 0,
+                "total": 93.04
               }
             ],
             "cfopSaidasTotal": 661317.0,
@@ -22425,81 +22993,27 @@ const DASHBOARD_DATA = {
     "_proxy": true
   },
   "cfopFinalidade": {
-    "1-101": {
-      "descricao": "Compra para industrializacao",
-      "finalidade": "Industrializacao",
-      "creditoPisCofins": true,
-      "debitaIcms": true
-    },
-    "2-101": {
-      "descricao": "Compra para industrializacao (interest.)",
-      "finalidade": "Industrializacao",
-      "creditoPisCofins": true,
-      "debitaIcms": true
-    },
     "1-102": {
-      "descricao": "Compra para comercializacao",
+      "descricao": "Compra para comercialização",
       "finalidade": "Revenda",
       "creditoPisCofins": true,
-      "debitaIcms": true
-    },
-    "2-102": {
-      "descricao": "Compra para comercializacao (interest.)",
-      "finalidade": "Revenda",
-      "creditoPisCofins": true,
-      "debitaIcms": true
-    },
-    "3-102": {
-      "descricao": "Compra para comercializacao (Importacao)",
-      "finalidade": "Outras Entradas",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-201": {
-      "descricao": "Devolucao de venda de producao do estabelecimento",
-      "finalidade": "Devolução Venda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-201": {
-      "descricao": "Devolucao de venda de producao do estabelecimento",
-      "finalidade": "Devolução Venda",
-      "creditoPisCofins": false,
       "debitaIcms": true
     },
     "1-202": {
-      "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
+      "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
       "finalidade": "Devolução Venda",
       "creditoPisCofins": false,
       "debitaIcms": true
     },
-    "2-202": {
-      "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros",
-      "finalidade": "Devolução Venda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-410": {
-      "descricao": "Devolucao de venda de producao do estabelecimento em operacao com produto sujeit",
-      "finalidade": "Devol. Compra",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "2-410": {
-      "descricao": "Devolucao de venda de producao do estabelecimento em operacao com produto sujeit",
-      "finalidade": "Devol. Compra",
-      "creditoPisCofins": false,
+    "1-403": {
+      "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
+      "finalidade": "Revenda c/ ST",
+      "creditoPisCofins": true,
       "debitaIcms": false
     },
     "1-411": {
-      "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros em operacao ",
-      "finalidade": "Devol. Compra",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "2-411": {
-      "descricao": "Devolucao de venda de mercadoria adquirida ou recebida de terceiros em operacao ",
-      "finalidade": "Devol. Compra",
+      "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação ",
+      "finalidade": "Devolução Venda",
       "creditoPisCofins": false,
       "debitaIcms": false
     },
@@ -22509,537 +23023,236 @@ const DASHBOARD_DATA = {
       "creditoPisCofins": false,
       "debitaIcms": true
     },
+    "1-652": {
+      "descricao": "Compra de combustíveis ou lubrificantes para comercialização",
+      "finalidade": "Revenda",
+      "creditoPisCofins": true,
+      "debitaIcms": true
+    },
+    "1-910": {
+      "descricao": "Entrada de bonificação, doação ou brinde",
+      "finalidade": "Bonificação",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "1-912": {
+      "descricao": "Entrada de mercadoria ou bem recebido para demonstração ou mostruário",
+      "finalidade": "Outras Entradas",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "1-933": {
+      "descricao": "Aquisição de serviço sujeito ao ISSQN",
+      "finalidade": "Serviço ISSQN",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "2-102": {
+      "descricao": "Compra para comercialização",
+      "finalidade": "Revenda",
+      "creditoPisCofins": true,
+      "debitaIcms": true
+    },
+    "2-202": {
+      "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer",
+      "finalidade": "Devolução Venda",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "2-353": {
+      "descricao": "Aquisição de serviço de transporte por estabelecimento comercial",
+      "finalidade": "Serviço Transp.",
+      "creditoPisCofins": true,
+      "debitaIcms": false
+    },
+    "2-403": {
+      "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de subs",
+      "finalidade": "Revenda c/ ST",
+      "creditoPisCofins": true,
+      "debitaIcms": false
+    },
     "2-556": {
       "descricao": "Compra de material para uso ou consumo",
       "finalidade": "Uso e Consumo",
       "creditoPisCofins": false,
       "debitaIcms": true
     },
-    "1-407": {
-      "descricao": "Compra de mercadoria para uso ou consumo cuja mercadoria esta sujeita ao regime ",
-      "finalidade": "Revenda c/ ST",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "2-407": {
-      "descricao": "Compra de mercadoria para uso ou consumo cuja mercadoria esta sujeita ao regime ",
-      "finalidade": "Revenda c/ ST",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "1-551": {
-      "descricao": "Compra de bem para o ativo imobilizado",
-      "finalidade": "Ativo Imobilizado",
-      "creditoPisCofins": true,
-      "debitaIcms": true
-    },
-    "2-551": {
-      "descricao": "Compra de bem para o ativo imobilizado",
-      "finalidade": "Ativo Imobilizado",
-      "creditoPisCofins": true,
-      "debitaIcms": true
-    },
-    "1-401": {
-      "descricao": "Compra para industrializacao em operacao com mercadoria sujeita ao regime de ST",
-      "finalidade": "Industrializacao c/ ST",
-      "creditoPisCofins": true,
-      "debitaIcms": false
-    },
-    "2-401": {
-      "descricao": "Compra para industrializacao em operacao com mercadoria sujeita ao regime de ST",
-      "finalidade": "Industrializacao c/ ST",
-      "creditoPisCofins": true,
-      "debitaIcms": false
-    },
-    "1-403": {
-      "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
-      "finalidade": "Revenda c/ ST",
-      "creditoPisCofins": true,
-      "debitaIcms": false
-    },
-    "2-403": {
-      "descricao": "Compra para comercializacao em operacao com mercadoria sujeita ao regime de ST",
-      "finalidade": "Revenda c/ ST",
-      "creditoPisCofins": true,
-      "debitaIcms": false
-    },
-    "2-352": {
-      "descricao": "Compra para comercializacao",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-352": {
-      "descricao": "Compra para comercializacao",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-353": {
-      "descricao": "Compra para comercializacao",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-353": {
-      "descricao": "Compra para comercializacao",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-910": {
-      "descricao": "Entrada de bonificacao, doacao ou brinde",
-      "finalidade": "Bonificação",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
     "2-910": {
-      "descricao": "Entrada de bonificacao, doacao ou brinde",
-      "finalidade": "Bonificação",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-916": {
-      "descricao": "Retorno de mercadoria ou bem remetido para conserto ou reparo",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-916": {
-      "descricao": "Retorno de mercadoria ou bem remetido para conserto ou reparo",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-923": {
-      "descricao": "Entrada de mercadoria ou bem recebido para deposito em deposito fechado",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-923": {
-      "descricao": "Entrada de mercadoria ou bem recebido para deposito em deposito fechado",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-933": {
-      "descricao": "Aquisicao de servico tributado pelo ISSQN",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "2-933": {
-      "descricao": "Aquisicao de servico tributado pelo ISSQN",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "1-949": {
-      "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
-      "finalidade": "Revenda c/ ST",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "2-949": {
-      "descricao": "Outra entrada de mercadoria ou prestacao de servico nao especificado",
-      "finalidade": "Revenda c/ ST",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "1-152": {
-      "descricao": "Transferencia de mercadoria adquirida ou recebida de terceiros",
-      "finalidade": "Transferência",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-152": {
-      "descricao": "Transferencia de mercadoria adquirida ou recebida de terceiros",
-      "finalidade": "Transferência",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-911": {
-      "descricao": "Remessa em bonificacao, doacao ou brinde",
+      "descricao": "Entrada de bonificação, doação ou brinde",
       "finalidade": "Bonificação",
       "creditoPisCofins": false,
       "debitaIcms": true
     },
     "2-911": {
-      "descricao": "Remessa em bonificacao, doacao ou brinde",
-      "finalidade": "Bonificação",
+      "descricao": "Entrada de amostra grátis",
+      "finalidade": "Outras Entradas",
       "creditoPisCofins": false,
-      "debitaIcms": true
+      "debitaIcms": false
     },
-    "1-912": {
-      "descricao": "Importacao de mercadoria recebida em consignacao mercantil",
-      "finalidade": "Revenda",
+    "2-916": {
+      "descricao": "Retorno de mercadoria ou bem remetido para conserto ou reparo",
+      "finalidade": "Retorno Conserto",
       "creditoPisCofins": false,
-      "debitaIcms": true
+      "debitaIcms": false
     },
-    "2-912": {
-      "descricao": "Importacao de mercadoria recebida em consignacao mercantil",
-      "finalidade": "Revenda",
+    "2-923": {
+      "descricao": "Entrada de mercadoria recebida do vendedor remetente, em venda à ordem",
+      "finalidade": "Outras Entradas",
       "creditoPisCofins": false,
-      "debitaIcms": true
+      "debitaIcms": false
     },
-    "1-652": {
-      "descricao": "Compra de combustivel ou lubrificante para comercializacao",
-      "finalidade": "Revenda",
+    "2-933": {
+      "descricao": "Aquisição de serviço sujeito ao ISSQN",
+      "finalidade": "Serviço ISSQN",
       "creditoPisCofins": false,
-      "debitaIcms": true
+      "debitaIcms": false
     },
-    "2-652": {
-      "descricao": "Compra de combustivel ou lubrificante para comercializacao",
-      "finalidade": "Revenda",
+    "2-949": {
+      "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
+      "finalidade": "Outras Entradas",
       "creditoPisCofins": false,
-      "debitaIcms": true
+      "debitaIcms": false
     },
-    "5-102": {
-      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros",
+    "5-005": {
+      "descricao": "Operacao fiscal 5-005",
       "finalidade": "Venda",
       "creditoPisCofins": false,
       "debitaIcms": true
     },
-    "6-102": {
-      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros",
+    "5-102": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mer",
+      "finalidade": "Venda",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "5-117": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, originada de encomenda p",
       "finalidade": "Venda",
       "creditoPisCofins": false,
       "debitaIcms": true
     },
     "5-202": {
-      "descricao": "Devolucao de compra para comercializacao",
+      "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadorias e",
       "finalidade": "Devol. Compra",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "6-202": {
-      "descricao": "Devolucao de compra para comercializacao",
-      "finalidade": "Devol. Compra",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-113": {
-      "descricao": "Operacao fiscal 1-113",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-117": {
-      "descricao": "Operacao fiscal 1-117",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-118": {
-      "descricao": "Operacao fiscal 1-118",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-121": {
-      "descricao": "Operacao fiscal 1-121",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-251": {
-      "descricao": "Operacao fiscal 1-251",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-113": {
-      "descricao": "Operacao fiscal 2-113",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-117": {
-      "descricao": "Operacao fiscal 2-117",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-118": {
-      "descricao": "Operacao fiscal 2-118",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-121": {
-      "descricao": "Operacao fiscal 2-121",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-251": {
-      "descricao": "Operacao fiscal 2-251",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "3-251": {
-      "descricao": "Operacao fiscal 3-251",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "3-652": {
-      "descricao": "Operacao fiscal 3-652",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-111": {
-      "descricao": "Operacao fiscal 1-111",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-116": {
-      "descricao": "Operacao fiscal 1-116",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-120": {
-      "descricao": "Operacao fiscal 1-120",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-122": {
-      "descricao": "Operacao fiscal 1-122",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-126": {
-      "descricao": "Operacao fiscal 1-126",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-128": {
-      "descricao": "Operacao fiscal 1-128",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-651": {
-      "descricao": "Operacao fiscal 1-651",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-653": {
-      "descricao": "Operacao fiscal 1-653",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-111": {
-      "descricao": "Operacao fiscal 2-111",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-116": {
-      "descricao": "Operacao fiscal 2-116",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-120": {
-      "descricao": "Operacao fiscal 2-120",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-122": {
-      "descricao": "Operacao fiscal 2-122",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-126": {
-      "descricao": "Operacao fiscal 2-126",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-128": {
-      "descricao": "Operacao fiscal 2-128",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-651": {
-      "descricao": "Operacao fiscal 2-651",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-653": {
-      "descricao": "Operacao fiscal 2-653",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "3-101": {
-      "descricao": "Operacao fiscal 3-101",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "3-126": {
-      "descricao": "Operacao fiscal 3-126",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "3-128": {
-      "descricao": "Operacao fiscal 3-128",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "3-556": {
-      "descricao": "Operacao fiscal 3-556",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "3-651": {
-      "descricao": "Operacao fiscal 3-651",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "3-653": {
-      "descricao": "Operacao fiscal 3-653",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-124": {
-      "descricao": "Operacao fiscal 1-124",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-125": {
-      "descricao": "Operacao fiscal 1-125",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-124": {
-      "descricao": "Operacao fiscal 2-124",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-125": {
-      "descricao": "Operacao fiscal 2-125",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-203": {
-      "descricao": "Operacao fiscal 1-203",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-204": {
-      "descricao": "Operacao fiscal 1-204",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-660": {
-      "descricao": "Operacao fiscal 1-660",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-661": {
-      "descricao": "Operacao fiscal 1-661",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-662": {
-      "descricao": "Operacao fiscal 1-662",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-660": {
-      "descricao": "Operacao fiscal 2-660",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-661": {
-      "descricao": "Operacao fiscal 2-661",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-662": {
-      "descricao": "Operacao fiscal 2-662",
-      "finalidade": "Revenda",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "5-117": {
-      "descricao": "Operacao fiscal 5-117",
-      "finalidade": "Venda",
       "creditoPisCofins": false,
       "debitaIcms": true
     },
     "5-403": {
-      "descricao": "Operacao fiscal 5-403",
-      "finalidade": "Venda",
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadori",
+      "finalidade": "Venda c/ ST",
       "creditoPisCofins": false,
-      "debitaIcms": true
+      "debitaIcms": false
     },
     "5-405": {
-      "descricao": "Operacao fiscal 5-405",
-      "finalidade": "Venda",
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadori",
+      "finalidade": "Venda c/ ST",
       "creditoPisCofins": false,
-      "debitaIcms": true
+      "debitaIcms": false
     },
     "5-411": {
-      "descricao": "Operacao fiscal 5-411",
+      "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao r",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "5-910": {
+      "descricao": "Remessa em bonificação, doação ou brinde",
+      "finalidade": "Bonificação",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "5-915": {
+      "descricao": "Remessa de mercadoria ou bem para conserto ou reparo",
+      "finalidade": "Outras Saídas",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "5-922": {
+      "descricao": "Lançamento efetuado a título de simples faturamento decorrente de venda para ent",
+      "finalidade": "Outras Saídas",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "5-949": {
+      "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+      "finalidade": "Outras Saídas",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "6-102": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mer",
       "finalidade": "Venda",
       "creditoPisCofins": false,
       "debitaIcms": true
     },
-    "6-949": {
-      "descricao": "Operacao fiscal 6-949",
+    "6-108": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, destinada a não contribu",
       "finalidade": "Venda",
       "creditoPisCofins": false,
       "debitaIcms": true
+    },
+    "6-202": {
+      "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadoria ef",
+      "finalidade": "Devol. Compra",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "6-403": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadori",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "6-404": {
+      "descricao": "Venda de mercadoria sujeita ao regime de substituição tributária, cujo imposto j",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "6-411": {
+      "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao r",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "6-915": {
+      "descricao": "Remessa de mercadoria ou bem para conserto ou reparo",
+      "finalidade": "Outras Saídas",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "6-949": {
+      "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+      "finalidade": "Outras Saídas",
+      "creditoPisCofins": false,
+      "debitaIcms": false
     }
   },
   "finalidadeCores": {
     "Industrializacao": "#22a329",
+    "Industrializacao terceiros": "#10b981",
+    "Industrializacao c/ ST": "#06b6d4",
     "Revenda": "#22a329",
     "Revenda c/ ST": "#10b981",
-    "Industrializacao c/ ST": "#10b981",
     "Uso e Consumo": "#10b981",
+    "Uso e Consumo c/ ST": "#06b6d4",
     "Ativo Imobilizado": "#f97316",
     "Outras Entradas": "#64748b",
     "Devolução Venda": "#ef4444",
     "Devol. Compra": "#f59e0b",
     "Transferência": "#8b5cf6",
     "Serviço Transp.": "#06b6d4",
+    "Serviço ISSQN": "#64748b",
     "Bonificação": "#ec4899",
-    "Venda": "#22a329"
+    "Venda": "#22a329",
+    "Venda c/ ST": "#10b981",
+    "Outras Saídas": "#64748b",
+    "Exportação": "#06b6d4",
+    "Energia": "#f59e0b",
+    "Servico": "#f97316",
+    "Combustivel": "#ef4444",
+    "Retorno Industrializacao": "#8b5cf6",
+    "Retorno Conserto": "#ef4444"
   },
   "fontes": {
     "fiscal": "Apuração 5005 Contábil e Fiscal Baifer.xlsx",
@@ -23618,10 +23831,14 @@ const DASHBOARD_DATA = {
   }
 
   function cfopFinalidadeFromItem(c) {
+    const fromMap = CFOP_FINALIDADE[c.cfop];
+    if (fromMap && fromMap.finalidade) return fromMap.finalidade;
     return c.finalidade || getCfopInfo(c.cfop).finalidade;
   }
 
   function cfopDescricaoFromItem(c) {
+    const fromMap = CFOP_FINALIDADE[c.cfop];
+    if (fromMap && fromMap.descricao) return fromMap.descricao;
     return c.descricao || getCfopInfo(c.cfop).descricao;
   }
 
@@ -25027,17 +25244,28 @@ const DASHBOARD_DATA = {
 
 </script>
 <script>
-/* Relatório Gerencial PDF — BAIFER */
+/* Relatório Gerencial PDF — BAIFER (descrições CFOP via mapa oficial) */
 function exportRelatorioGerencial() {
   if (typeof DASHBOARD_DATA === 'undefined' || typeof jspdf === 'undefined') {
     alert('Dados ou jsPDF não carregados.');
     return;
   }
   const D = DASHBOARD_DATA;
+  const catalog = D.cfopFinalidade || {};
   const mm = D.competencia.split('-')[1];
   const pack = D.fiscalPorMes.porMes[mm] || D.fiscalPorMes.porMes[D.meta.meses[D.meta.meses.length - 1]];
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  function cfopDesc(c) {
+    const fromMap = catalog[c.cfop];
+    return (fromMap && fromMap.descricao) || c.descricao || ('CFOP ' + c.cfop);
+  }
+
+  function cfopFin(c) {
+    const fromMap = catalog[c.cfop];
+    return (fromMap && fromMap.finalidade) || c.finalidade || '—';
+  }
 
   doc.setFontSize(18);
   doc.text('Relatório Gerencial — BAIFER', 14, 20);
@@ -25061,18 +25289,41 @@ function exportRelatorioGerencial() {
   const impBody = pack.impostosTabela.map((r) => [r.tributo, 'R$ ' + r.recolher.toLocaleString('pt-BR', { minimumFractionDigits: 2 }), r.pctRb + '%']);
   doc.autoTable({ startY: doc.lastAutoTable.finalY + 16, head: [['Tributo', 'A Recolher', '% RB']], body: impBody, theme: 'striped', styles: { fontSize: 9 } });
 
-  if (pack.cfopEntradas.length) {
+  if (pack.cfopEntradas && pack.cfopEntradas.length) {
     doc.addPage();
+    doc.setFontSize(13);
     doc.text('Top CFOPs — Entradas', 14, 20);
     doc.autoTable({
       startY: 24,
+      head: [['CFOP', 'Descrição', 'Finalidade', 'Valor']],
+      body: pack.cfopEntradas.slice(0, 15).map((c) => [
+        c.cfop,
+        cfopDesc(c).slice(0, 48),
+        cfopFin(c).slice(0, 22),
+        'R$ ' + (c.total || c.contabil || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+      ]),
+      styles: { fontSize: 7 },
+      columnStyles: { 1: { cellWidth: 70 }, 2: { cellWidth: 35 } },
+    });
+  }
+
+  if (pack.cfopSaidas && pack.cfopSaidas.length) {
+    doc.addPage();
+    doc.setFontSize(13);
+    doc.text('Top CFOPs — Saídas', 14, 20);
+    doc.autoTable({
+      startY: 24,
       head: [['CFOP', 'Descrição', 'Valor']],
-      body: pack.cfopEntradas.slice(0, 15).map((c) => [c.cfop, (c.descricao || '').slice(0, 40), 'R$ ' + c.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })]),
+      body: pack.cfopSaidas.slice(0, 15).map((c) => [
+        c.cfop,
+        cfopDesc(c).slice(0, 55),
+        'R$ ' + (c.total || c.contabil || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+      ]),
       styles: { fontSize: 8 },
     });
   }
 
-  if (pack.sped.clientes && pack.sped.clientes.length) {
+  if (pack.sped && pack.sped.clientes && pack.sped.clientes.length) {
     doc.text('Top Clientes', 14, doc.lastAutoTable.finalY + 12);
     doc.autoTable({
       startY: doc.lastAutoTable.finalY + 16,

@@ -37,7 +37,7 @@ const DASHBOARDS = [
   },
   {
     id: "egaplast",
-    html: path.join(dashRoot, "egaplast", "EGAPLAST.html"),
+    html: path.join(workspaceRoot, "egaplast att com cfop", "EGAPLAST.html"),
     outputs: ["egaplast.ejs"],
   },
   {
