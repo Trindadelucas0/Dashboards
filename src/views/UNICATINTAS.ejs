@@ -1215,6 +1215,12 @@
     </div>
     <div class="modal-body">
       <div class="search-box">
+        <label for="supplierReportPeriod" style="display:block;font-size:12px;font-weight:600;margin-bottom:6px;">
+          Competência do relatório
+        </label>
+        <select id="supplierReportPeriod" class="period-sel" style="width:100%;" onchange="onSupplierReportPeriodChange()"></select>
+      </div>
+      <div class="search-box">
         <input type="text" id="supplierSearch" placeholder="Buscar fornecedor..." oninput="filterSuppliers(this.value)">
       </div>
       <div class="supplier-actions">
@@ -8191,8 +8197,48 @@ const DASHBOARD_DATA = {
     return (f.cnpj && String(f.cnpj).trim()) || f.nome;
   }
 
+  function getSupplierReportPeriodKey() {
+    const sel = document.getElementById('supplierReportPeriod');
+    return sel?.value || resolveDefaultSupplierReportPeriod();
+  }
+
+  function getPackForSupplierReport(periodKey) {
+    if (periodKey === 'total') return aggregatePack(MES_KEYS);
+    const pack = D.fiscalPorMes[periodKey];
+    return pack ? { ...pack, monthKeys: [periodKey] } : null;
+  }
+
+  function periodLabelForReport(periodKey) {
+    if (periodKey === 'total') return D.meta.periodoTotal.label;
+    return (MONTH_LABELS[periodKey] || periodKey) + ' / 2026';
+  }
+
+  function resolveDefaultSupplierReportPeriod() {
+    if (state.fiscalMode === 'month' && D.fiscalPorMes[state.month]?.hasMovimentacao) {
+      return state.month;
+    }
+    return getLastMovementMonth();
+  }
+
+  function hydrateSupplierReportPeriodSelect() {
+    const sel = document.getElementById('supplierReportPeriod');
+    if (!sel) return;
+    const mov = monthsWithMovement();
+    let html = '';
+    mov.forEach((m) => {
+      html += '<option value="' + m + '">' + MONTH_LABELS[m] + ' / 2026</option>';
+    });
+    if (mov.length > 1) {
+      html += '<option value="total">' + D.meta.periodoTotal.label + '</option>';
+    }
+    sel.innerHTML = html;
+    sel.value = resolveDefaultSupplierReportPeriod();
+  }
+
   function getCfopDadosForPrint() {
-    return enrichMovementPack(getPack()).cfopDados || [];
+    const pack = getPackForSupplierReport(getSupplierReportPeriodKey());
+    if (!pack) return [];
+    return enrichMovementPack(pack).cfopDados || [];
   }
 
   function collectUniqueSuppliers() {
@@ -8283,7 +8329,7 @@ const DASHBOARD_DATA = {
     return { html, subtotal };
   }
 
-  window.openSupplierModal = function () {
+  function renderSupplierList() {
     const list = document.getElementById('supplierList');
     if (!list) return;
     const suppliers = collectUniqueSuppliers();
@@ -8294,11 +8340,26 @@ const DASHBOARD_DATA = {
         '<span class="supplier-info"><strong>' + escHtml(s.nome) + '</strong>' +
         '<small>' + escHtml(s.cnpj) + ' · ' + escHtml(s.uf) + '</small></span></label>';
     }).join('');
+  }
+
+  window.openSupplierModal = function () {
+    const list = document.getElementById('supplierList');
+    if (!list) return;
+    hydrateSupplierReportPeriodSelect();
+    renderSupplierList();
     const search = document.getElementById('supplierSearch');
     if (search) search.value = '';
     const demais = document.getElementById('includeDemaisFornecedores');
     if (demais) demais.checked = true;
     document.getElementById('supplierModal').style.display = 'flex';
+  };
+  window.onSupplierReportPeriodChange = function () {
+    renderSupplierList();
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+    document.querySelectorAll('#supplierList .supplier-item input[type="checkbox"]').forEach((cb) => {
+      cb.checked = false;
+    });
   };
   window.closeSupplierModal = function () {
     document.getElementById('supplierModal').style.display = 'none';
@@ -8326,13 +8387,18 @@ const DASHBOARD_DATA = {
       return;
     }
 
+    const periodKey = getSupplierReportPeriodKey();
     const cfopDados = getCfopDadosForPrint();
+    if (!cfopDados.length) {
+      alert('Sem entradas para a competência selecionada.');
+      return;
+    }
     const selectedKeys = new Set(selected.map((cb) => cb.dataset.key || cb.dataset.nome || cb.value));
     let totalGeral = 0;
     let html = '<div style="font-family:Inter,sans-serif;padding:24px;color:#1a1a2e;background:#fff;">';
     html += '<h1 style="font-size:18px;margin-bottom:4px;">Relatório por Fornecedor</h1>';
     html += '<p style="font-size:12px;color:#555;margin-bottom:24px;">' +
-      escHtml(getCompanyName()) + ' — ' + escHtml(periodFull()) + ' — ' +
+      escHtml(getCompanyName()) + ' — Competência ' + escHtml(periodLabelForReport(periodKey)) + ' — ' +
       new Date().toLocaleDateString('pt-BR') + '</p>';
 
     selected.forEach((cb) => {
