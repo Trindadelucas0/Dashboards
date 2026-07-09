@@ -1,1 +1,37 @@
-[]
+[
+  {
+    "username": "unicatintas",
+    "password": "Unica@2026",
+    "dashboards": ["unicatintas"]
+  },
+  {
+    "username": "lojamaquinas",
+    "password": "Loja@2026",
+    "dashboards": ["loja-maquinas"]
+  },
+  {
+    "username": "jpg",
+    "password": "Jpg@2026",
+    "dashboards": ["jpg"]
+  },
+  {
+    "username": "baifer",
+    "password": "Baifer@2026",
+    "dashboards": ["baifer"]
+  },
+  {
+    "username": "schumacher",
+    "password": "Schu@2026",
+    "dashboards": ["schumacher"]
+  },
+  {
+    "username": "egaplast",
+    "password": "Ega@2026",
+    "dashboards": ["egaplast"]
+  },
+  {
+    "username": "dulanches",
+    "password": "Du@2026",
+    "dashboards": ["du-lanche"]
+  }
+]

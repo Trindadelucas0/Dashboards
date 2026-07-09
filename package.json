@@ -1,10 +1,15 @@
 {
   "scripts": {
-    "build:dashboards": "node scripts/build-dashboards-ejs.js"
+    "start": "node server.js",
+    "build:dashboards": "node scripts/build-dashboards-ejs.js",
+    "report:access-pdf": "node scripts/generate-access-report-pdf.js"
   },
   "dependencies": {
     "ejs": "^6.0.1",
     "express": "^5.2.1",
     "express-session": "^1.19.0"
+  },
+  "devDependencies": {
+    "pdfkit": "^0.19.1"
   }
 }
