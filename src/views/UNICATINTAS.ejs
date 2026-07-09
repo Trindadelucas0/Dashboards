@@ -435,9 +435,7 @@
       table td { color:#333 !important; border-color:#ddd !important; }
       canvas { max-width:100% !important; }
     }
-  
-    .btn-back-hub { display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
-
+  .btn-back-hub { display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
   </style>
 </head>
 <body>
@@ -477,6 +475,12 @@
         <div class="nav-ico"><i class="fas fa-calculator"></i></div><span class="nav-label">Memória de Cálculo</span>
       </div>
       <div class="sec-label">Financeiro</div>
+      <div class="nav-item" id="nav-recebimentos" onclick="showTab('recebimentos')">
+        <div class="nav-ico"><i class="fas fa-money-bill-transfer"></i></div><span class="nav-label">Recebimentos/Pagamentos</span>
+      </div>
+      <div class="nav-item" id="nav-balancete" onclick="showTab('balancete')">
+        <div class="nav-ico"><i class="fas fa-scale-balanced"></i></div><span class="nav-label">Balancete</span>
+      </div>
       <div class="nav-item" id="nav-dre" onclick="showTab('dre')">
         <div class="nav-ico"><i class="fas fa-chart-line"></i></div><span class="nav-label">DRE</span>
       </div>
@@ -740,7 +744,7 @@
           </div>
           <div class="tbl-scroll">
             <table>
-              <thead><tr><th>CFOP</th><th class="r">Qtd NF</th><th class="r">Valor (R$)</th><th class="r">%</th></tr></thead>
+              <thead><tr><th>CFOP</th><th>Descrição</th><th class="r">Qtd NF</th><th class="r">Valor (R$)</th><th class="r">%</th></tr></thead>
               <tbody id="cfop-saidas-tbody"></tbody>
             </table>
           </div>
@@ -971,6 +975,110 @@
               </tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      <!-- ===============================================
+           ABA – RECEBIMENTOS / PAGAMENTOS
+           =============================================== -->
+      <section id="tab-recebimentos" class="tab-section">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Recebimentos / Pagamentos <small id="rec-sec-competencia">—</small></div>
+            <div class="sec-sub" id="rec-sec-sub">Visão derivada do ICMS — não substitui extrato bancário</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-recebimentos','Recebimentos_Pagamentos')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-recebimentos','Recebimentos_Pagamentos')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
+        </div>
+        <div class="vd-mes-bar fiscal-mes-bar-head" id="rec-mes-bar" aria-label="Competência"></div>
+        <div class="alert-box" id="rec-alert" style="margin-bottom:16px;">
+          <i class="fas fa-info-circle" style="margin-right:8px;"></i>
+          <strong>Visão derivada do ICMS:</strong> recebimentos estimados = faturamento (saídas); pagamentos estimados = compras (entradas). Não substitui extrato bancário ou contas a pagar/receber.
+        </div>
+        <div class="kpi-grid kpi-grid-3" id="rec-kpi-grid"></div>
+        <div class="chart-card">
+          <div class="chart-ttl">Recebimentos × Pagamentos por Mês</div>
+          <div class="chart-sub" id="rec-chart-sub">—</div>
+          <div class="chart-wrap h260"><canvas id="chartRecebPag"></canvas></div>
+        </div>
+      </section>
+
+      <!-- ===============================================
+           ABA – BALANCETE
+           =============================================== -->
+      <section id="tab-balancete" class="tab-section">
+        <div class="sec-header">
+          <div>
+            <div class="sec-title">Balancete <small id="bal-header-period">—</small></div>
+            <div class="sec-sub">Balancete de verificação — fonte DADOS UNICA / CONTABIL/BALANCETE</div>
+          </div>
+          <div class="export-bar">
+            <button class="btn-export pdf" onclick="exportPDF('tab-balancete','Balancete')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-export xlsx" onclick="exportExcel('tab-balancete','Balancete')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
+          </div>
+        </div>
+        <div class="alert-box" id="bal-alert" style="margin-bottom:16px;"></div>
+        <div class="kpi-grid kpi-grid-4" id="bal-kpi-grid" style="margin-bottom:24px;">
+          <div class="kpi-card c-blue" id="bal-kpi-ativo">
+            <div class="kpi-head"><div class="kpi-ico c-blue"><i class="fas fa-building-columns"></i></div></div>
+            <div class="kpi-val">—</div>
+            <div class="kpi-lbl">Total Ativo</div>
+            <div class="kpi-sub">Conta 1</div>
+          </div>
+          <div class="kpi-card c-purple" id="bal-kpi-passivo">
+            <div class="kpi-head"><div class="kpi-ico c-purple"><i class="fas fa-scale-balanced"></i></div></div>
+            <div class="kpi-val">—</div>
+            <div class="kpi-lbl">Total Passivo</div>
+            <div class="kpi-sub">Conta 2</div>
+          </div>
+          <div class="kpi-card c-green" id="bal-kpi-resultado">
+            <div class="kpi-head"><div class="kpi-ico c-green"><i class="fas fa-chart-line"></i></div></div>
+            <div class="kpi-val">—</div>
+            <div class="kpi-lbl">Resultado do Período</div>
+            <div class="kpi-sub">Conta 3</div>
+          </div>
+          <div class="kpi-card c-cyan" id="bal-kpi-contas">
+            <div class="kpi-head"><div class="kpi-ico c-cyan"><i class="fas fa-list-ol"></i></div></div>
+            <div class="kpi-val">—</div>
+            <div class="kpi-lbl">Contas Analíticas</div>
+            <div class="kpi-sub">Nível 4 ou superior</div>
+          </div>
+        </div>
+        <div class="vd-mes-bar fiscal-mes-bar-head" id="bal-mes-bar" aria-label="Meses do balancete"></div>
+        <div class="table-card">
+          <div class="table-head" style="flex-wrap:wrap;gap:12px;">
+            <div>
+              <div class="ttl">Balancete de Verificação</div>
+              <div class="sub" id="bal-fonte-sub">—</div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <input type="search" id="bal-search" placeholder="Buscar conta ou descrição..." style="background:var(--bg-card-hover);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:var(--radius-sm);font-size:12px;min-width:200px;" autocomplete="off" />
+              <select id="bal-grupo-filter" title="Filtrar grupo" style="background:var(--bg-card-hover);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:var(--radius-sm);font-size:12px;">
+                <option value="">Todos os grupos</option>
+                <option value="ativo">Ativo</option>
+                <option value="passivo">Passivo</option>
+                <option value="resultado">Resultado</option>
+              </select>
+            </div>
+          </div>
+          <div class="tbl-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Conta</th>
+                  <th>Descrição</th>
+                  <th class="r">Saldo Ant.</th>
+                  <th class="r">Débito</th>
+                  <th class="r">Crédito</th>
+                  <th class="r">Saldo Atual</th>
+                </tr>
+              </thead>
+              <tbody id="bal-tbody"></tbody>
+            </table>
+          </div>
+          <div id="bal-row-count" class="td-mute" style="padding:12px;">—</div>
         </div>
       </section>
 
@@ -1293,26 +1401,32 @@ const DASHBOARD_DATA = {
   },
   "cfopFinalidade": {
     "1-102": {
-      "descricao": "Compra p/ comercialização (intraestadual)",
+      "descricao": "Compra para comercialização",
       "finalidade": "Revenda",
       "creditoPisCofins": true,
       "debitaIcms": true
     },
     "1-202": {
-      "descricao": "Devolução de venda p/ comercialização (intraest.)",
+      "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas nos códigos 1.503, 1.504, 1.505 e 1.506",
       "finalidade": "Devolução Venda",
       "creditoPisCofins": false,
-      "debitaIcms": false
+      "debitaIcms": true
     },
     "1-403": {
-      "descricao": "Compra p/ comercialização com ST (intraestadual)",
+      "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
       "finalidade": "Revenda c/ ST",
       "creditoPisCofins": true,
       "debitaIcms": false
     },
+    "1-407": {
+      "descricao": "Compra de mercadoria para uso ou consumo cuja mercadoria está sujeita ao regime de substituição tributária",
+      "finalidade": "Uso e Consumo c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
     "1-411": {
-      "descricao": "Devolução de compra p/ uso e consumo (intraest.)",
-      "finalidade": "Devol. Compra",
+      "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária",
+      "finalidade": "Devolução Venda",
       "creditoPisCofins": false,
       "debitaIcms": false
     },
@@ -1323,107 +1437,199 @@ const DASHBOARD_DATA = {
       "debitaIcms": true
     },
     "1-556": {
-      "descricao": "Compra de material para uso e consumo",
-      "finalidade": "Uso e Consumo",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "1-949": {
-      "descricao": "Outra entrada — não especificada",
-      "finalidade": "Outras Entradas",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "2-102": {
-      "descricao": "Compra p/ comercialização (interestadual)",
-      "finalidade": "Revenda",
-      "creditoPisCofins": true,
-      "debitaIcms": true
-    },
-    "2-202": {
-      "descricao": "Devolução de venda p/ comercialização (interest.)",
-      "finalidade": "Devolução Venda",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "2-353": {
-      "descricao": "Aquisição de serviço de transporte (substituto)",
-      "finalidade": "Serviço Transp.",
-      "creditoPisCofins": true,
-      "debitaIcms": false
-    },
-    "1-933": {
-      "descricao": "Bonificação (intraestadual)",
-      "finalidade": "Bonificação",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "2-933": {
-      "descricao": "Bonificação (interestadual)",
-      "finalidade": "Bonificação",
-      "creditoPisCofins": false,
-      "debitaIcms": false
-    },
-    "2-403": {
-      "descricao": "Compra p/ comercialização com ST (interestadual)",
-      "finalidade": "Revenda c/ ST",
-      "creditoPisCofins": true,
-      "debitaIcms": false
-    },
-    "2-556": {
-      "descricao": "Compra material uso e consumo (interest.)",
+      "descricao": "Compra de material para uso ou consumo",
       "finalidade": "Uso e Consumo",
       "creditoPisCofins": false,
       "debitaIcms": true
     },
     "1-652": {
-      "descricao": "Compra de combustível ou lubrificante",
-      "finalidade": "Uso e Consumo",
-      "creditoPisCofins": false,
+      "descricao": "Compra de combustíveis ou lubrificantes para comercialização",
+      "finalidade": "Revenda",
+      "creditoPisCofins": true,
       "debitaIcms": true
     },
-    "1-407": {
-      "descricao": "Compra p/ uso e consumo (intraestadual)",
-      "finalidade": "Uso e Consumo",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-407": {
-      "descricao": "Compra p/ uso e consumo (interestadual)",
-      "finalidade": "Uso e Consumo",
-      "creditoPisCofins": false,
-      "debitaIcms": true
-    },
-    "2-411": {
-      "descricao": "Devolução de compra p/ uso e consumo (interest.)",
-      "finalidade": "Devol. Compra",
+    "1-933": {
+      "descricao": "Aquisição de serviço sujeito ao ISSQN",
+      "finalidade": "Serviço ISSQN",
       "creditoPisCofins": false,
       "debitaIcms": false
     },
+    "1-949": {
+      "descricao": "Outra entrada de mercadoria ou prestação de serviço não especificada",
+      "finalidade": "Outras Entradas",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "2-102": {
+      "descricao": "Compra para comercialização",
+      "finalidade": "Revenda",
+      "creditoPisCofins": true,
+      "debitaIcms": true
+    },
+    "2-202": {
+      "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros, ou qualquer devolução de mercadoria efetuada pelo MEI com exceção das classificadas nos códigos 2.503, 2.504, 2.505 e 2.506",
+      "finalidade": "Devolução Venda",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "2-353": {
+      "descricao": "Aquisição de serviço de transporte por estabelecimento comercial",
+      "finalidade": "Serviço Transp.",
+      "creditoPisCofins": true,
+      "debitaIcms": false
+    },
+    "2-403": {
+      "descricao": "Compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+      "finalidade": "Revenda c/ ST",
+      "creditoPisCofins": true,
+      "debitaIcms": false
+    },
+    "2-407": {
+      "descricao": "Compra de mercadoria para uso ou consumo cuja mercadoria está sujeita ao regime de substituição tributária",
+      "finalidade": "Uso e Consumo c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "2-411": {
+      "descricao": "Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária",
+      "finalidade": "Devolução Venda",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "2-556": {
+      "descricao": "Compra de material para uso ou consumo",
+      "finalidade": "Uso e Consumo",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
     "2-908": {
-      "descricao": "Entrada mercadoria p/ conta e ordem",
+      "descricao": "Entrada de bem por conta de contrato de comodato ou locação",
       "finalidade": "Outras Entradas",
       "creditoPisCofins": false,
       "debitaIcms": false
     },
     "2-910": {
-      "descricao": "Entrada mercadoria para conserto",
-      "finalidade": "Retorno Conserto",
+      "descricao": "Entrada de bonificação, doação ou brinde",
+      "finalidade": "Bonificação",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "2-933": {
+      "descricao": "Aquisição de serviço sujeito ao ISSQN",
+      "finalidade": "Serviço ISSQN",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "5-102": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 5.501, 5.502, 5.504 e 5.505",
+      "finalidade": "Venda",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "5-202": {
+      "descricao": "Devolução de compra para comercialização, ou qualquer devolução de mercadorias efetuada pelo MEI com exceção das classificadas no código 5.503",
+      "finalidade": "Devol. Compra",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "5-403": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "5-405": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "5-411": {
+      "descricao": "Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "5-910": {
+      "descricao": "Remessa em bonificação, doação ou brinde",
+      "finalidade": "Bonificação",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "5-949": {
+      "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+      "finalidade": "Outras Saídas",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "6-102": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, ou qualquer venda de mercadoria efetuada pelo MEI com exceção das saídas classificadas nos códigos 6.501, 6.502, 6.504 e 6.505",
+      "finalidade": "Venda",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "6-108": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros, destinada a não contribuinte",
+      "finalidade": "Venda",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "6-201": {
+      "descricao": "Devolução de compra para industrialização ou produção rural",
+      "finalidade": "Devol. Compra",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "6-403": {
+      "descricao": "Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "6-404": {
+      "descricao": "Venda de mercadoria sujeita ao regime de substituição tributária, cujo imposto já tenha sido retido anteriormente",
+      "finalidade": "Venda c/ ST",
+      "creditoPisCofins": false,
+      "debitaIcms": false
+    },
+    "6-910": {
+      "descricao": "Remessa em bonificação, doação ou brinde",
+      "finalidade": "Bonificação",
+      "creditoPisCofins": false,
+      "debitaIcms": true
+    },
+    "6-949": {
+      "descricao": "Outra saída de mercadoria ou prestação de serviço não especificada",
+      "finalidade": "Outras Saídas",
       "creditoPisCofins": false,
       "debitaIcms": false
     }
   },
   "finalidadeCores": {
+    "Industrializacao": "#22a329",
+    "Industrializacao terceiros": "#10b981",
+    "Industrializacao c/ ST": "#06b6d4",
     "Revenda": "#22a329",
-    "Revenda c/ ST": "#06b6d4",
-    "Ativo Imobilizado": "#f97316",
+    "Revenda c/ ST": "#10b981",
     "Uso e Consumo": "#10b981",
-    "Devolução Venda": "#8b5cf6",
-    "Devol. Compra": "#8b5cf6",
-    "Serviço Transp.": "#f59e0b",
-    "Retorno Conserto": "#ef4444",
+    "Uso e Consumo c/ ST": "#06b6d4",
+    "Ativo Imobilizado": "#f97316",
     "Outras Entradas": "#64748b",
-    "Bonificação": "#ec4899"
+    "Devolução Venda": "#ef4444",
+    "Devol. Compra": "#f59e0b",
+    "Transferência": "#8b5cf6",
+    "Serviço Transp.": "#06b6d4",
+    "Serviço ISSQN": "#64748b",
+    "Bonificação": "#ec4899",
+    "Venda": "#22a329",
+    "Venda c/ ST": "#10b981",
+    "Outras Saídas": "#64748b",
+    "Exportação": "#06b6d4",
+    "Energia": "#f59e0b",
+    "Servico": "#f97316",
+    "Combustivel": "#ef4444",
+    "Retorno Industrializacao": "#8b5cf6",
+    "Retorno Conserto": "#ef4444"
   },
   "fiscalPorMes": {
     "01": {
@@ -7311,9 +7517,17 @@ const DASHBOARD_DATA = {
       ],
       "receitaFonte": "faturamento_nf"
     }
+  },
+  "balancete": {
+    "meses": [],
+    "mesLabels": [],
+    "porMes": {}
+  },
+  "pendentes": {
+    "recebimentos": false,
+    "balancete": true
   }
 };
-
 </script>
 <script>
 /* ÚNICA Dashboard — período dinâmico + abas (DASHBOARD_DATA) */
@@ -7330,8 +7544,8 @@ const DASHBOARD_DATA = {
   const FINALIDADE_CORES = D.finalidadeCores || {};
   const MES_KEYS = D.meta.meses;
   const MONTH_LABELS = D.meta.monthLabels;
-  const MES_BAR_IDS = ['vg-mes-bar', 'cp-mes-bar', 'fn-mes-bar', 'vd-mes-bar', 'tax-mes-bar', 'mem-mes-bar', 'dre-mes-bar', 'ind-mes-bar'];
-  const MOVEMENT_TABS = new Set(['compras', 'finalidade', 'vendas']);
+  const MES_BAR_IDS = ['vg-mes-bar', 'cp-mes-bar', 'fn-mes-bar', 'vd-mes-bar', 'tax-mes-bar', 'mem-mes-bar', 'rec-mes-bar', 'dre-mes-bar', 'ind-mes-bar'];
+  const MOVEMENT_TABS = new Set(['compras', 'finalidade', 'vendas', 'recebimentos']);
   const DRE_TABS = new Set(['visao-geral', 'dre', 'indicadores', 'impostos']);
 
   let state = { fiscalMode: 'month', month: D.meta.defaultMonth || MES_KEYS[MES_KEYS.length - 1] };
@@ -7454,7 +7668,7 @@ const DASHBOARD_DATA = {
   function updateCompetenciaLabels() {
     const lbl = 'Competência ' + periodFull();
     ['vg-sec-competencia', 'cp-sec-competencia', 'fn-sec-competencia', 'vd-sec-competencia',
-      'tax-sec-competencia', 'mem-sec-competencia', 'dre-sec-competencia', 'ind-sec-competencia'].forEach(id => {
+      'tax-sec-competencia', 'mem-sec-competencia', 'rec-sec-competencia', 'dre-sec-competencia', 'ind-sec-competencia'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.textContent = lbl;
     });
@@ -7702,23 +7916,16 @@ const DASHBOARD_DATA = {
     return 'gn';
   }
 
-  const REVENDA_CFOPS = new Set(['1-102', '2-102', '1-403', '2-403']);
-  const ATIVO_CFOPS = new Set(['1-551']);
-  const DEVOL_CFOPS = new Set(['1-202', '1-411', '2-202', '2-411']);
-
   const MACRO_FINALIDADE = [
-    { key: 'revenda', label: 'Revenda', badge: '2.102 / 1.102 / 1.403', color: '#22a329', cardColor: 'blue', icon: 'rotate-left', sub: 'Compra p/ comercialização' },
+    { key: 'revenda', label: 'Revenda', badge: '1.102 / 2.102 / 1.403', color: '#22a329', cardColor: 'blue', icon: 'rotate-left', sub: 'Compra p/ comercialização' },
     { key: 'ativo', label: 'Ativo Imobilizado', badge: '1.551', color: '#f97316', cardColor: 'orange', icon: 'building', sub: 'Bens para o ativo imobilizado' },
-    { key: 'devol', label: 'Devoluções / Retornos', badge: '1.202 / 1.411 / 2.202 / 2.411', color: '#8b5cf6', cardColor: 'purple', icon: 'arrows-rotate', sub: 'Devoluções de venda ou de compra' },
-    { key: 'outros', label: 'Outros (Serviço/Remessa)', badge: '1.949 / 2.353 / 2.910 / 2.908', color: '#06b6d4', cardColor: 'cyan', icon: 'box-open', sub: 'Transporte, conserto e demais entradas' },
+    { key: 'devol', label: 'Devoluções / Retornos', badge: '1.202 / 1.411 / 2.202 / 2.411', color: '#8b5cf6', cardColor: 'purple', icon: 'arrows-rotate', sub: 'Devoluções de venda (incl. ST)' },
+    { key: 'outros', label: 'Outros', badge: 'Demais CFOPs', color: '#06b6d4', cardColor: 'cyan', icon: 'box-open', sub: 'Serviços, bonificação, comodato e demais entradas' },
   ];
 
   function getMacroGrupo(cfop) {
-    if (REVENDA_CFOPS.has(cfop)) return 'revenda';
-    if (ATIVO_CFOPS.has(cfop)) return 'ativo';
-    if (DEVOL_CFOPS.has(cfop)) return 'devol';
-    const fin = (CFOP_FINALIDADE[cfop] || {}).finalidade;
-    if (fin === 'Revenda' || fin === 'Revenda c/ ST') return 'revenda';
+    const fin = (CFOP_FINALIDADE[cfop] || {}).finalidade || '';
+    if (fin === 'Revenda' || fin === 'Revenda c/ ST' || fin === 'Industrializacao' || fin === 'Industrializacao c/ ST') return 'revenda';
     if (fin === 'Ativo Imobilizado') return 'ativo';
     if (fin === 'Devolução Venda' || fin === 'Devol. Compra') return 'devol';
     return 'outros';
@@ -7915,16 +8122,17 @@ const DASHBOARD_DATA = {
     const dados = pack.cfopSaidas || [];
     const total = pack.cfopSaidasTotal || 0;
     tbody.innerHTML = '';
-    if (!dados.length) { tbody.innerHTML = '<tr><td colspan="4" class="td-mute">Sem dados de saídas para este período.</td></tr>'; return; }
+    if (!dados.length) { tbody.innerHTML = '<tr><td colspan="5" class="td-mute">Sem dados de saídas para este período.</td></tr>'; return; }
     dados.forEach(d => {
       const pct = total > 0 ? ((d.total / total) * 100).toFixed(1) : '0.0';
+      const info = CFOP_FINALIDADE[d.cfop] || {};
       const tr = document.createElement('tr');
-      tr.innerHTML = '<td><span class="chip" style="background:rgba(255,255,255,0.07);font-family:monospace;font-weight:700;">' + d.cfop + '</span></td><td class="r">' + d.qtd + '</td><td class="r td-val">R$ ' + d.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td><td class="r"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:' + pct + '%"></div></div><div class="pb-pct">' + pct + '%</div></div></td>';
+      tr.innerHTML = '<td><span class="chip" style="background:rgba(255,255,255,0.07);font-family:monospace;font-weight:700;">' + d.cfop + '</span></td><td style="font-size:12px;color:var(--text-sec)">' + (info.descricao || '—') + '</td><td class="r">' + d.qtd + '</td><td class="r td-val">R$ ' + d.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td><td class="r"><div class="pb-wrap"><div class="pb-bar"><div class="pb-fill" style="width:' + pct + '%"></div></div><div class="pb-pct">' + pct + '%</div></div></td>';
       tbody.appendChild(tr);
     });
     const trTot = document.createElement('tr');
     trTot.style.background = 'rgba(34,163,41,0.05)';
-    trTot.innerHTML = '<td class="fw7">TOTAL</td><td class="r fw7">' + (pack.nfsSaidas || '—') + '*</td><td class="r fw7 td-val">R$ ' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td><td class="r fw7">100%</td>';
+    trTot.innerHTML = '<td class="fw7">TOTAL</td><td></td><td class="r fw7">' + (pack.nfsSaidas || '—') + '*</td><td class="r fw7 td-val">R$ ' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td><td class="r fw7">100%</td>';
     tbody.appendChild(trTot);
   }
 
@@ -8110,6 +8318,206 @@ const DASHBOARD_DATA = {
 
   function initMemoria() { /* conteúdo estático — labels atualizados via updateCompetenciaLabels */ }
 
+  function initRecebimentos() {
+    const pack = getPack();
+    renderTabNotice('tab-recebimentos', activeTabNotice || movementAvailabilityNote(pack));
+
+    const recPeriod = document.getElementById('rec-sec-competencia');
+    if (recPeriod) recPeriod.textContent = 'Competência ' + periodFull();
+    const recSub = document.getElementById('rec-sec-sub');
+    if (recSub) {
+      recSub.textContent = pack.hasMovimentacao
+        ? 'Estimativa ICMS — ' + periodFull()
+        : 'Sem movimentação fiscal neste período — ' + periodFull();
+    }
+
+    const receb = pack.cfopSaidasTotal;
+    const pag = pack.totalCompras;
+    const hasRec = receb != null;
+    const hasPag = pag != null;
+    const saldo = hasRec && hasPag ? receb - pag : null;
+
+    const grid = document.getElementById('rec-kpi-grid');
+    if (grid) {
+      if (!pack.hasMovimentacao) {
+        grid.innerHTML = '<div class="alert-box" style="grid-column:1/-1;">Sem planilha de entradas/saídas para ' + periodFull() + '. Selecione Mai ou Jun/2026, ou Total.</div>';
+      } else {
+        grid.innerHTML =
+          kpiCard('green', 'arrow-down', periodLbl(), fmtBRL(receb, true), 'Recebimentos estimados', 'Faturamento (saídas ICMS)') +
+          kpiCard('red', 'arrow-up', periodLbl(), fmtBRL(pag, true), 'Pagamentos estimados', 'Compras (entradas ICMS)') +
+          kpiCard(saldo != null && saldo >= 0 ? 'blue' : 'orange', 'scale-balanced', periodLbl(), fmtBRL(saldo, true), 'Saldo estimado', 'Recebimentos − pagamentos');
+      }
+    }
+
+    const labels = D.meta.monthShort;
+    const recData = MES_KEYS.map((m) => {
+      const v = D.fiscalPorMes[m]?.cfopSaidasTotal;
+      return v != null ? +(v / 1000).toFixed(1) : null;
+    });
+    const pagData = MES_KEYS.map((m) => {
+      const v = D.fiscalPorMes[m]?.totalCompras;
+      return v != null ? +(v / 1000).toFixed(1) : null;
+    });
+
+    const chartSub = document.getElementById('rec-chart-sub');
+    if (chartSub) {
+      const mov = monthsWithMovement();
+      chartSub.textContent = mov.length
+        ? 'Comparativo mensal — Jan–Jun/2026 (valores em milhares; meses sem planilha ficam vazios)'
+        : 'Sem movimentação fiscal importada';
+    }
+
+    safeChart('chartRecebPag', {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Recebimentos (mil)', data: recData, backgroundColor: PAL[1], borderRadius: 4 },
+          { label: 'Pagamentos (mil)', data: pagData, backgroundColor: PAL[4], borderRadius: 4 },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false, spanGaps: false, plugins: { legend: leg() } },
+    });
+  }
+
+  let balMesKey = null;
+
+  function setBalKpi(cardId, val, isMoney) {
+    const card = document.getElementById(cardId);
+    if (!card) return;
+    const vEl = card.querySelector('.kpi-val');
+    if (!vEl) return;
+    if (val == null || val === '') {
+      vEl.textContent = '—';
+      return;
+    }
+    vEl.textContent = isMoney !== false ? fmtBRL(val) : String(val);
+  }
+
+  function updateBalKpisEmpty() {
+    ['bal-kpi-ativo', 'bal-kpi-passivo', 'bal-kpi-resultado'].forEach((id) => setBalKpi(id, null));
+    setBalKpi('bal-kpi-contas', null, false);
+  }
+
+  function updateBalKpis(contas) {
+    const norm = (cod) => String(cod).replace(/\.0$/, '');
+    const find = (cod) => contas.find((c) => norm(c.codigo) === cod);
+    const ativo = find('1');
+    const passivo = find('2');
+    const resultado = find('3');
+    const analiticas = contas.filter((c) => (c.nivel || 0) >= 4).length;
+    setBalKpi('bal-kpi-ativo', ativo ? ativo.saldoAtual : null);
+    setBalKpi('bal-kpi-passivo', passivo ? passivo.saldoAtual : null);
+    setBalKpi('bal-kpi-resultado', resultado ? resultado.saldoAtual : null);
+    setBalKpi('bal-kpi-contas', analiticas, false);
+  }
+
+  function renderCustomMesBar(containerId, meses, labels, activeKey, onSelect) {
+    const el = document.getElementById(containerId);
+    if (!el || !meses || !meses.length) return;
+    el.innerHTML = '';
+    meses.forEach((m, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'vd-mes-chip' + (m === activeKey ? ' active' : '');
+      btn.setAttribute('data-mes', m);
+      btn.textContent = labels[i] || m;
+      btn.onclick = () => { onSelect(m); };
+      el.appendChild(btn);
+    });
+  }
+
+  function renderBalanceteMes(mesKey) {
+    const bal = D.balancete;
+    const pack = bal && bal.porMes ? bal.porMes[mesKey] : null;
+    if (!pack) return;
+    balMesKey = mesKey;
+
+    const periodEl = document.getElementById('bal-header-period');
+    const idx = bal.meses.indexOf(mesKey);
+    if (periodEl && idx >= 0) periodEl.textContent = bal.mesLabels[idx];
+    const fonteSub = document.getElementById('bal-fonte-sub');
+    if (fonteSub) fonteSub.textContent = pack.arquivo || '—';
+
+    const contas = pack.contas || [];
+    updateBalKpis(contas);
+
+    const search = (document.getElementById('bal-search')?.value || '').toLowerCase();
+    const grupo = document.getElementById('bal-grupo-filter')?.value || '';
+
+    const filtered = contas.filter((c) => {
+      const cod = String(c.codigo || '').trim();
+      if (!cod || !/^\d/.test(cod)) return false;
+      if (grupo && c.grupo !== grupo) return false;
+      if (search) {
+        const hay = (cod + ' ' + (c.descricao || '')).toLowerCase();
+        if (hay.indexOf(search) < 0) return false;
+      }
+      return true;
+    });
+
+    const tbody = document.getElementById('bal-tbody');
+    if (tbody) {
+      tbody.innerHTML = filtered.map((c) => {
+        const nivel = c.nivel || 1;
+        const pad = nivel > 1 ? 'padding-left:' + ((nivel - 1) * 12) + 'px' : '';
+        return '<tr><td><span style="font-family:monospace;font-weight:600">' + escHtml(String(c.codigo)) + '</span></td>' +
+          '<td style="' + pad + '">' + escHtml(c.descricao || '') + '</td>' +
+          '<td class="r">' + fmtBRL(c.saldoAnterior) + '</td>' +
+          '<td class="r">' + fmtBRL(c.debito) + '</td>' +
+          '<td class="r">' + fmtBRL(c.credito) + '</td>' +
+          '<td class="r td-val">' + fmtBRL(c.saldoAtual) + '</td></tr>';
+      }).join('') || '<tr><td colspan="6" class="td-mute" style="text-align:center;padding:32px;">Nenhuma conta encontrada</td></tr>';
+    }
+    const countEl = document.getElementById('bal-row-count');
+    if (countEl) countEl.textContent = filtered.length + ' contas exibidas';
+
+    const bar = document.getElementById('bal-mes-bar');
+    if (bar) {
+      bar.querySelectorAll('.vd-mes-chip').forEach((chip) => {
+        chip.classList.toggle('active', chip.getAttribute('data-mes') === mesKey);
+      });
+    }
+  }
+
+  function initBalancete() {
+    const bal = D.balancete;
+    const alertEl = document.getElementById('bal-alert');
+    const hasData = bal && bal.meses && bal.meses.length > 0;
+    const pendente = !!(D.pendentes && D.pendentes.balancete) || !hasData;
+
+    if (pendente) {
+      if (alertEl) {
+        alertEl.innerHTML = '<i class="fas fa-clock" style="margin-right:8px;"></i> Balancete pendente — coloque planilhas em <strong>DADOS UNICA/CONTABIL/BALANCETE/{mm-yyyy}/*BALANCETE.xls</strong> (ou arquivo *BALANCETE*.xls na pasta DADOS UNICA) e rode o extract.';
+      }
+      const tbody = document.getElementById('bal-tbody');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="td-mute" style="text-align:center;padding:32px;">Aguardando planilhas de balancete contábil.</td></tr>';
+      const bar = document.getElementById('bal-mes-bar');
+      if (bar) bar.innerHTML = '';
+      const countEl = document.getElementById('bal-row-count');
+      if (countEl) countEl.textContent = '—';
+      const fonteSub = document.getElementById('bal-fonte-sub');
+      if (fonteSub) fonteSub.textContent = 'Sem arquivo importado';
+      updateBalKpisEmpty();
+      return;
+    }
+
+    if (alertEl) {
+      alertEl.innerHTML = '<i class="fas fa-info-circle" style="margin-right:8px;"></i> Dados contábeis disponíveis para <strong>' + bal.meses.length + '</strong> competência(s).';
+    }
+
+    const defaultKey = bal.meses[bal.meses.length - 1];
+    renderCustomMesBar('bal-mes-bar', bal.meses, bal.mesLabels, balMesKey || defaultKey, (m) => {
+      renderBalanceteMes(m);
+    });
+    renderBalanceteMes(balMesKey || defaultKey);
+
+    const search = document.getElementById('bal-search');
+    if (search) search.oninput = () => renderBalanceteMes(balMesKey);
+    const grupo = document.getElementById('bal-grupo-filter');
+    if (grupo) grupo.onchange = () => renderBalanceteMes(balMesKey);
+  }
+
   /* ---- NAV ---- */
   const tabTitles = {
     'visao-geral': ['Visão Geral', 'Resumo Executivo'],
@@ -8118,6 +8526,8 @@ const DASHBOARD_DATA = {
     'vendas': ['Vendas', 'Faturamento — Grupo DAUTO'],
     'impostos': ['Impostos', 'Apuração Tributária — Lucro Real'],
     'memoria': ['Memória de Cálculo', 'ICMS Decreto 5005 + PIS/COFINS'],
+    'recebimentos': ['Recebimentos/Pagamentos', 'Estimativa ICMS — saídas × entradas'],
+    'balancete': ['Balancete', 'Balancete de verificação'],
     'dre': ['DRE', 'Demonstrativo do Resultado'],
     'indicadores': ['Indicadores', 'Análise de Margens e Carga Tributária'],
   };
@@ -8136,7 +8546,11 @@ const DASHBOARD_DATA = {
     if (!tabsInit[name] || force) {
       tabsInit[name] = true;
       setTimeout(() => {
-        const inits = { 'visao-geral': initVisaoGeral, compras: initCompras, finalidade: initFinalidade, vendas: initVendas, impostos: initImpostos, memoria: initMemoria, dre: initDRE, indicadores: initIndicadores };
+        const inits = {
+          'visao-geral': initVisaoGeral, compras: initCompras, finalidade: initFinalidade, vendas: initVendas,
+          impostos: initImpostos, memoria: initMemoria, recebimentos: initRecebimentos, balancete: initBalancete,
+          dre: initDRE, indicadores: initIndicadores,
+        };
         if (inits[name]) inits[name]();
       }, 50);
     }
@@ -8452,7 +8866,6 @@ const DASHBOARD_DATA = {
     showTab('visao-geral', true);
   });
 })();
-
 </script>
 </body>
 </html>
