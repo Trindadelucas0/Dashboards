@@ -22,7 +22,7 @@ const DASHBOARDS = [
   },
   {
     id: "loja-maquinas",
-    html: path.join(dashRoot, "lojja", "LOJA-MAQUINAS.html"),
+    html: path.join(workspaceRoot, "lojja", "LOJA-MAQUINAS.html"),
     outputs: ["loja-maquinas.ejs", "lojamaquinas1trm.ejs"],
   },
   {
