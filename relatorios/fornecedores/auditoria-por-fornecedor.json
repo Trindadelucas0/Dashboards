@@ -1,0 +1,84 @@
+{
+  "generatedAt": "2026-07-13T14:37:27.773Z",
+  "failCount": 4,
+  "results": [
+    {
+      "id": "unica",
+      "file": "UNICATINTAS.ejs",
+      "ok": true,
+      "missing": [],
+      "parseErrors": [],
+      "scripts": 2
+    },
+    {
+      "id": "baifer1",
+      "file": "baifer1trm.ejs",
+      "ok": true,
+      "missing": [],
+      "parseErrors": [],
+      "scripts": 3
+    },
+    {
+      "id": "baifer2",
+      "file": "baifer2trm.ejs",
+      "ok": true,
+      "missing": [],
+      "parseErrors": [],
+      "scripts": 3
+    },
+    {
+      "id": "du",
+      "file": "du-lanche.ejs",
+      "ok": false,
+      "missing": [
+        "noPhantomToggleExport",
+        "noIsFornecedorCall"
+      ],
+      "parseErrors": [],
+      "scripts": 3
+    },
+    {
+      "id": "egaplast",
+      "file": "egaplast.ejs",
+      "ok": false,
+      "missing": [
+        "noPhantomToggleExport",
+        "noIsFornecedorCall"
+      ],
+      "parseErrors": [],
+      "scripts": 3
+    },
+    {
+      "id": "loja",
+      "file": "loja-maquinas.ejs",
+      "ok": true,
+      "missing": [],
+      "parseErrors": [],
+      "scripts": 1
+    },
+    {
+      "id": "loja1trm",
+      "file": "lojamaquinas1trm.ejs",
+      "ok": true,
+      "missing": [],
+      "parseErrors": [],
+      "scripts": 1
+    },
+    {
+      "id": "schumacher",
+      "file": "schumacher.ejs",
+      "ok": true,
+      "missing": [],
+      "parseErrors": [],
+      "scripts": 4
+    },
+    {
+      "id": "jpg",
+      "file": "jpg.ejs",
+      "ok": true,
+      "missing": [],
+      "parseErrors": [],
+      "scripts": 2
+    }
+  ]
+}

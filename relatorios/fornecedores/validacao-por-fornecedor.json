@@ -1,0 +1,88 @@
+{
+  "generatedAt": "2026-07-13T14:38:34.049Z",
+  "allOk": true,
+  "fails": 0,
+  "results": [
+    {
+      "id": "unica",
+      "file": "UNICATINTAS.ejs",
+      "route": "/auth/UNICATINTAS",
+      "gaps": [],
+      "parseErrors": [],
+      "scripts": 2,
+      "ok": true
+    },
+    {
+      "id": "baifer1",
+      "file": "baifer1trm.ejs",
+      "route": "/auth/baifer1trm",
+      "gaps": [],
+      "parseErrors": [],
+      "scripts": 3,
+      "ok": true
+    },
+    {
+      "id": "baifer2",
+      "file": "baifer2trm.ejs",
+      "route": "/auth/baifer2trm",
+      "gaps": [],
+      "parseErrors": [],
+      "scripts": 3,
+      "ok": true
+    },
+    {
+      "id": "du",
+      "file": "du-lanche.ejs",
+      "route": "/auth/du-lanche",
+      "gaps": [],
+      "parseErrors": [],
+      "scripts": 3,
+      "ok": true
+    },
+    {
+      "id": "egaplast",
+      "file": "egaplast.ejs",
+      "route": "/auth/egaplast",
+      "gaps": [],
+      "parseErrors": [],
+      "scripts": 3,
+      "ok": true
+    },
+    {
+      "id": "loja",
+      "file": "loja-maquinas.ejs",
+      "route": "/auth/loja-maquinas",
+      "gaps": [],
+      "parseErrors": [],
+      "scripts": 1,
+      "ok": true
+    },
+    {
+      "id": "loja1trm",
+      "file": "lojamaquinas1trm.ejs",
+      "route": "/auth/lojamaquinas1trm",
+      "gaps": [],
+      "parseErrors": [],
+      "scripts": 1,
+      "ok": true
+    },
+    {
+      "id": "schumacher",
+      "file": "schumacher.ejs",
+      "route": "/auth/schumacher",
+      "gaps": [],
+      "parseErrors": [],
+      "scripts": 4,
+      "ok": true
+    },
+    {
+      "id": "jpg",
+      "file": "jpg.ejs",
+      "route": "/auth/jpg",
+      "gaps": [],
+      "parseErrors": [],
+      "scripts": 2,
+      "ok": true
+    }
+  ]
+}

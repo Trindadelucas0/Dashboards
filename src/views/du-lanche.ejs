@@ -294,10 +294,22 @@
     .btn-export.xlsx i { color:#22c55e; }
     .btn-export.print i { color:#f59e0b; }
 
+    
+    .fin-supplier-bar {
+      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+      margin:0 0 16px; padding:12px 14px;
+      background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.4);
+      border-radius:10px;
+    }
+    .fin-supplier-bar .btn-export.print {
+      font-weight:700; font-size:13px; padding:10px 16px;
+    }
+    .fin-supplier-hint { font-size:12px; color:var(--text-sec); line-height:1.4; }
+
     /* === SUPPLIER MODAL === */
     .modal-overlay {
       position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(4px);
-      z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px;
+      z-index:1000; display:none; align-items:center; justify-content:center; padding:20px;
     }
     .modal-box {
       background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
@@ -741,7 +753,14 @@
             <div class="sec-sub"><span id="fin-sec-sub"></span></div>
             <div class="mes-bar" id="fn-mes-bar" aria-label="Competência fiscal finalidade"></div>
           </div>
-          <div class="export-bar">
+          
+        <div class="fin-supplier-bar" id="fin-supplier-bar">
+          <button type="button" class="btn-export print" id="btn-por-fornecedor" onclick="openSupplierModal()" title="Imprimir por Fornecedor">
+            <i class="fas fa-truck"></i> Por Fornecedor
+          </button>
+          <span class="fin-supplier-hint">Selecione fornecedores e emita o relatório (Imprimir ou PDF) da competência ativa.</span>
+        </div>
+<div class="export-bar">
             <button type="button" class="btn-export print" id="btn-fornecedor-panel" onclick="openSupplierModal()" title="Imprimir por Fornecedor"><i class="fas fa-truck"></i> Por Fornecedor</button>
             <button class="btn-export pdf" onclick="exportPDF('tab-finalidade','Finalidade_Compras')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
             <button class="btn-export xlsx" onclick="exportExcel('tab-finalidade','Finalidade_Compras')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>

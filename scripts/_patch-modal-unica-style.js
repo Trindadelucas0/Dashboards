@@ -1,6 +1,11 @@
 /**
  * Padroniza modal "Imprimir por Fornecedor" (estilo UNICA) em Finalidade de Compras.
  * Fontes: BAIFER, DU LANCHE, EGAPLAST + Demais em Loja/Schumacher.
+ *
+ * REGRESSAO: patchAppJs deve substituir SOMENTE o bloco do modal
+ * (helpers supplier* / openSupplierModal / printBySupplier / exportSupplierPdf)
+ * imediatamente antes de closeDrilldown. Nao cortar getCfopDados, painel legado
+ * nem exports de funcoes inexistentes.
  */
 const fs = require("fs");
 const path = require("path");
@@ -224,7 +229,10 @@ const APP_MODAL_LOGIC = `
 
   function openSupplierModal() {
     const modal = document.getElementById('supplierModal');
-    if (!modal) { toggleFornecedorPanel(); return; }
+    if (!modal) {
+      alert('Modal de fornecedores nao encontrado nesta pagina.');
+      return;
+    }
     hydrateSupplierReportPeriodSelect();
     renderSupplierList();
     const search = document.getElementById('supplierSearch');
@@ -382,30 +390,57 @@ const APP_MODAL_LOGIC = `
 function patchAppJs(file) {
   let js = fs.readFileSync(file, "utf8");
 
-  // Remove old print/export/builder/openSupplierModal blocks by replacing from openSupplierModal through exportSupplierPdf end
-  // Prefer: insert new logic before closeDrilldown and remove conflicting functions
+  // IMPORTANTE: nao cortar helpers de painel/drilldown (getCfopDados, toggleFornecedorPanel, etc.).
+  // Substituir somente o bloco do modal de impressao (openSupplierModal .. exportSupplierPdf),
+  // imediatamente antes de closeDrilldown.
 
-  // Strip previous exportSupplierPdfFromData / buildSelected / printBySupplier / exportSupplierPdf / openSupplierModal / getCompanyName duplicates carefully
-
-  // Find start: "function openSupplierModal" or "function getCompanyName" before print
-  let startMarkers = [
-    "  function openSupplierModal() {",
-    "  function getCompanyName() {",
-    "  function buildSelectedSupplierReportData",
-    "  function exportSupplierPdfFromData",
-    "  function printBySupplier() {",
-  ];
-  let start = -1;
-  for (const m of startMarkers) {
-    const i = js.indexOf(m);
-    if (i >= 0 && (start < 0 || i < start)) start = i;
-  }
   const end = js.indexOf("\n  function closeDrilldown()");
-  if (start < 0 || end < 0) {
-    throw new Error("markers not found in " + file + " start=" + start + " end=" + end);
+  if (end < 0) {
+    throw new Error("closeDrilldown marker not found in " + file);
   }
 
-  // Keep getCompanyName if present before start — re-add simple one
+  // Preferir inicio em openSupplierModal; se nao houver, em getCompanyName logo antes do modal.
+  let start = js.lastIndexOf("  function openSupplierModal() {", end);
+  if (start < 0) {
+    start = js.lastIndexOf("  function getCompanyName() {", end);
+  }
+  if (start < 0) {
+    // Inserir antes de closeDrilldown sem apagar nada anterior
+    start = end;
+  } else {
+    // Se getCompanyName estiver colado ao bloco modal, incluir; se houver codigo entre
+    // getCompanyName e openSupplierModal que nao seja do modal, recuar so ate openSupplierModal.
+    const openIdx = js.lastIndexOf("  function openSupplierModal() {", end);
+    if (openIdx >= 0) start = openIdx;
+    // Tambem remova funcoes auxiliares do modal imediatamente acima de openSupplierModal
+    const modalHelpers = [
+      "  function buildModalSupplierReportData()",
+      "  function aggregateDemaisByCfop(",
+      "  function rowsForSupplierPrint(",
+      "  function renderSupplierList()",
+      "  function collectUniqueSuppliers()",
+      "  function getCfopDadosForPrint()",
+      "  function hydrateSupplierReportPeriodSelect()",
+      "  function periodLabelForReport(",
+      "  function getPackForSupplierReport(",
+      "  function getSupplierReportPeriodKey()",
+      "  function supplierKey(",
+      "  function getCompanyName()",
+    ];
+    let earliest = start;
+    for (const h of modalHelpers) {
+      const i = js.lastIndexOf(h, start);
+      if (i >= 0 && i < earliest) {
+        // Confirma que nao ha closeDrilldown / init entre i e start (bloco continuo)
+        const between = js.slice(i, start);
+        if (!between.includes("function closeDrilldown") && !between.includes("function initFinalidade")) {
+          earliest = i;
+        }
+      }
+    }
+    start = earliest;
+  }
+
   const companyDefault = file.includes("egaplast")
     ? "EGAPLAST"
     : file.includes("du-lanche")
@@ -418,11 +453,33 @@ function patchAppJs(file) {
   }
 `;
 
-  js = js.slice(0, start) + companyFn + APP_MODAL_LOGIC + js.slice(end);
+  // Garante getCfopDados fora da zona substituida (antes do bloco injetado)
+  const cfopDadosGuard = `
+  function getCfopDados() {
+    if (typeof getPack === 'function') {
+      const pack = getPack();
+      return (pack && pack.cfopEntradas) || [];
+    }
+    return [];
+  }
+`;
 
-  const exports = [
-    ["window.openSupplierModal = openSupplierModal;", "window.openSupplierModal = openSupplierModal;\n  window.closeSupplierModal = closeSupplierModal;\n  window.onSupplierReportPeriodChange = onSupplierReportPeriodChange;\n  window.filterSuppliers = filterSuppliers;\n  window.toggleAllSuppliers = toggleAllSuppliers;"],
-  ];
+  let prefix = js.slice(0, start);
+  if (!prefix.includes("function getCfopDados(")) {
+    prefix += cfopDadosGuard;
+  }
+  if (!/\blet activeDrilldownCfop\b/.test(js) && !/\blet activeDrilldownCfop\b/.test(prefix)) {
+    prefix = prefix.replace(
+      /(let state = \{[^}]+\};)/,
+      "$1\n  let activeDrilldownCfop = null;"
+    );
+  }
+
+  js = prefix + companyFn + APP_MODAL_LOGIC + js.slice(end);
+
+  // Remover chamada legado quebrada se ainda existir
+  js = js.replace(/\n\s*if \(isFornecedorPanelOpen\(\)\) renderFornecedorPanel\(\);\n/g, "\n");
+
   if (!js.includes("window.closeSupplierModal")) {
     js = js.replace(
       "window.openSupplierModal = openSupplierModal;",
@@ -439,6 +496,25 @@ function patchAppJs(file) {
       "window.openSupplierModal = openSupplierModal;",
       "window.openSupplierModal = openSupplierModal;\n  window.printBySupplier = printBySupplier;\n  window.exportSupplierPdf = exportSupplierPdf;"
     );
+  }
+
+  // Remover exports fantasma (funcoes de painel que podem nao existir apos patch)
+  const phantomExports = [
+    "toggleFornecedorPanel",
+    "closeFornecedorPanel",
+    "filterFornecedorPanel",
+    "filterFornecedorPicker",
+    "toggleFornecedorPicker",
+    "toggleAllFornecedorPicker",
+    "selectTopFornecedores",
+    "onFornecedorPickerChange",
+    "showFornecedorDetail",
+  ];
+  for (const name of phantomExports) {
+    const hasFn = new RegExp("function\\s+" + name + "\\s*\\(").test(js);
+    if (!hasFn) {
+      js = js.replace(new RegExp("\\n\\s*window\\." + name + "\\s*=\\s*" + name + "\\s*;", "g"), "");
+    }
   }
 
   fs.writeFileSync(file, js);

@@ -287,10 +287,22 @@
     .btn-export.xlsx i { color:#22c55e; }
     .btn-export.print i { color:#f59e0b; }
 
+    
+    .fin-supplier-bar {
+      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+      margin:0 0 16px; padding:12px 14px;
+      background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.4);
+      border-radius:10px;
+    }
+    .fin-supplier-bar .btn-export.print {
+      font-weight:700; font-size:13px; padding:10px 16px;
+    }
+    .fin-supplier-hint { font-size:12px; color:var(--text-sec); line-height:1.4; }
+
     /* === SUPPLIER MODAL === */
     .modal-overlay {
       position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(4px);
-      z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px;
+      z-index:1000; display:none; align-items:center; justify-content:center; padding:20px;
     }
     .modal-box {
       background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
@@ -445,7 +457,8 @@
     .audit-banner i, .audit-footer i { color:var(--accent); margin-right:6px; }
     .audit-footer { margin-top:32px; margin-bottom:16px; }
     .tbl-scroll { -webkit-overflow-scrolling:touch; }
-    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:200; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:200; display:none; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay[style*="display: flex"], .modal-overlay[style*="display:flex"] { display:flex !important; }
     .modal-box { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column; }
     .modal-header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--border); }
     .modal-header h3 { font-size:15px; font-weight:700; margin:0; }
@@ -819,7 +832,14 @@
 
           </div>
 
-          <div class="export-bar">
+          
+        <div class="fin-supplier-bar" id="fin-supplier-bar">
+          <button type="button" class="btn-export print" id="btn-por-fornecedor" onclick="openSupplierModalActive()" title="Imprimir por Fornecedor">
+            <i class="fas fa-truck"></i> Por Fornecedor
+          </button>
+          <span class="fin-supplier-hint">Selecione fornecedores e emita o relatório (Imprimir ou PDF) da competência/unidade ativa.</span>
+        </div>
+<div class="export-bar">
 
             <button type="button" class="btn-export print" id="btnSupplierHeader" onclick="openSupplierModalActive()"><i class="fas fa-truck"></i> Por Fornecedor</button>
 
@@ -25361,7 +25381,9 @@ function closeSupplierModal() {
 function filterSuppliers(query) {
   const q = (query || '').toLowerCase();
   document.querySelectorAll('#supplierList .supplier-item').forEach((el) => {
-    el.style.display = el.dataset.search.includes(q) ? '' : 'none';
+    if (el.id === 'demaisFornecedoresOption' || el.classList.contains('supplier-item-demais')) return;
+    const search = el.dataset.search || '';
+    el.style.display = search.includes(q) ? '' : 'none';
   });
 }
 
@@ -25373,7 +25395,7 @@ function toggleAllSuppliers(state) {
   });
 }
 
-function buildSupplierReportData(selected) {
+function buildSupplierReportData(selected, includeDemais) {
   const ctx = jpgSupplierCtx;
   const cfops = ctx && ctx.data ? ctx.data.cfop_entradas || [] : [];
   const periodo = (typeof window.getJpgCompetenciaLabel === 'function')
@@ -25382,9 +25404,11 @@ function buildSupplierReportData(selected) {
   const empresa = (typeof JPG_DATA !== 'undefined' && JPG_DATA.meta) ? JPG_DATA.meta.empresa : 'JPG';
   let totalGeral = 0;
   const suppliers = [];
+  const selectedKeys = new Set();
   selected.forEach((cb) => {
     const cnpj = cb.value;
     const nome = cb.dataset.nome;
+    selectedKeys.add((cnpj || '').trim() || nome);
     const rows = [];
     let subtotal = 0;
     let uf = '—';
@@ -25396,16 +25420,45 @@ function buildSupplierReportData(selected) {
         uf = f.uf || uf;
       }
     });
+    if (!rows.length) return;
     totalGeral += subtotal;
     suppliers.push({ nome, cnpj, uf, rows, subtotal });
   });
+  if (includeDemais) {
+    const demaisMap = {};
+    cfops.forEach((cfop) => {
+      (cfop.parties || []).forEach((f) => {
+        const key = (f.cnpj || '').trim() || f.nome;
+        if (!key || selectedKeys.has(key)) return;
+        if (!demaisMap[cfop.cfop]) {
+          demaisMap[cfop.cfop] = { cfop: cfop.cfop, desc: cfop.descricao, fin: cfop.finalidade, qtd: 0, total: 0 };
+        }
+        demaisMap[cfop.cfop].qtd += f.qtd || 0;
+        demaisMap[cfop.cfop].total += f.total || 0;
+      });
+    });
+    const demaisRows = Object.values(demaisMap).filter((r) => r.total > 0).sort((a, b) => b.total - a.total);
+    const subtotal = demaisRows.reduce((s, r) => s + r.total, 0);
+    if (demaisRows.length) {
+      totalGeral += subtotal;
+      suppliers.push({ nome: 'Demais fornecedores', cnpj: '—', uf: '—', rows: demaisRows, subtotal });
+    }
+  }
   return { suppliers, totalGeral, periodo, empresa, label: ctx ? ctx.label : '' };
 }
 
 function printBySupplier() {
-  const selected = Array.from(document.querySelectorAll('#supplierList input:checked'));
-  if (!selected.length) { alert('Selecione ao menos um fornecedor.'); return; }
-  const { suppliers, totalGeral, periodo, empresa, label } = buildSupplierReportData(selected);
+  const selected = Array.from(document.querySelectorAll('#supplierList .supplier-item input:checked'));
+  const includeDemais = document.getElementById('includeDemaisFornecedores')?.checked;
+  if (!selected.length && !includeDemais) {
+    alert('Selecione ao menos um fornecedor ou marque "Demais fornecedores".');
+    return;
+  }
+  const { suppliers, totalGeral, periodo, empresa, label } = buildSupplierReportData(selected, includeDemais);
+  if (!suppliers.length || totalGeral <= 0) {
+    alert('Nenhum dado encontrado para os fornecedores selecionados neste periodo.');
+    return;
+  }
   closeSupplierModal();
   let html = '<div class="supplier-print-root" style="font-family:Inter,sans-serif;padding:0;margin:0;color:#1a1a2e;background:#fff;width:100%;max-width:100%;box-sizing:border-box;">';
   html += '<h1 style="font-size:18px;margin-bottom:4px;">Relatório por Fornecedor</h1>';
@@ -25438,20 +25491,33 @@ function printBySupplier() {
   div.id = 'print-supplier-report';
   div.innerHTML = html;
   document.body.appendChild(div);
-  const cleanup = () => { div.remove(); window.removeEventListener('afterprint', cleanup); };
+  document.body.classList.add('supplier-printing');
+  const cleanup = () => {
+    document.body.classList.remove('supplier-printing');
+    div.remove();
+    window.removeEventListener('afterprint', cleanup);
+  };
   window.addEventListener('afterprint', cleanup);
   window.print();
 }
 
 function exportSupplierPdf() {
-  const selected = Array.from(document.querySelectorAll('#supplierList input:checked'));
-  if (!selected.length) { alert('Selecione ao menos um fornecedor.'); return; }
+  const selected = Array.from(document.querySelectorAll('#supplierList .supplier-item input:checked'));
+  const includeDemais = document.getElementById('includeDemaisFornecedores')?.checked;
+  if (!selected.length && !includeDemais) {
+    alert('Selecione ao menos um fornecedor ou marque "Demais fornecedores".');
+    return;
+  }
   if (!window.jspdf?.jsPDF) { alert('Biblioteca jsPDF não carregada.'); return; }
   if (typeof window.jspdf.jsPDF.prototype.autoTable !== 'function') {
     alert('Biblioteca jspdf-autotable não carregada.');
     return;
   }
-  const { suppliers, totalGeral, periodo, empresa, label } = buildSupplierReportData(selected);
+  const { suppliers, totalGeral, periodo, empresa, label } = buildSupplierReportData(selected, includeDemais);
+  if (!suppliers.length || totalGeral <= 0) {
+    alert('Nenhum dado encontrado para os fornecedores selecionados neste periodo.');
+    return;
+  }
   closeSupplierModal();
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -25785,7 +25851,7 @@ function filialBlockHTML(key, label, tabType) {
       <div class="filial-block mb-24" data-filial="${key}">
         <div class="sec-title" style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
           <span>${label}</span>
-          <button class="btn-export print" onclick="openSupplierModal(jpgCtxRegistry['${key}_']||registerJpgCtx('${key}_', JPG_DATA.filiais['${key}']))" style="font-size:11px;padding:6px 12px"><i class="fas fa-truck"></i> Por Fornecedor</button>
+          <button class="btn-export print" onclick="openFilialSupplierModal('${key}')" style="font-size:11px;padding:6px 12px"><i class="fas fa-truck"></i> Por Fornecedor</button>
         </div>
         <div class="kpi-grid kpi-grid-4" id="${p}kpiFinalidade"></div>
         <div class="charts-row cr-2col">
@@ -26348,10 +26414,27 @@ function updateSupplierHeaderBtn() {
   }
 }
 
+function openFilialSupplierModal(filialKey) {
+  const pack = typeof getActivePack === 'function' ? getActivePack() : null;
+  const data = pack && pack.filiais ? pack.filiais[filialKey] : null;
+  if (!data) {
+    alert('Dados da filial ' + filialKey + ' nao encontrados no periodo ativo.');
+    return;
+  }
+  const key = filialKey + '_';
+  registerJpgCtx(key, data, (data.meta && data.meta.filial_label) || filialKey);
+  openSupplierModal(jpgCtxRegistry[key]);
+}
+
 function openSupplierModalActive() {
   const D = getScopeData();
-  if (!D) return;
-  openSupplierModal(jpgCtxRegistry.ACTIVE || makeJpgContext(D, D.meta?.filial_label));
+  if (!D) {
+    alert('Sem dados da unidade ativa para o relatorio por fornecedor.');
+    return;
+  }
+  const label = (D.meta && D.meta.filial_label) || (typeof unidadeAtiva !== 'undefined' && unidadeAtiva === 'TODAS' ? 'Empresa (consolidado)' : (unidadeAtiva || 'JPG'));
+  registerJpgCtx('ACTIVE', D, label);
+  openSupplierModal(jpgCtxRegistry.ACTIVE);
 }
 
 function initFinalidade() {
@@ -26718,7 +26801,11 @@ window.JpgDashboard = {
   getScopeData,
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+window.openSupplierModal = openSupplierModal;
+  window.closeSupplierModal = closeSupplierModal;
+  window.printBySupplier = printBySupplier;
+  window.exportSupplierPdf = exportSupplierPdf;
+  document.addEventListener('DOMContentLoaded', () => {
   initPeriodSelector();
   buildFiscalMesBars();
   initMeta();
