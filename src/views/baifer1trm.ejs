@@ -450,6 +450,81 @@
     }
   
   
+    /* SUPPLIER-PRINT-A4 */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+      }
+      html, body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      body.supplier-printing #print-supplier-report {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+      }
+      body.supplier-printing #print-supplier-report .supplier-print-root,
+      body.supplier-printing #print-supplier-report .supplier-print-block {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        box-sizing: border-box !important;
+      }
+      body.supplier-printing #print-supplier-report .supplier-print-block {
+        page-break-inside: auto !important;
+        break-inside: auto !important;
+        margin-bottom: 10px !important;
+      }
+      body.supplier-printing #print-supplier-report table {
+        width: 100% !important;
+        max-width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+        font-size: 9pt !important;
+      }
+      body.supplier-printing #print-supplier-report col.cfop { width: 12% !important; }
+      body.supplier-printing #print-supplier-report col.desc { width: 34% !important; }
+      body.supplier-printing #print-supplier-report col.fin { width: 28% !important; }
+      body.supplier-printing #print-supplier-report col.qtd { width: 10% !important; }
+      body.supplier-printing #print-supplier-report col.val { width: 16% !important; }
+      body.supplier-printing #print-supplier-report th,
+      body.supplier-printing #print-supplier-report td {
+        padding: 3px 4px !important;
+        word-wrap: break-word !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+        vertical-align: top !important;
+      }
+      body.supplier-printing #print-supplier-report thead { display: table-header-group !important; }
+      body.supplier-printing #print-supplier-report tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      body.supplier-printing #print-supplier-report h1 {
+        font-size: 14pt !important;
+        margin: 0 0 4px !important;
+      }
+      body.supplier-printing #print-supplier-report h2 {
+        font-size: 11pt !important;
+        margin: 0 0 4px !important;
+        page-break-after: avoid;
+      }
+    }
+
+  
     .btn-back-hub { display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
 
   </style>
@@ -664,7 +739,7 @@
             <div class="mes-bar" id="fn-mes-bar" aria-label="Competência fiscal finalidade"></div>
           </div>
           <div class="export-bar">
-            <button type="button" class="btn-export print" id="btn-fornecedor-panel" onclick="toggleFornecedorPanel()" title="Ver por Fornecedor"><i class="fas fa-truck"></i> Por Fornecedor</button>
+            <button type="button" class="btn-export print" id="btn-fornecedor-panel" onclick="openSupplierModal()" title="Imprimir por Fornecedor"><i class="fas fa-truck"></i> Por Fornecedor</button>
             <button class="btn-export pdf" onclick="exportPDF('tab-finalidade','Finalidade_Compras')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
             <button class="btn-export xlsx" onclick="exportExcel('tab-finalidade','Finalidade_Compras')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
           </div>
@@ -1104,14 +1179,20 @@
 </div>
 
 
-<!-- MODAL legado (substituído por painel inline) -->
-<div class="modal-overlay" id="supplierModal" style="display:none !important;" aria-hidden="true">
+<!-- MODAL: Impressão por Fornecedor (Finalidade de Compras) -->
+<div class="modal-overlay" id="supplierModal" style="display:none;" onclick="if(event.target===this)closeSupplierModal()">
   <div class="modal-box">
     <div class="modal-header">
       <h3><i class="fas fa-truck"></i> Imprimir por Fornecedor</h3>
-      <button onclick="closeSupplierModal()" class="modal-close">&times;</button>
+      <button type="button" onclick="closeSupplierModal()" class="modal-close">&times;</button>
     </div>
     <div class="modal-body">
+      <div class="search-box">
+        <label for="supplierReportPeriod" style="display:block;font-size:12px;font-weight:600;margin-bottom:6px;">
+          Competência do relatório
+        </label>
+        <select id="supplierReportPeriod" class="period-sel" style="width:100%;" onchange="onSupplierReportPeriodChange()"></select>
+      </div>
       <div class="search-box">
         <input type="text" id="supplierSearch" placeholder="Buscar fornecedor..." oninput="filterSuppliers(this.value)">
       </div>
@@ -1119,6 +1200,13 @@
         <button type="button" onclick="toggleAllSuppliers(true)">Selecionar Todos</button>
         <button type="button" onclick="toggleAllSuppliers(false)">Limpar Seleção</button>
       </div>
+      <label class="supplier-item supplier-item-demais" id="demaisFornecedoresOption">
+        <input type="checkbox" id="includeDemaisFornecedores" checked>
+        <span class="supplier-info">
+          <strong>Demais fornecedores</strong>
+          <small>Agrupa fornecedores não selecionados por CFOP</small>
+        </span>
+      </label>
       <div class="supplier-list" id="supplierList"></div>
     </div>
     <div class="modal-footer">
@@ -24645,632 +24733,240 @@ const DASHBOARD_DATA = {
     XLSX.writeFile(wb, filename + '.xlsx');
   }
 
+
   function getCompanyName() {
     return document.querySelector('.logo-text .company')?.textContent?.trim() || 'BAIFER';
   }
 
-  function getExportDate() {
-    return new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+  function supplierKey(f) {
+    return (f.cnpj && String(f.cnpj).trim()) || f.nome;
   }
 
-  const PDF_CLONE_CSS = `
-    .pdf-export-target {
-      --bg:#f8fafc; --bg-card:#fff; --bg-card-hover:#f1f5f9;
-      --text:#1e293b; --text-sec:#475569; --text-muted:#64748b;
-      --border:rgba(0,0,0,.12);
-      background:#f8fafc !important; color:#1e293b !important;
-      padding:20px; opacity:1 !important; filter:none !important; animation:none !important;
-    }
-    .pdf-export-target * { opacity:1 !important; filter:none !important; }
-    .pdf-export-target .sec-title,.pdf-export-target .kpi-val,.pdf-export-target .chart-ttl,
-    .pdf-export-target .margin-val,.pdf-export-target .ind-val,.pdf-export-target .tax-cur,
-    .pdf-export-target .table-head .ttl,.pdf-export-target tbody td,.pdf-export-target td,
-    .pdf-export-target .kpi-lbl,.pdf-export-target .mem-row .lbl,.pdf-export-target .mem-row .val,
-    .pdf-export-target .fw7,.pdf-export-target .fw8 { color:#1e293b !important; }
-    .pdf-export-target .sec-sub,.pdf-export-target .kpi-sub,.pdf-export-target .chart-sub,
-    .pdf-export-target .table-head .sub,.pdf-export-target .td-mute,.pdf-export-target .sec-title small,
-    .pdf-export-target .margin-sub,.pdf-export-target .tax-prev,.pdf-export-target .ind-formula {
-      color:#475569 !important;
-    }
-    .pdf-export-target .kpi-card,.pdf-export-target .chart-card,.pdf-export-target .table-card,
-    .pdf-export-target .margin-card,.pdf-export-target .tax-card,.pdf-export-target .mem-card,
-    .pdf-export-target .ind-card,.pdf-export-target .alert-box {
-      background:#fff !important; border:1px solid #e2e8f0 !important;
-      box-shadow:0 1px 3px rgba(0,0,0,.06) !important;
-    }
-    .pdf-export-target .export-bar { display:none !important; }
-    .pdf-export-target thead th { background:#f1f5f9 !important; color:#475569 !important; }
-  `;
-
-  function applyPdfLiveTheme(el) {
-    el.style.setProperty('--text', '#1e293b');
-    el.style.setProperty('--text-sec', '#475569');
-    el.style.setProperty('--text-muted', '#64748b');
-    el.style.setProperty('--bg-card', '#ffffff');
-    el.style.setProperty('--border', 'rgba(0,0,0,0.12)');
-    el.style.opacity = '1';
-    el.style.animation = 'none';
+  function getSupplierReportPeriodKey() {
+    const sel = document.getElementById('supplierReportPeriod');
+    return (sel && sel.value) || (state.fiscalMode === 'month' ? state.month : (state.fiscalMode || state.month));
   }
 
-  function clearPdfLiveTheme(el) {
-    ['--text', '--text-sec', '--text-muted', '--bg-card', '--border', 'opacity', 'animation'].forEach((p) => el.style.removeProperty(p));
+  function getPackForSupplierReport(periodKey) {
+    if (periodKey === 'total') return buildFiscalTotalPack();
+    if (periodKey === 'q1' || periodKey === 'q2') return buildFiscalTrimPack(periodKey);
+    const fp = getUnitFiscal();
+    return fp.porMes[periodKey] || null;
   }
 
-  function applyPdfCloneTheme(doc, el) {
-    el.classList.add('pdf-export-target');
-    applyPdfLiveTheme(el);
-    const bar = el.querySelector('.export-bar');
-    if (bar) bar.style.display = 'none';
-    const style = doc.createElement('style');
-    style.textContent = PDF_CLONE_CSS;
-    el.insertBefore(style, el.firstChild);
+  function periodLabelForReport(periodKey) {
+    if (periodKey === 'total') return PERIODO_TOTAL.label;
+    if (periodKey === 'q1' && TRIMESTRES.q1) return TRIMESTRES.q1.label;
+    if (periodKey === 'q2' && TRIMESTRES.q2) return TRIMESTRES.q2.label;
+    return (MONTH_LABELS[periodKey] || periodKey) + ' / 2026';
   }
 
-  function solidifyRgba(color) {
-    if (typeof color !== 'string' || !color.startsWith('rgba')) return color;
-    return color.replace(/,\s*[\d.]+\)\s*$/, ', 1)');
-  }
-
-  function prepareChartsForPdf(section) {
-    const saved = [];
-    Object.entries(chartInst).forEach(([id, chart]) => {
-      if (!chart?.canvas || !section.contains(chart.canvas)) return;
-      const snap = { id, ticks: [], grids: [], legend: null, datasets: [] };
-      if (chart.options.scales) {
-        Object.keys(chart.options.scales).forEach((key) => {
-          const s = chart.options.scales[key];
-          if (!s) return;
-          if (s.ticks) { snap.ticks.push({ key, color: s.ticks.color }); s.ticks.color = '#475569'; }
-          if (s.grid) { snap.grids.push({ key, color: s.grid.color }); s.grid.color = 'rgba(0,0,0,0.1)'; }
-        });
-      }
-      if (chart.options.plugins?.legend?.labels) {
-        snap.legend = chart.options.plugins.legend.labels.color;
-        chart.options.plugins.legend.labels.color = '#475569';
-      }
-      chart.data.datasets.forEach((d) => {
-        snap.datasets.push({ backgroundColor: d.backgroundColor, borderColor: d.borderColor, fill: d.fill });
-        if (d.fill && typeof d.backgroundColor === 'string' && d.backgroundColor.startsWith('rgba')) {
-          d.backgroundColor = d.backgroundColor.replace(/,\s*[\d.]+\)/, ', 0.18)');
-        } else {
-          d.backgroundColor = solidifyRgba(d.backgroundColor);
-        }
-        if (d.borderColor) d.borderColor = solidifyRgba(d.borderColor) || d.borderColor;
-      });
-      chart.update('none');
-      saved.push(snap);
+  function hydrateSupplierReportPeriodSelect() {
+    const sel = document.getElementById('supplierReportPeriod');
+    if (!sel) return;
+    let html = '';
+    MONTH_KEYS.forEach((m) => {
+      html += '<option value="' + m + '">' + MONTH_LABELS[m] + ' / 2026</option>';
     });
-    return saved;
+    if (TRIMESTRES.q1) html += '<option value="q1">' + TRIMESTRES.q1.label + '</option>';
+    if (TRIMESTRES.q2) html += '<option value="q2">' + TRIMESTRES.q2.label + '</option>';
+    html += '<option value="total">' + PERIODO_TOTAL.label + '</option>';
+    sel.innerHTML = html;
+    if (state.fiscalMode === 'month') sel.value = state.month;
+    else if (state.fiscalMode === 'q1' || state.fiscalMode === 'q2' || state.fiscalMode === 'total') sel.value = state.fiscalMode;
+    else sel.value = state.month;
   }
 
-  function restoreChartsFromPdf(saved) {
-    saved.forEach((snap) => {
-      const chart = chartInst[snap.id];
-      if (!chart) return;
-      snap.ticks.forEach(({ key, color }) => { if (chart.options.scales?.[key]?.ticks) chart.options.scales[key].ticks.color = color; });
-      snap.grids.forEach(({ key, color }) => { if (chart.options.scales?.[key]?.grid) chart.options.scales[key].grid.color = color; });
-      if (snap.legend != null && chart.options.plugins?.legend?.labels) chart.options.plugins.legend.labels.color = snap.legend;
-      snap.datasets.forEach((orig, i) => {
-        const d = chart.data.datasets[i];
-        if (!d) return;
-        d.backgroundColor = orig.backgroundColor;
-        d.borderColor = orig.borderColor;
-        d.fill = orig.fill;
-      });
-      chart.update('none');
-    });
+  function getCfopDadosForPrint() {
+    const pack = getPackForSupplierReport(getSupplierReportPeriodKey());
+    return (pack && pack.cfopEntradas) || [];
   }
 
-  function ensureTabRendered(sectionId) {
-    const tabName = sectionId.replace(/^tab-/, '');
-    const fn = tabInits[tabName];
-    if (fn) fn();
-  }
-
-  async function exportPDF(sectionId, filename) {
-    const section = document.getElementById(sectionId);
-    if (!section) return;
-    if (typeof html2canvas === 'undefined') {
-      alert('Biblioteca html2canvas não carregada.');
-      return;
-    }
-    const btn = (typeof event !== 'undefined' && event?.currentTarget) ? event.currentTarget : null;
-    const origHtml = btn?.innerHTML;
-    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...'; }
-
-    ensureTabRendered(sectionId);
-    await new Promise((r) => setTimeout(r, 200));
-
-    const wasHidden = !section.classList.contains('active');
-    if (wasHidden) section.classList.add('export-capture');
-    section.classList.add('pdf-export-target');
-    document.body.classList.add('pdf-capturing');
-    section.scrollTop = 0;
-    applyPdfLiveTheme(section);
-    const chartSnap = prepareChartsForPdf(section);
-
-    try {
-      await new Promise((r) => setTimeout(r, 500));
-      const canvas = await html2canvas(section, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#f8fafc',
-        logging: false,
-        onclone: (doc, el) => applyPdfCloneTheme(doc, el),
-      });
-      const imgData = canvas.toDataURL('image/png');
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      const pageW = pdf.internal.pageSize.getWidth();
-      const pageH = pdf.internal.pageSize.getHeight();
-      const margin = 10;
-      const headerH = 12;
-      const contentW = pageW - margin * 2;
-      const pdfHeight = (canvas.height * contentW) / canvas.width;
-      let heightLeft = pdfHeight;
-      let position = margin + headerH;
-
-      const addHeader = () => {
-        pdf.setFontSize(10);
-        pdf.setTextColor(26, 26, 46);
-        pdf.text(getCompanyName() + ' — ' + new Date().toLocaleDateString('pt-BR'), margin, margin + 4);
-        pdf.setDrawColor(200);
-        pdf.line(margin, margin + 7, pageW - margin, margin + 7);
-      };
-
-      addHeader();
-      pdf.addImage(imgData, 'PNG', margin, position, contentW, pdfHeight);
-      heightLeft -= (pageH - margin - headerH);
-
-      while (heightLeft > 0) {
-        position = margin + headerH - (pdfHeight - heightLeft);
-        pdf.addPage();
-        addHeader();
-        pdf.addImage(imgData, 'PNG', margin, position, contentW, pdfHeight);
-        heightLeft -= (pageH - margin - headerH);
-      }
-
-      pdf.save((filename || sectionId) + '_' + getExportDate() + '.pdf');
-    } catch (err) {
-      console.error(err);
-      alert('Erro ao gerar PDF. Tente novamente.');
-    } finally {
-      restoreChartsFromPdf(chartSnap);
-      clearPdfLiveTheme(section);
-      document.body.classList.remove('pdf-capturing');
-      section.classList.remove('pdf-export-target', 'export-capture');
-      if (btn) { btn.disabled = false; btn.innerHTML = origHtml; }
-    }
-  }
-
-  let activeDrilldownCfop = null;
-  let activeFornecedorNome = null;
-  let fornecedorSelected = new Set();
-  let fornecedorCatalogCache = [];
-  let fornecedorSelectionPeriodKey = '';
-
-  function escHtml(v) {
-    return String(v || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-  }
-
-  function getCfopDados() {
-    return getPack().cfopEntradas || [];
-  }
-
-  function topCfopForFornecedor(nome) {
-    let best = null;
-    getCfopDados().forEach((c) => {
-      const f = (c.fornecedores || []).find((x) => x.nome === nome);
-      if (f && (!best || f.total > best.total)) best = { cfop: c.cfop, total: f.total };
-    });
-    return best ? best.cfop : '—';
-  }
-
-  function dominantUf(ufMap) {
-    const entries = Object.entries(ufMap || {}).filter(([k]) => k && k !== '—');
-    if (!entries.length) return '—';
-    entries.sort((a, b) => b[1] - a[1]);
-    return entries[0][0];
-  }
-
-  function fornecedorPeriodKey() {
-    return state.unit + '|' + state.fiscalMode + '|' + state.month;
-  }
-
-  function buildFornecedorCatalog() {
+  function collectUniqueSuppliers() {
     const map = new Map();
-    getCfopDados().forEach((c) => {
-      const cfopUf = raw_cfop_uf(c.cfop);
-      (c.fornecedores || []).forEach((f) => {
-        if (!f.nome) return;
-        if (!map.has(f.nome)) {
-          map.set(f.nome, { nome: f.nome, total: 0, qtd: 0, cfops: new Set(), ufs: {}, cnpj: f.cnpj || '', uf: f.uf && f.uf !== '—' ? f.uf : '' });
-        }
-        const entry = map.get(f.nome);
-        entry.total += f.total || 0;
-        entry.qtd += f.qtd || 0;
-        entry.cfops.add(c.cfop);
-        entry.ufs[cfopUf] = (entry.ufs[cfopUf] || 0) + (f.total || 0);
-        if (f.cnpj && !entry.cnpj) entry.cnpj = f.cnpj;
-        if (f.uf && f.uf !== '—') entry.uf = f.uf;
+    getCfopDadosForPrint().forEach((cfop) => {
+      (cfop.fornecedores || []).forEach((f) => {
+        const key = supplierKey(f);
+        if (!key || map.has(key)) return;
+        map.set(key, { nome: f.nome, cnpj: f.cnpj || '—', uf: f.uf || '—', key: key });
       });
     });
-    const packList = getPack().fornecedores || [];
-    packList.forEach((f) => {
-      if (!f.nome) return;
-      if (!map.has(f.nome)) map.set(f.nome, { nome: f.nome, total: f.total || 0, qtd: 0, cfops: new Set(), ufs: {}, cnpj: '', uf: '' });
-      else if ((map.get(f.nome).total || 0) < (f.total || 0)) map.get(f.nome).total = f.total;
-    });
-    return Array.from(map.values()).map((e) => ({
-      nome: e.nome,
-      total: Math.round(e.total * 100) / 100,
-      qtd: e.qtd,
-      cfopCount: e.cfops.size,
-      topCfop: topCfopForFornecedor(e.nome),
-      uf: e.uf || dominantUf(e.ufs),
-      cnpj: e.cnpj || '',
-    })).sort((a, b) => b.total - a.total);
+    return Array.from(map.values()).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
   }
 
-  function ensureFornecedorSelection(catalog) {
-    const key = fornecedorPeriodKey();
-    if (key !== fornecedorSelectionPeriodKey) {
-      fornecedorSelectionPeriodKey = key;
-      fornecedorSelected = new Set(catalog.slice(0, 20).map((f) => f.nome));
-    }
-    if (!fornecedorSelected.size && catalog.length) {
-      fornecedorSelected = new Set(catalog.slice(0, 20).map((f) => f.nome));
-    }
-    Array.from(fornecedorSelected).forEach((nome) => {
-      if (!catalog.find((x) => x.nome === nome)) fornecedorSelected.delete(nome);
-    });
-  }
-
-  function buildFornecedorRanking() {
-    fornecedorCatalogCache = buildFornecedorCatalog();
-    ensureFornecedorSelection(fornecedorCatalogCache);
-    return fornecedorCatalogCache.filter((f) => fornecedorSelected.has(f.nome));
-  }
-
-  function updateFornecedorPickerCount() {
-    const el = document.getElementById('forn-picker-count');
-    const total = fornecedorCatalogCache.length;
-    if (el) el.textContent = fornecedorSelected.size + ' de ' + total + ' selecionados';
-  }
-
-  function renderFornecedorPicker() {
-    const list = document.getElementById('forn-picker-list');
+  function renderSupplierList() {
+    const list = document.getElementById('supplierList');
     if (!list) return;
-    fornecedorCatalogCache = buildFornecedorCatalog();
-    ensureFornecedorSelection(fornecedorCatalogCache);
-    const packTotal = getPack().totalCompras || 1;
-    list.innerHTML = fornecedorCatalogCache.map((f) => {
-      const checked = fornecedorSelected.has(f.nome) ? ' checked' : '';
-      const search = (f.nome + ' ' + (f.cnpj || '') + ' ' + f.uf).toLowerCase();
-      const meta = fmtBRL(f.total) + ' · ' + (f.qtd || 0) + ' NFs · ' + f.cfopCount + ' CFOP(s) · UF ' + f.uf;
-      return '<label class="supplier-item forn-picker-item" data-search="' + escHtml(search) + '">' +
-        '<input type="checkbox" data-nome="' + escHtml(f.nome) + '"' + checked + ' onchange="onFornecedorPickerChange(this)">' +
-        '<span class="supplier-info"><strong>' + escHtml(f.nome) + '</strong><small>' + escHtml(meta) +
-        (packTotal > 0 ? ' · ' + pct1(f.total, packTotal) + '% das compras' : '') + '</small></span></label>';
-    }).join('') || '<p class="td-mute">Nenhum fornecedor no período selecionado.</p>';
-    updateFornecedorPickerCount();
-    const note = document.getElementById('forn-data-note');
-    if (note) {
-      note.textContent = 'Fonte: notas de entrada por CFOP (SPED/apuração). Valores somam o contábil do período; até 15 fornecedores por CFOP no ETL. CNPJ/UF aparecem quando disponíveis na planilha.';
-    }
+    const suppliers = collectUniqueSuppliers();
+    list.innerHTML = suppliers.map((s) => {
+      const search = (s.nome + ' ' + s.cnpj + ' ' + s.uf).toLowerCase();
+      return '<label class="supplier-item" data-search="' + escHtml(search) + '">' +
+        '<input type="checkbox" value="' + escHtml(s.cnpj) + '" data-key="' + escHtml(s.key) + '" data-nome="' + escHtml(s.nome) + '" data-uf="' + escHtml(s.uf) + '">' +
+        '<span class="supplier-info"><strong>' + escHtml(s.nome) + '</strong>' +
+        '<small>' + escHtml(s.cnpj) + ' · ' + escHtml(s.uf) + '</small></span></label>';
+    }).join('') || '<p class="td-mute" style="padding:16px;">Nenhum fornecedor nesta competência.</p>';
   }
 
-  function renderFornecedorStats(ranking) {
-    const el = document.getElementById('forn-panel-stats');
-    if (!el) return;
-    const pack = getPack();
-    const totalCompras = pack.totalCompras || 0;
-    const selTotal = ranking.reduce((s, f) => s + (f.total || 0), 0);
-    const selNfs = ranking.reduce((s, f) => s + (f.qtd || 0), 0);
-    const catalogTotal = fornecedorCatalogCache.reduce((s, f) => s + (f.total || 0), 0);
-    el.innerHTML =
-      '<div class="forn-stat"><div class="lbl">Exibindo</div><div class="val">' + ranking.length + ' fornecedor(es)</div></div>' +
-      '<div class="forn-stat"><div class="lbl">Valor selecionado</div><div class="val">' + fmtBRL(selTotal) + '</div></div>' +
-      '<div class="forn-stat"><div class="lbl">NFs (selecionados)</div><div class="val">' + selNfs + '</div></div>' +
-      '<div class="forn-stat"><div class="lbl">Cobertura vs compras</div><div class="val">' + pct1(selTotal, totalCompras) + '%</div></div>' +
-      '<div class="forn-stat"><div class="lbl">Total catalogado</div><div class="val">' + fornecedorCatalogCache.length + ' · ' + fmtBRL(catalogTotal) + '</div></div>';
-  }
-
-  function onFornecedorPickerChange(cb) {
-    const nome = cb.dataset.nome;
-    if (cb.checked) fornecedorSelected.add(nome);
-    else {
-      fornecedorSelected.delete(nome);
-      if (activeFornecedorNome === nome) {
-        activeFornecedorNome = null;
-        const detail = document.getElementById('fornecedor-detail');
-        if (detail) detail.style.display = 'none';
-      }
-    }
-    updateFornecedorPickerCount();
-    renderFornecedorRankingTable();
-  }
-
-  function toggleAllFornecedorPicker(state) {
-    document.querySelectorAll('#forn-picker-list .forn-picker-item').forEach((el) => {
-      if (el.style.display === 'none') return;
-      const cb = el.querySelector('input');
-      if (!cb) return;
-      cb.checked = state;
-      if (state) fornecedorSelected.add(cb.dataset.nome);
-      else fornecedorSelected.delete(cb.dataset.nome);
-    });
-    if (!state) {
-      activeFornecedorNome = null;
-      const detail = document.getElementById('fornecedor-detail');
-      if (detail) detail.style.display = 'none';
-    }
-    updateFornecedorPickerCount();
-    renderFornecedorRankingTable();
-  }
-
-  function selectTopFornecedores(n) {
-    fornecedorSelected = new Set(fornecedorCatalogCache.slice(0, n).map((f) => f.nome));
-    renderFornecedorPicker();
-    renderFornecedorRankingTable();
-  }
-
-  function filterFornecedorPicker(query) {
-    const q = (query || '').toLowerCase();
-    document.querySelectorAll('#forn-picker-list .forn-picker-item').forEach((el) => {
-      el.style.display = el.dataset.search.includes(q) ? '' : 'none';
-    });
-  }
-
-  function toggleFornecedorPicker() {
-    const body = document.getElementById('forn-picker-body');
-    if (!body) return;
-    const open = body.style.display === 'none';
-    body.style.display = open ? 'block' : 'none';
-    const btn = document.getElementById('forn-picker-toggle');
-    if (btn) btn.innerHTML = '<i class="fas fa-list-check"></i> ' + (open ? 'Ocultar lista' : 'Escolher fornecedores');
-  }
-
-  function renderFornecedorRankingTable() {
-    const pack = getPack();
-    const total = pack.totalCompras || 1;
-    const ranking = fornecedorCatalogCache.filter((f) => fornecedorSelected.has(f.nome));
-    renderFornecedorStats(ranking);
-    const tbody = document.getElementById('fornecedor-ranking-tbody');
-    if (!tbody) return;
-    if (!ranking.length) {
-      tbody.innerHTML = '<tr><td colspan="8" class="td-mute">Marque fornecedores na lista acima para exibir o ranking.</td></tr>';
-      return;
-    }
-    tbody.innerHTML = ranking.map((f, i) => {
-      const search = (f.nome + ' ' + f.uf + ' ' + f.topCfop).toLowerCase();
-      const rowStyle = activeFornecedorNome === f.nome ? ' style="background:rgba(34,163,41,0.08)"' : '';
-      return '<tr class="forn-rank-row" data-search="' + escHtml(search) + '" data-nome="' + escHtml(f.nome) + '"' + rowStyle + '>' +
-        '<td><span class="rank ' + (i < 3 ? 'g' + (i + 1) : 'gn') + '">' + (i + 1) + '</span></td>' +
-        '<td class="fw7">' + escHtml(f.nome) + '</td>' +
-        '<td>' + escHtml(f.uf || '—') + '</td>' +
-        '<td class="r">' + (f.qtd || 0) + '</td>' +
-        '<td class="r">' + f.cfopCount + '</td>' +
-        '<td class="r td-val">' + fmtBRL(f.total) + '</td>' +
-        '<td>' + pbBar(total > 0 ? f.total / total * 100 : 0) + '</td>' +
-        '<td class="r">' + escHtml(f.topCfop || '—') + '</td></tr>';
-    }).join('');
-    tbody.querySelectorAll('.forn-rank-row').forEach((row) => {
-      row.onclick = () => showFornecedorDetail(row.dataset.nome);
-    });
-    const q = (document.getElementById('forn-search') || {}).value;
-    if (q) filterFornecedorPanel(q);
-  }
-
-  function isFornecedorPanelOpen() {
-    const panel = document.getElementById('fornecedor-panel');
-    return panel && panel.style.display !== 'none';
-  }
-
-  function setFornecedorPanelBtnActive(active) {
-    const btn = document.getElementById('btn-fornecedor-panel');
-    if (btn) btn.classList.toggle('fornecedor-panel-active', active);
-  }
-
-  function renderFornecedorPanel() {
-    fornecedorCatalogCache = buildFornecedorCatalog();
-    ensureFornecedorSelection(fornecedorCatalogCache);
-    const pack = getPack();
-    const total = pack.totalCompras || 1;
-    const sub = document.getElementById('forn-panel-sub');
-    if (sub) {
-      sub.textContent = UNIT_LABELS[state.unit] + ' — ' + periodFull() + periodContext() +
-        ' — Total compras ' + fmtBRL(total) + ' — ' + fornecedorCatalogCache.length + ' fornecedores catalogados';
-    }
-    renderFornecedorPicker();
-    renderFornecedorRankingTable();
-    if (activeFornecedorNome && fornecedorSelected.has(activeFornecedorNome)) showFornecedorDetail(activeFornecedorNome, true);
-    else {
-      activeFornecedorNome = null;
-      const detail = document.getElementById('fornecedor-detail');
-      if (detail) detail.style.display = 'none';
-    }
-  }
-
-  function showFornecedorDetail(nome, skipScroll) {
-    activeFornecedorNome = nome;
-    const pack = getPack();
-    const totalCompras = pack.totalCompras || 1;
-    const catalog = fornecedorCatalogCache.find((f) => f.nome === nome) || {};
+  function rowsForSupplierPrint(cfopDados, key, nome) {
     const rows = [];
-    let subtotal = 0;
-    let totalNfs = 0;
-    const finalidades = {};
-    getCfopDados().forEach((c) => {
-      const f = (c.fornecedores || []).find((x) => x.nome === nome);
-      if (f) {
-        subtotal += f.total || 0;
-        totalNfs += f.qtd || 0;
-        const fin = cfopFinalidadeFromItem(c);
-        finalidades[fin] = (finalidades[fin] || 0) + (f.total || 0);
-        rows.push({
-          cfop: c.cfop,
-          descricao: cfopDescricaoFromItem(c),
-          finalidade: fin,
-          qtd: f.qtd || 0,
-          total: f.total || 0,
-        });
+    cfopDados.forEach((c) => {
+      const f = (c.fornecedores || []).find((x) => supplierKey(x) === key || x.nome === nome);
+      if (!f) return;
+      let desc = c.descricao || ('CFOP ' + c.cfop);
+      let fin = c.finalidade || c.grupo || '—';
+      if (typeof cfopDescricaoFromItem === 'function') desc = cfopDescricaoFromItem(c);
+      if (typeof cfopFinalidadeFromItem === 'function') fin = cfopFinalidadeFromItem(c);
+      else if (typeof cfopGrupoFromItem === 'function') fin = cfopGrupoFromItem(c);
+      else if (typeof getCfopInfo === 'function') {
+        const info = getCfopInfo(c.cfop);
+        desc = info.descricao || desc;
+        fin = info.finalidade || info.grupo || fin;
       }
+      rows.push({ cfop: c.cfop, desc: desc, fin: fin, qtd: f.qtd || 0, total: f.total || 0 });
     });
-    rows.sort((a, b) => b.total - a.total);
-    const title = document.getElementById('forn-detail-title');
-    const sub = document.getElementById('forn-detail-sub');
-    const meta = document.getElementById('forn-detail-meta');
-    if (title) title.textContent = nome;
-    if (sub) {
-      sub.textContent = 'Subtotal: ' + fmtBRL(subtotal) + ' · ' + totalNfs + ' NFs · ' + rows.length + ' CFOP(s) · ' +
-        pct1(subtotal, totalCompras) + '% das compras do período';
-    }
-    if (meta) {
-      const finTxt = Object.entries(finalidades).sort((a, b) => b[1] - a[1]).map(([k, v]) => k + ' ' + fmtBRL(v)).join(' · ');
-      meta.textContent = 'UF: ' + (catalog.uf || '—') +
-        (catalog.cnpj ? ' · CNPJ: ' + catalog.cnpj : '') +
-        (finTxt ? ' · Finalidades: ' + finTxt : '');
-    }
-    const dtbody = document.getElementById('fornecedor-detail-tbody');
-    if (dtbody) {
-      dtbody.innerHTML = rows.length ? rows.map((r) =>
-        '<tr><td class="fw7">' + escHtml(r.cfop) + '</td><td>' + escHtml(r.descricao) + '</td><td>' + escHtml(r.finalidade) + '</td><td class="r">' + r.qtd +
-        '</td><td class="r td-val">' + fmtBRL(r.total) + '</td><td class="r">' + pbBar(subtotal > 0 ? r.total / subtotal * 100 : 0) +
-        '</td><td class="r">' + pct1(r.total, totalCompras) + '%</td></tr>'
-      ).join('') : '<tr><td colspan="7" class="td-mute">Sem CFOPs para este fornecedor</td></tr>';
-    }
-    const detail = document.getElementById('fornecedor-detail');
-    if (detail) {
-      detail.style.display = 'block';
-      if (!skipScroll) detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-    document.querySelectorAll('#fornecedor-ranking-tbody .forn-rank-row').forEach((row) => {
-      row.style.background = row.dataset.nome === nome ? 'rgba(34,163,41,0.08)' : '';
+    return rows.sort((a, b) => b.total - a.total);
+  }
+
+  function aggregateDemaisByCfop(cfopDados, selectedKeys) {
+    const map = {};
+    cfopDados.forEach((c) => {
+      (c.fornecedores || []).forEach((f) => {
+        const key = supplierKey(f);
+        if (!key || selectedKeys.has(key)) return;
+        if (!map[c.cfop]) {
+          let desc = c.descricao || ('CFOP ' + c.cfop);
+          let fin = c.finalidade || c.grupo || '—';
+          if (typeof cfopDescricaoFromItem === 'function') desc = cfopDescricaoFromItem(c);
+          if (typeof cfopFinalidadeFromItem === 'function') fin = cfopFinalidadeFromItem(c);
+          else if (typeof cfopGrupoFromItem === 'function') fin = cfopGrupoFromItem(c);
+          map[c.cfop] = { cfop: c.cfop, desc: desc, fin: fin, qtd: 0, total: 0 };
+        }
+        map[c.cfop].qtd += f.qtd || 0;
+        map[c.cfop].total += f.total || 0;
+      });
     });
+    return Object.values(map).filter((r) => r.total > 0).sort((a, b) => b.total - a.total);
   }
 
-  function toggleFornecedorPanel() {
-    const panel = document.getElementById('fornecedor-panel');
-    if (!panel) return;
-    if (panel.style.display === 'none' || !panel.style.display) {
-      panel.style.display = 'block';
-      setFornecedorPanelBtnActive(true);
-      const search = document.getElementById('forn-search');
-      if (search) search.value = '';
-      const pickerSearch = document.getElementById('forn-picker-search');
-      if (pickerSearch) pickerSearch.value = '';
-      renderFornecedorPanel();
-      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    } else {
-      closeFornecedorPanel();
+  function buildModalSupplierReportData() {
+    const selected = Array.from(document.querySelectorAll('#supplierList input[type="checkbox"]:checked'));
+    const includeDemais = document.getElementById('includeDemaisFornecedores')?.checked;
+    if (!selected.length && !includeDemais) {
+      return { error: 'Selecione ao menos um fornecedor ou marque "Demais fornecedores".' };
     }
-  }
-
-  function closeFornecedorPanel() {
-    const panel = document.getElementById('fornecedor-panel');
-    if (panel) panel.style.display = 'none';
-    activeFornecedorNome = null;
-    const detail = document.getElementById('fornecedor-detail');
-    if (detail) detail.style.display = 'none';
-    const search = document.getElementById('forn-search');
-    if (search) search.value = '';
-    const pickerSearch = document.getElementById('forn-picker-search');
-    if (pickerSearch) pickerSearch.value = '';
-    setFornecedorPanelBtnActive(false);
-  }
-
-  function filterFornecedorPanel(query) {
-    const q = (query || '').toLowerCase();
-    document.querySelectorAll('#fornecedor-ranking-tbody .forn-rank-row').forEach((el) => {
-      el.style.display = el.dataset.search.includes(q) ? '' : 'none';
-    });
-  }
-
-  function openSupplierModal() {
-    toggleFornecedorPanel();
-  }
-
-  function buildSelectedSupplierReportData(useGrupo) {
-    const selectedNames = Array.from(fornecedorSelected);
-    if (!selectedNames.length) return { error: 'Selecione ao menos um fornecedor.' };
-    const cfopDados = getCfopDados();
+    const periodKey = getSupplierReportPeriodKey();
+    const cfopDados = getCfopDadosForPrint();
     if (!cfopDados.length) return { error: 'Sem entradas para a competência selecionada.' };
-
+    const selectedKeys = new Set(selected.map((cb) => cb.dataset.key || cb.dataset.nome || cb.value));
     const suppliers = [];
     let totalGeral = 0;
-    selectedNames.forEach((nome) => {
-      const catalog = fornecedorCatalogCache.find((f) => f.nome === nome) || {};
-      const rows = [];
-      let subtotal = 0;
-      cfopDados.forEach((c) => {
-        const f = (c.fornecedores || []).find((x) => x.nome === nome);
-        if (!f) return;
-        rows.push({
-          cfop: c.cfop,
-          desc: cfopDescricaoFromItem(c),
-          fin: useGrupo ? (typeof cfopGrupoFromItem === 'function' ? cfopGrupoFromItem(c) : (c.grupo || '—')) : cfopFinalidadeFromItem(c),
-          qtd: f.qtd || 0,
-          total: f.total || 0,
-        });
-        subtotal += f.total || 0;
-      });
-      rows.sort((a, b) => b.total - a.total);
+    selected.forEach((cb) => {
+      const key = cb.dataset.key || cb.dataset.nome || cb.value;
+      const nome = cb.dataset.nome || '';
+      const rows = rowsForSupplierPrint(cfopDados, key, nome);
+      const subtotal = rows.reduce((s, r) => s + r.total, 0);
+      if (!rows.length) return;
       totalGeral += subtotal;
-      suppliers.push({
-        nome: nome,
-        cnpj: catalog.cnpj || '—',
-        uf: catalog.uf || '—',
-        rows: rows,
-        subtotal: subtotal,
-      });
+      suppliers.push({ nome: nome, cnpj: cb.value || '—', uf: cb.dataset.uf || '—', rows: rows, subtotal: subtotal });
     });
+    if (includeDemais) {
+      const demaisRows = aggregateDemaisByCfop(cfopDados, selectedKeys);
+      const subtotal = demaisRows.reduce((s, r) => s + r.total, 0);
+      if (demaisRows.length) {
+        totalGeral += subtotal;
+        suppliers.push({ nome: 'Demais fornecedores', cnpj: '—', uf: '—', rows: demaisRows, subtotal: subtotal });
+      }
+    }
     if (totalGeral <= 0) {
       return { error: 'Nenhum dado encontrado para os fornecedores selecionados neste período.' };
     }
+    let col3 = 'Finalidade';
+    if (typeof cfopGrupoFromItem === 'function' && typeof cfopFinalidadeFromItem !== 'function') col3 = 'Grupo';
     return {
       suppliers: suppliers,
       totalGeral: totalGeral,
-      competencia: periodFull(),
       companyName: getCompanyName(),
-      col3Label: useGrupo ? 'Grupo' : 'Finalidade',
+      competencia: periodLabelForReport(periodKey),
+      col3Label: col3,
     };
   }
 
-  function printBySupplier() {
-    const data = buildSelectedSupplierReportData(false);
-    if (data.error) { alert(data.error); return; }
+  function openSupplierModal() {
+    const modal = document.getElementById('supplierModal');
+    if (!modal) { toggleFornecedorPanel(); return; }
+    hydrateSupplierReportPeriodSelect();
+    renderSupplierList();
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+    const demais = document.getElementById('includeDemaisFornecedores');
+    if (demais) demais.checked = true;
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+  }
 
-    let html = '<div style="font-family:Inter,sans-serif;padding:24px;color:#1a1a2e;background:#fff;">';
+  function closeSupplierModal() {
+    const modal = document.getElementById('supplierModal');
+    if (modal) {
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+    }
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+  }
+
+  function onSupplierReportPeriodChange() {
+    renderSupplierList();
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+  }
+
+  function filterSuppliers(q) {
+    const term = (q || '').toLowerCase();
+    document.querySelectorAll('#supplierList .supplier-item').forEach((el) => {
+      if (el.id === 'demaisFornecedoresOption' || el.classList.contains('supplier-item-demais')) return;
+      el.style.display = (el.dataset.search || '').includes(term) ? '' : 'none';
+    });
+  }
+
+  function toggleAllSuppliers(st) {
+    document.querySelectorAll('#supplierList .supplier-item input[type="checkbox"]').forEach((cb) => {
+      const row = cb.closest('.supplier-item');
+      if (row && row.style.display === 'none') return;
+      cb.checked = st;
+    });
+  }
+
+  function printBySupplier() {
+    const data = buildModalSupplierReportData();
+    if (data.error) { alert(data.error); return; }
+    let html = '<div class="supplier-print-root" style="font-family:Inter,sans-serif;padding:0;margin:0;color:#1a1a2e;background:#fff;width:100%;max-width:100%;box-sizing:border-box;">';
     html += '<h1 style="font-size:18px;margin-bottom:4px;">Relatório por Fornecedor</h1>';
     html += '<p style="font-size:12px;color:#555;margin-bottom:24px;">' +
-      escHtml(data.companyName) + ' — ' + escHtml(data.competencia) + ' — ' +
+      escHtml(data.companyName) + ' — Competência ' + escHtml(data.competencia) + ' — ' +
       new Date().toLocaleDateString('pt-BR') + '</p>';
-
     data.suppliers.forEach((s) => {
-      html += '<div style="margin-bottom:28px;page-break-inside:avoid;">';
+      html += '<div class="supplier-print-block" style="margin-bottom:12px;page-break-inside:auto;width:100%;max-width:100%;box-sizing:border-box;">';
       html += '<h2 style="font-size:14px;border-bottom:2px solid #22a329;padding-bottom:6px;">' + escHtml(s.nome) + '</h2>';
       html += '<p style="font-size:11px;color:#555;">CNPJ: ' + escHtml(s.cnpj) + ' · UF: ' + escHtml(s.uf) + '</p>';
-      html += '<table style="width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;">';
-      html += '<thead><tr style="background:#f0f0f0;"><th style="padding:8px;text-align:left;">CFOP</th>';
-      html += '<th style="padding:8px;text-align:left;">Descrição</th><th style="padding:8px;text-align:left;">' + escHtml(data.col3Label) + '</th>';
-      html += '<th style="padding:8px;text-align:right;">Qtd NFs</th><th style="padding:8px;text-align:right;">Valor (R$)</th></tr></thead><tbody>';
+      html += '<table style="width:100%;max-width:100%;border-collapse:collapse;margin-top:8px;font-size:10px;table-layout:fixed;"><colgroup><col class="cfop"><col class="desc"><col class="fin"><col class="qtd"><col class="val"></colgroup>';
+      html += '<thead><tr style="background:#f0f0f0;"><th style="padding:4px 5px;text-align:left;">CFOP</th>';
+      html += '<th style="padding:4px 5px;text-align:left;">Descrição</th><th style="padding:4px 5px;text-align:left;">' + escHtml(data.col3Label) + '</th>';
+      html += '<th style="padding:4px 5px;text-align:right;">Qtd NFs</th><th style="padding:4px 5px;text-align:right;">Valor (R$)</th></tr></thead><tbody>';
       s.rows.forEach((r) => {
-        html += '<tr><td style="padding:8px;border-bottom:1px solid #ddd;">' + escHtml(r.cfop) + '</td>';
-        html += '<td style="padding:8px;border-bottom:1px solid #ddd;">' + escHtml(r.desc) + '</td>';
-        html += '<td style="padding:8px;border-bottom:1px solid #ddd;">' + escHtml(r.fin) + '</td>';
-        html += '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;">' + r.qtd + '</td>';
-        html += '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;font-weight:600;">' +
+        html += '<tr><td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + escHtml(r.cfop) + '</td>';
+        html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + escHtml(r.desc) + '</td>';
+        html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + escHtml(r.fin) + '</td>';
+        html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;text-align:right;">' + r.qtd + '</td>';
+        html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;text-align:right;font-weight:600;">' +
           r.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr>';
       });
-      html += '</tbody><tfoot><tr><td colspan="4" style="padding:10px;text-align:right;font-weight:700;">Subtotal:</td>';
-      html += '<td style="padding:10px;text-align:right;font-weight:700;">R$ ' +
+      html += '</tbody><tfoot><tr><td colspan="4" style="padding:6px 5px;text-align:right;font-weight:700;">Subtotal:</td>';
+      html += '<td style="padding:6px 5px;text-align:right;font-weight:700;">R$ ' +
         s.subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr></tfoot></table></div>';
     });
-
     html += '<div style="border-top:2px solid #1a1a2e;padding-top:12px;margin-top:16px;text-align:right;font-size:14px;font-weight:700;">';
     html += 'Total Geral: R$ ' + data.totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</div></div>';
-
+    closeSupplierModal();
     const old = document.getElementById('print-supplier-report');
     if (old) old.remove();
     const div = document.createElement('div');
@@ -25278,7 +24974,6 @@ const DASHBOARD_DATA = {
     div.innerHTML = html;
     document.body.appendChild(div);
     document.body.classList.add('supplier-printing');
-
     const cleanup = () => {
       document.body.classList.remove('supplier-printing');
       div.remove();
@@ -25289,9 +24984,9 @@ const DASHBOARD_DATA = {
   }
 
   function exportSupplierPdf() {
-    const data = buildSelectedSupplierReportData(false);
+    const data = buildModalSupplierReportData();
     if (data.error) { alert(data.error); return; }
-    if (!window.jspdf?.jsPDF) {
+    if (!window.jspdf || !window.jspdf.jsPDF) {
       alert('Biblioteca jsPDF nao carregada.');
       return;
     }
@@ -25299,7 +24994,7 @@ const DASHBOARD_DATA = {
       alert('Biblioteca jspdf-autotable nao carregada.');
       return;
     }
-
+    closeSupplierModal();
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const margin = 14;
@@ -25307,12 +25002,8 @@ const DASHBOARD_DATA = {
     let y = margin;
     const fmtBrl = (v) => 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const ensureSpace = (need) => {
-      if (y + need > pageH - margin) {
-        pdf.addPage();
-        y = margin;
-      }
+      if (y + need > pageH - margin) { pdf.addPage(); y = margin; }
     };
-
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(14);
     pdf.text('Relatorio por Fornecedor', margin, y);
@@ -25320,10 +25011,9 @@ const DASHBOARD_DATA = {
     pdf.setFont('helvetica', 'normal');
     pdf.setFontSize(9);
     pdf.setTextColor(80, 80, 80);
-    pdf.text(data.companyName + ' — ' + data.competencia + ' — ' + new Date().toLocaleDateString('pt-BR'), margin, y);
+    pdf.text(data.companyName + ' — Competencia ' + data.competencia + ' — ' + new Date().toLocaleDateString('pt-BR'), margin, y);
     y += 10;
     pdf.setTextColor(0, 0, 0);
-
     data.suppliers.forEach((s) => {
       ensureSpace(20);
       pdf.setFont('helvetica', 'bold');
@@ -25339,22 +25029,22 @@ const DASHBOARD_DATA = {
       pdf.autoTable({
         startY: y,
         margin: { left: margin, right: margin },
+        tableWidth: 'auto',
         head: [['CFOP', 'Descricao', data.col3Label, 'Qtd NFs', 'Valor (R$)']],
         body: s.rows.map((r) => [r.cfop, r.desc, r.fin, String(r.qtd), fmtBrl(r.total)]),
         foot: [['', '', '', 'Subtotal:', fmtBrl(s.subtotal)]],
-        styles: { fontSize: 8, cellPadding: 2 },
+        styles: { fontSize: 7, cellPadding: 1.5, overflow: 'linebreak' },
         headStyles: { fillColor: [34, 163, 41], textColor: 255 },
         footStyles: { fillColor: [241, 245, 249], textColor: [30, 41, 59], fontStyle: 'bold' },
         columnStyles: { 3: { halign: 'right' }, 4: { halign: 'right' } },
       });
       y = pdf.lastAutoTable.finalY + 8;
     });
-
     ensureSpace(12);
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(11);
     pdf.text('Total Geral: ' + fmtBrl(data.totalGeral), margin, y);
-    const safe = String(data.companyName || 'empresa').slice(0, 24).replace(/[\\/:*?"<>|]/g, '');
+    const safe = String(data.companyName || 'empresa').slice(0, 24).replace(/[\/:*?"<>|]/g, '');
     pdf.save('relatorio-fornecedor-' + safe + '.pdf');
   }
 
@@ -25400,6 +25090,10 @@ const DASHBOARD_DATA = {
   window.validateApuracaoPack = validateApuracaoPack;
   window.buildFiscalTotalPack = buildFiscalTotalPack;
   window.openSupplierModal = openSupplierModal;
+  window.closeSupplierModal = closeSupplierModal;
+  window.onSupplierReportPeriodChange = onSupplierReportPeriodChange;
+  window.filterSuppliers = filterSuppliers;
+  window.toggleAllSuppliers = toggleAllSuppliers;
   window.printBySupplier = printBySupplier;
   window.exportSupplierPdf = exportSupplierPdf;
   window.toggleFornecedorPanel = toggleFornecedorPanel;

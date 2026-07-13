@@ -196,7 +196,15 @@ function drawSupplierSection(doc, supplier, col3Label) {
     .text(`CNPJ: ${supplier.cnpj}  ·  UF: ${supplier.uf}`);
   doc.moveDown(0.3);
 
-  const colW = [55, 170, 120, 50, 80];
+  const usable = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+  const colW = [
+    Math.floor(usable * 0.12),
+    Math.floor(usable * 0.34),
+    Math.floor(usable * 0.28),
+    Math.floor(usable * 0.10),
+    0,
+  ];
+  colW[4] = usable - colW[0] - colW[1] - colW[2] - colW[3];
   const headers = ["CFOP", "Descricao", col3Label, "Qtd NFs", "Valor (R$)"];
   const startX = doc.page.margins.left;
   let y = doc.y;
@@ -248,7 +256,7 @@ function drawSupplierSection(doc, supplier, col3Label) {
 
 async function writePdf(outFile, { companyName, competencia, suppliers, note, col3Label }) {
   await new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ margin: 40, size: "A4" });
+    const doc = new PDFDocument({ margin: 36, size: "A4" });
     const stream = fs.createWriteStream(outFile);
     doc.pipe(stream);
     stream.on("finish", resolve);
@@ -332,6 +340,34 @@ async function processCompany(cfg) {
 
   const all = buildSupplierCatalog(cfops, catalog, preferGrupo);
   const selected = all.slice(0, TOP_N);
+  // Inclui "Demais fornecedores" (mesmo comportamento do modal UNICA)
+  const selectedKeys = new Set(selected.map((s) => s.key || s.cnpj || s.nome));
+  const demaisMap = {};
+  cfops.forEach((c) => {
+    const { desc, fin } = resolveDescFin(c, catalog, preferGrupo);
+    (c.fornecedores || []).forEach((f) => {
+      if (!f || !f.nome) return;
+      const key = (f.cnpj && String(f.cnpj).trim()) || f.nome;
+      if (selectedKeys.has(key)) return;
+      if (!demaisMap[c.cfop]) {
+        demaisMap[c.cfop] = { cfop: c.cfop, desc, fin, qtd: 0, total: 0 };
+      }
+      demaisMap[c.cfop].qtd += f.qtd || 0;
+      demaisMap[c.cfop].total += f.total || 0;
+    });
+  });
+  const demaisRows = Object.values(demaisMap)
+    .filter((r) => r.total > 0)
+    .sort((a, b) => b.total - a.total);
+  if (demaisRows.length) {
+    selected.push({
+      nome: "Demais fornecedores",
+      cnpj: "—",
+      uf: "—",
+      total: demaisRows.reduce((s, r) => s + r.total, 0),
+      rows: demaisRows,
+    });
+  }
 
   if (cfg.id === "schumacher" && !selected.length) {
     note =

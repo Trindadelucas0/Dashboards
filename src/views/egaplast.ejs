@@ -449,6 +449,81 @@
     }
   
   
+    /* SUPPLIER-PRINT-A4 */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+      }
+      html, body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      body.supplier-printing #print-supplier-report {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+      }
+      body.supplier-printing #print-supplier-report .supplier-print-root,
+      body.supplier-printing #print-supplier-report .supplier-print-block {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        box-sizing: border-box !important;
+      }
+      body.supplier-printing #print-supplier-report .supplier-print-block {
+        page-break-inside: auto !important;
+        break-inside: auto !important;
+        margin-bottom: 10px !important;
+      }
+      body.supplier-printing #print-supplier-report table {
+        width: 100% !important;
+        max-width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+        font-size: 9pt !important;
+      }
+      body.supplier-printing #print-supplier-report col.cfop { width: 12% !important; }
+      body.supplier-printing #print-supplier-report col.desc { width: 34% !important; }
+      body.supplier-printing #print-supplier-report col.fin { width: 28% !important; }
+      body.supplier-printing #print-supplier-report col.qtd { width: 10% !important; }
+      body.supplier-printing #print-supplier-report col.val { width: 16% !important; }
+      body.supplier-printing #print-supplier-report th,
+      body.supplier-printing #print-supplier-report td {
+        padding: 3px 4px !important;
+        word-wrap: break-word !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+        vertical-align: top !important;
+      }
+      body.supplier-printing #print-supplier-report thead { display: table-header-group !important; }
+      body.supplier-printing #print-supplier-report tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      body.supplier-printing #print-supplier-report h1 {
+        font-size: 14pt !important;
+        margin: 0 0 4px !important;
+      }
+      body.supplier-printing #print-supplier-report h2 {
+        font-size: 11pt !important;
+        margin: 0 0 4px !important;
+        page-break-after: avoid;
+      }
+    }
+
+  
     .btn-back-hub { display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
 
   </style>
@@ -670,7 +745,7 @@
             <div class="mes-bar" id="fn-mes-bar" aria-label="Competencia fiscal finalidade"></div>
           </div>
           <div class="export-bar">
-            <button type="button" class="btn-export print" id="btn-fornecedor-panel" onclick="toggleFornecedorPanel()" title="Ver por Fornecedor"><i class="fas fa-truck"></i> Por Fornecedor</button>
+            <button type="button" class="btn-export print" id="btn-fornecedor-panel" onclick="openSupplierModal()" title="Imprimir por Fornecedor"><i class="fas fa-truck"></i> Por Fornecedor</button>
             <button class="btn-export pdf" onclick="exportPDF('tab-finalidade','Finalidade_Compras')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
             <button class="btn-export xlsx" onclick="exportExcel('tab-finalidade','Finalidade_Compras')" title="Exportar Excel"><i class="fas fa-file-excel"></i> Excel</button>
           </div>
@@ -1171,14 +1246,20 @@
 </div>
 
 
-<!-- MODAL legado (substituído por painel inline) -->
-<div class="modal-overlay" id="supplierModal" style="display:none !important;" aria-hidden="true">
+<!-- MODAL: Impressão por Fornecedor (Finalidade de Compras) -->
+<div class="modal-overlay" id="supplierModal" style="display:none;" onclick="if(event.target===this)closeSupplierModal()">
   <div class="modal-box">
     <div class="modal-header">
       <h3><i class="fas fa-truck"></i> Imprimir por Fornecedor</h3>
-      <button onclick="closeSupplierModal()" class="modal-close">&times;</button>
+      <button type="button" onclick="closeSupplierModal()" class="modal-close">&times;</button>
     </div>
     <div class="modal-body">
+      <div class="search-box">
+        <label for="supplierReportPeriod" style="display:block;font-size:12px;font-weight:600;margin-bottom:6px;">
+          Competência do relatório
+        </label>
+        <select id="supplierReportPeriod" class="period-sel" style="width:100%;" onchange="onSupplierReportPeriodChange()"></select>
+      </div>
       <div class="search-box">
         <input type="text" id="supplierSearch" placeholder="Buscar fornecedor..." oninput="filterSuppliers(this.value)">
       </div>
@@ -1186,11 +1267,19 @@
         <button type="button" onclick="toggleAllSuppliers(true)">Selecionar Todos</button>
         <button type="button" onclick="toggleAllSuppliers(false)">Limpar Seleção</button>
       </div>
+      <label class="supplier-item supplier-item-demais" id="demaisFornecedoresOption">
+        <input type="checkbox" id="includeDemaisFornecedores" checked>
+        <span class="supplier-info">
+          <strong>Demais fornecedores</strong>
+          <small>Agrupa fornecedores não selecionados por CFOP</small>
+        </span>
+      </label>
       <div class="supplier-list" id="supplierList"></div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn-cancel" onclick="closeSupplierModal()">Cancelar</button>
       <button type="button" class="btn-confirm" onclick="printBySupplier()"><i class="fas fa-print"></i> Imprimir Selecionados</button>
+      <button type="button" class="btn-confirm btn-pdf-supplier" onclick="exportSupplierPdf()" style="background:#ef4444;"><i class="fas fa-file-pdf"></i> Baixar PDF</button>
     </div>
   </div>
 </div>
@@ -32283,146 +32372,240 @@ const DASHBOARD_DATA = {
     });
   }
 
-  function openSupplierModal() {
-    toggleFornecedorPanel();
-  }
 
   function getCompanyName() {
     return document.querySelector('.logo-text .company')?.textContent?.trim() || 'EGAPLAST';
   }
 
-
-  function exportSupplierPdfFromData(data) {
-    if (data.error) { alert(data.error); return; }
-    if (!window.jspdf || !window.jspdf.jsPDF) {
-      alert('Biblioteca jsPDF nao carregada.');
-      return;
-    }
-    if (typeof window.jspdf.jsPDF.prototype.autoTable !== 'function') {
-      alert('Biblioteca jspdf-autotable nao carregada.');
-      return;
-    }
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    const margin = 14;
-    const pageH = pdf.internal.pageSize.getHeight();
-    let y = margin;
-    const fmtBrl = (v) => 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const ensureSpace = (need) => {
-      if (y + need > pageH - margin) { pdf.addPage(); y = margin; }
-    };
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(14);
-    pdf.text('Relatorio por Fornecedor', margin, y);
-    y += 7;
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
-    pdf.setTextColor(80, 80, 80);
-    pdf.text(data.companyName + ' — ' + data.competencia + ' — ' + new Date().toLocaleDateString('pt-BR'), margin, y);
-    y += 10;
-    pdf.setTextColor(0, 0, 0);
-    data.suppliers.forEach((s) => {
-      ensureSpace(20);
-      pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(11);
-      pdf.text(String(s.nome || '').slice(0, 90), margin, y);
-      y += 5;
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(8);
-      pdf.setTextColor(100, 100, 100);
-      pdf.text('CNPJ: ' + s.cnpj + ' · UF: ' + s.uf, margin, y);
-      y += 4;
-      pdf.setTextColor(0, 0, 0);
-      pdf.autoTable({
-        startY: y,
-        margin: { left: margin, right: margin },
-        head: [['CFOP', 'Descricao', data.col3Label, 'Qtd NFs', 'Valor (R$)']],
-        body: s.rows.map((r) => [r.cfop, r.desc, r.fin, String(r.qtd), fmtBrl(r.total)]),
-        foot: [['', '', '', 'Subtotal:', fmtBrl(s.subtotal)]],
-        styles: { fontSize: 8, cellPadding: 2 },
-        headStyles: { fillColor: [34, 163, 41], textColor: 255 },
-        footStyles: { fillColor: [241, 245, 249], textColor: [30, 41, 59], fontStyle: 'bold' },
-        columnStyles: { 3: { halign: 'right' }, 4: { halign: 'right' } },
-      });
-      y = pdf.lastAutoTable.finalY + 8;
-    });
-    ensureSpace(12);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(11);
-    pdf.text('Total Geral: ' + fmtBrl(data.totalGeral), margin, y);
-    const safe = String(data.companyName || 'empresa').slice(0, 24).replace(/[\\/:*?"<>|]/g, '');
-    pdf.save('relatorio-fornecedor-' + safe + '.pdf');
+  function supplierKey(f) {
+    return (f.cnpj && String(f.cnpj).trim()) || f.nome;
   }
 
-  function buildSelectedSupplierReportData() {
-    const selectedNames = Array.from(fornecedorSelected);
-    if (!selectedNames.length) return { error: 'Selecione ao menos um fornecedor.' };
-    const cfopDados = getCfopDados();
+  function getSupplierReportPeriodKey() {
+    const sel = document.getElementById('supplierReportPeriod');
+    return (sel && sel.value) || (state.fiscalMode === 'month' ? state.month : (state.fiscalMode || state.month));
+  }
+
+  function getPackForSupplierReport(periodKey) {
+    if (periodKey === 'total') return buildFiscalTotalPack();
+    if (periodKey === 'q1' || periodKey === 'q2') return buildFiscalTrimPack(periodKey);
+    const fp = getUnitFiscal();
+    return fp.porMes[periodKey] || null;
+  }
+
+  function periodLabelForReport(periodKey) {
+    if (periodKey === 'total') return PERIODO_TOTAL.label;
+    if (periodKey === 'q1' && TRIMESTRES.q1) return TRIMESTRES.q1.label;
+    if (periodKey === 'q2' && TRIMESTRES.q2) return TRIMESTRES.q2.label;
+    return (MONTH_LABELS[periodKey] || periodKey) + ' / 2026';
+  }
+
+  function hydrateSupplierReportPeriodSelect() {
+    const sel = document.getElementById('supplierReportPeriod');
+    if (!sel) return;
+    let html = '';
+    MONTH_KEYS.forEach((m) => {
+      html += '<option value="' + m + '">' + MONTH_LABELS[m] + ' / 2026</option>';
+    });
+    if (TRIMESTRES.q1) html += '<option value="q1">' + TRIMESTRES.q1.label + '</option>';
+    if (TRIMESTRES.q2) html += '<option value="q2">' + TRIMESTRES.q2.label + '</option>';
+    html += '<option value="total">' + PERIODO_TOTAL.label + '</option>';
+    sel.innerHTML = html;
+    if (state.fiscalMode === 'month') sel.value = state.month;
+    else if (state.fiscalMode === 'q1' || state.fiscalMode === 'q2' || state.fiscalMode === 'total') sel.value = state.fiscalMode;
+    else sel.value = state.month;
+  }
+
+  function getCfopDadosForPrint() {
+    const pack = getPackForSupplierReport(getSupplierReportPeriodKey());
+    return (pack && pack.cfopEntradas) || [];
+  }
+
+  function collectUniqueSuppliers() {
+    const map = new Map();
+    getCfopDadosForPrint().forEach((cfop) => {
+      (cfop.fornecedores || []).forEach((f) => {
+        const key = supplierKey(f);
+        if (!key || map.has(key)) return;
+        map.set(key, { nome: f.nome, cnpj: f.cnpj || '—', uf: f.uf || '—', key: key });
+      });
+    });
+    return Array.from(map.values()).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  }
+
+  function renderSupplierList() {
+    const list = document.getElementById('supplierList');
+    if (!list) return;
+    const suppliers = collectUniqueSuppliers();
+    list.innerHTML = suppliers.map((s) => {
+      const search = (s.nome + ' ' + s.cnpj + ' ' + s.uf).toLowerCase();
+      return '<label class="supplier-item" data-search="' + escHtml(search) + '">' +
+        '<input type="checkbox" value="' + escHtml(s.cnpj) + '" data-key="' + escHtml(s.key) + '" data-nome="' + escHtml(s.nome) + '" data-uf="' + escHtml(s.uf) + '">' +
+        '<span class="supplier-info"><strong>' + escHtml(s.nome) + '</strong>' +
+        '<small>' + escHtml(s.cnpj) + ' · ' + escHtml(s.uf) + '</small></span></label>';
+    }).join('') || '<p class="td-mute" style="padding:16px;">Nenhum fornecedor nesta competência.</p>';
+  }
+
+  function rowsForSupplierPrint(cfopDados, key, nome) {
+    const rows = [];
+    cfopDados.forEach((c) => {
+      const f = (c.fornecedores || []).find((x) => supplierKey(x) === key || x.nome === nome);
+      if (!f) return;
+      let desc = c.descricao || ('CFOP ' + c.cfop);
+      let fin = c.finalidade || c.grupo || '—';
+      if (typeof cfopDescricaoFromItem === 'function') desc = cfopDescricaoFromItem(c);
+      if (typeof cfopFinalidadeFromItem === 'function') fin = cfopFinalidadeFromItem(c);
+      else if (typeof cfopGrupoFromItem === 'function') fin = cfopGrupoFromItem(c);
+      else if (typeof getCfopInfo === 'function') {
+        const info = getCfopInfo(c.cfop);
+        desc = info.descricao || desc;
+        fin = info.finalidade || info.grupo || fin;
+      }
+      rows.push({ cfop: c.cfop, desc: desc, fin: fin, qtd: f.qtd || 0, total: f.total || 0 });
+    });
+    return rows.sort((a, b) => b.total - a.total);
+  }
+
+  function aggregateDemaisByCfop(cfopDados, selectedKeys) {
+    const map = {};
+    cfopDados.forEach((c) => {
+      (c.fornecedores || []).forEach((f) => {
+        const key = supplierKey(f);
+        if (!key || selectedKeys.has(key)) return;
+        if (!map[c.cfop]) {
+          let desc = c.descricao || ('CFOP ' + c.cfop);
+          let fin = c.finalidade || c.grupo || '—';
+          if (typeof cfopDescricaoFromItem === 'function') desc = cfopDescricaoFromItem(c);
+          if (typeof cfopFinalidadeFromItem === 'function') fin = cfopFinalidadeFromItem(c);
+          else if (typeof cfopGrupoFromItem === 'function') fin = cfopGrupoFromItem(c);
+          map[c.cfop] = { cfop: c.cfop, desc: desc, fin: fin, qtd: 0, total: 0 };
+        }
+        map[c.cfop].qtd += f.qtd || 0;
+        map[c.cfop].total += f.total || 0;
+      });
+    });
+    return Object.values(map).filter((r) => r.total > 0).sort((a, b) => b.total - a.total);
+  }
+
+  function buildModalSupplierReportData() {
+    const selected = Array.from(document.querySelectorAll('#supplierList input[type="checkbox"]:checked'));
+    const includeDemais = document.getElementById('includeDemaisFornecedores')?.checked;
+    if (!selected.length && !includeDemais) {
+      return { error: 'Selecione ao menos um fornecedor ou marque "Demais fornecedores".' };
+    }
+    const periodKey = getSupplierReportPeriodKey();
+    const cfopDados = getCfopDadosForPrint();
     if (!cfopDados.length) return { error: 'Sem entradas para a competência selecionada.' };
+    const selectedKeys = new Set(selected.map((cb) => cb.dataset.key || cb.dataset.nome || cb.value));
     const suppliers = [];
     let totalGeral = 0;
-    selectedNames.forEach((nome) => {
-      const catalog = fornecedorCatalogCache.find((f) => f.nome === nome) || {};
-      const rows = [];
-      let subtotal = 0;
-      cfopDados.forEach((c) => {
-        const f = (c.fornecedores || []).find((x) => x.nome === nome);
-        if (!f) return;
-        const desc = cfopDescricaoFromItem(c);
-        const fin = cfopGrupoFromItem(c);
-        rows.push({
-          cfop: c.cfop,
-          desc: desc,
-          fin: fin,
-          qtd: f.qtd || 0,
-          total: f.total || 0,
-        });
-        subtotal += f.total || 0;
-      });
-      rows.sort((a, b) => b.total - a.total);
+    selected.forEach((cb) => {
+      const key = cb.dataset.key || cb.dataset.nome || cb.value;
+      const nome = cb.dataset.nome || '';
+      const rows = rowsForSupplierPrint(cfopDados, key, nome);
+      const subtotal = rows.reduce((s, r) => s + r.total, 0);
+      if (!rows.length) return;
       totalGeral += subtotal;
-      suppliers.push({ nome: nome, cnpj: catalog.cnpj || '—', uf: catalog.uf || '—', rows: rows, subtotal: subtotal });
+      suppliers.push({ nome: nome, cnpj: cb.value || '—', uf: cb.dataset.uf || '—', rows: rows, subtotal: subtotal });
     });
-    if (totalGeral <= 0) return { error: 'Nenhum dado encontrado para os fornecedores selecionados neste período.' };
+    if (includeDemais) {
+      const demaisRows = aggregateDemaisByCfop(cfopDados, selectedKeys);
+      const subtotal = demaisRows.reduce((s, r) => s + r.total, 0);
+      if (demaisRows.length) {
+        totalGeral += subtotal;
+        suppliers.push({ nome: 'Demais fornecedores', cnpj: '—', uf: '—', rows: demaisRows, subtotal: subtotal });
+      }
+    }
+    if (totalGeral <= 0) {
+      return { error: 'Nenhum dado encontrado para os fornecedores selecionados neste período.' };
+    }
+    let col3 = 'Finalidade';
+    if (typeof cfopGrupoFromItem === 'function' && typeof cfopFinalidadeFromItem !== 'function') col3 = 'Grupo';
     return {
       suppliers: suppliers,
       totalGeral: totalGeral,
-      competencia: periodFull(),
       companyName: getCompanyName(),
-      col3Label: 'Grupo',
+      competencia: periodLabelForReport(periodKey),
+      col3Label: col3,
     };
   }
 
+  function openSupplierModal() {
+    const modal = document.getElementById('supplierModal');
+    if (!modal) { toggleFornecedorPanel(); return; }
+    hydrateSupplierReportPeriodSelect();
+    renderSupplierList();
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+    const demais = document.getElementById('includeDemaisFornecedores');
+    if (demais) demais.checked = true;
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeSupplierModal() {
+    const modal = document.getElementById('supplierModal');
+    if (modal) {
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+    }
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+  }
+
+  function onSupplierReportPeriodChange() {
+    renderSupplierList();
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+  }
+
+  function filterSuppliers(q) {
+    const term = (q || '').toLowerCase();
+    document.querySelectorAll('#supplierList .supplier-item').forEach((el) => {
+      if (el.id === 'demaisFornecedoresOption' || el.classList.contains('supplier-item-demais')) return;
+      el.style.display = (el.dataset.search || '').includes(term) ? '' : 'none';
+    });
+  }
+
+  function toggleAllSuppliers(st) {
+    document.querySelectorAll('#supplierList .supplier-item input[type="checkbox"]').forEach((cb) => {
+      const row = cb.closest('.supplier-item');
+      if (row && row.style.display === 'none') return;
+      cb.checked = st;
+    });
+  }
+
   function printBySupplier() {
-    const data = buildSelectedSupplierReportData();
+    const data = buildModalSupplierReportData();
     if (data.error) { alert(data.error); return; }
-    let html = '<div style="font-family:Inter,sans-serif;padding:24px;color:#1a1a2e;background:#fff;">';
+    let html = '<div class="supplier-print-root" style="font-family:Inter,sans-serif;padding:0;margin:0;color:#1a1a2e;background:#fff;width:100%;max-width:100%;box-sizing:border-box;">';
     html += '<h1 style="font-size:18px;margin-bottom:4px;">Relatório por Fornecedor</h1>';
     html += '<p style="font-size:12px;color:#555;margin-bottom:24px;">' +
-      escHtml(data.companyName) + ' — ' + escHtml(data.competencia) + ' — ' +
+      escHtml(data.companyName) + ' — Competência ' + escHtml(data.competencia) + ' — ' +
       new Date().toLocaleDateString('pt-BR') + '</p>';
     data.suppliers.forEach((s) => {
-      html += '<div style="margin-bottom:28px;page-break-inside:avoid;">';
+      html += '<div class="supplier-print-block" style="margin-bottom:12px;page-break-inside:auto;width:100%;max-width:100%;box-sizing:border-box;">';
       html += '<h2 style="font-size:14px;border-bottom:2px solid #22a329;padding-bottom:6px;">' + escHtml(s.nome) + '</h2>';
       html += '<p style="font-size:11px;color:#555;">CNPJ: ' + escHtml(s.cnpj) + ' · UF: ' + escHtml(s.uf) + '</p>';
-      html += '<table style="width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;">';
-      html += '<thead><tr style="background:#f0f0f0;"><th style="padding:8px;text-align:left;">CFOP</th>';
-      html += '<th style="padding:8px;text-align:left;">Descrição</th><th style="padding:8px;text-align:left;">' + escHtml(data.col3Label) + '</th>';
-      html += '<th style="padding:8px;text-align:right;">Qtd NFs</th><th style="padding:8px;text-align:right;">Valor (R$)</th></tr></thead><tbody>';
+      html += '<table style="width:100%;max-width:100%;border-collapse:collapse;margin-top:8px;font-size:10px;table-layout:fixed;"><colgroup><col class="cfop"><col class="desc"><col class="fin"><col class="qtd"><col class="val"></colgroup>';
+      html += '<thead><tr style="background:#f0f0f0;"><th style="padding:4px 5px;text-align:left;">CFOP</th>';
+      html += '<th style="padding:4px 5px;text-align:left;">Descrição</th><th style="padding:4px 5px;text-align:left;">' + escHtml(data.col3Label) + '</th>';
+      html += '<th style="padding:4px 5px;text-align:right;">Qtd NFs</th><th style="padding:4px 5px;text-align:right;">Valor (R$)</th></tr></thead><tbody>';
       s.rows.forEach((r) => {
-        html += '<tr><td style="padding:8px;border-bottom:1px solid #ddd;">' + escHtml(r.cfop) + '</td>';
-        html += '<td style="padding:8px;border-bottom:1px solid #ddd;">' + escHtml(r.desc) + '</td>';
-        html += '<td style="padding:8px;border-bottom:1px solid #ddd;">' + escHtml(r.fin) + '</td>';
-        html += '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;">' + r.qtd + '</td>';
-        html += '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;font-weight:600;">' +
+        html += '<tr><td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + escHtml(r.cfop) + '</td>';
+        html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + escHtml(r.desc) + '</td>';
+        html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + escHtml(r.fin) + '</td>';
+        html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;text-align:right;">' + r.qtd + '</td>';
+        html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;text-align:right;font-weight:600;">' +
           r.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr>';
       });
-      html += '</tbody><tfoot><tr><td colspan="4" style="padding:10px;text-align:right;font-weight:700;">Subtotal:</td>';
-      html += '<td style="padding:10px;text-align:right;font-weight:700;">R$ ' +
+      html += '</tbody><tfoot><tr><td colspan="4" style="padding:6px 5px;text-align:right;font-weight:700;">Subtotal:</td>';
+      html += '<td style="padding:6px 5px;text-align:right;font-weight:700;">R$ ' +
         s.subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr></tfoot></table></div>';
     });
     html += '<div style="border-top:2px solid #1a1a2e;padding-top:12px;margin-top:16px;text-align:right;font-size:14px;font-weight:700;">';
     html += 'Total Geral: R$ ' + data.totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</div></div>';
+    closeSupplierModal();
     const old = document.getElementById('print-supplier-report');
     if (old) old.remove();
     const div = document.createElement('div');
@@ -32440,7 +32623,68 @@ const DASHBOARD_DATA = {
   }
 
   function exportSupplierPdf() {
-    exportSupplierPdfFromData(buildSelectedSupplierReportData());
+    const data = buildModalSupplierReportData();
+    if (data.error) { alert(data.error); return; }
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      alert('Biblioteca jsPDF nao carregada.');
+      return;
+    }
+    if (typeof window.jspdf.jsPDF.prototype.autoTable !== 'function') {
+      alert('Biblioteca jspdf-autotable nao carregada.');
+      return;
+    }
+    closeSupplierModal();
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const margin = 14;
+    const pageH = pdf.internal.pageSize.getHeight();
+    let y = margin;
+    const fmtBrl = (v) => 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const ensureSpace = (need) => {
+      if (y + need > pageH - margin) { pdf.addPage(); y = margin; }
+    };
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(14);
+    pdf.text('Relatorio por Fornecedor', margin, y);
+    y += 7;
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(9);
+    pdf.setTextColor(80, 80, 80);
+    pdf.text(data.companyName + ' — Competencia ' + data.competencia + ' — ' + new Date().toLocaleDateString('pt-BR'), margin, y);
+    y += 10;
+    pdf.setTextColor(0, 0, 0);
+    data.suppliers.forEach((s) => {
+      ensureSpace(20);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(11);
+      pdf.text(String(s.nome || '').slice(0, 90), margin, y);
+      y += 5;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text('CNPJ: ' + s.cnpj + ' · UF: ' + s.uf, margin, y);
+      y += 4;
+      pdf.setTextColor(0, 0, 0);
+      pdf.autoTable({
+        startY: y,
+        margin: { left: margin, right: margin },
+        tableWidth: 'auto',
+        head: [['CFOP', 'Descricao', data.col3Label, 'Qtd NFs', 'Valor (R$)']],
+        body: s.rows.map((r) => [r.cfop, r.desc, r.fin, String(r.qtd), fmtBrl(r.total)]),
+        foot: [['', '', '', 'Subtotal:', fmtBrl(s.subtotal)]],
+        styles: { fontSize: 7, cellPadding: 1.5, overflow: 'linebreak' },
+        headStyles: { fillColor: [34, 163, 41], textColor: 255 },
+        footStyles: { fillColor: [241, 245, 249], textColor: [30, 41, 59], fontStyle: 'bold' },
+        columnStyles: { 3: { halign: 'right' }, 4: { halign: 'right' } },
+      });
+      y = pdf.lastAutoTable.finalY + 8;
+    });
+    ensureSpace(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(11);
+    pdf.text('Total Geral: ' + fmtBrl(data.totalGeral), margin, y);
+    const safe = String(data.companyName || 'empresa').slice(0, 24).replace(/[\/:*?"<>|]/g, '');
+    pdf.save('relatorio-fornecedor-' + safe + '.pdf');
   }
 
   function closeDrilldown() {
@@ -32486,6 +32730,10 @@ const DASHBOARD_DATA = {
   window.validateApuracaoPack = validateApuracaoPack;
   window.buildFiscalTotalPack = buildFiscalTotalPack;
   window.openSupplierModal = openSupplierModal;
+  window.closeSupplierModal = closeSupplierModal;
+  window.onSupplierReportPeriodChange = onSupplierReportPeriodChange;
+  window.filterSuppliers = filterSuppliers;
+  window.toggleAllSuppliers = toggleAllSuppliers;
   window.printBySupplier = printBySupplier;
   window.exportSupplierPdf = exportSupplierPdf;
   window.toggleFornecedorPanel = toggleFornecedorPanel;

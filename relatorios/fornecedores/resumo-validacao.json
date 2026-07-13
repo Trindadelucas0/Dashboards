@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-07-13T13:58:38.990Z",
+  "generatedAt": "2026-07-13T14:09:18.821Z",
   "results": [
     {
       "id": "baifer",
       "companyName": "BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA",
       "competencia": "Jun / 2026",
-      "suppliers": 10,
-      "total": 481848.2099999999,
-      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-baifer.pdf",
+      "suppliers": 11,
+      "total": 549035.0799999998,
+      "file": "c:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-baifer.pdf",
       "note": null,
       "ok": true
     },
@@ -17,7 +17,7 @@
       "competencia": "Mai / 2026",
       "suppliers": 6,
       "total": 269697.5,
-      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-du-lanche.pdf",
+      "file": "c:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-du-lanche.pdf",
       "note": null,
       "ok": true
     },
@@ -25,9 +25,9 @@
       "id": "egaplast",
       "companyName": "EGAPLAST ARTEFATOS E COMERCIO DE PLASTICOS LTDA",
       "competencia": "Jun / 2026",
-      "suppliers": 10,
-      "total": 632244.6699999999,
-      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-egaplast.pdf",
+      "suppliers": 11,
+      "total": 894857.04,
+      "file": "c:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-egaplast.pdf",
       "note": null,
       "ok": true
     },
@@ -35,9 +35,9 @@
       "id": "unica",
       "companyName": "ÚNICA Comércio Atacadista de Tintas",
       "competencia": "06",
-      "suppliers": 10,
-      "total": 1705869.2,
-      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-unica.pdf",
+      "suppliers": 11,
+      "total": 1976993.72,
+      "file": "c:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-unica.pdf",
       "note": null,
       "ok": true
     },
@@ -47,7 +47,7 @@
       "competencia": "Mai / 2026",
       "suppliers": 0,
       "total": 0,
-      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-schumacher.pdf",
+      "file": "c:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-schumacher.pdf",
       "note": "Detalhe por fornecedor indisponivel no pacote atual da Schumacher (cfopEntradas sem lista de fornecedores). Funcao de impressao validada; aguarde SPED/entradas com C100 para popular o relatorio.",
       "ok": true
     },
@@ -55,9 +55,9 @@
       "id": "loja-maquinas",
       "companyName": "LOJA DAS MAQUINAS E FERRAMENTAS LTDA",
       "competencia": "Jun / 2026",
-      "suppliers": 10,
-      "total": 362962.94,
-      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-loja-maquinas.pdf",
+      "suppliers": 11,
+      "total": 388293.61,
+      "file": "c:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-loja-maquinas.pdf",
       "note": null,
       "ok": true
     },
@@ -67,7 +67,7 @@
       "competencia": "Mai/2026",
       "suppliers": 8,
       "total": 266352.54,
-      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-jpg.pdf",
+      "file": "c:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-jpg.pdf",
       "note": null,
       "ok": true
     }

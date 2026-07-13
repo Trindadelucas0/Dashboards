@@ -437,6 +437,81 @@
       canvas { max-width:100% !important; }
     }
   
+    /* SUPPLIER-PRINT-A4 */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+      }
+      html, body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      body.supplier-printing #print-supplier-report {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+      }
+      body.supplier-printing #print-supplier-report .supplier-print-root,
+      body.supplier-printing #print-supplier-report .supplier-print-block {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        box-sizing: border-box !important;
+      }
+      body.supplier-printing #print-supplier-report .supplier-print-block {
+        page-break-inside: auto !important;
+        break-inside: auto !important;
+        margin-bottom: 10px !important;
+      }
+      body.supplier-printing #print-supplier-report table {
+        width: 100% !important;
+        max-width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+        font-size: 9pt !important;
+      }
+      body.supplier-printing #print-supplier-report col.cfop { width: 12% !important; }
+      body.supplier-printing #print-supplier-report col.desc { width: 34% !important; }
+      body.supplier-printing #print-supplier-report col.fin { width: 28% !important; }
+      body.supplier-printing #print-supplier-report col.qtd { width: 10% !important; }
+      body.supplier-printing #print-supplier-report col.val { width: 16% !important; }
+      body.supplier-printing #print-supplier-report th,
+      body.supplier-printing #print-supplier-report td {
+        padding: 3px 4px !important;
+        word-wrap: break-word !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+        vertical-align: top !important;
+      }
+      body.supplier-printing #print-supplier-report thead { display: table-header-group !important; }
+      body.supplier-printing #print-supplier-report tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      body.supplier-printing #print-supplier-report h1 {
+        font-size: 14pt !important;
+        margin: 0 0 4px !important;
+      }
+      body.supplier-printing #print-supplier-report h2 {
+        font-size: 11pt !important;
+        margin: 0 0 4px !important;
+        page-break-after: avoid;
+      }
+    }
+
+  
     .btn-back-hub { display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
 
   </style>
@@ -8721,11 +8796,11 @@ const DASHBOARD_DATA = {
 
   function renderSupplierTableRows(rows) {
     return rows.map((r) =>
-      '<tr><td style="padding:8px;border-bottom:1px solid #ddd;">' + escHtml(r.cfop) + '</td>' +
-      '<td style="padding:8px;border-bottom:1px solid #ddd;">' + escHtml(r.desc) + '</td>' +
-      '<td style="padding:8px;border-bottom:1px solid #ddd;">' + escHtml(r.fin) + '</td>' +
-      '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;">' + r.qtd + '</td>' +
-      '<td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;font-weight:600;">' +
+      '<tr><td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + escHtml(r.cfop) + '</td>' +
+      '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + escHtml(r.desc) + '</td>' +
+      '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + escHtml(r.fin) + '</td>' +
+      '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;text-align:right;">' + r.qtd + '</td>' +
+      '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;text-align:right;font-weight:600;">' +
       r.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr>'
     ).join('');
   }
@@ -8734,16 +8809,16 @@ const DASHBOARD_DATA = {
     const subtotal = rows.reduce((s, r) => s + r.total, 0);
     if (!rows.length) return { html: '', subtotal: 0 };
 
-    let html = '<div style="margin-bottom:28px;page-break-inside:avoid;">';
+    let html = '<div class="supplier-print-block" style="margin-bottom:12px;page-break-inside:auto;width:100%;max-width:100%;box-sizing:border-box;">';
     html += '<h2 style="font-size:14px;border-bottom:2px solid #22a329;padding-bottom:6px;">' + escHtml(nome) + '</h2>';
     html += '<p style="font-size:11px;color:#555;">CNPJ: ' + escHtml(cnpj) + ' · UF: ' + escHtml(uf) + '</p>';
-    html += '<table style="width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;">';
-    html += '<thead><tr style="background:#f0f0f0;"><th style="padding:8px;text-align:left;">CFOP</th>';
-    html += '<th style="padding:8px;text-align:left;">Descrição</th><th style="padding:8px;text-align:left;">Finalidade</th>';
-    html += '<th style="padding:8px;text-align:right;">Qtd NFs</th><th style="padding:8px;text-align:right;">Valor (R$)</th></tr></thead><tbody>';
+    html += '<table style="width:100%;max-width:100%;border-collapse:collapse;margin-top:8px;font-size:10px;table-layout:fixed;"><colgroup><col class="cfop"><col class="desc"><col class="fin"><col class="qtd"><col class="val"></colgroup>';
+    html += '<thead><tr style="background:#f0f0f0;"><th style="padding:4px 5px;text-align:left;">CFOP</th>';
+    html += '<th style="padding:4px 5px;text-align:left;">Descrição</th><th style="padding:4px 5px;text-align:left;">Finalidade</th>';
+    html += '<th style="padding:4px 5px;text-align:right;">Qtd NFs</th><th style="padding:4px 5px;text-align:right;">Valor (R$)</th></tr></thead><tbody>';
     html += renderSupplierTableRows(rows);
-    html += '</tbody><tfoot><tr><td colspan="4" style="padding:10px;text-align:right;font-weight:700;">Subtotal:</td>';
-    html += '<td style="padding:10px;text-align:right;font-weight:700;">R$ ' +
+    html += '</tbody><tfoot><tr><td colspan="4" style="padding:6px 5px;text-align:right;font-weight:700;">Subtotal:</td>';
+    html += '<td style="padding:6px 5px;text-align:right;font-weight:700;">R$ ' +
       subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr></tfoot></table></div>';
     return { html, subtotal };
   }
@@ -8814,7 +8889,7 @@ const DASHBOARD_DATA = {
     }
     const selectedKeys = new Set(selected.map((cb) => cb.dataset.key || cb.dataset.nome || cb.value));
     let totalGeral = 0;
-    let html = '<div style="font-family:Inter,sans-serif;padding:24px;color:#1a1a2e;background:#fff;">';
+    let html = '<div class="supplier-print-root" style="font-family:Inter,sans-serif;padding:0;margin:0;color:#1a1a2e;background:#fff;width:100%;max-width:100%;box-sizing:border-box;">';
     html += '<h1 style="font-size:18px;margin-bottom:4px;">Relatório por Fornecedor</h1>';
     html += '<p style="font-size:12px;color:#555;margin-bottom:24px;">' +
       escHtml(getCompanyName()) + ' — Competência ' + escHtml(periodLabelForReport(periodKey)) + ' — ' +
@@ -8954,10 +9029,11 @@ const DASHBOARD_DATA = {
       pdf.autoTable({
         startY: y,
         margin: { left: margin, right: margin },
+        tableWidth: 'auto',
         head: [['CFOP', 'Descricao', data.col3Label, 'Qtd NFs', 'Valor (R$)']],
         body: s.rows.map((r) => [r.cfop, r.desc, r.fin, String(r.qtd), fmtBrl(r.total)]),
         foot: [['', '', '', 'Subtotal:', fmtBrl(s.subtotal)]],
-        styles: { fontSize: 8, cellPadding: 2 },
+        styles: { fontSize: 7, cellPadding: 1.5, overflow: 'linebreak' },
         headStyles: { fillColor: [34, 163, 41], textColor: 255 },
         footStyles: { fillColor: [241, 245, 249], textColor: [30, 41, 59], fontStyle: 'bold' },
         columnStyles: { 3: { halign: 'right' }, 4: { halign: 'right' } },
