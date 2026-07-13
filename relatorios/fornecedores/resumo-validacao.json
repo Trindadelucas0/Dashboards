@@ -1,0 +1,75 @@
+{
+  "generatedAt": "2026-07-13T13:58:38.990Z",
+  "results": [
+    {
+      "id": "baifer",
+      "companyName": "BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA",
+      "competencia": "Jun / 2026",
+      "suppliers": 10,
+      "total": 481848.2099999999,
+      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-baifer.pdf",
+      "note": null,
+      "ok": true
+    },
+    {
+      "id": "du-lanche",
+      "companyName": "GUARDANAPOS DU LANCHE LTDA",
+      "competencia": "Mai / 2026",
+      "suppliers": 6,
+      "total": 269697.5,
+      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-du-lanche.pdf",
+      "note": null,
+      "ok": true
+    },
+    {
+      "id": "egaplast",
+      "companyName": "EGAPLAST ARTEFATOS E COMERCIO DE PLASTICOS LTDA",
+      "competencia": "Jun / 2026",
+      "suppliers": 10,
+      "total": 632244.6699999999,
+      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-egaplast.pdf",
+      "note": null,
+      "ok": true
+    },
+    {
+      "id": "unica",
+      "companyName": "ÚNICA Comércio Atacadista de Tintas",
+      "competencia": "06",
+      "suppliers": 10,
+      "total": 1705869.2,
+      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-unica.pdf",
+      "note": null,
+      "ok": true
+    },
+    {
+      "id": "schumacher",
+      "companyName": "INDUSTRIA SCHUMACHER LTDA",
+      "competencia": "Mai / 2026",
+      "suppliers": 0,
+      "total": 0,
+      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-schumacher.pdf",
+      "note": "Detalhe por fornecedor indisponivel no pacote atual da Schumacher (cfopEntradas sem lista de fornecedores). Funcao de impressao validada; aguarde SPED/entradas com C100 para popular o relatorio.",
+      "ok": true
+    },
+    {
+      "id": "loja-maquinas",
+      "companyName": "LOJA DAS MAQUINAS E FERRAMENTAS LTDA",
+      "competencia": "Jun / 2026",
+      "suppliers": 10,
+      "total": 362962.94,
+      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-loja-maquinas.pdf",
+      "note": null,
+      "ok": true
+    },
+    {
+      "id": "jpg",
+      "companyName": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS",
+      "competencia": "Mai/2026",
+      "suppliers": 8,
+      "total": 266352.54,
+      "file": "C:\\Users\\trind\\Desktop\\dashboards\\Dashboards\\relatorios\\fornecedores\\relatorio-fornecedor-jpg.pdf",
+      "note": null,
+      "ok": true
+    }
+  ]
+}

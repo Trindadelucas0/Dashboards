@@ -8,7 +8,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
@@ -1246,6 +1247,7 @@
     <div class="modal-footer">
       <button type="button" class="btn-cancel" onclick="closeSupplierModal()">Cancelar</button>
       <button type="button" class="btn-confirm" onclick="printBySupplier()"><i class="fas fa-print"></i> Imprimir Selecionados</button>
+      <button type="button" class="btn-confirm btn-pdf-supplier" onclick="exportSupplierPdf()" title="Baixar PDF dos selecionados" style="background:#ef4444;"><i class="fas fa-file-pdf"></i> Baixar PDF</button>
     </div>
   </div>
 </div>
@@ -8822,6 +8824,110 @@
     };
     window.addEventListener('afterprint', cleanup);
     window.print();
+  }
+
+  function buildLojaSupplierReportData(selected) {
+    const suppliers = [];
+    let totalGeral = 0;
+    selected.forEach((cb) => {
+      const cnpj = cb.value;
+      const nome = cb.dataset.nome;
+      const rows = [];
+      let subtotal = 0;
+      let uf = '—';
+      (CFOP_DADOS || []).forEach((cfop) => {
+        const f = (cfop.fornecedores || []).find((x) => x.cnpj === cnpj);
+        if (!f) return;
+        const info = (CFOP_FINALIDADE[cfop.cfop] || {});
+        rows.push({
+          cfop: cfop.cfop,
+          desc: info.descricao || '—',
+          fin: info.finalidade || '—',
+          qtd: f.qtd,
+          total: f.total,
+        });
+        subtotal += f.total;
+        uf = f.uf || uf;
+      });
+      totalGeral += subtotal;
+      suppliers.push({ nome: nome, cnpj: cnpj, uf: uf, rows: rows, subtotal: subtotal });
+    });
+    return {
+      suppliers: suppliers,
+      totalGeral: totalGeral,
+      companyName: getCompanyName(),
+      competencia: (EMPRESA && EMPRESA.periodo) || '—',
+      col3Label: 'Finalidade',
+    };
+  }
+
+  function exportSupplierPdf() {
+    const selected = Array.from(document.querySelectorAll('#supplierList input:checked'));
+    if (!selected.length) { alert('Selecione ao menos um fornecedor.'); return; }
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      alert('Biblioteca jsPDF nao carregada.');
+      return;
+    }
+    if (typeof window.jspdf.jsPDF.prototype.autoTable !== 'function') {
+      alert('Biblioteca jspdf-autotable nao carregada.');
+      return;
+    }
+    const data = buildLojaSupplierReportData(selected);
+    if (data.totalGeral <= 0) {
+      alert('Nenhum dado encontrado para os fornecedores selecionados neste período.');
+      return;
+    }
+    closeSupplierModal();
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const margin = 14;
+    const pageH = pdf.internal.pageSize.getHeight();
+    let y = margin;
+    const fmtBrl = (v) => 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const ensureSpace = (need) => {
+      if (y + need > pageH - margin) { pdf.addPage(); y = margin; }
+    };
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(14);
+    pdf.text('Relatorio por Fornecedor', margin, y);
+    y += 7;
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(9);
+    pdf.setTextColor(80, 80, 80);
+    pdf.text(data.companyName + ' — ' + data.competencia + ' — ' + new Date().toLocaleDateString('pt-BR'), margin, y);
+    y += 10;
+    pdf.setTextColor(0, 0, 0);
+    data.suppliers.forEach((s) => {
+      ensureSpace(20);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(11);
+      pdf.text(String(s.nome || '').slice(0, 90), margin, y);
+      y += 5;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text('CNPJ: ' + s.cnpj + ' · UF: ' + s.uf, margin, y);
+      y += 4;
+      pdf.setTextColor(0, 0, 0);
+      pdf.autoTable({
+        startY: y,
+        margin: { left: margin, right: margin },
+        head: [['CFOP', 'Descricao', data.col3Label, 'Qtd NFs', 'Valor (R$)']],
+        body: s.rows.map((r) => [r.cfop, r.desc, r.fin, String(r.qtd), fmtBrl(r.total)]),
+        foot: [['', '', '', 'Subtotal:', fmtBrl(s.subtotal)]],
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { fillColor: [34, 163, 41], textColor: 255 },
+        footStyles: { fillColor: [241, 245, 249], textColor: [30, 41, 59], fontStyle: 'bold' },
+        columnStyles: { 3: { halign: 'right' }, 4: { halign: 'right' } },
+      });
+      y = pdf.lastAutoTable.finalY + 8;
+    });
+    ensureSpace(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(11);
+    pdf.text('Total Geral: ' + fmtBrl(data.totalGeral), margin, y);
+    const safe = String(data.companyName || 'loja').slice(0, 24).replace(/[\\/:*?"<>|]/g, '');
+    pdf.save('relatorio-fornecedor-' + safe + '.pdf');
   }
 
   /* -----------------------------------------------
