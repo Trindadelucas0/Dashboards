@@ -306,6 +306,28 @@
     }
     .fin-supplier-hint { font-size:12px; color:var(--text-sec); line-height:1.4; }
 
+    
+    #supplierModal .modal-footer {
+      display:flex; flex-wrap:wrap; align-items:center;
+      justify-content:space-between; gap:10px;
+      padding:14px 20px; border-top:1px solid var(--border);
+    }
+    #supplierModal .modal-footer-actions {
+      display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end;
+    }
+    #supplierModal .btn-confirm.btn-print-supplier {
+      background:rgba(34,163,41,.2); border-color:rgba(34,163,41,.45); color:var(--accent);
+    }
+    #supplierModal .btn-confirm.btn-print-supplier:hover { background:rgba(34,163,41,.35); }
+    #supplierModal .btn-confirm.btn-pdf-supplier {
+      background:#dc2626; border-color:#b91c1c; color:#fff;
+    }
+    #supplierModal .btn-confirm.btn-pdf-supplier:hover { background:#b91c1c; }
+    #supplierModal .btn-confirm.btn-xlsx-supplier {
+      background:#15803d; border-color:#166534; color:#fff;
+    }
+    #supplierModal .btn-confirm.btn-xlsx-supplier:hover { background:#166534; }
+
     /* === SUPPLIER MODAL === */
     .modal-overlay {
       position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(4px);
@@ -761,7 +783,7 @@
           <button type="button" class="btn-export print" id="btn-por-fornecedor" onclick="openSupplierModal()" title="Imprimir por Fornecedor">
             <i class="fas fa-truck"></i> Por Fornecedor
           </button>
-          <span class="fin-supplier-hint">Selecione fornecedores e emita o relatório (Imprimir ou PDF) da competência ativa.</span>
+          <span class="fin-supplier-hint">Selecione fornecedores e emita o relatório (Imprimir, PDF ou Excel) da competência ativa.</span>
         </div>
 <div class="export-bar">
             <button type="button" class="btn-export print" id="btn-fornecedor-panel" onclick="openSupplierModal()" title="Imprimir por Fornecedor"><i class="fas fa-truck"></i> Por Fornecedor</button>
@@ -829,7 +851,7 @@
                 <button type="button" class="btn-confirm" onclick="printBySupplier()" style="flex:1;min-width:140px;">
                   <i class="fas fa-print"></i> Imprimir Selecionados
                 </button>
-                <button type="button" class="btn-confirm btn-pdf-supplier" onclick="exportSupplierPdf()" style="flex:1;min-width:140px;background:#ef4444;">
+                <button type="button" class="btn-confirm btn-pdf-supplier" onclick="exportSupplierPdf()">
                   <i class="fas fa-file-pdf"></i> Baixar PDF
                 </button>
               </div>
@@ -1297,8 +1319,11 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn-cancel" onclick="closeSupplierModal()">Cancelar</button>
-      <button type="button" class="btn-confirm" onclick="printBySupplier()"><i class="fas fa-print"></i> Imprimir Selecionados</button>
-      <button type="button" class="btn-confirm btn-pdf-supplier" onclick="exportSupplierPdf()" style="background:#ef4444;"><i class="fas fa-file-pdf"></i> Baixar PDF</button>
+      <div class="modal-footer-actions">
+        <button type="button" class="btn-confirm btn-print-supplier" onclick="printBySupplier()"><i class="fas fa-print"></i> Imprimir Selecionados</button>
+        <button type="button" class="btn-confirm btn-pdf-supplier" onclick="exportSupplierPdf()" title="Baixar PDF dos selecionados"><i class="fas fa-file-pdf"></i> Baixar PDF</button>
+        <button type="button" class="btn-confirm btn-xlsx-supplier" onclick="exportSupplierExcel()" title="Baixar Excel dos selecionados"><i class="fas fa-file-excel"></i> Baixar Excel</button>
+      </div>
     </div>
   </div>
 </div>
@@ -32706,6 +32731,92 @@ const DASHBOARD_DATA = {
     pdf.save('relatorio-fornecedor-' + safe + '.pdf');
   }
 
+  function autoColWidths(aoa, maxWch) {
+    const widths = [];
+    aoa.forEach((row) => {
+      row.forEach((cell, c) => {
+        const len = String(cell == null ? '' : cell).length + 2;
+        widths[c] = Math.min(Math.max(widths[c] || 10, len), maxWch || 50);
+      });
+    });
+    return widths.map((wch) => ({ wch }));
+  }
+
+  function buildSupplierExcelWorkbook(data) {
+    const wb = XLSX.utils.book_new();
+    const emitido = new Date().toLocaleDateString('pt-BR');
+    const col3 = data.col3Label || 'Finalidade';
+
+    const resumo = [
+      ['Relatório por Fornecedor'],
+      ['Empresa', data.companyName || ''],
+      ['Competência', data.competencia || ''],
+      ['Emitido em', emitido],
+      [],
+      ['Fornecedor', 'CNPJ', 'UF', 'Subtotal (R$)'],
+    ];
+    data.suppliers.forEach((s) => {
+      resumo.push([
+        s.nome || '',
+        s.cnpj || '—',
+        s.uf || '—',
+        Math.round(Number(s.subtotal || 0) * 100) / 100,
+      ]);
+    });
+    resumo.push(['Total Geral', '', '', Math.round(Number(data.totalGeral || 0) * 100) / 100]);
+    const wsResumo = XLSX.utils.aoa_to_sheet(resumo);
+    wsResumo['!cols'] = autoColWidths(resumo, 45);
+    XLSX.utils.book_append_sheet(wb, wsResumo, 'Resumo');
+
+    const detalhado = [
+      ['Fornecedor', 'CNPJ', 'UF', 'CFOP', 'Descrição', col3, 'Qtd NFs', 'Valor (R$)'],
+    ];
+    data.suppliers.forEach((s) => {
+      (s.rows || []).forEach((r) => {
+        detalhado.push([
+          s.nome || '',
+          s.cnpj || '—',
+          s.uf || '—',
+          r.cfop || '',
+          r.desc || '—',
+          r.fin || '—',
+          Number(r.qtd || 0),
+          Math.round(Number(r.total || 0) * 100) / 100,
+        ]);
+      });
+    });
+    const wsDet = XLSX.utils.aoa_to_sheet(detalhado);
+    wsDet['!cols'] = autoColWidths(detalhado, 50);
+    XLSX.utils.book_append_sheet(wb, wsDet, 'Detalhado');
+    return wb;
+  }
+
+  function saveSupplierExcelWorkbook(data) {
+    const wb = buildSupplierExcelWorkbook(data);
+    const safeCompany = String(data.companyName || 'empresa').slice(0, 24).replace(/[\/:*?"<>|]/g, '');
+    const safeComp = String(data.competencia || '')
+      .replace(/[\/:*?"<>|]/g, '-')
+      .replace(/\s+/g, '_')
+      .slice(0, 32);
+    const safeDate = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+    const parts = ['relatorio-fornecedor', safeCompany, safeComp, safeDate].filter(Boolean);
+    XLSX.writeFile(wb, parts.join('_') + '.xlsx');
+  }
+
+
+  function exportSupplierExcel() {
+    const data = buildModalSupplierReportData();
+    if (data.error) { alert(data.error); return; }
+    if (!window.XLSX) {
+      alert('Biblioteca XLSX nao carregada.');
+      return;
+    }
+    closeSupplierModal();
+    saveSupplierExcelWorkbook(data);
+  }
+
+
+
   function closeDrilldown() {
     const panel = document.getElementById('drilldown-panel');
     if (panel) panel.style.display = 'none';
@@ -32755,6 +32866,7 @@ const DASHBOARD_DATA = {
   window.toggleAllSuppliers = toggleAllSuppliers;
   window.printBySupplier = printBySupplier;
   window.exportSupplierPdf = exportSupplierPdf;
+  window.exportSupplierExcel = exportSupplierExcel;
   window.toggleFornecedorPanel = toggleFornecedorPanel;
   window.closeFornecedorPanel = closeFornecedorPanel;
   window.filterFornecedorPanel = filterFornecedorPanel;
