@@ -55827,25 +55827,29 @@ function renderIndicadoresFiscal(mesKey) {
     const btnPrint = document.querySelector('#supplierModal .btn-print-supplier');
     const btnPdf = document.querySelector('#supplierModal .btn-pdf-supplier');
     const suppliers = collectUniqueSuppliers();
+    const btnExcel = document.querySelector('#supplierModal .btn-xlsx-supplier');
     if (!suppliers.length) {
       list.innerHTML = '<div class="td-mute" style="padding:24px;text-align:center;font-size:13px;line-height:1.6;">' +
         '<i class="fas fa-truck" style="font-size:24px;margin-bottom:12px;display:block;opacity:0.5;"></i>' +
-        'Detalhe por fornecedor indisponivel neste pacote.<br><br>' +
-        'O livro ENTRADA-SAIDA agrega apenas por CFOP. Para listar fornecedores reais, envie SPED ICMS/IPI com notas de entrada (C100) ou relatorio de compras por fornecedor.' +
+        '<strong>Detalhe por fornecedor indisponível nesta competência.</strong><br><br>' +
+        'O livro ENTRADA-SAIDA agrega apenas por CFOP (sem nome/CNPJ). ' +
+        'Para listar fornecedores, envie SPED ICMS/IPI com notas de entrada (C100) ou relatório de compras por fornecedor.' +
         '</div>';
       if (btnPrint) { btnPrint.disabled = true; btnPrint.style.opacity = '0.45'; }
       if (btnPdf) { btnPdf.disabled = true; btnPdf.style.opacity = '0.45'; }
+      if (btnExcel) { btnExcel.disabled = true; btnExcel.style.opacity = '0.45'; }
     } else {
       list.innerHTML = suppliers.map((s) => {
         const search = (s.nome + ' ' + s.cnpj).toLowerCase();
-        const esc = (v) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+        const esc = (v) => String(v ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
         return '<label class="supplier-item" data-search="' + esc(search) + '">' +
-          '<input type="checkbox" value="' + esc(s.cnpj) + '" data-nome="' + esc(s.nome) + '">' +
+          '<input type="checkbox" value="' + esc(s.cnpj || s.nome) + '" data-nome="' + esc(s.nome) + '">' +
           '<span class="supplier-info"><strong>' + esc(s.nome) + '</strong>' +
-          '<small>' + esc(s.cnpj) + ' · ' + esc(s.uf) + '</small></span></label>';
+          '<small>' + esc(s.cnpj || '—') + ' · ' + esc(s.uf || '—') + '</small></span></label>';
       }).join('');
       if (btnPrint) { btnPrint.disabled = false; btnPrint.style.opacity = '1'; }
       if (btnPdf) { btnPdf.disabled = false; btnPdf.style.opacity = '1'; }
+      if (btnExcel) { btnExcel.disabled = false; btnExcel.style.opacity = '1'; }
     }
     document.getElementById('supplierSearch').value = '';
     document.getElementById('supplierModal').style.display = 'flex';
