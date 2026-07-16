@@ -294,6 +294,10 @@
     .vd-mes-chip.active { background:rgba(34,163,41,0.2); border-color:var(--accent); color:var(--accent); }
     .vd-mes-chip.tot { border-color:rgba(139,92,246,0.4); }
     .vd-mes-chip.tot.active { background:rgba(139,92,246,0.2); border-color:var(--purple); color:var(--purple); }
+    .vd-mes-chip.in-trim { border-color:rgba(34,163,41,0.45); color:var(--text); }
+    .vd-mes-chip.dim { opacity:0.42; }
+    .vd-mes-chip.dim:hover { opacity:0.75; }
+    .vd-mes-sep { color:var(--text-muted); padding:6px 4px; font-size:12px; user-select:none; line-height:1; }
     .bal-mes-bar-head { margin:10px 0 4px; width:100%; }
     .fiscal-mes-bar-head { margin:10px 0 8px; width:100%; }
     .fiscal-data-status {
@@ -52885,6 +52889,7 @@ const DASHBOARD_DATA = {
     const fp = getFiscal();
     const key = mesKey || appMesFiscal || fp.meses[fp.meses.length - 1];
     if (key === 'total') return buildFiscalTotalPack();
+    if (key === 'q1' || key === 'q2') return buildFiscalTrimPack(key);
     if (fp.porMes && fp.porMes[key]) return fp.porMes[key];
     if (key === D().competencia) {
       return {
@@ -52906,6 +52911,52 @@ const DASHBOARD_DATA = {
     return null;
   }
 
+  function fiscalQMeses(qid) {
+    const fp = getFiscal();
+    const meses = fp.meses || [];
+    const mmOf = (k) => {
+      const s = String(k);
+      if (s.includes('-')) return s.split('-')[1];
+      return s.length === 2 ? s : s.slice(-2);
+    };
+    if (qid === 'q1') return meses.filter((m) => ['01', '02', '03'].includes(mmOf(m)));
+    return meses.filter((m) => ['04', '05', '06', '07', '08', '09', '10', '11', '12'].includes(mmOf(m)));
+  }
+
+  function buildFiscalTrimPack(qid) {
+    const fp = getFiscal();
+    const keys = fiscalQMeses(qid);
+    const monthPacks = keys.map((m) => fp.porMes && fp.porMes[m]).filter(Boolean);
+    if (!monthPacks.length) return null;
+    const ap = mergeApuracao(monthPacks);
+    const receitaBruta = monthPacks.reduce((a, p) => a + (p.receitaBruta || 0), 0);
+    const totalCompras = monthPacks.reduce((a, p) => a + (p.totalCompras || 0), 0);
+    const deducoes = monthPacks.reduce((a, p) => a + (p.deducoes || 0), 0);
+    const dedPct = receitaBruta > 0 ? Math.round(deducoes / receitaBruta * 10000) / 100 : 0;
+    const label = qid === 'q1' ? '1º Trimestre 2026' : '2º Trimestre 2026';
+    return {
+      competencia: qid,
+      competenciaLabel: label,
+      receitaBruta: Math.round(receitaBruta * 100) / 100,
+      totalCompras: Math.round(totalCompras * 100) / 100,
+      deducoes: Math.round(deducoes * 100) / 100,
+      dedPct: dedPct,
+      composicao: [
+        { label: 'ICMS', valor: ap.icms.aRecolher },
+        { label: 'ICMS ST', valor: ap.icmsSt.aRecolher },
+        { label: 'PIS', valor: ap.pis.aRecolher },
+        { label: 'COFINS', valor: ap.cofins.aRecolher },
+        { label: 'IPI', valor: ap.ipi.aRecolher },
+      ],
+      impostosTabela: buildImpostosTabelaFromAp(ap),
+      apuracao: ap,
+      cfopEntradas: mergeCfopEntradas(monthPacks),
+      cfopSaidas: monthPacks[monthPacks.length - 1].cfopSaidas || [],
+      cfopSaidasTotal: monthPacks.reduce((a, p) => a + (p.cfopSaidasTotal || 0), 0),
+      sped: monthPacks[monthPacks.length - 1].sped || {},
+    };
+  }
+
   function fiscalPeriodTotalLabel() {
     const fp = getFiscal();
     if (!fp.meses || !fp.meses.length) return 'Total';
@@ -52918,7 +52969,26 @@ const DASHBOARD_DATA = {
 
   function fiscalDisplayLabel(mesKey) {
     if (mesKey === 'total') return fiscalPeriodTotalLabel();
+    if (mesKey === 'q1') return '1º Trimestre 2026';
+    if (mesKey === 'q2') return '2º Trimestre 2026';
     return fiscalMesLabel(mesKey);
+  }
+
+  function mmOfKey(k) {
+    const s = String(k);
+    if (s.includes('-')) return s.split('-')[1];
+    return s.length === 2 ? s : s.slice(-2);
+  }
+
+  function activeTrimContextSchu() {
+    if (appMesFiscal === 'q1') return 'q1';
+    if (appMesFiscal === 'q2') return 'q2';
+    if (appMesFiscal && appMesFiscal !== 'total') {
+      const mm = mmOfKey(appMesFiscal);
+      if (['01', '02', '03'].includes(mm)) return 'q1';
+      if (['04', '05', '06', '07', '08', '09', '10', '11', '12'].includes(mm)) return 'q2';
+    }
+    return null;
   }
 
   function mergeCfopEntradas(monthPacks) {
@@ -53041,8 +53111,8 @@ const DASHBOARD_DATA = {
       meses: fp.meses,
       mesLabels: fp.mesLabels,
       defaultKey: appMesFiscal || fp.meses[fp.meses.length - 1],
-      showTotal: fp.meses.length > 1,
-      totalLabel: fiscalPeriodTotalLabel(),
+      showTotal: true,
+      totalLabel: 'Total',
       onSelect: (m) => setAppMesFiscal(m),
       skipInitialSelect: true,
     });
@@ -53104,30 +53174,62 @@ const DASHBOARD_DATA = {
     if (!bar) return;
     const meses = options.meses || [];
     const mesLabels = options.mesLabels || meses;
+    const q1 = meses.filter((m) => ['01', '02', '03'].includes(mmOfKey(m)));
+    const q2 = meses.filter((m) => !q1.includes(m));
+    const trimCtx = activeTrimContextSchu();
     bar.innerHTML = '';
-    meses.forEach((m, i) => {
+
+    const addBtn = (key, label, extras) => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'vd-mes-chip';
-      btn.setAttribute('data-mes', m);
-      btn.textContent = mesLabels[i] || m;
+      const classes = ['vd-mes-chip'];
+      if (extras) classes.push(extras);
+      const isMonth = meses.includes(key);
+      if (isMonth) {
+        if (trimCtx === 'q1' && q1.includes(key)) classes.push('in-trim');
+        if (trimCtx === 'q2' && q2.includes(key)) classes.push('in-trim');
+        if (trimCtx === 'q1' && q2.includes(key)) classes.push('dim');
+        if (trimCtx === 'q2' && q1.includes(key)) classes.push('dim');
+      }
+      btn.className = classes.join(' ');
+      btn.setAttribute('data-mes', key);
+      btn.textContent = label;
       btn.onclick = () => {
-        if (options.syncGlobal) setAppMesFiscal(m);
-        else if (options.onSelect) options.onSelect(m);
+        if (options.syncGlobal) setAppMesFiscal(key);
+        else if (options.onSelect) options.onSelect(key);
       };
       bar.appendChild(btn);
-    });
-    if (options.showTotal) {
-      const btnTot = document.createElement('button');
-      btnTot.type = 'button';
-      btnTot.className = 'vd-mes-chip tot';
-      btnTot.setAttribute('data-mes', options.totalKey || 'total');
-      btnTot.textContent = options.totalLabel || 'Total';
-      btnTot.onclick = () => {
-        if (options.onSelect) options.onSelect(options.totalKey || 'total');
-      };
-      bar.appendChild(btnTot);
+    };
+    const sep = () => {
+      const s = document.createElement('span');
+      s.className = 'vd-mes-sep';
+      s.textContent = '|';
+      bar.appendChild(s);
+    };
+
+    if (options.showTotal !== false && meses.length) {
+      addBtn(options.totalKey || 'total', options.totalLabel || 'Total', 'tot');
     }
+    if (q1.length) {
+      sep();
+      addBtn('q1', '1º Trim', 'tot');
+      q1.forEach((m) => {
+        const i = meses.indexOf(m);
+        addBtn(m, mesLabels[i] || m, '');
+      });
+    }
+    if (q2.length) {
+      sep();
+      addBtn('q2', '2º Trim', 'tot');
+      q2.forEach((m) => {
+        const i = meses.indexOf(m);
+        addBtn(m, mesLabels[i] || m, '');
+      });
+    }
+    if (!q1.length && !q2.length) {
+      meses.forEach((m, i) => addBtn(m, mesLabels[i] || m, ''));
+    }
+
     const active = options.defaultKey || meses[meses.length - 1];
     setMesBarActive(containerId, active);
     if (options.syncGlobal) {
@@ -53143,6 +53245,8 @@ const DASHBOARD_DATA = {
       meses: fp.meses,
       mesLabels: fp.mesLabels,
       defaultKey: appMesFiscal || fp.meses[fp.meses.length - 1],
+      showTotal: true,
+      totalLabel: 'Total',
       syncGlobal: !onSelect,
       onSelect: onSelect,
       skipInitialSelect: skipInitialSelect,
@@ -53170,7 +53274,7 @@ const DASHBOARD_DATA = {
   function setAppMesFiscal(mesKey, opts) {
     appMesFiscal = mesKey;
     const sel = document.querySelector('.period-sel');
-    if (sel && mesKey !== 'total' && sel.value !== mesKey) sel.value = mesKey;
+    if (sel) sel.value = mesKey;
     syncFiscalMesBars(mesKey);
     updateHeaderSubtitle();
     if (!opts || !opts.skipRerender) rerenderActiveFiscalTab();
@@ -53196,13 +53300,30 @@ const DASHBOARD_DATA = {
     const fp = getFiscal();
     const sel = document.querySelector('.period-sel');
     if (!sel || !fp.meses.length) return;
-    sel.innerHTML = '';
-    fp.meses.forEach((m, i) => {
-      const opt = document.createElement('option');
-      opt.value = m;
-      opt.textContent = fp.mesLabels[i] || m;
-      sel.appendChild(opt);
-    });
+    const q1 = fp.meses.filter((m) => ['01', '02', '03'].includes(mmOfKey(m)));
+    const q2 = fp.meses.filter((m) => !q1.includes(m));
+    let html = '<optgroup label="Período">';
+    html += '<option value="total">' + fiscalPeriodTotalLabel() + '</option>';
+    if (q1.length) html += '<option value="q1">1º Trimestre 2026</option>';
+    if (q2.length) html += '<option value="q2">2º Trimestre 2026</option>';
+    html += '</optgroup>';
+    if (q1.length) {
+      html += '<optgroup label="1º Trimestre — meses">';
+      q1.forEach((m) => {
+        const i = fp.meses.indexOf(m);
+        html += '<option value="' + m + '">' + (fp.mesLabels[i] || m) + '</option>';
+      });
+      html += '</optgroup>';
+    }
+    if (q2.length) {
+      html += '<optgroup label="2º Trimestre — meses">';
+      q2.forEach((m) => {
+        const i = fp.meses.indexOf(m);
+        html += '<option value="' + m + '">' + (fp.mesLabels[i] || m) + '</option>';
+      });
+      html += '</optgroup>';
+    }
+    sel.innerHTML = html;
     const def = fp.meses[fp.meses.length - 1];
     appMesFiscal = def;
     sel.value = def;

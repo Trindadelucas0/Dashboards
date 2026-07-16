@@ -74,6 +74,9 @@
     .vd-mes-chip.active { background:rgba(34,163,41,0.2); border-color:var(--accent); color:var(--accent); }
     .vd-mes-chip.tot { border-color:rgba(139,92,246,0.4); }
     .vd-mes-chip.tot.active { background:rgba(139,92,246,0.2); border-color:var(--purple); color:var(--purple); }
+    .vd-mes-chip.in-trim { border-color:rgba(34,163,41,0.45); color:var(--text); }
+    .vd-mes-chip.dim { opacity:0.42; }
+    .vd-mes-chip.dim:hover { opacity:0.75; }
     .fiscal-mes-bar-head { margin:10px 0 16px; width:100%; min-height:40px; }
     .vd-mes-sep { color:var(--text-muted); padding:6px 4px; font-size:12px; user-select:none; }
 
@@ -7666,6 +7669,8 @@ const DASHBOARD_DATA = {
   const FINALIDADE_CORES = D.finalidadeCores || {};
   const MES_KEYS = D.meta.meses;
   const MONTH_LABELS = D.meta.monthLabels;
+  const Q1_MESES = MES_KEYS.filter((m) => ['01', '02', '03'].includes(m));
+  const Q2_MESES = MES_KEYS.filter((m) => ['04', '05', '06', '07', '08', '09', '10', '11', '12'].includes(m) && !Q1_MESES.includes(m));
   const MES_BAR_IDS = ['vg-mes-bar', 'cp-mes-bar', 'fn-mes-bar', 'vd-mes-bar', 'tax-mes-bar', 'mem-mes-bar', 'rec-mes-bar', 'dre-mes-bar', 'ind-mes-bar'];
   const MOVEMENT_TABS = new Set(['compras', 'finalidade', 'vendas', 'recebimentos']);
   const DRE_TABS = new Set(['visao-geral', 'dre', 'indicadores', 'impostos']);
@@ -7704,24 +7709,42 @@ const DASHBOARD_DATA = {
 
   function periodLbl() {
     if (state.fiscalMode === 'total') return 'Total';
+    if (state.fiscalMode === 'q1') return '1º Trim';
+    if (state.fiscalMode === 'q2') return '2º Trim';
     return (MONTH_LABELS[state.month] || state.month) + '/26';
   }
 
   function periodFull() {
     if (state.fiscalMode === 'total') return D.meta.periodoTotal.label;
+    if (state.fiscalMode === 'q1') return '1º Trimestre 2026 (' + Q1_MESES.map((m) => MONTH_LABELS[m]).join(' – ') + ')';
+    if (state.fiscalMode === 'q2') return '2º Trimestre 2026 (' + Q2_MESES.map((m) => MONTH_LABELS[m]).join(' – ') + ')';
     return (MONTH_LABELS[state.month] || state.month) + ' / 2026';
   }
 
   function getActiveKey() {
-    return state.fiscalMode === 'total' ? 'total' : state.month;
+    if (state.fiscalMode === 'total') return 'total';
+    if (state.fiscalMode === 'q1') return 'q1';
+    if (state.fiscalMode === 'q2') return 'q2';
+    return state.month;
   }
 
   function isActiveKey(key) {
     return getActiveKey() === key;
   }
 
+  function activeTrimContext() {
+    if (state.fiscalMode === 'q1') return 'q1';
+    if (state.fiscalMode === 'q2') return 'q2';
+    if (state.fiscalMode === 'month') {
+      if (Q1_MESES.includes(state.month)) return 'q1';
+      if (Q2_MESES.includes(state.month)) return 'q2';
+    }
+    return null;
+  }
+
   function applyPeriodSelection(val) {
     if (val === 'total') state.fiscalMode = 'total';
+    else if (val === 'q1' || val === 'q2') state.fiscalMode = val;
     else { state.fiscalMode = 'month'; state.month = val; }
     syncMonthSel();
     syncAllMesBars();
@@ -7742,9 +7765,22 @@ const DASHBOARD_DATA = {
   function hydrateMonthSel() {
     const ms = document.getElementById('monthSel');
     if (!ms) return;
-    let html = '';
-    if (MES_KEYS.length > 1) html += '<option value="total">' + D.meta.periodoTotal.label + '</option>';
-    MES_KEYS.forEach(m => { html += '<option value="' + m + '">' + MONTH_LABELS[m] + ' / 2026</option>'; });
+    let html =
+      '<optgroup label="Período">' +
+        '<option value="total">' + D.meta.periodoTotal.label + '</option>' +
+        (Q1_MESES.length ? '<option value="q1">1º Trimestre 2026</option>' : '') +
+        (Q2_MESES.length ? '<option value="q2">2º Trimestre 2026</option>' : '') +
+      '</optgroup>';
+    if (Q1_MESES.length) {
+      html += '<optgroup label="1º Trimestre — meses">' +
+        Q1_MESES.map((m) => '<option value="' + m + '">' + MONTH_LABELS[m] + ' / 2026</option>').join('') +
+        '</optgroup>';
+    }
+    if (Q2_MESES.length) {
+      html += '<optgroup label="2º Trimestre — meses">' +
+        Q2_MESES.map((m) => '<option value="' + m + '">' + MONTH_LABELS[m] + ' / 2026</option>').join('') +
+        '</optgroup>';
+    }
     ms.innerHTML = html;
     syncMonthSel();
   }
@@ -7753,34 +7789,46 @@ const DASHBOARD_DATA = {
     const bar = document.getElementById(containerId);
     if (!bar) return;
     bar.innerHTML = '';
-    const add = (key, label, extra) => {
+    const trimCtx = activeTrimContext();
+    const add = (key, label, extras) => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'vd-mes-chip' + (extra ? ' ' + extra : '') + (isActiveKey(key) ? ' active' : '');
+      const classes = ['vd-mes-chip'];
+      if (extras) classes.push(extras);
+      if (isActiveKey(key)) classes.push('active');
+      if (Q1_MESES.includes(key) || Q2_MESES.includes(key)) {
+        if (trimCtx === 'q1' && Q1_MESES.includes(key)) classes.push('in-trim');
+        if (trimCtx === 'q2' && Q2_MESES.includes(key)) classes.push('in-trim');
+        if (trimCtx === 'q1' && Q2_MESES.includes(key)) classes.push('dim');
+        if (trimCtx === 'q2' && Q1_MESES.includes(key)) classes.push('dim');
+      }
+      btn.className = classes.join(' ');
       btn.setAttribute('data-mes', key);
       btn.textContent = label;
       btn.onclick = () => { applyPeriodSelection(key); if (onSelect) onSelect(); };
       bar.appendChild(btn);
     };
+    const sep = () => {
+      const s = document.createElement('span');
+      s.className = 'vd-mes-sep';
+      s.textContent = '|';
+      bar.appendChild(s);
+    };
     if (MES_KEYS.length > 1) add('total', 'Total', 'tot');
-    if (MES_KEYS.length > 1) {
-      const sep = document.createElement('span');
-      sep.className = 'vd-mes-sep';
-      sep.textContent = '|';
-      bar.appendChild(sep);
+    if (Q1_MESES.length) {
+      sep();
+      add('q1', '1º Trim', 'tot');
+      Q1_MESES.forEach((m) => add(m, MONTH_LABELS[m], ''));
     }
-    MES_KEYS.forEach(m => add(m, MONTH_LABELS[m], ''));
+    if (Q2_MESES.length) {
+      sep();
+      add('q2', '2º Trim', 'tot');
+      Q2_MESES.forEach((m) => add(m, MONTH_LABELS[m], ''));
+    }
   }
 
   function syncAllMesBars() {
-    const key = getActiveKey();
-    MES_BAR_IDS.forEach(id => {
-      const bar = document.getElementById(id);
-      if (!bar) return;
-      bar.querySelectorAll('.vd-mes-chip').forEach(chip => {
-        chip.classList.toggle('active', chip.getAttribute('data-mes') === key);
-      });
-    });
+    MES_BAR_IDS.forEach((id) => renderPeriodBar(id));
   }
 
   function buildAllMesBars() {
@@ -7915,6 +7963,8 @@ const DASHBOARD_DATA = {
 
   function getPack() {
     if (state.fiscalMode === 'total') return aggregatePack(MES_KEYS);
+    if (state.fiscalMode === 'q1') return aggregatePack(Q1_MESES);
+    if (state.fiscalMode === 'q2') return aggregatePack(Q2_MESES);
     return { ...D.fiscalPorMes[state.month], monthKeys: [state.month] };
   }
 
@@ -7935,7 +7985,7 @@ const DASHBOARD_DATA = {
   }
 
   function ensurePeriodForTab(tabName) {
-    if (state.fiscalMode === 'total') return null;
+    if (state.fiscalMode === 'total' || state.fiscalMode === 'q1' || state.fiscalMode === 'q2') return null;
     const pack = D.fiscalPorMes[state.month];
     if (MOVEMENT_TABS.has(tabName) && !pack?.hasMovimentacao) {
       const fallback = getLastMovementMonth();
@@ -8740,12 +8790,16 @@ const DASHBOARD_DATA = {
 
   function getPackForSupplierReport(periodKey) {
     if (periodKey === 'total') return aggregatePack(MES_KEYS);
+    if (periodKey === 'q1') return aggregatePack(Q1_MESES);
+    if (periodKey === 'q2') return aggregatePack(Q2_MESES);
     const pack = D.fiscalPorMes[periodKey];
     return pack ? { ...pack, monthKeys: [periodKey] } : null;
   }
 
   function periodLabelForReport(periodKey) {
     if (periodKey === 'total') return D.meta.periodoTotal.label;
+    if (periodKey === 'q1') return '1º Trimestre 2026';
+    if (periodKey === 'q2') return '2º Trimestre 2026';
     return (MONTH_LABELS[periodKey] || periodKey) + ' / 2026';
   }
 
@@ -8760,12 +8814,23 @@ const DASHBOARD_DATA = {
     const sel = document.getElementById('supplierReportPeriod');
     if (!sel) return;
     const mov = monthsWithMovement();
-    let html = '';
-    mov.forEach((m) => {
-      html += '<option value="' + m + '">' + MONTH_LABELS[m] + ' / 2026</option>';
-    });
-    if (mov.length > 1) {
-      html += '<option value="total">' + D.meta.periodoTotal.label + '</option>';
+    const q1 = Q1_MESES.filter((m) => mov.includes(m));
+    const q2 = Q2_MESES.filter((m) => mov.includes(m));
+    let html =
+      '<optgroup label="Período">' +
+        (mov.length > 1 ? '<option value="total">' + D.meta.periodoTotal.label + '</option>' : '') +
+        (q1.length > 1 ? '<option value="q1">1º Trimestre 2026</option>' : '') +
+        (q2.length > 1 ? '<option value="q2">2º Trimestre 2026</option>' : '') +
+      '</optgroup>';
+    if (q1.length) {
+      html += '<optgroup label="1º Trimestre — meses">' +
+        q1.map((m) => '<option value="' + m + '">' + MONTH_LABELS[m] + ' / 2026</option>').join('') +
+        '</optgroup>';
+    }
+    if (q2.length) {
+      html += '<optgroup label="2º Trimestre — meses">' +
+        q2.map((m) => '<option value="' + m + '">' + MONTH_LABELS[m] + ' / 2026</option>').join('') +
+        '</optgroup>';
     }
     sel.innerHTML = html;
     sel.value = resolveDefaultSupplierReportPeriod();

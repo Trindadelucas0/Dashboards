@@ -448,9 +448,12 @@
     /* MES BAR — seleção Total / Trim / Mês */
     .mes-bar-wrap { margin-bottom:20px; position:sticky; top:var(--header-h); z-index:40; background:var(--bg); padding:12px 0 4px; border-bottom:1px solid var(--border); }
     .mes-bar { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
-    .mes-btn { background:var(--bg-card); border:1px solid var(--border); color:var(--text-sec); padding:7px 14px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; transition:background var(--t),color var(--t),border-color var(--t); font-family:inherit; white-space:nowrap; }
+    .mes-btn { background:var(--bg-card); border:1px solid var(--border); color:var(--text-sec); padding:7px 14px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; transition:background var(--t),color var(--t),border-color var(--t),opacity var(--t); font-family:inherit; white-space:nowrap; }
     .mes-btn:hover { background:var(--bg-card-hover); color:var(--text); border-color:rgba(255,255,255,0.12); }
     .mes-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 2px 12px rgba(34,163,41,0.35); }
+    .mes-btn.in-trim { border-color:rgba(34,163,41,0.45); color:var(--text); }
+    .mes-btn.dim { opacity:0.42; }
+    .mes-btn.dim:hover { opacity:0.75; }
     .mes-sep { width:1px; height:22px; background:var(--border); margin:0 6px; flex-shrink:0; }
     .mes-bar-label { font-size:11px; color:var(--text-muted); margin-right:8px; font-weight:500; }
 
@@ -608,15 +611,21 @@
       <div class="header-title" id="headerTitle">Visão Geral <span>Resumo Executivo – Competência Maio 2026</span></div>
       <div class="header-actions"><a href="/auth/dashboard-selector" class="btn-export btn-back-hub"><i class="fas fa-arrow-left"></i> Voltar</a>
         <select class="period-sel" id="periodSel" onchange="onHeaderPeriodChange(this.value)">
-          <option value="total">Total — Jan a Jun/2026</option>
-          <option value="trim1">1º Trim — Jan a Mar/2026</option>
-          <option value="trim2">2º Trim — Abr a Jun/2026</option>
-          <option value="0">Jan / 2026</option>
-          <option value="1">Fev / 2026</option>
-          <option value="2">Mar / 2026</option>
-          <option value="3">Abr / 2026</option>
-          <option value="4">Mai / 2026</option>
-          <option value="5">Jun / 2026</option>
+          <optgroup label="Período">
+            <option value="total">Total — Jan a Jun/2026</option>
+            <option value="trim1">1º Trimestre 2026</option>
+            <option value="trim2">2º Trimestre 2026</option>
+          </optgroup>
+          <optgroup label="1º Trimestre — meses">
+            <option value="0">Jan / 2026</option>
+            <option value="1">Fev / 2026</option>
+            <option value="2">Mar / 2026</option>
+          </optgroup>
+          <optgroup label="2º Trimestre — meses">
+            <option value="3">Abr / 2026</option>
+            <option value="4">Mai / 2026</option>
+            <option value="5">Jun / 2026</option>
+          </optgroup>
         </select>
         <div class="regime-badge"><i class="fas fa-circle" style="font-size:7px;margin-right:5px;"></i>Lucro Real</div>
       </div>
@@ -629,15 +638,16 @@
         <div class="mes-bar" id="mes-bar">
           <span class="mes-bar-label"><i class="fas fa-calendar-days" style="margin-right:5px;"></i>Competência</span>
           <button type="button" class="mes-btn" data-mode="total" onclick="setPeriod('total')">Total</button>
-          <button type="button" class="mes-btn" data-mode="trim1" onclick="setPeriod('trim1')">1º Trim</button>
-          <button type="button" class="mes-btn" data-mode="trim2" onclick="setPeriod('trim2')">2º Trim</button>
           <span class="mes-sep"></span>
-          <button type="button" class="mes-btn" data-mode="month" data-idx="0" onclick="setPeriod('month',0)">Jan</button>
-          <button type="button" class="mes-btn" data-mode="month" data-idx="1" onclick="setPeriod('month',1)">Fev</button>
-          <button type="button" class="mes-btn" data-mode="month" data-idx="2" onclick="setPeriod('month',2)">Mar</button>
-          <button type="button" class="mes-btn" data-mode="month" data-idx="3" onclick="setPeriod('month',3)">Abr</button>
-          <button type="button" class="mes-btn" data-mode="month" data-idx="4" onclick="setPeriod('month',4)">Mai</button>
-          <button type="button" class="mes-btn" data-mode="month" data-idx="5" onclick="setPeriod('month',5)">Jun</button>
+          <button type="button" class="mes-btn" data-mode="trim1" onclick="setPeriod('trim1')">1º Trim</button>
+          <button type="button" class="mes-btn" data-mode="month" data-idx="0" data-trim="q1" onclick="setPeriod('month',0)">Jan</button>
+          <button type="button" class="mes-btn" data-mode="month" data-idx="1" data-trim="q1" onclick="setPeriod('month',1)">Fev</button>
+          <button type="button" class="mes-btn" data-mode="month" data-idx="2" data-trim="q1" onclick="setPeriod('month',2)">Mar</button>
+          <span class="mes-sep"></span>
+          <button type="button" class="mes-btn" data-mode="trim2" onclick="setPeriod('trim2')">2º Trim</button>
+          <button type="button" class="mes-btn" data-mode="month" data-idx="3" data-trim="q2" onclick="setPeriod('month',3)">Abr</button>
+          <button type="button" class="mes-btn" data-mode="month" data-idx="4" data-trim="q2" onclick="setPeriod('month',4)">Mai</button>
+          <button type="button" class="mes-btn" data-mode="month" data-idx="5" data-trim="q2" onclick="setPeriod('month',5)">Jun</button>
         </div>
       </div>
 
@@ -7854,12 +7864,23 @@
   }
 
   function updateMesBarActive() {
+    let trimCtx = null;
+    if (periodMode === 'trim1') trimCtx = 'q1';
+    else if (periodMode === 'trim2') trimCtx = 'q2';
+    else if (periodMode === 'month') {
+      trimCtx = selectedMonthIdx <= 2 ? 'q1' : 'q2';
+    }
     document.querySelectorAll('#mes-bar .mes-btn').forEach(btn => {
-      btn.classList.remove('active');
+      btn.classList.remove('active', 'dim', 'in-trim');
       const m = btn.dataset.mode;
       const i = btn.dataset.idx;
+      const btnTrim = btn.dataset.trim;
       if (periodMode === 'month' && i !== undefined && parseInt(i, 10) === selectedMonthIdx) btn.classList.add('active');
       else if (periodMode === m) btn.classList.add('active');
+      if (btnTrim && trimCtx) {
+        if (btnTrim === trimCtx) btn.classList.add('in-trim');
+        else btn.classList.add('dim');
+      }
     });
     const sel = document.getElementById('periodSel');
     if (sel) sel.value = getHeaderSelectValue();

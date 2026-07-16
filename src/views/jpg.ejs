@@ -518,6 +518,9 @@
       opacity: 0.38; cursor: not-allowed; pointer-events: none;
       border-color: var(--border); color: var(--text-muted); background: rgba(255,255,255,0.02);
     }
+    .vd-mes-chip.in-trim { border-color:rgba(34,163,41,0.45); color:var(--text); }
+    .vd-mes-chip.dim { opacity:0.42; }
+    .vd-mes-chip.dim:hover { opacity:0.75; }
     .vd-mes-sep { color:var(--text-muted); padding:6px 4px; font-size:12px; user-select:none; line-height:1; }
     .fiscal-mes-bar-head { margin:10px 0 16px; width:100%; min-height:40px; }
     .vg-kpi-mes-badge { font-size:10px; }
@@ -26335,38 +26338,74 @@ function getAllMonthSlotsForYear() {
   return slots;
 }
 
+function activeTrimContextJpg() {
+  if (appTrimestre) {
+    if (String(appTrimestre).includes('Q1')) return 'q1';
+    if (String(appTrimestre).includes('Q2')) return 'q2';
+  }
+  if (appMesFiscal && appMesFiscal !== 'total') {
+    const mm = parseInt(String(appMesFiscal).split('-')[1], 10);
+    if (mm >= 1 && mm <= 3) return 'q1';
+    if (mm >= 4) return 'q2';
+  }
+  return null;
+}
+
 function renderPeriodBar(containerId) {
   const bar = document.getElementById(containerId);
   if (!bar) return;
   const fp = getFiscal();
   const tr = J.trimestres || {};
   bar.innerHTML = '';
+  const trimCtx = activeTrimContextJpg();
+  const months = getAllMonthSlotsForYear();
+  const q1Months = months.filter((s) => parseInt(s.key.split('-')[1], 10) <= 3);
+  const q2Months = months.filter((s) => parseInt(s.key.split('-')[1], 10) > 3);
+  const trimSlots = getTrimestreSlots();
 
-  const addChip = (key, label, extraClass, disabled) => {
+  const addChip = (key, label, extraClass, disabled, isMonth) => {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'vd-mes-chip' + (extraClass ? ' ' + extraClass : '') + (disabled ? ' disabled' : '');
+    const classes = ['vd-mes-chip'];
+    if (extraClass) classes.push(extraClass);
+    if (disabled) classes.push('disabled');
+    else if (isPeriodActive(key)) classes.push('active');
+    if (isMonth && !disabled) {
+      const mm = parseInt(String(key).split('-')[1], 10);
+      const inQ1 = mm <= 3;
+      if (trimCtx === 'q1' && inQ1) classes.push('in-trim');
+      if (trimCtx === 'q2' && !inQ1) classes.push('in-trim');
+      if (trimCtx === 'q1' && !inQ1) classes.push('dim');
+      if (trimCtx === 'q2' && inQ1) classes.push('dim');
+    }
+    btn.className = classes.join(' ');
     btn.setAttribute('data-mes', key);
     btn.textContent = label;
     if (disabled) btn.disabled = true;
-    else if (isPeriodActive(key)) btn.classList.add('active');
     bar.appendChild(btn);
   };
+  const sep = () => {
+    const s = document.createElement('span');
+    s.className = 'vd-mes-sep';
+    s.textContent = '|';
+    bar.appendChild(s);
+  };
 
-  addChip('total', 'Total', 'tot', !fp.meses || fp.meses.length < 2);
+  addChip('total', 'Total', 'tot', !fp.meses || fp.meses.length < 2, false);
 
-  getTrimestreSlots().forEach((t) => {
-    addChip(t.key, t.label, 'trim', !t.available);
-  });
+  const q1Trim = trimSlots.find((t) => String(t.key).includes('Q1'));
+  if (q1Trim || q1Months.length) {
+    sep();
+    if (q1Trim) addChip(q1Trim.key, q1Trim.label, 'trim', !q1Trim.available, false);
+    q1Months.forEach((slot) => addChip(slot.key, slot.label, '', !slot.available, true));
+  }
 
-  const sep = document.createElement('span');
-  sep.className = 'vd-mes-sep';
-  sep.textContent = '|';
-  bar.appendChild(sep);
-
-  getAllMonthSlotsForYear().forEach((slot) => {
-    addChip(slot.key, slot.label, '', !slot.available);
-  });
+  const q2Trim = trimSlots.find((t) => String(t.key).includes('Q2'));
+  if (q2Trim || q2Months.length) {
+    sep();
+    if (q2Trim) addChip(q2Trim.key, q2Trim.label, 'trim', !q2Trim.available, false);
+    q2Months.forEach((slot) => addChip(slot.key, slot.label, '', !slot.available, true));
+  }
 
   bar.querySelectorAll('.vd-mes-chip:not(:disabled)').forEach((chip) => {
     chip.onclick = () => {
@@ -26391,7 +26430,7 @@ function setAppTrimestre(qKey) {
   appTrimestre = qKey;
   appMesFiscal = null;
   const sel = document.getElementById('mesSelect');
-  if (sel) sel.value = '';
+  if (sel) sel.value = qKey;
   buildFiscalMesBars();
   updatePeriodLabels();
   rerenderAllTabs();
@@ -26434,25 +26473,45 @@ function initPeriodSelector() {
   const fp = getFiscal();
   const sel = document.getElementById('mesSelect');
   if (!sel || !fp.meses.length) return;
-  sel.innerHTML = '';
-  fp.meses.forEach((m, i) => {
-    const opt = document.createElement('option');
-    opt.value = m;
-    opt.textContent = fp.mesLabels[i] || m;
-    sel.appendChild(opt);
-  });
+  const tr = J.trimestres || {};
+  const yyyy = getDisplayYear();
+  const q1 = fp.meses.filter((m) => parseInt(m.split('-')[1], 10) <= 3);
+  const q2 = fp.meses.filter((m) => parseInt(m.split('-')[1], 10) > 3);
+  let html = '<optgroup label="Período">';
   if (fp.meses.length > 1) {
-    const optTot = document.createElement('option');
-    optTot.value = 'total';
-    optTot.textContent = fiscalPeriodTotalLabel();
-    sel.appendChild(optTot);
+    html += '<option value="total">' + fiscalPeriodTotalLabel() + '</option>';
   }
+  getTrimestreSlots().forEach((t) => {
+    if (!t.available) return;
+    const qnum = String(t.key).split('Q')[1];
+    html += '<option value="' + t.key + '">' + qnum + 'º Trimestre ' + yyyy + '</option>';
+  });
+  html += '</optgroup>';
+  if (q1.length) {
+    html += '<optgroup label="1º Trimestre — meses">';
+    q1.forEach((m) => {
+      const i = fp.meses.indexOf(m);
+      html += '<option value="' + m + '">' + (fp.mesLabels[i] || m) + '</option>';
+    });
+    html += '</optgroup>';
+  }
+  if (q2.length) {
+    html += '<optgroup label="2º Trimestre — meses">';
+    q2.forEach((m) => {
+      const i = fp.meses.indexOf(m);
+      html += '<option value="' + m + '">' + (fp.mesLabels[i] || m) + '</option>';
+    });
+    html += '</optgroup>';
+  }
+  sel.innerHTML = html;
   const def = J.meta.competenciaDefault || fp.meses[fp.meses.length - 1];
   appMesFiscal = def;
   sel.value = def;
   sel.onchange = () => {
-    appTrimestre = null;
-    setAppMesFiscal(sel.value);
+    const v = sel.value;
+    if (v === 'total') setAppMesFiscal('total');
+    else if (tr.trimestres && tr.trimestres.includes(v)) setAppTrimestre(v);
+    else setAppMesFiscal(v);
   };
 }
 
@@ -26489,7 +26548,7 @@ function setAppMesFiscal(mesKey, opts) {
   appMesFiscal = mesKey;
   appTrimestre = null;
   const sel = document.getElementById('mesSelect');
-  if (sel && mesKey !== 'total' && sel.value !== mesKey) sel.value = mesKey;
+  if (sel) sel.value = mesKey;
   buildFiscalMesBars();
   updatePeriodLabels();
   if (!opts || !opts.skipRerender) rerenderAllTabs();
