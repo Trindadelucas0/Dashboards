@@ -20,6 +20,7 @@ router.get("/auth/baifer1trm", authMiddleware, requireDashboard("baifer"), authC
 router.get("/auth/schumacher", authMiddleware, requireDashboard("schumacher"), authControl.schumacher);
 router.get("/auth/egaplast", authMiddleware, requireDashboard("egaplast"), authControl.egaplast);
 router.get("/auth/du-lanche", authMiddleware, requireDashboard("du-lanche"), authControl.duLanche);
+router.get("/auth/avicola", authMiddleware, requireDashboard("avicola"), authControl.avicola);
 router.get("/auth/jpg", authMiddleware, requireDashboard("jpg"), authControl.jpg);
 router.get("/auth/jpg/:filial", authMiddleware, requireDashboard("jpg"), authControl.jpgFilial);
 module.exports = router;

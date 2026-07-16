@@ -6,4 +6,5 @@ module.exports = [
   { id: "schumacher", label: "Schumacher", routes: ["/auth/schumacher"] },
   { id: "egaplast", label: "Egaplast", routes: ["/auth/egaplast"] },
   { id: "du-lanche", label: "Du Lanches", routes: ["/auth/du-lanche"] },
+  { id: "avicola", label: "Avícola Progresso", routes: ["/auth/avicola"] },
 ];

@@ -81,6 +81,9 @@ module.exports = {
   duLanche: (req, res) => {
     res.render("du-lanche");
   },
+  avicola: (req, res) => {
+    res.render("avicola");
+  },
   jpg: (req, res) => {
     res.render("jpg");
   },

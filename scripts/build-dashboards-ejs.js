@@ -46,6 +46,11 @@ const DASHBOARDS = [
     outputs: ["du-lanche.ejs"],
   },
   {
+    id: "avicola",
+    html: path.join(dashRoot, "avicola", "avicola.html"),
+    outputs: ["avicola.ejs"],
+  },
+  {
     id: "jpg",
     html: path.join(workspaceRoot, "jpg", "JPG.html"),
     outputs: ["jpg.ejs"],
