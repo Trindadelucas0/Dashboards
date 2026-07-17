@@ -28976,6 +28976,11 @@ const DASHBOARD_DATA = {
   window.getDashboardPack = getPack;
   window.getDashboardPeriodLabel = periodFull;
   window.getDashboardUnitLabel = () => UNIT_LABELS[state.unit] || 'Consolidado';
+  window.getDashboardMonthSeries = () => ({
+    monthKeys: MONTH_KEYS,
+    monthLabels: MONTH_LABELS,
+    getMonthPack: (m) => getUnitFiscal().porMes[m] || null,
+  });
 
   document.addEventListener('DOMContentLoaded', () => {
     hydrateStatic();
@@ -28985,48 +28990,55 @@ const DASHBOARD_DATA = {
 
 </script>
 <script>
-/* Relatório Gerencial PDF — EGAPLAST (CFOP SINIEF) */
-(function () {
+/* Relatório Gerencial — motor PDF compartilhado (snapshot normalizado) */
+(function (global) {
   'use strict';
 
-  const fmtMoeda = (v) => 'R$ ' + Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const fmtPct = (v) => Number(v || 0).toFixed(1).replace('.', ',') + '%';
+  const MARGIN = 14;
+  const HEADER_H = 14;
+  const FOOTER_H = 10;
+  const PAGE_W = 210;
+  const CONTENT_W = PAGE_W - MARGIN * 2;
 
-  function getCatalog(D) {
-    return D.cfopFinalidade || {};
+  const fmt = (v) => (v == null || isNaN(v) ? '—' : Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+  const fmtK = (v) => {
+    if (v == null || isNaN(v)) return '—';
+    const n = Number(v);
+    if (Math.abs(n) >= 1e6) return 'R$ ' + (n / 1e6).toFixed(2).replace('.', ',') + ' mi';
+    if (Math.abs(n) >= 1e3) return 'R$ ' + (n / 1e3).toFixed(0) + ' mil';
+    return 'R$ ' + fmt(n);
+  };
+  const fmtPct = (v, digits = 1) => (v == null || isNaN(v) ? '—' : Number(v).toFixed(digits).replace('.', ',') + '%');
+  const fmtVar = (v) => {
+    if (v == null || isNaN(v)) return '—';
+    const n = Number(v);
+    const sign = n > 0 ? '+' : '';
+    return sign + n.toFixed(0) + '%';
+  };
+  const fmtMoeda = (v) => (v == null || isNaN(v) ? '—' : 'R$ ' + fmt(v));
+
+  function calcVariacao(atual, anterior) {
+    const a = Number(atual) || 0;
+    const p = Number(anterior) || 0;
+    const abs = a - p;
+    const pct = p !== 0 ? (abs / Math.abs(p)) * 100 : (a !== 0 ? 100 : 0);
+    return { abs, pct };
   }
 
-  function cfopDescricao(c, catalog) {
-    const fromMap = catalog[c.cfop];
-    return (fromMap && fromMap.descricao) || c.descricao || ('CFOP ' + c.cfop);
+  function somaImpostos(impostosTabela) {
+    return (impostosTabela || []).reduce((s, t) => s + (t.recolher || 0), 0);
   }
 
-  function cfopGrupo(c, catalog) {
-    const fromMap = catalog[c.cfop];
-    return (fromMap && (fromMap.grupo || fromMap.finalidade)) || c.grupo || c.finalidade || 'Sem grupo';
-  }
-
-  function resolvePack(D) {
-    if (typeof window.getDashboardPack === 'function') {
-      return {
-        pack: window.getDashboardPack(),
-        periodLabel: typeof window.getDashboardPeriodLabel === 'function' ? window.getDashboardPeriodLabel() : D.competenciaLabel,
-        unitLabel: typeof window.getDashboardUnitLabel === 'function' ? window.getDashboardUnitLabel() : 'Consolidado',
-      };
-    }
-    const mm = (D.competencia || '').split('-')[1] || D.meta.meses[D.meta.meses.length - 1];
-    const pack = D.fiscalPorMes.porMes[mm] || D.fiscalPorMes.porMes[D.meta.meses[D.meta.meses.length - 1]];
-    return { pack, periodLabel: D.competenciaLabel, unitLabel: 'Consolidado' };
-  }
-
-  function agruparComprasPorGrupo(cfopEntradas, catalog) {
+  function agruparComprasPorFinalidade(cfopEntradas, catalog) {
     const map = {};
+    const cat = catalog || {};
     (cfopEntradas || []).forEach((c) => {
-      const g = cfopGrupo(c, catalog);
-      map[g] = (map[g] || 0) + (c.total || c.contabil || 0);
+      const fromMap = cat[c.cfop];
+      const fin = (fromMap && fromMap.finalidade) || c.finalidade || c.grupo || 'Outras';
+      map[fin] = (map[fin] || 0) + (c.total || c.contabil || 0);
     });
     return Object.entries(map)
-      .map(([grupo, total]) => ({ grupo, total }))
+      .map(([finalidade, total]) => ({ finalidade, total }))
       .sort((a, b) => b.total - a.total);
   }
 
@@ -29034,30 +29046,446 @@ const DASHBOARD_DATA = {
     return (list || []).slice().sort((a, b) => (b.total || b.contabil || 0) - (a.total || a.contabil || 0));
   }
 
-  function exportRelatorioGerencial() {
-    if (typeof DASHBOARD_DATA === 'undefined') {
-      alert('Dados do dashboard não carregados.');
-      return;
+  function cfopDesc(c, catalog) {
+    const fromMap = (catalog || {})[c.cfop];
+    return (fromMap && fromMap.descricao) || c.descricao || ('CFOP ' + c.cfop);
+  }
+
+  function createPdfContext(snapshot) {
+    const { jsPDF } = global.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageH = pdf.internal.pageSize.getHeight();
+    let y = MARGIN + HEADER_H;
+    let pageNum = 1;
+    const empresaNome = (snapshot.empresa?.nome || 'Empresa').split(' ')[0];
+    const periodLabel = snapshot.periodLabel || '';
+    const footerNote = snapshot.footerNote
+      || ((snapshot.empresa?.nome || 'Empresa') + ' — Relatório gerencial — ' + periodLabel);
+
+    function addHeader() {
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      pdf.setTextColor(100, 116, 139);
+      pdf.text(empresaNome + ' — pág. ' + pageNum, MARGIN, MARGIN + 4);
+      pdf.setDrawColor(226, 232, 240);
+      pdf.line(MARGIN, MARGIN + 7, PAGE_W - MARGIN, MARGIN + 7);
     }
-    if (!window.jspdf?.jsPDF) {
+
+    function addFooter() {
+      pdf.setFontSize(7);
+      pdf.setTextColor(148, 163, 184);
+      pdf.text(footerNote, MARGIN, pageH - 5, { maxWidth: CONTENT_W });
+    }
+
+    function newPage() {
+      addFooter();
+      pdf.addPage();
+      pageNum++;
+      addHeader();
+      y = MARGIN + HEADER_H + 4;
+    }
+
+    function ensureSpace(need) {
+      if (y + need > pageH - FOOTER_H - MARGIN) newPage();
+    }
+
+    function writeTitle(text, size) {
+      size = size || 14;
+      ensureSpace(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(size);
+      pdf.setTextColor(30, 41, 59);
+      pdf.text(text, MARGIN, y);
+      y += size * 0.45 + 4;
+    }
+
+    function writeSubtitle(text) {
+      ensureSpace(8);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      pdf.setTextColor(71, 85, 105);
+      const lines = pdf.splitTextToSize(String(text || ''), CONTENT_W);
+      pdf.text(lines, MARGIN, y);
+      y += lines.length * 5 + 2;
+    }
+
+    function writeParagraph(text, size) {
+      size = size || 9;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(size);
+      pdf.setTextColor(51, 65, 85);
+      const lines = pdf.splitTextToSize(String(text || ''), CONTENT_W);
+      ensureSpace(lines.length * 4 + 4);
+      pdf.text(lines, MARGIN, y);
+      y += lines.length * 4 + 4;
+    }
+
+    function writeSectionLabel(text) {
+      ensureSpace(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(10);
+      pdf.setTextColor(30, 41, 59);
+      pdf.text(text, MARGIN, y);
+      y += 6;
+    }
+
+    function writeBullets(items) {
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(9);
+      pdf.setTextColor(51, 65, 85);
+      (items || []).forEach((item) => {
+        const lines = pdf.splitTextToSize('• ' + item, CONTENT_W - 4);
+        ensureSpace(lines.length * 4 + 2);
+        pdf.text(lines, MARGIN + 2, y);
+        y += lines.length * 4 + 2;
+      });
+      y += 2;
+    }
+
+    function addTable(head, body, opts) {
+      opts = opts || {};
+      ensureSpace(20);
+      pdf.autoTable({
+        startY: y,
+        margin: { top: y, left: MARGIN, right: MARGIN, bottom: FOOTER_H + MARGIN },
+        head: [head],
+        body,
+        theme: 'grid',
+        styles: Object.assign({ fontSize: 8, cellPadding: 2, textColor: [51, 65, 85] }, opts.styles || {}),
+        headStyles: { fillColor: [241, 245, 249], textColor: [71, 85, 105], fontStyle: 'bold' },
+        columnStyles: opts.columnStyles || {},
+      });
+      y = pdf.lastAutoTable.finalY + 6;
+    }
+
+    addHeader();
+
+    return {
+      pdf,
+      snapshot,
+      getY: () => y,
+      setY: (v) => { y = v; },
+      newPage,
+      ensureSpace,
+      writeTitle,
+      writeSubtitle,
+      writeParagraph,
+      writeSectionLabel,
+      writeBullets,
+      addTable,
+      addFooter,
+      getPageNum: () => pageNum,
+    };
+  }
+
+  function renderCover(ctx) {
+    const s = ctx.snapshot;
+    ctx.writeTitle('Relatório Gerencial');
+    ctx.writeSubtitle((s.empresa?.nome || 'Empresa') + ' — ' + (s.periodLabel || ''));
+    if (s.empresa?.cnpj) ctx.writeParagraph('CNPJ: ' + s.empresa.cnpj, 9);
+    if (s.narrativa) {
+      ctx.writeSectionLabel('O período em uma frase');
+      ctx.writeParagraph(s.narrativa);
+    }
+  }
+
+  function renderComparativo(ctx) {
+    const rc = ctx.snapshot.resultadoComparativo;
+    if (!rc || !(rc.rows || []).length) return;
+    ctx.newPage();
+    ctx.writeTitle(rc.title || 'Resultado do período');
+    if (rc.subtitle) ctx.writeParagraph(rc.subtitle);
+    const body = rc.rows.map((r) => {
+      const v = calcVariacao(r.curr, r.prev);
+      return [
+        r.linha,
+        r.isPct ? fmtPct(r.prev) : fmtMoeda(r.prev),
+        r.isPct ? fmtPct(r.curr) : fmtMoeda(r.curr),
+        fmtVar(v.pct),
+      ];
+    });
+    ctx.addTable(['Linha', rc.headPrev || 'Anterior', rc.headCurr || 'Atual', 'Var.'], body, {
+      columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' } },
+    });
+  }
+
+  function renderFiscal(ctx) {
+    const s = ctx.snapshot;
+    if (!s.fiscal) return;
+    ctx.newPage();
+    ctx.writeTitle('Visão fiscal e compras — ' + (s.periodLabel || ''));
+    const f = s.fiscal;
+    const imp = somaImpostos(s.impostosTabela || f.impostosTabela);
+    const rows = [
+      ['(+) Receita bruta', fmtMoeda(f.receitaBruta)],
+      ['(-) Deduções / impostos s/ vendas', fmtMoeda(-(f.deducoes || 0))],
+      ['% Carga tributária', fmtPct(f.dedPct)],
+      ['(-) Compras do período', fmtMoeda(-(f.totalCompras || 0))],
+    ];
+    if (f.cfopSaidasTotal != null) rows.push(['(=) Total saídas (CFOP)', fmtMoeda(f.cfopSaidasTotal)]);
+    rows.push(['(=) Impostos a recolher (total)', fmtMoeda(imp)]);
+    ctx.addTable(['Indicador', 'Valor'], rows, { columnStyles: { 1: { halign: 'right' } } });
+
+    const impostos = s.impostosTabela || f.impostosTabela || [];
+    if (impostos.length) {
+      ctx.writeSectionLabel('Impostos a recolher por tributo');
+      ctx.addTable(['Tributo', 'A recolher', '% RB'], impostos.map((t) => [
+        t.tributo,
+        fmtMoeda(t.recolher),
+        t.pctRb != null ? fmtPct(t.pctRb) : '—',
+      ]), { columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } } });
+    }
+
+    const fins = s.comprasFinalidade || [];
+    if (fins.length) {
+      ctx.writeSectionLabel('Compras por finalidade (CFOP)');
+      const top = fins.slice(0, 12);
+      const base = f.totalCompras || top.reduce((a, c) => a + c.total, 0) || 1;
+      ctx.addTable(['Finalidade', 'Valor', '%'], top.map((c) => [
+        c.finalidade,
+        fmtMoeda(c.total),
+        fmtPct((c.total / base) * 100),
+      ]), { columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } } });
+    }
+  }
+
+  function renderTops(ctx) {
+    const s = ctx.snapshot;
+    const hasClientes = (s.topClientes || []).length;
+    const hasForn = (s.topFornecedores || []).length;
+    const hasEnt = (s.topCfopEntradas || []).length;
+    const hasSai = (s.topCfopSaidas || []).length;
+    if (!hasClientes && !hasForn && !hasEnt && !hasSai) return;
+
+    ctx.newPage();
+    ctx.writeTitle('Rankings do período — ' + (s.periodLabel || ''));
+
+    if (hasClientes) {
+      ctx.writeSectionLabel('Top clientes');
+      ctx.addTable(['Cliente', 'Total'], s.topClientes.slice(0, 10).map((c) => [
+        String(c.nome || '—').substring(0, 48),
+        fmtMoeda(c.total),
+      ]), { columnStyles: { 1: { halign: 'right' } } });
+    }
+    if (hasForn) {
+      ctx.writeSectionLabel('Top fornecedores');
+      ctx.addTable(['Fornecedor', 'Total'], s.topFornecedores.slice(0, 10).map((c) => [
+        String(c.nome || '—').substring(0, 48),
+        fmtMoeda(c.total),
+      ]), { columnStyles: { 1: { halign: 'right' } } });
+    }
+    if (hasEnt) {
+      ctx.writeSectionLabel('Top CFOPs — entradas');
+      ctx.addTable(['CFOP', 'Descrição', 'Valor'], s.topCfopEntradas.slice(0, 15).map((c) => [
+        c.cfop,
+        String(c.descricao || '').substring(0, 42),
+        fmtMoeda(c.total),
+      ]), {
+        styles: { fontSize: 7 },
+        columnStyles: { 0: { cellWidth: 16 }, 1: { cellWidth: 100 }, 2: { halign: 'right' } },
+      });
+    }
+    if (hasSai) {
+      ctx.writeSectionLabel('Top CFOPs — saídas');
+      ctx.addTable(['CFOP', 'Descrição', 'Valor'], s.topCfopSaidas.slice(0, 15).map((c) => [
+        c.cfop,
+        String(c.descricao || '').substring(0, 42),
+        fmtMoeda(c.total),
+      ]), {
+        styles: { fontSize: 7 },
+        columnStyles: { 0: { cellWidth: 16 }, 1: { cellWidth: 100 }, 2: { halign: 'right' } },
+      });
+    }
+  }
+
+  function renderEvolucao(ctx) {
+    const s = ctx.snapshot;
+    if (!(s.evolucaoMensal || []).length) return;
+    ctx.newPage();
+    ctx.writeTitle(s.evolucaoTitle || 'Evolução mensal');
+    if (s.evolucaoSubtitle) ctx.writeParagraph(s.evolucaoSubtitle);
+    const body = s.evolucaoMensal.map((m) => [
+      m.label,
+      fmtMoeda(m.vendas),
+      fmtMoeda(m.lucroLiquido != null ? m.lucroLiquido : m.receitaBruta),
+      m.margemLiquidaPct != null ? fmtPct(m.margemLiquidaPct) : (m.dedPct != null ? fmtPct(m.dedPct) : '—'),
+    ]);
+    if (s.consolidado) {
+      body.push([
+        'Acum.',
+        fmtMoeda(s.consolidado.vendas),
+        fmtMoeda(s.consolidado.lucroLiquido),
+        fmtPct(s.consolidado.margemLiquidaPct),
+      ]);
+    }
+    ctx.addTable(
+      ['Mês', s.evolucaoCol2 || 'Vendas', s.evolucaoCol3 || 'Lucro líq.', s.evolucaoCol4 || 'Margem %'],
+      body,
+      { columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' } } }
+    );
+  }
+
+  function renderLeitura(ctx) {
+    const s = ctx.snapshot;
+    if (!(s.leitura || []).length && !(s.acoes || []).length) return;
+    ctx.newPage();
+    ctx.writeTitle('Leitura integrada');
+    (s.leitura || []).forEach((p) => ctx.writeParagraph(p));
+    if ((s.acoes || []).length) {
+      ctx.writeSectionLabel('Para onde olhar no próximo período');
+      ctx.writeBullets(s.acoes);
+    }
+  }
+
+  function renderResumoAcumulado(ctx) {
+    const s = ctx.snapshot;
+    if (!s.consolidado && !(s.alertasMargem && s.alertasMargem.total)) return;
+    ctx.newPage();
+    ctx.writeTitle('Resumo executivo acumulado');
+    if (s.resumoAcumuladoSubtitle) ctx.writeSubtitle(s.resumoAcumuladoSubtitle);
+    if (s.consolidado) {
+      const c = s.consolidado;
+      ctx.addTable(['Indicador', 'Valor', '%'], [
+        ['Faturamento (vendas)', fmtMoeda(c.vendas), '100%'],
+        ['Lucro bruto', fmtMoeda(c.lucroBruto), c.vendas ? fmtPct((c.lucroBruto / c.vendas) * 100) : '—'],
+        ['Lucro líquido', fmtMoeda(c.lucroLiquido), fmtPct(c.margemLiquidaPct)],
+        ['Margem bruta', fmtPct(c.margemBrutaPct), '—'],
+        ['Margem líquida', fmtPct(c.margemLiquidaPct), '—'],
+      ], { columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } } });
+    }
+    if (s.alertasMargem && s.alertasMargem.total > 0) {
+      ctx.writeSectionLabel(s.alertasMargem.label || 'Alertas de margem');
+      ctx.addTable(['Produto', 'Vendas', 'Margem líq. %'], (s.alertasMargem.emAtencao || []).slice(0, 10).map((p) => [
+        String(p.nome || p.descricao || '—').substring(0, 45),
+        fmtMoeda(p.total),
+        fmtPct(p.margemLiquidaPct),
+      ]), { columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } } });
+    }
+  }
+
+  function renderMediaDetalhe(ctx) {
+    const s = ctx.snapshot;
+    if (!s.mediaMensal && !(s.evolucaoMensal || []).length) return;
+    if (!s.mediaMensal && !s.showEvolucaoDetalhada) return;
+    ctx.newPage();
+    ctx.writeTitle('Média mensal e evolução detalhada');
+    if (s.mediaMensal) {
+      if (s.mediaMensalNote) ctx.writeParagraph(s.mediaMensalNote);
+      ctx.addTable(['Indicador', 'Média mensal'], [
+        ['Vendas', fmtMoeda(s.mediaMensal.vendas)],
+        ['Lucro líquido', fmtMoeda(s.mediaMensal.lucroLiquido)],
+        ['Margem líquida', fmtPct(s.mediaMensal.margemLiquidaPct)],
+        ['Margem bruta', fmtPct(s.mediaMensal.margemBrutaPct)],
+      ], { columnStyles: { 1: { halign: 'right' } } });
+    }
+    if (s.showEvolucaoDetalhada && (s.evolucaoMensal || []).length) {
+      ctx.writeSectionLabel('Evolução mensal detalhada');
+      const body = s.evolucaoMensal.map((m) => [
+        m.label,
+        fmtMoeda(m.vendas),
+        fmtMoeda(m.custo),
+        fmtMoeda(m.lucroBruto),
+        fmtMoeda(m.lucroLiquido),
+        fmtPct(m.margemBrutaPct),
+        fmtPct(m.margemLiquidaPct),
+      ]);
+      if (s.consolidado) {
+        const c = s.consolidado;
+        body.push(['Acum.', fmtMoeda(c.vendas), fmtMoeda(c.custo), fmtMoeda(c.lucroBruto), fmtMoeda(c.lucroLiquido), fmtPct(c.margemBrutaPct), fmtPct(c.margemLiquidaPct)]);
+      }
+      ctx.addTable(['Mês', 'Vendas', 'Custo', 'Lucro bruto', 'Lucro líq.', 'Marg.br.%', 'Marg.líq.%'], body, {
+        styles: { fontSize: 7 },
+        columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' }, 4: { halign: 'right' }, 5: { halign: 'right' }, 6: { halign: 'right' } },
+      });
+    }
+  }
+
+  function renderComposicao(ctx) {
+    const s = ctx.snapshot;
+    if (!(s.composicaoMargens || []).length) return;
+    ctx.newPage();
+    ctx.writeTitle('Onde vai cada real do faturamento');
+    if (s.composicaoSubtitle) ctx.writeParagraph(s.composicaoSubtitle);
+    ctx.addTable(['Item', 'R$ acumulado', '% do faturamento'], s.composicaoMargens.map((r) => [
+      r.item,
+      fmtMoeda(r.valor),
+      fmtPct(Math.abs(r.pct)),
+    ]), { columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } } });
+    if (s.composicaoNota) ctx.writeParagraph(s.composicaoNota);
+    if (s.fiscalPeriodoNote) {
+      ctx.writeSectionLabel('Competência fiscal do período selecionado');
+      ctx.writeParagraph(s.fiscalPeriodoNote);
+    }
+  }
+
+  function renderPatrimonial(ctx) {
+    const s = ctx.snapshot;
+    if (!s.patrimonial || !(s.patrimonial.meses || []).length) return;
+    ctx.newPage();
+    ctx.writeTitle('Indicadores patrimoniais');
+    if (s.patrimonial.note) ctx.writeParagraph(s.patrimonial.note);
+    ctx.addTable(['Mês', 'Liq. corrente', 'Liq. seca', 'Cap. giro', 'Endiv. %'], s.patrimonial.meses.map((p) => [
+      p.label,
+      Number(p.liquidezCorrente).toFixed(2).replace('.', ','),
+      Number(p.liquidezSeca).toFixed(2).replace('.', ','),
+      fmtMoeda(p.capitalGiro),
+      fmtPct(p.grauEndividamento),
+    ]), { columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' }, 4: { halign: 'right' } } });
+  }
+
+  function renderPendencias(ctx) {
+    const s = ctx.snapshot;
+    const pend = (s.pendentes || []).filter(Boolean);
+    const acoes = s.acoes || [];
+    if (!pend.length && !acoes.length) return;
+    ctx.newPage();
+    ctx.writeTitle('Pendências e próximos passos');
+    if (pend.length) {
+      ctx.writeSectionLabel('Fontes pendentes de integração');
+      ctx.writeBullets(pend);
+    }
+    if (acoes.length) {
+      ctx.writeSectionLabel('Ações recomendadas');
+      ctx.writeBullets(acoes);
+    }
+    ctx.writeParagraph(
+      'Relatório gerencial — ' + (s.empresa?.nome || 'Empresa')
+      + ' — competência ' + (s.periodLabel || '') + '.'
+    );
+  }
+
+  function renderAll(ctx) {
+    renderCover(ctx);
+    renderComparativo(ctx);
+    renderFiscal(ctx);
+    renderTops(ctx);
+    renderEvolucao(ctx);
+    renderLeitura(ctx);
+    renderResumoAcumulado(ctx);
+    renderMediaDetalhe(ctx);
+    renderComposicao(ctx);
+    renderPatrimonial(ctx);
+    renderPendencias(ctx);
+    ctx.addFooter();
+  }
+
+  async function exportSnapshot(snapshot, opts) {
+    opts = opts || {};
+    if (!global.jspdf?.jsPDF) {
       alert('Biblioteca jsPDF não carregada.');
-      return;
+      return null;
     }
-    const probe = new window.jspdf.jsPDF();
+    const probe = new global.jspdf.jsPDF();
     if (typeof probe.autoTable !== 'function') {
       alert('Biblioteca jspdf-autotable não carregada.');
-      return;
+      return null;
+    }
+    if (!snapshot || !snapshot.empresa) {
+      alert('Snapshot do relatório inválido.');
+      return null;
     }
 
-    const D = DASHBOARD_DATA;
-    const catalog = getCatalog(D);
-    const { pack, periodLabel, unitLabel } = resolvePack(D);
-    if (!pack) {
-      alert('Pacote fiscal do período não encontrado.');
-      return;
-    }
-
-    const btn = typeof event !== 'undefined' ? event?.currentTarget : null;
+    const btn = opts.button || (typeof event !== 'undefined' ? event?.currentTarget : null);
     const origHtml = btn?.innerHTML;
     if (btn) {
       btn.disabled = true;
@@ -29065,122 +29493,15 @@ const DASHBOARD_DATA = {
     }
 
     try {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      const tableOpts = {
-        theme: 'striped',
-        styles: { fontSize: 7, cellPadding: 1.5, overflow: 'linebreak' },
-        headStyles: { fillColor: [241, 245, 249], textColor: [71, 85, 105], fontStyle: 'bold' },
-        columnStyles: { 2: { halign: 'right' }, 3: { halign: 'right' } },
-      };
-
-      doc.setFontSize(18);
-      doc.text('Relatório Gerencial', 14, 20);
-      doc.setFontSize(11);
-      doc.text(D.empresa.nome, 14, 28);
-      doc.text('CNPJ: ' + D.empresa.cnpj, 14, 34);
-      doc.text('Período: ' + periodLabel + ' — ' + unitLabel, 14, 40);
-      doc.text('Gerado em: ' + new Date().toLocaleString('pt-BR'), 14, 46);
-
-      doc.setFontSize(13);
-      doc.text('Visão Geral — KPIs', 14, 58);
-      const kpis = [
-        ['Receita Bruta', fmtMoeda(pack.receitaBruta)],
-        ['Total Vendas (saídas)', fmtMoeda(pack.cfopSaidasTotal)],
-        ['Total Compras', fmtMoeda(pack.totalCompras)],
-        ['Deduções Tributárias', fmtMoeda(pack.deducoes)],
-        ['% Carga tributária (RB)', fmtPct(pack.dedPct)],
-      ];
-      doc.autoTable({ startY: 62, head: [['Indicador', 'Valor']], body: kpis, theme: 'grid', styles: { fontSize: 10 } });
-
-      doc.text('Impostos a Recolher', 14, doc.lastAutoTable.finalY + 12);
-      const impBody = (pack.impostosTabela || []).map((r) => [r.tributo, fmtMoeda(r.recolher), r.pctRb + '%']);
-      doc.autoTable({
-        startY: doc.lastAutoTable.finalY + 16,
-        head: [['Tributo', 'A Recolher', '% RB']],
-        body: impBody,
-        theme: 'striped',
-        styles: { fontSize: 9 },
-        columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } },
-      });
-
-      const grupos = agruparComprasPorGrupo(pack.cfopEntradas, catalog);
-      if (grupos.length) {
-        doc.addPage();
-        doc.setFontSize(13);
-        doc.text('Compras por grupo CFOP SINIEF', 14, 20);
-        doc.setFontSize(9);
-        doc.text('Classificação oficial — Anexo II SINIEF (sem finalidade inventada)', 14, 26);
-        const totalCompras = pack.totalCompras || grupos.reduce((s, g) => s + g.total, 0) || 1;
-        doc.autoTable({
-          startY: 30,
-          head: [['Grupo SINIEF', 'Valor', '% Compras']],
-          body: grupos.slice(0, 12).map((g) => [
-            g.grupo,
-            fmtMoeda(g.total),
-            fmtPct((g.total / totalCompras) * 100),
-          ]),
-          ...tableOpts,
-          columnStyles: { 1: { halign: 'right', cellWidth: 28 }, 2: { halign: 'right', cellWidth: 18 } },
-        });
-      }
-
-      const entradas = sortCfop(pack.cfopEntradas);
-      if (entradas.length) {
-        const y = doc.lastAutoTable ? doc.lastAutoTable.finalY + 14 : 30;
-        if (y > 250) doc.addPage();
-        doc.setFontSize(13);
-        doc.text('Top CFOPs — Entradas', 14, y > 250 ? 20 : y);
-        doc.autoTable({
-          startY: (y > 250 ? 24 : y + 4),
-          head: [['CFOP', 'Descrição oficial SINIEF', 'Valor']],
-          body: entradas.slice(0, 15).map((c) => [
-            c.cfop,
-            cfopDescricao(c, catalog),
-            fmtMoeda(c.total || c.contabil),
-          ]),
-          ...tableOpts,
-          columnStyles: { 0: { cellWidth: 16 }, 1: { cellWidth: 110 }, 2: { halign: 'right', cellWidth: 28 } },
-        });
-      }
-
-      const saidas = sortCfop(pack.cfopSaidas);
-      if (saidas.length) {
-        if (doc.lastAutoTable.finalY > 240) doc.addPage();
-        const y = doc.lastAutoTable.finalY > 240 ? 20 : doc.lastAutoTable.finalY + 12;
-        doc.setFontSize(13);
-        doc.text('Top CFOPs — Saídas', 14, y);
-        const totalSai = pack.cfopSaidasTotal || saidas.reduce((s, c) => s + (c.contabil || c.total || 0), 0) || 1;
-        doc.autoTable({
-          startY: y + 4,
-          head: [['CFOP', 'Descrição oficial SINIEF', 'Valor', '%']],
-          body: saidas.slice(0, 15).map((c) => {
-            const val = c.contabil || c.total || 0;
-            return [c.cfop, cfopDescricao(c, catalog), fmtMoeda(val), fmtPct((val / totalSai) * 100)];
-          }),
-          ...tableOpts,
-          columnStyles: { 0: { cellWidth: 16 }, 1: { cellWidth: 100 }, 2: { halign: 'right', cellWidth: 28 }, 3: { halign: 'right', cellWidth: 14 } },
-        });
-      }
-
-      if (pack.sped?.clientes?.length) {
-        if (doc.lastAutoTable.finalY > 240) doc.addPage();
-        doc.setFontSize(13);
-        doc.text('Top Clientes', 14, doc.lastAutoTable.finalY > 240 ? 20 : doc.lastAutoTable.finalY + 12);
-        doc.autoTable({
-          startY: (doc.lastAutoTable.finalY > 240 ? 24 : doc.lastAutoTable.finalY + 16),
-          head: [['Cliente', 'Total']],
-          body: pack.sped.clientes.slice(0, 10).map((c) => [c.nome.slice(0, 55), fmtMoeda(c.total)]),
-          styles: { fontSize: 8 },
-          columnStyles: { 1: { halign: 'right' } },
-        });
-      }
-
-      const safeName = (D.empresa.nome || 'EGAPLAST').slice(0, 24).replace(/[\\/:*?"<>|]/g, '');
-      doc.save('Relatorio_Gerencial — ' + safeName + ' — ' + periodLabel.replace(/\//g, '-') + '.pdf');
+      const ctx = createPdfContext(snapshot);
+      renderAll(ctx);
+      const slug = snapshot.fileSlug || 'Relatorio_Gerencial';
+      ctx.pdf.save(slug + '.pdf');
+      return ctx.pdf;
     } catch (err) {
       console.error(err);
       alert('Erro ao gerar Relatório Gerencial. Tente novamente.');
+      return null;
     } finally {
       if (btn) {
         btn.disabled = false;
@@ -29189,7 +29510,273 @@ const DASHBOARD_DATA = {
     }
   }
 
+  function buildFiscalSnapshot(opts) {
+    opts = opts || {};
+    const empresa = opts.empresa || {};
+    const periodLabel = opts.periodLabel || '';
+    const pack = opts.pack || {};
+    const catalog = opts.catalog || {};
+    const unitLabel = opts.unitLabel || '';
+    const impostosTabela = pack.impostosTabela || [];
+    const comprasFinalidade = agruparComprasPorFinalidade(pack.cfopEntradas, catalog);
+    const topCfopEntradas = sortCfop(pack.cfopEntradas).slice(0, 15).map((c) => ({
+      cfop: c.cfop,
+      descricao: cfopDesc(c, catalog),
+      total: c.total || c.contabil || 0,
+    }));
+    const topCfopSaidas = sortCfop(pack.cfopSaidas).slice(0, 15).map((c) => ({
+      cfop: c.cfop,
+      descricao: cfopDesc(c, catalog),
+      total: c.total || c.contabil || 0,
+    }));
+    const clientesSrc = pack.sped?.clientes || pack.clientes || pack.clientesTop10 || [];
+    const fornSrc = pack.sped?.fornecedores || pack.fornecedores || [];
+    const topClientes = clientesSrc.slice(0, 10).map((c) => ({ nome: c.nome, total: c.total }));
+    const topFornecedores = fornSrc.slice(0, 10).map((c) => ({ nome: c.nome, total: c.total }));
+
+    const imp = somaImpostos(impostosTabela);
+    let narrativa = 'Período ' + periodLabel;
+    if (unitLabel) narrativa += ' (' + unitLabel + ')';
+    narrativa += ': receita bruta ' + fmtK(pack.receitaBruta)
+      + ', compras ' + fmtK(pack.totalCompras)
+      + ', carga tributária ' + fmtPct(pack.dedPct)
+      + ' (impostos a recolher ' + fmtK(imp) + ').';
+    if (pack.cfopSaidasTotal != null) {
+      narrativa += ' Total de saídas CFOP: ' + fmtK(pack.cfopSaidasTotal) + '.';
+    }
+
+    const leitura = [
+      'Receita bruta ' + fmtK(pack.receitaBruta) + ' e compras ' + fmtK(pack.totalCompras) + ' em ' + periodLabel + '.',
+      'Carga tributária de ' + fmtPct(pack.dedPct) + ' sobre a receita bruta.',
+    ];
+    if (topClientes.length) leitura.push('Principal cliente no ranking: ' + topClientes[0].nome + ' (' + fmtK(topClientes[0].total) + ').');
+    if (comprasFinalidade.length) {
+      leitura.push('Maior grupo de compras: ' + comprasFinalidade[0].finalidade + ' (' + fmtK(comprasFinalidade[0].total) + ').');
+    }
+
+    const acoes = [
+      'Monitorar carga tributária de ' + fmtPct(pack.dedPct) + ' e créditos disponíveis.',
+      'Revisar top CFOPs de entrada e finalidade de compras do período.',
+    ];
+    if (topFornecedores.length) acoes.push('Acompanhar concentração de compras nos principais fornecedores.');
+    else acoes.push('Integrar ranking de fornecedores quando SPED de entradas estiver completo.');
+
+    const pendentes = [];
+    if (!topFornecedores.length) pendentes.push('Ranking de fornecedores (quando não disponível nos dados)');
+    if (opts.pendentes) pendentes.push.apply(pendentes, opts.pendentes);
+
+    let evolucaoMensal = opts.evolucaoMensal || null;
+    if (!evolucaoMensal && opts.monthKeys && typeof opts.getMonthPack === 'function') {
+      evolucaoMensal = opts.monthKeys.map((m) => {
+        const p = opts.getMonthPack(m) || {};
+        return {
+          label: (opts.monthLabels && opts.monthLabels[m]) || m,
+          vendas: p.cfopSaidasTotal || p.receitaBruta || 0,
+          lucroLiquido: p.receitaBruta,
+          receitaBruta: p.receitaBruta,
+          dedPct: p.dedPct,
+          custo: p.totalCompras,
+          lucroBruto: null,
+          margemBrutaPct: null,
+          margemLiquidaPct: null,
+        };
+      });
+    }
+
+    const slug = opts.fileSlug || ('Relatorio_Gerencial_' + String(empresa.nome || 'Empresa').slice(0, 20).replace(/[^\w]+/g, '_'));
+
+    return {
+      empresa,
+      periodLabel,
+      fileSlug: slug,
+      narrativa,
+      resultadoComparativo: opts.resultadoComparativo || null,
+      fiscal: {
+        receitaBruta: pack.receitaBruta,
+        deducoes: pack.deducoes,
+        dedPct: pack.dedPct,
+        totalCompras: pack.totalCompras,
+        cfopSaidasTotal: pack.cfopSaidasTotal,
+        impostosTabela,
+      },
+      impostosTabela,
+      comprasFinalidade,
+      topClientes,
+      topFornecedores,
+      topCfopEntradas,
+      topCfopSaidas,
+      evolucaoMensal,
+      evolucaoTitle: 'Evolução mensal — fiscal',
+      evolucaoSubtitle: 'Receita / saídas e carga tributária por mês disponível.',
+      evolucaoCol2: 'Saídas/RB',
+      evolucaoCol3: 'Receita bruta',
+      evolucaoCol4: 'Carga %',
+      consolidado: opts.consolidado || null,
+      mediaMensal: null,
+      showEvolucaoDetalhada: false,
+      alertasMargem: null,
+      composicaoMargens: null,
+      patrimonial: opts.patrimonial || null,
+      leitura,
+      acoes,
+      pendentes: [...new Set(pendentes.filter(Boolean))],
+      footerNote: (empresa.nome || 'Empresa') + ' — Relatório gerencial fiscal — ' + periodLabel,
+    };
+  }
+
+  global.RelatorioGerencialCore = {
+    export: exportSnapshot,
+    buildFiscalSnapshot,
+    fmtMoeda,
+    fmtPct,
+    fmtK,
+    fmtVar,
+    calcVariacao,
+    somaImpostos,
+    agruparComprasPorFinalidade,
+    sortCfop,
+    cfopDesc,
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* Relatório Gerencial — adapter fiscal genérico (BAIFER / Du / Avícola / Egaplast / etc.) */
+(function () {
+  'use strict';
+
+  function resolvePack(D) {
+    let pack = null;
+    if (typeof window.getDashboardPack === 'function') {
+      pack = window.getDashboardPack();
+    } else {
+      const fp = D.fiscalPorMes || (D.unidades && D.unidades.consolidado && D.unidades.consolidado.fiscalPorMes);
+      const mm = (D.competencia || '').split('-')[1] || (D.meta?.meses || []).slice(-1)[0];
+      pack = (fp && fp.porMes && fp.porMes[mm]) || null;
+    }
+    if (!pack) return null;
+    // Normaliza aliases entre dashboards
+    if (!pack.cfopEntradas && pack.cfopDados) pack = Object.assign({}, pack, { cfopEntradas: pack.cfopDados });
+    if (!pack.impostosTabela && pack.composicao) {
+      const rb = pack.receitaBruta || 0;
+      pack = Object.assign({}, pack, {
+        impostosTabela: (pack.composicao || []).map((c) => ({
+          tributo: c.label || c.tributo,
+          recolher: c.valor != null ? c.valor : c.recolher,
+          pctRb: rb > 0 ? Math.round(((c.valor || c.recolher || 0) / rb) * 10000) / 100 : 0,
+        })),
+      });
+    }
+    if (!pack.impostosTabela && (pack.pisRecolher != null || pack.icmsRecolher != null)) {
+      const rb = pack.receitaBruta || 0;
+      const rows = [];
+      const push = (tributo, recolher) => {
+        if (recolher == null) return;
+        rows.push({
+          tributo,
+          recolher,
+          pctRb: rb > 0 ? Math.round((recolher / rb) * 10000) / 100 : 0,
+        });
+      };
+      push('PIS', pack.pisRecolher);
+      push('COFINS', pack.cofinsRecolher);
+      push('ICMS', pack.icmsRecolher);
+      pack = Object.assign({}, pack, { impostosTabela: rows });
+    }
+    if (!pack.fornecedores && pack.cfopEntradas) {
+      const map = {};
+      (pack.cfopEntradas || []).forEach((c) => {
+        (c.fornecedores || []).forEach((f) => {
+          if (!map[f.nome]) map[f.nome] = { nome: f.nome, total: 0 };
+          map[f.nome].total += f.total || 0;
+        });
+      });
+      pack = Object.assign({}, pack, {
+        fornecedores: Object.values(map).sort((a, b) => b.total - a.total),
+      });
+    }
+    return pack;
+  }
+
+  function resolvePeriodLabel(D) {
+    if (typeof window.getDashboardPeriodLabel === 'function') {
+      return window.getDashboardPeriodLabel();
+    }
+    return D.competenciaLabel || D.meta?.periodoTotal?.label || 'Período';
+  }
+
+  function resolveUnitLabel() {
+    if (typeof window.getDashboardUnitLabel === 'function') {
+      return window.getDashboardUnitLabel();
+    }
+    return '';
+  }
+
+  function resolveMonthSeries(D) {
+    if (typeof window.getDashboardMonthSeries === 'function') {
+      return window.getDashboardMonthSeries();
+    }
+    const keys = D.meta?.meses || [];
+    const labels = D.meta?.monthLabels || {};
+    const unit = D.unidades?.consolidado || D.unidades?.matriz;
+    const fp = D.fiscalPorMes || unit?.fiscalPorMes;
+    return {
+      monthKeys: keys,
+      monthLabels: labels,
+      getMonthPack: (m) => (fp && fp.porMes && fp.porMes[m]) || null,
+    };
+  }
+
+  function buildSnapshot() {
+    const C = window.RelatorioGerencialCore;
+    if (!C) throw new Error('RelatorioGerencialCore não carregado');
+    if (typeof DASHBOARD_DATA === 'undefined') throw new Error('DASHBOARD_DATA não carregado');
+    const D = DASHBOARD_DATA;
+    const pack = resolvePack(D);
+    if (!pack) throw new Error('Pacote fiscal do período não encontrado');
+    const periodLabel = resolvePeriodLabel(D);
+    const unitLabel = resolveUnitLabel();
+    const series = resolveMonthSeries(D);
+    const nome = (D.empresa && D.empresa.nome) || 'Empresa';
+    const slug = 'Relatorio_Gerencial_' + String(nome).slice(0, 24).replace(/[^\wÀ-ÿ]+/gi, '_');
+
+    return C.buildFiscalSnapshot({
+      empresa: D.empresa || { nome },
+      periodLabel,
+      unitLabel,
+      pack,
+      catalog: D.cfopFinalidade || {},
+      fileSlug: slug,
+      monthKeys: series.monthKeys,
+      monthLabels: series.monthLabels,
+      getMonthPack: series.getMonthPack,
+      pendentes: D.pendentes
+        ? Object.keys(D.pendentes).filter((k) => D.pendentes[k]).map((k) => k)
+        : [],
+    });
+  }
+
+  async function exportRelatorioGerencial() {
+    if (typeof DASHBOARD_DATA === 'undefined') {
+      alert('Dados do dashboard não carregados.');
+      return;
+    }
+    if (!window.RelatorioGerencialCore) {
+      alert('Motor do Relatório Gerencial não carregado.');
+      return;
+    }
+    try {
+      const snapshot = buildSnapshot();
+      const btn = typeof event !== 'undefined' ? event?.currentTarget : null;
+      await window.RelatorioGerencialCore.export(snapshot, { button: btn });
+    } catch (err) {
+      console.error(err);
+      alert(err.message || 'Erro ao gerar Relatório Gerencial.');
+    }
+  }
+
   window.exportRelatorioGerencial = exportRelatorioGerencial;
+  window.buildRelatorioGerencialSnapshot = buildSnapshot;
 })();
 
 </script>
