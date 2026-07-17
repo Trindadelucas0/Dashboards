@@ -564,9 +564,7 @@
       }
     }
 
-  
-    .btn-back-hub { display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
-
+  .btn-back-hub { display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
   </style>
 </head>
 <body>
@@ -1022,7 +1020,7 @@
         <div class="sec-header">
           <div>
             <div class="sec-title">Memória de Cálculo <small>Mar/2026</small></div>
-            <div class="sec-sub"><span id="mem-sec-sub"></span><span id="dyn-cnpj"></span> — Fonte: Apuração 5005 + EFD PIS/COFINS</div>
+            <div class="sec-sub"><span id="mem-sec-sub"></span><span id="dyn-cnpj"></span> — Fonte: Apuração 5005 + EFD + Demonstrativo IRPJ/CSLL (Lucro Presumido)</div>
           </div>
           <div class="export-bar">
             <button class="btn-export pdf" onclick="exportPDF('tab-memoria','Memoria_Calculo')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button>
@@ -1032,15 +1030,15 @@
 
         <div class="mes-bar" id="mem-mes-bar"></div>
         <div class="kpi-grid kpi-grid-3" id="mem-kpi-grid"></div>
-        <div class="formula-box">
-          <div class="fttl"><i class="fas fa-function" style="margin-right:8px;"></i>Fórmulas de Apuração – Regime Lucro Real / Decreto 5005</div>
+            <div class="formula-box">
+          <div class="fttl"><i class="fas fa-function" style="margin-right:8px;"></i>Fórmulas de Apuração – Regime Lucro Presumido / Decreto 5005</div>
           <div class="fline">
             ICMS = Débitos de Saída – Créditos de Entrada – Crédito Devolução – Crédito Outorgado 3% (Decreto 5005)<br>
             ICMS ST = Base ST (valor entrada × MVA) × alíquota interna – ICMS próprio destacado na NF-e<br>
             PIS (Cumulativo) = (Receita tributável × 1,65%) – Créditos apurados nas entradas/saídas (SPED EFD)<br>
             COFINS (Cumulativo) = (Receita tributável × 7,60%) – Créditos apurados nas entradas/saídas (SPED EFD)<br>
-            IRPJ (Lucro Real) = Lucro Real Ajustado no LALUR × 15% + adicional 10% s/ parcela &gt; R$20.000/mês<br>
-            CSLL (Lucro Real) = Lucro Real Ajustado × 9%
+            IRPJ (Lucro Presumido) = Base de cálculo (RB × 8% / majoração 8,8%) × 15% + adicional 10% s/ parcela &gt; R$60.000/tri<br>
+            CSLL (Lucro Presumido) = Base de cálculo (RB × 12% / majoração 13,2%) × 9%
           </div>
         </div>
 
@@ -18499,18 +18497,133 @@ const DASHBOARD_DATA = {
     "Retorno Industrializacao": "#8b5cf6",
     "Retorno Conserto": "#ef4444"
   },
+  "irpjCsll": {
+    "regime": "Lucro Presumido",
+    "periodicidade": "trimestral",
+    "porTrimestre": {
+      "q1": {
+        "id": "q1",
+        "competencia": "2026-03",
+        "receitaBruta": 7609877.28,
+        "devolucoes": -6473.0,
+        "saidas": 7616350.28,
+        "irpj": {
+          "competencia": "2026-03",
+          "saidas": 7616350.28,
+          "devolucoes": -6473.0,
+          "receitaBruta": 7609877.28,
+          "pctPresuncao": 8.0,
+          "aliquota": 15.0,
+          "baseCalculoSimples": 608790.18,
+          "baseCalculo": 659669.2,
+          "majoracao": {
+            "receitaLimite": 1250000.0,
+            "pctLimite": 8.0,
+            "baseLimite": 100000.0,
+            "receitaExcedente": 6359877.28,
+            "pctExcedente": 8.8,
+            "baseExcedente": 559669.2
+          },
+          "adicional": {
+            "baseCalculo": 659669.2,
+            "limiteIsento": 60000.0,
+            "parcelaExcedente": 599669.2,
+            "aliquota": 10.0,
+            "valor": 59966.92
+          },
+          "debitos": 98950.38,
+          "aRecolher": 158917.3,
+          "fonte": "AVICOLA/irpj-csll/Demostrativo IRPJ e CSLL 1º Trimestre de 2026.xlsx"
+        },
+        "csll": {
+          "competencia": "2026-03",
+          "saidas": 7616350.28,
+          "devolucoes": -6473.0,
+          "receitaBruta": 7609877.28,
+          "pctPresuncao": 12.0,
+          "aliquota": 9.0,
+          "baseCalculoSimples": 913185.27,
+          "baseCalculo": 913185.27,
+          "majoracao": null,
+          "debitos": 82186.67,
+          "aRecolher": 82186.67,
+          "fonte": "AVICOLA/irpj-csll/Demostrativo IRPJ e CSLL 1º Trimestre de 2026.xlsx"
+        },
+        "fonte": "AVICOLA/irpj-csll/Demostrativo IRPJ e CSLL 1º Trimestre de 2026.xlsx"
+      },
+      "q2": {
+        "id": "q2",
+        "competencia": "2026-06",
+        "receitaBruta": 9141920.28,
+        "devolucoes": -440.0,
+        "saidas": 9142360.28,
+        "irpj": {
+          "competencia": "2026-06",
+          "saidas": 9142360.28,
+          "devolucoes": -440.0,
+          "receitaBruta": 9141920.28,
+          "pctPresuncao": 8.0,
+          "aliquota": 15.0,
+          "baseCalculoSimples": 731353.62,
+          "baseCalculo": 794488.98,
+          "majoracao": {
+            "receitaLimite": 1250000.0,
+            "pctLimite": 8.0,
+            "baseLimite": 100000.0,
+            "receitaExcedente": 7891920.28,
+            "pctExcedente": 8.8,
+            "baseExcedente": 694488.98
+          },
+          "adicional": {
+            "baseCalculo": 794488.98,
+            "limiteIsento": 60000.0,
+            "parcelaExcedente": 734488.98,
+            "aliquota": 10.0,
+            "valor": 73448.9
+          },
+          "debitos": 119173.35,
+          "aRecolher": 192622.25,
+          "fonte": "AVICOLA/irpj-csll/Demostrativo IRPJ e CSLL 2º Trimestre de 2026.xlsx"
+        },
+        "csll": {
+          "competencia": "2026-06",
+          "saidas": 9142360.28,
+          "devolucoes": -440.0,
+          "receitaBruta": 9141920.28,
+          "pctPresuncao": 12.0,
+          "aliquota": 9.0,
+          "baseCalculoSimples": 1097030.43,
+          "baseCalculo": 1191733.48,
+          "majoracao": {
+            "receitaLimite": 1250000.0,
+            "pctLimite": 12.0,
+            "baseLimite": 150000.0,
+            "receitaExcedente": 7891920.28,
+            "pctExcedente": 13.2,
+            "baseExcedente": 1041733.48
+          },
+          "debitos": 107256.01,
+          "aRecolher": 107256.01,
+          "fonte": "AVICOLA/irpj-csll/Demostrativo IRPJ e CSLL 2º Trimestre de 2026.xlsx"
+        },
+        "fonte": "AVICOLA/irpj-csll/Demostrativo IRPJ e CSLL 2º Trimestre de 2026.xlsx"
+      }
+    }
+  },
   "fontes": {
     "fiscal": "Proxy — Entradas/Saídas EXITO (Apuração ausente)",
     "pisCofins": "Pendente — EFD não fornecida",
     "movimento": "Relatorio de entrada/saida AVICOLA",
     "balancete": "Pendente",
     "sped": "Derivado de Saídas.xls",
-    "resumo": "Pendente"
+    "resumo": "Pendente",
+    "irpj": "Demonstrativo IRPJ Lucro Presumido — EXITO (trimestral)",
+    "csll": "Demonstrativo CSLL Lucro Presumido — EXITO (trimestral)"
   },
   "inventario": {
     "resumo": {
-      "totalArquivos": 12,
-      "integrados": 12,
+      "totalArquivos": 16,
+      "integrados": 16,
       "redundantes": 0,
       "pendentes": 8,
       "ignorados": 0,
@@ -18623,6 +18736,42 @@ const DASHBOARD_DATA = {
         "competencia": "2026-06",
         "registros": 1,
         "uso": "Dashboard Avícola — proxy fiscal",
+        "parseOk": true
+      },
+      {
+        "modulo": "irpj",
+        "path": "AVICOLA/irpj-csll/Demostrativo IRPJ e CSLL 1º Trimestre de 2026.xlsx",
+        "detalhe": "Demonstrativo IRPJ Q1",
+        "competencia": "2026-03",
+        "registros": 1,
+        "uso": "Memória de Cálculo — Lucro Presumido",
+        "parseOk": true
+      },
+      {
+        "modulo": "csll",
+        "path": "AVICOLA/irpj-csll/Demostrativo IRPJ e CSLL 1º Trimestre de 2026.xlsx",
+        "detalhe": "Demonstrativo CSLL Q1",
+        "competencia": "2026-03",
+        "registros": 1,
+        "uso": "Memória de Cálculo — Lucro Presumido",
+        "parseOk": true
+      },
+      {
+        "modulo": "irpj",
+        "path": "AVICOLA/irpj-csll/Demostrativo IRPJ e CSLL 2º Trimestre de 2026.xlsx",
+        "detalhe": "Demonstrativo IRPJ Q2",
+        "competencia": "2026-06",
+        "registros": 1,
+        "uso": "Memória de Cálculo — Lucro Presumido",
+        "parseOk": true
+      },
+      {
+        "modulo": "csll",
+        "path": "AVICOLA/irpj-csll/Demostrativo IRPJ e CSLL 2º Trimestre de 2026.xlsx",
+        "detalhe": "Demonstrativo CSLL Q2",
+        "competencia": "2026-06",
+        "registros": 1,
+        "uso": "Memória de Cálculo — Lucro Presumido",
         "parseOk": true
       }
     ],
@@ -18759,8 +18908,8 @@ const DASHBOARD_DATA = {
     "balanceteCopiaJan": false,
     "fornecedores": false,
     "pessoal": true,
-    "irpj": true,
-    "csll": true,
+    "irpj": false,
+    "csll": false,
     "recebimentos": false,
     "margens": true,
     "margensProxy": true,
@@ -19553,40 +19702,62 @@ const DASHBOARD_DATA = {
 
   function initImpostos() {
     const pack = getPack();
+    const fed = getIrpjCsllPack();
     renderMesBar('tax-mes-bar', () => { tabsInit.impostos = false; initImpostos(); });
     const v = validateApuracaoPack(pack);
     setFiscalDataStatus('tax-data-status', v, 'Apuração conferida', 'Divergência apuração: recolher ' + fmt(v.sumRec) + ' vs deduções ' + fmt(v.deducoes));
 
     const impSub = document.getElementById('imp-sec-sub');
-    if (impSub) impSub.textContent = UNIT_LABELS[state.unit] + ' — ' + periodFull() + periodContext();
+    if (impSub) {
+      impSub.textContent = UNIT_LABELS[state.unit] + ' — ' + periodFull() + periodContext() +
+        (fed ? ' — IRPJ/CSLL ' + irpjCsllTrimLabel(fed) : '');
+    }
     const impAlert = document.getElementById('imp-alert');
     if (impAlert) {
       const icms = pack.apuracao.icms.aRecolher;
-      impAlert.innerHTML = '<i class="fas fa-info-circle" style="margin-right:8px;"></i><strong>Apuração ICMS (5005) + EFD PIS/COFINS</strong> — ' +
+      let alertHtml = '<i class="fas fa-info-circle" style="margin-right:8px;"></i><strong>Apuração ICMS (5005) + EFD PIS/COFINS</strong> — ' +
         periodFull() + ': ICMS a recolher <strong>' + fmtBRL(icms) + '</strong>, PIS <strong>' + fmtBRL(pack.apuracao.pis.aRecolher) +
-        '</strong>, COFINS <strong>' + fmtBRL(pack.apuracao.cofins.aRecolher) + '</strong>. Fonte: planilhas Avícola.';
+        '</strong>, COFINS <strong>' + fmtBRL(pack.apuracao.cofins.aRecolher) + '</strong>.';
+      if (fed) {
+        alertHtml += ' <strong>IRPJ/CSLL Lucro Presumido</strong> (' + irpjCsllTrimLabel(fed) + '): IRPJ <strong>' +
+          fmtBRL(fed.irpj.aRecolher) + '</strong>, CSLL <strong>' + fmtBRL(fed.csll.aRecolher) + '</strong>.';
+      }
+      alertHtml += ' Fonte: planilhas Avícola + demonstrativos EXITO.';
+      impAlert.innerHTML = alertHtml;
     }
 
     const icmsVal = pack.apuracao.icms.aRecolher;
-    const totalRec = tributosRecolher(pack);
+    const fedRec = fed ? (fed.irpj.aRecolher || 0) + (fed.csll.aRecolher || 0) : 0;
+    const totalRec = tributosRecolher(pack) + Math.max(fedRec, 0);
     const impKpi = document.getElementById('imp-kpi-grid');
     if (impKpi) {
       impKpi.innerHTML =
-        kpiCard('yellow', 'hand-holding-dollar', '', fmtBRL(totalRec, true), 'Total a recolher', 'PIS+COFINS+ICMS positivos') +
+        kpiCard('yellow', 'hand-holding-dollar', '', fmtBRL(totalRec, true), 'Total a recolher', fed ? 'PIS+COFINS+ICMS + IRPJ/CSLL' : 'PIS+COFINS+ICMS positivos') +
         (icmsVal < 0
           ? kpiCard('green', 'rotate-left', '', fmtBRL(Math.abs(icmsVal), true), 'Crédito ICMS', 'Saldo credor no período')
           : kpiCard('purple', 'landmark', '', fmtBRL(icmsVal, true), 'ICMS a recolher', '')) +
-        kpiCard('orange', 'percent', '', pack.dedPct + '%', 'Carga % sobre RB', fmtBRL(pack.deducoes) + ' em tributos');
+        (fed
+          ? kpiCard('cyan', 'file-invoice-dollar', '', fmtBRL(fedRec, true), 'IRPJ + CSLL', irpjCsllTrimLabel(fed) + ' (trimestral)')
+          : kpiCard('orange', 'percent', '', pack.dedPct + '%', 'Carga % sobre RB', fmtBRL(pack.deducoes) + ' em tributos'));
     }
 
     const cards = document.getElementById('imp-tax-grid');
     if (cards) {
-      const html = ['icms', 'icmsSt', 'pis', 'cofins', 'ipi'].map((k, i) => {
+      let html = ['icms', 'icmsSt', 'pis', 'cofins', 'ipi'].map((k, i) => {
         const labels = ['ICMS', 'ICMS ST', 'PIS', 'COFINS', 'IPI'];
         const t = pack.apuracao[k];
         return '<div class="tax-card"><div class="tax-card-head"><div class="tax-name">' + labels[i] + '</div></div><div class="tax-cur">' + fmtBRL(t.aRecolher) +
           '</div><div class="tax-prev">Apurado: ' + fmtBRL(t.debitoSaidas) + '</div></div>';
       }).join('');
+      if (fed) {
+        html +=
+          '<div class="tax-card"><div class="tax-card-head"><div class="tax-name" style="color:var(--cyan)">IRPJ</div><span class="chip cy">Trimestral</span></div>' +
+          '<div class="tax-cur">' + fmtBRL(fed.irpj.aRecolher) + '</div>' +
+          '<div class="tax-prev">' + irpjCsllTrimLabel(fed) + ' · Adicional ' + fmtBRL(fed.irpj.adicional?.valor || 0) + '</div></div>' +
+          '<div class="tax-card"><div class="tax-card-head"><div class="tax-name" style="color:var(--orange)">CSLL</div><span class="chip or">Trimestral</span></div>' +
+          '<div class="tax-cur">' + fmtBRL(fed.csll.aRecolher) + '</div>' +
+          '<div class="tax-prev">' + irpjCsllTrimLabel(fed) + ' · BC ' + fmtBRL(fed.csll.baseCalculo) + '</div></div>';
+      }
       cards.innerHTML = html;
     }
 
@@ -19605,6 +19776,10 @@ const DASHBOARD_DATA = {
     });
 
     const comp = composicaoChartData(pack);
+    if (fed) {
+      comp.push({ label: 'IRPJ', valor: Math.max(fed.irpj.aRecolher || 0, 0) });
+      comp.push({ label: 'CSLL', valor: Math.max(fed.csll.aRecolher || 0, 0) });
+    }
     safeChart('chartImpostosPart', {
       type: 'doughnut',
       data: { labels: comp.map((c) => c.label), datasets: [{ data: comp.map((c) => c.valor), backgroundColor: PAL }] },
@@ -19612,34 +19787,198 @@ const DASHBOARD_DATA = {
     });
   }
 
+  function trimestreKeyForMonth(m) {
+    if (TRIMESTRES.q1 && TRIMESTRES.q1.meses.includes(m)) return 'q1';
+    if (TRIMESTRES.q2 && TRIMESTRES.q2.meses.includes(m)) return 'q2';
+    return null;
+  }
+
+  function aggregateIrpjCsllPacks(packs) {
+    if (!packs.length) return null;
+    if (packs.length === 1) return packs[0];
+    const sumTax = (key) => {
+      const first = packs[0][key];
+      const out = {
+        receitaBruta: 0,
+        devolucoes: 0,
+        saidas: 0,
+        pctPresuncao: first.pctPresuncao,
+        aliquota: first.aliquota,
+        baseCalculoSimples: 0,
+        baseCalculo: 0,
+        majoracao: null,
+        debitos: 0,
+        aRecolher: 0,
+        fonte: packs.map((p) => p[key].fonte).filter(Boolean).join(' + '),
+      };
+      if (key === 'irpj') {
+        out.adicional = {
+          baseCalculo: 0,
+          limiteIsento: first.adicional?.limiteIsento || 60000,
+          parcelaExcedente: 0,
+          aliquota: first.adicional?.aliquota || 10,
+          valor: 0,
+        };
+      }
+      packs.forEach((p) => {
+        const t = p[key];
+        out.receitaBruta += t.receitaBruta || 0;
+        out.devolucoes += t.devolucoes || 0;
+        out.saidas += t.saidas || 0;
+        out.baseCalculoSimples += t.baseCalculoSimples || 0;
+        out.baseCalculo += t.baseCalculo || 0;
+        out.debitos += t.debitos || 0;
+        out.aRecolher += t.aRecolher || 0;
+        if (key === 'irpj' && t.adicional) {
+          out.adicional.baseCalculo += t.adicional.baseCalculo || 0;
+          out.adicional.parcelaExcedente += t.adicional.parcelaExcedente || 0;
+          out.adicional.valor += t.adicional.valor || 0;
+          out.adicional.limiteIsento += t.adicional.limiteIsento || 0;
+        }
+      });
+      ['receitaBruta', 'devolucoes', 'saidas', 'baseCalculoSimples', 'baseCalculo', 'debitos', 'aRecolher'].forEach((f) => {
+        out[f] = Math.round(out[f] * 100) / 100;
+      });
+      if (out.adicional) {
+        ['baseCalculo', 'parcelaExcedente', 'valor', 'limiteIsento'].forEach((f) => {
+          out.adicional[f] = Math.round(out.adicional[f] * 100) / 100;
+        });
+      }
+      return out;
+    };
+    return {
+      id: 'total',
+      competencia: null,
+      receitaBruta: Math.round(packs.reduce((a, p) => a + (p.receitaBruta || 0), 0) * 100) / 100,
+      devolucoes: Math.round(packs.reduce((a, p) => a + (p.devolucoes || 0), 0) * 100) / 100,
+      saidas: Math.round(packs.reduce((a, p) => a + (p.saidas || 0), 0) * 100) / 100,
+      irpj: sumTax('irpj'),
+      csll: sumTax('csll'),
+      fonte: packs.map((p) => p.fonte).filter(Boolean).join(' + '),
+      _agregado: true,
+    };
+  }
+
+  function getIrpjCsllPack() {
+    const root = D.irpjCsll;
+    if (!root || !root.porTrimestre) return null;
+    const por = root.porTrimestre;
+    if (state.fiscalMode === 'q1' || state.fiscalMode === 'q2') return por[state.fiscalMode] || null;
+    if (state.fiscalMode === 'total') {
+      return aggregateIrpjCsllPacks([por.q1, por.q2].filter(Boolean));
+    }
+    const qid = trimestreKeyForMonth(state.month);
+    return qid ? (por[qid] || null) : null;
+  }
+
+  function irpjCsllTrimLabel(pack) {
+    if (!pack) return '';
+    if (pack.id === 'total' || pack._agregado) return 'Jan – Jun / 2026';
+    if (pack.id === 'q1' && TRIMESTRES.q1) return TRIMESTRES.q1.label;
+    if (pack.id === 'q2' && TRIMESTRES.q2) return TRIMESTRES.q2.label;
+    return pack.id || '';
+  }
+
+  function memRow(lbl, val, cls) {
+    return '<div class="mem-row' + (cls ? ' ' + cls : '') + '"><span class="lbl">' + lbl + '</span><span class="val">' + val + '</span></div>';
+  }
+
+  function renderIrpjCsllMemCards(pack) {
+    if (!pack) {
+      return '<div class="mem-card" style="grid-column:1/-1;opacity:.7"><div class="mem-card-head"><span class="fw7 t-muted">IRPJ / CSLL</span><span class="chip gy">Pendente</span></div>' +
+        memRow('Status', 'Demonstrativo trimestral não carregado') + '</div>';
+    }
+    const trimLbl = irpjCsllTrimLabel(pack);
+    const irpj = pack.irpj || {};
+    const csll = pack.csll || {};
+    const majI = irpj.majoracao;
+    const majC = csll.majoracao;
+    const adic = irpj.adicional || {};
+
+    let irpjHtml = '<div class="mem-card">' +
+      '<div class="mem-card-head"><span style="color:var(--cyan)" class="fw7">IRPJ — Lucro Presumido</span><span class="chip cy">Trimestral</span></div>' +
+      memRow('Apuração', trimLbl, 'hl') +
+      memRow('Receita bruta (líquida)', fmtBRL(irpj.receitaBruta)) +
+      memRow('Presunção base', (irpj.pctPresuncao != null ? irpj.pctPresuncao.toFixed(2).replace('.', ',') : '8,00') + '%');
+    if (majI) {
+      irpjHtml += memRow('RB até limite (' + majI.pctLimite.toFixed(2).replace('.', ',') + '%)', fmtBRL(majI.receitaLimite)) +
+        memRow('RB excedente (' + majI.pctExcedente.toFixed(2).replace('.', ',') + '%)', fmtBRL(majI.receitaExcedente));
+    }
+    irpjHtml += memRow('Base de cálculo IRPJ', fmtBRL(irpj.baseCalculo), 'hl') +
+      memRow('Alíquota básica', (irpj.aliquota != null ? irpj.aliquota.toFixed(2).replace('.', ',') : '15,00') + '%') +
+      memRow('Débitos (IRPJ básico)', fmtBRL(irpj.debitos)) +
+      memRow('Adicional 10% s/ > R$60k/tri', fmtBRL(adic.valor)) +
+      memRow('IRPJ a recolher', fmtBRL(irpj.aRecolher), 'tot') +
+      '</div>';
+
+    let csllHtml = '<div class="mem-card">' +
+      '<div class="mem-card-head"><span style="color:var(--orange)" class="fw7">CSLL — Lucro Presumido</span><span class="chip or">Trimestral</span></div>' +
+      memRow('Apuração', trimLbl, 'hl') +
+      memRow('Receita bruta (líquida)', fmtBRL(csll.receitaBruta)) +
+      memRow('Presunção base', (csll.pctPresuncao != null ? csll.pctPresuncao.toFixed(2).replace('.', ',') : '12,00') + '%');
+    if (majC) {
+      csllHtml += memRow('RB até limite (' + majC.pctLimite.toFixed(2).replace('.', ',') + '%)', fmtBRL(majC.receitaLimite)) +
+        memRow('RB excedente (' + majC.pctExcedente.toFixed(2).replace('.', ',') + '%)', fmtBRL(majC.receitaExcedente));
+    }
+    csllHtml += memRow('Base de cálculo CSLL', fmtBRL(csll.baseCalculo), 'hl') +
+      memRow('Alíquota CSLL', (csll.aliquota != null ? csll.aliquota.toFixed(2).replace('.', ',') : '9,00') + '%') +
+      memRow('Débitos', fmtBRL(csll.debitos)) +
+      memRow('CSLL a recolher', fmtBRL(csll.aRecolher), 'tot') +
+      '</div>';
+
+    return irpjHtml + csllHtml;
+  }
+
   function initMemoria() {
     const pack = getPack();
+    const fed = getIrpjCsllPack();
     renderMesBar('mem-mes-bar', () => { tabsInit.memoria = false; initMemoria(); });
     const memSub = document.getElementById('mem-sec-sub');
-    if (memSub) memSub.textContent = UNIT_LABELS[state.unit] + ' — ' + periodFull() + periodContext() + ' — ';
+    if (memSub) {
+      memSub.textContent = UNIT_LABELS[state.unit] + ' — ' + periodFull() + periodContext() +
+        (fed ? ' — IRPJ/CSLL ' + irpjCsllTrimLabel(fed) : '') + ' — ';
+    }
 
     const taxKeys = ['icms', 'icmsSt', 'pis', 'cofins', 'ipi'];
     const totalDeb = taxKeys.reduce((a, k) => a + (pack.apuracao[k].debitoSaidas || 0), 0);
     const totalCred = taxKeys.reduce((a, k) => a + (pack.apuracao[k].creditoEntradas || 0) + (pack.apuracao[k].outrosCreditos || 0), 0);
-    const totalLiq = taxKeys.reduce((a, k) => a + (pack.apuracao[k].aRecolher || 0), 0);
+    const totalLiq = taxKeys.reduce((a, k) => a + (pack.apuracao[k].aRecolher || 0), 0) +
+      (fed ? (fed.irpj.aRecolher || 0) + (fed.csll.aRecolher || 0) : 0);
     const memKpi = document.getElementById('mem-kpi-grid');
     if (memKpi) {
       memKpi.innerHTML =
         kpiCard('red', 'arrow-up', '', fmtBRL(totalDeb, true), 'Total débitos', 'Saídas dos 5 tributos') +
         kpiCard('green', 'arrow-down', '', fmtBRL(totalCred, true), 'Total créditos', 'Entradas + outros créditos') +
-        kpiCard('yellow', 'equals', '', fmtBRL(totalLiq, true), 'A recolher líquido', 'Soma apuração final');
+        kpiCard('yellow', 'equals', '', fmtBRL(totalLiq, true), 'A recolher líquido', fed ? 'Inclui IRPJ + CSLL trimestral' : 'Soma apuração final');
     }
+
+    const memGrid = document.getElementById('mem-grid');
+    if (memGrid) memGrid.innerHTML = renderIrpjCsllMemCards(fed);
 
     const tbody = document.getElementById('mem-resumo-tbody');
     if (!tbody) return;
+    const rb = pack.receitaBruta || 0;
     const rows = ['icms', 'icmsSt', 'pis', 'cofins', 'ipi'].map((k) => {
       const t = pack.apuracao[k];
       const name = k.toUpperCase().replace('ICMSST', 'ICMS ST');
       return '<tr><td>' + name + '</td><td class="r">' + fmtBRL(t.debitoSaidas) + '</td><td class="r">' + fmtBRL(t.creditoEntradas) +
         '</td><td class="r">' + fmtBRL(t.outrosDebitos) + '</td><td class="r">' + fmtBRL(t.outrosCreditos) + '</td><td class="r">' + fmtBRL(t.saldoDevedor) +
         '</td><td class="r">' + fmtBRL(t.saldoCredor) + '</td><td class="r td-val">' + fmtBRL(t.aRecolher) + '</td><td class="r">' + fmtBRL(t.saldoCredorTransportar) + '</td></tr>';
-    }).join('');
-    tbody.innerHTML = rows;
+    });
+    if (fed) {
+      const pctFed = (v) => (rb > 0 ? ((v / rb) * 100).toFixed(2).replace('.', ',') + '%' : '—');
+      rows.push(
+        '<tr><td class="fw7" style="color:var(--cyan)">IRPJ <span class="chip cy">Trimestral</span></td><td class="r">' + fmtBRL(fed.irpj.debitos) +
+        '</td><td class="r">—</td><td class="r">' + fmtBRL(fed.irpj.adicional?.valor || 0) + '</td><td class="r">—</td><td class="r">' +
+        fmtBRL(fed.irpj.aRecolher) + '</td><td class="r">—</td><td class="r td-val">' + fmtBRL(fed.irpj.aRecolher) +
+        '</td><td class="r">' + pctFed(fed.irpj.aRecolher) + '</td></tr>',
+        '<tr><td class="fw7" style="color:var(--orange)">CSLL <span class="chip or">Trimestral</span></td><td class="r">' + fmtBRL(fed.csll.debitos) +
+        '</td><td class="r">—</td><td class="r">—</td><td class="r">—</td><td class="r">' + fmtBRL(fed.csll.aRecolher) +
+        '</td><td class="r">—</td><td class="r td-val">' + fmtBRL(fed.csll.aRecolher) +
+        '</td><td class="r">' + pctFed(fed.csll.aRecolher) + '</td></tr>'
+      );
+    }
+    tbody.innerHTML = rows.join('');
   }
 
   function initDRE() {
