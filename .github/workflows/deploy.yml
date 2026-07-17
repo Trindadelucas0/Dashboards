@@ -1,0 +1,57 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy no servidor
+    runs-on: self-hosted
+    timeout-minutes: 15
+
+    env:
+      # Caminho do projeto no lucasservidor
+      DEPLOY_PATH: /home/lucas/PROJETOS/Dashboards
+      APP_NAME: dashboards
+
+    steps:
+      - name: Atualizar codigo, dependencias e reiniciar
+        run: |
+          set -euo pipefail
+
+          cd "$DEPLOY_PATH"
+
+          echo "==> Atualizando codigo"
+          git fetch origin main
+          git reset --hard origin/main
+
+          echo "==> Instalando dependencias"
+          if [ -f package-lock.json ]; then
+            npm ci --omit=dev
+          else
+            npm install --omit=dev
+          fi
+
+          echo "==> Reiniciando aplicacao ($APP_NAME)"
+          if ! command -v pm2 >/dev/null 2>&1; then
+            echo "PM2 nao encontrado. Instale: npm install -g pm2"
+            exit 1
+          fi
+
+          if pm2 describe "$APP_NAME" >/dev/null 2>&1; then
+            pm2 reload "$APP_NAME" --update-env
+          elif [ -f ecosystem.config.cjs ]; then
+            pm2 start ecosystem.config.cjs
+          else
+            pm2 start server.js --name "$APP_NAME"
+          fi
+
+          pm2 save
+          echo "==> Deploy concluido"
