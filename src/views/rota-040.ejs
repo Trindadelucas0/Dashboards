@@ -19608,20 +19608,39 @@ const DASHBOARD_DATA = {
 
     grid.innerHTML = MONTH_KEYS.map((m) => {
       const d = dre[m] || {};
-      return '<div class="margin-card"><div class="margin-val">' + fmtBRL(d.resultadoLiquido, true) + '</div><div class="margin-lbl">Resultado ' + MONTH_LABELS[m] + '</div></div>';
+      const cor = d.resultadoLiquido < 0 ? 't-danger' : 't-success';
+      return (
+        '<div class="margin-card"><div class="margin-val ' + cor + '">' + fmtBRL(d.resultadoLiquido, true) +
+        '</div><div class="margin-lbl">Resultado ' + MONTH_LABELS[m] +
+        '</div><div class="margin-sub">Margem líq. ' + (d.margemLiquidaPct != null ? d.margemLiquidaPct + '%' : '—') + '</div></div>'
+      );
     }).join('');
 
     if (tbody && dre[MONTH_KEYS[0]]) {
-      const destaque = new Set(['lucro_bruto', 'resultado_liquido']);
       const linhas = dre[MONTH_KEYS[0]].linhas || [];
-      tbody.innerHTML = linhas.map((ln) => {
-        const isHl = destaque.has(ln.id);
+      const totalCols = MONTH_KEYS.length + 1;
+      const firstDesp = (linhas.find((ln) => ln.id.startsWith('desp_')) || {}).id;
+      const groupBefore = { receita_bruta: 'Receita', cmv: 'Custos', [firstDesp]: 'Despesas Operacionais' };
+      const rowClass = (id) => {
+        if (id === 'lucro_bruto') return 'dre-total';
+        if (id === 'total_despesas') return 'dre-total dre-neg';
+        if (id === 'resultado_liquido') return 'dre-lucro';
+        if (id === 'cmv' || id.startsWith('desp_')) return 'dre-indent dre-neg';
+        return 'dre-indent';
+      };
+      const fmtDRE = (v) => (v < 0 ? '(' + fmtBRL(Math.abs(v)) + ')' : fmtBRL(v));
+
+      const rows = [];
+      linhas.forEach((ln) => {
+        const grupo = groupBefore[ln.id];
+        if (grupo) rows.push('<tr class="dre-group"><td colspan="' + totalCols + '">' + grupo + '</td></tr>');
         const cells = MONTH_KEYS.map((m) => {
           const row = (dre[m]?.linhas || []).find((x) => x.id === ln.id);
-          return '<td class="r' + (isHl ? ' fw7' : '') + '">' + fmtBRL(row ? row.valor : 0) + '</td>';
+          return '<td class="r">' + fmtDRE(row ? row.valor : 0) + '</td>';
         }).join('');
-        return '<tr' + (isHl ? ' style="background:rgba(255,255,255,0.03)"' : '') + '><td' + (isHl ? ' class="fw7"' : '') + '>' + ln.label + '</td>' + cells + '</tr>';
-      }).join('');
+        rows.push('<tr class="' + rowClass(ln.id) + '"><td>' + ln.label + '</td>' + cells + '</tr>');
+      });
+      tbody.innerHTML = rows.join('');
     }
 
     const dreAlert = document.getElementById('dre-alert-box');
