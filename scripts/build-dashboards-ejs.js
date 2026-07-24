@@ -51,6 +51,11 @@ const DASHBOARDS = [
     outputs: ["avicola.ejs"],
   },
   {
+    id: "rota-040",
+    html: path.join(dashRoot, "rota-040", "rota-040.html"),
+    outputs: ["rota-040.ejs"],
+  },
+  {
     id: "jpg",
     html: path.join(workspaceRoot, "jpg", "JPG.html"),
     outputs: ["jpg.ejs"],

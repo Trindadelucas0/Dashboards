@@ -84,6 +84,9 @@ module.exports = {
   avicola: (req, res) => {
     res.render("avicola");
   },
+  rota040: (req, res) => {
+    res.render("rota-040");
+  },
   jpg: (req, res) => {
     res.render("jpg");
   },

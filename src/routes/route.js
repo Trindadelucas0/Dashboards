@@ -21,6 +21,7 @@ router.get("/auth/schumacher", authMiddleware, requireDashboard("schumacher"), a
 router.get("/auth/egaplast", authMiddleware, requireDashboard("egaplast"), authControl.egaplast);
 router.get("/auth/du-lanche", authMiddleware, requireDashboard("du-lanche"), authControl.duLanche);
 router.get("/auth/avicola", authMiddleware, requireDashboard("avicola"), authControl.avicola);
+router.get("/auth/rota-040", authMiddleware, requireDashboard("rota-040"), authControl.rota040);
 router.get("/auth/jpg", authMiddleware, requireDashboard("jpg"), authControl.jpg);
 router.get("/auth/jpg/:filial", authMiddleware, requireDashboard("jpg"), authControl.jpgFilial);
 module.exports = router;
