@@ -1261,46 +1261,52 @@ const DASHBOARD_DATA = {
     "uf": "DF",
     "regime": "Lucro Presumido"
   },
-  "competencia": "2026-05",
-  "competenciaLabel": "Mai / 2026",
+  "competencia": "2026-06",
+  "competenciaLabel": "Jun / 2026",
   "months": [
     "Jan",
     "Fev",
     "Mar",
     "Abr",
-    "Mai"
+    "Mai",
+    "Jun"
   ],
   "vendas": [
     265745.91,
     364570.15,
     411620.98,
     445273.41,
-    382294.89
+    382294.89,
+    433221.91
   ],
-  "totalCompras": 269697.5,
-  "receitaBruta": 382294.89,
+  "totalCompras": 452323.97,
+  "receitaBruta": 433221.91,
   "deducoes": [
     37548.22,
     64923.44,
     63338.22,
     73474.55,
-    29387.26
+    29387.25,
+    17080.06
   ],
   "dedPct": [
     14.13,
     17.81,
     15.39,
     16.5,
-    7.69
+    7.69,
+    3.94
   ],
   "icmsDed": [
     29616.81,
     51616.63,
     51092.99,
     60307.55,
-    18078.28
+    18078.27,
+    4294.37
   ],
   "icmsStDed": [
+    0,
     0,
     0,
     0,
@@ -1312,16 +1318,19 @@ const DASHBOARD_DATA = {
     2369.71,
     2180.66,
     2344.81,
-    2013.93
+    2013.93,
+    10508.79
   ],
   "cofinsDed": [
     6518.97,
     10937.1,
     10064.57,
     10822.19,
-    9295.05
+    9295.05,
+    2276.9
   ],
   "ipiDed": [
+    0,
     0,
     0,
     0,
@@ -1333,12 +1342,13 @@ const DASHBOARD_DATA = {
     0,
     0,
     0,
+    0,
     0
   ],
   "composicao": [
     {
       "label": "ICMS",
-      "valor": 18078.28
+      "valor": 4294.37
     },
     {
       "label": "ICMS ST",
@@ -1346,11 +1356,11 @@ const DASHBOARD_DATA = {
     },
     {
       "label": "PIS",
-      "valor": 2013.93
+      "valor": 10508.79
     },
     {
       "label": "COFINS",
-      "valor": 9295.05
+      "valor": 2276.9
     },
     {
       "label": "IPI",
@@ -1360,9 +1370,9 @@ const DASHBOARD_DATA = {
   "impostosTabela": [
     {
       "tributo": "ICMS",
-      "apurado": 72459.78,
-      "recolher": 18078.28,
-      "pctRb": 4.73
+      "apurado": 82928.85,
+      "recolher": 4294.37,
+      "pctRb": 0.99
     },
     {
       "tributo": "ICMS ST",
@@ -1373,14 +1383,14 @@ const DASHBOARD_DATA = {
     {
       "tributo": "PIS",
       "apurado": 0.0,
-      "recolher": 2013.93,
-      "pctRb": 0.53
+      "recolher": 10508.79,
+      "pctRb": 2.43
     },
     {
       "tributo": "COFINS",
       "apurado": 0.0,
-      "recolher": 9295.05,
-      "pctRb": 2.43
+      "recolher": 2276.9,
+      "pctRb": 0.53
     },
     {
       "tributo": "IPI",
@@ -1391,13 +1401,13 @@ const DASHBOARD_DATA = {
   ],
   "apuracao": {
     "icms": {
-      "debitoSaidas": 72459.78,
-      "creditoEntradas": 18274.27,
+      "debitoSaidas": 82928.85,
+      "creditoEntradas": 30313.88,
       "outrosDebitos": 0.0,
-      "outrosCreditos": 0.0,
+      "outrosCreditos": 1393.28,
       "saldoDevedor": 0.0,
       "saldoCredor": 0.0,
-      "aRecolher": 18078.28,
+      "aRecolher": 4294.37,
       "saldoCredorTransportar": 0.0
     },
     "icmsSt": {
@@ -1417,7 +1427,7 @@ const DASHBOARD_DATA = {
       "outrosCreditos": 0.0,
       "saldoDevedor": 0.0,
       "saldoCredor": 0.0,
-      "aRecolher": 2013.93,
+      "aRecolher": 10508.79,
       "saldoCredorTransportar": 0.0
     },
     "cofins": {
@@ -1427,7 +1437,7 @@ const DASHBOARD_DATA = {
       "outrosCreditos": 0.0,
       "saldoDevedor": 0.0,
       "saldoCredor": 0.0,
-      "aRecolher": 9295.05,
+      "aRecolher": 2276.9,
       "saldoCredorTransportar": 0.0
     },
     "ipi": {
@@ -1443,202 +1453,79 @@ const DASHBOARD_DATA = {
   },
   "cfopEntradas": [
     {
-      "cfop": "2-102",
+      "cfop": "1-102",
       "descricao": "Compra para comercialização",
-      "qtd": 8,
-      "contabil": 269697.5,
-      "fiscal": 269697.5,
+      "qtd": 1,
+      "contabil": 17.0,
+      "fiscal": 17.0,
       "imposto": 0.0,
       "finalidade": "Revenda",
       "creditoPisCofins": true,
       "debitaIcms": true,
-      "total": 269697.5,
-      "fornecedores": [
-        {
-          "nome": "LUTEPEL IND COM PAPEL LTDA",
-          "qtd": 2,
-          "total": 169736.34,
-          "cnpj": "51.425.130/0002-98",
-          "uf": "SP"
-        },
-        {
-          "nome": "PARANA INDUSTRIA DE PAPEIS",
-          "qtd": 2,
-          "total": 72370.76,
-          "cnpj": "17.287.963/0001-10",
-          "uf": "MG"
-        },
-        {
-          "nome": "LUTEPEL INDUSTRIA E COMERCIO DE PAPEL LTDA",
-          "qtd": 1,
-          "total": 16056.51,
-          "cnpj": "51.425.130/0005-30",
-          "uf": "SP"
-        },
-        {
-          "nome": "SEGPLAST IND COM DE EMB PLASTICAS LTDA",
-          "qtd": 1,
-          "total": 5743.89,
-          "cnpj": "59.096.289/0001-37",
-          "uf": "SP"
-        },
-        {
-          "nome": "TINN KOL TINTAS E ADESIVOS LTDA",
-          "qtd": 1,
-          "total": 4000.0,
-          "cnpj": "51.333.862/0001-77",
-          "uf": "SP"
-        },
-        {
-          "nome": "HYDROPRESS TINTAS ESPECIAIS LTDA.",
-          "qtd": 1,
-          "total": 1790.0,
-          "cnpj": "59.432.104/0001-18",
-          "uf": "SP"
-        }
-      ]
+      "total": 17.0,
+      "fornecedores": []
+    },
+    {
+      "cfop": "2-102",
+      "descricao": "Compra para comercialização",
+      "qtd": 1,
+      "contabil": 450414.17,
+      "fiscal": 450414.17,
+      "imposto": 0.0,
+      "finalidade": "Revenda",
+      "creditoPisCofins": true,
+      "debitaIcms": true,
+      "total": 450414.17,
+      "fornecedores": []
+    },
+    {
+      "cfop": "2-910",
+      "descricao": "Entrada de bonificação, doação ou brinde",
+      "qtd": 1,
+      "contabil": 1892.8,
+      "fiscal": 1892.8,
+      "imposto": 0.0,
+      "finalidade": "Bonificação",
+      "creditoPisCofins": false,
+      "debitaIcms": true,
+      "total": 1892.8,
+      "fornecedores": []
     }
   ],
   "cfopSaidas": [
     {
       "cfop": "5-102",
       "descricao": "CFOP 5-102",
-      "qtd": 172,
-      "contabil": 332306.62,
-      "fiscal": 332306.62,
+      "qtd": 1,
+      "contabil": 386779.24,
+      "fiscal": 386779.24,
       "imposto": 0.0
     },
     {
       "cfop": "6-102",
       "descricao": "CFOP 6-102",
-      "qtd": 34,
-      "contabil": 49988.27,
-      "fiscal": 49988.27,
+      "qtd": 1,
+      "contabil": 46442.67,
+      "fiscal": 46442.67,
       "imposto": 0.0
     }
   ],
-  "cfopSaidasTotal": 382294.89,
+  "cfopSaidasTotal": 433221.91,
   "sped": {
-    "nfSaidas": 206,
-    "totalClientes": 15,
-    "c100Total": 382294.89,
-    "clientes": [
-      {
-        "cod": "1",
-        "nome": "SAMFLA CP MAGALHAS EMBALAGENS ME",
-        "cnpj": "10.344.811/0001-63",
-        "total": 69349.6,
-        "qtd": 14
-      },
-      {
-        "cod": "2",
-        "nome": "PLAZA EMPORIO E PANIFICADORA LTDA",
-        "cnpj": "07.350.187/0001-00",
-        "total": 11707.08,
-        "qtd": 1
-      },
-      {
-        "cod": "3",
-        "nome": "PASTELARIA VICOSA LTDA",
-        "cnpj": "00.052.274/0001-24",
-        "total": 9919.8,
-        "qtd": 4
-      },
-      {
-        "cod": "4",
-        "nome": "HW PANIFICADORA E CONFEITARIA LTDA ME",
-        "cnpj": "05.300.914/0001-91",
-        "total": 9844.7,
-        "qtd": 2
-      },
-      {
-        "cod": "5",
-        "nome": "PANIFICADORA E CONFEITARIA PRINCIPAL LTDA -ME",
-        "cnpj": "19.760.544/0001-80",
-        "total": 8473.94,
-        "qtd": 5
-      },
-      {
-        "cod": "6",
-        "nome": "COMERCIAL DE FRUTAS E VERDURAS CANTEIROS LTDA-EPP",
-        "cnpj": "38.030.151/0002-46",
-        "total": 7737.3,
-        "qtd": 3
-      },
-      {
-        "cod": "7",
-        "nome": "LIFESTYLE COMERCIO DE ALIMENTOS LTDA ME",
-        "cnpj": "29.039.101/0001-58",
-        "total": 7663.95,
-        "qtd": 2
-      },
-      {
-        "cod": "8",
-        "nome": "DIVIPAN PANIFICADORA LTDA",
-        "cnpj": "49.392.363/0001-09",
-        "total": 7660.73,
-        "qtd": 2
-      },
-      {
-        "cod": "9",
-        "nome": "BONNAPAN PAES E DELICIAS (RUA 28)",
-        "cnpj": "19.488.760/0001-18",
-        "total": 7558.0,
-        "qtd": 3
-      },
-      {
-        "cod": "10",
-        "nome": "PANIFICADORA E CONFEITARIA MLI LTDA ME",
-        "cnpj": "06.138.877/0001-20",
-        "total": 6396.51,
-        "qtd": 4
-      },
-      {
-        "cod": "11",
-        "nome": "SACOLAO DE FRUTAS E VERDURAS BICALHO LTDA",
-        "cnpj": "02.918.588/0001-92",
-        "total": 6062.7,
-        "qtd": 2
-      },
-      {
-        "cod": "12",
-        "nome": "M M TEIXEIRA COMERCIAL DE ALIMENTO",
-        "cnpj": "25.103.764/0001-33",
-        "total": 5967.6,
-        "qtd": 2
-      },
-      {
-        "cod": "13",
-        "nome": "REY PLATS EMBALAGENS",
-        "cnpj": "32.549.410/0001-82",
-        "total": 5928.0,
-        "qtd": 3
-      },
-      {
-        "cod": "14",
-        "nome": "COMERCIAL DE ALIMENTOS FARTURA SB LTDA",
-        "cnpj": "35.840.208/0001-01",
-        "total": 5877.8,
-        "qtd": 3
-      },
-      {
-        "cod": "15",
-        "nome": "MODERLYFE PANIFICADORA E COMERCIO DE ALIMENTOS LTD",
-        "cnpj": "33.040.936/0001-03",
-        "total": 5838.35,
-        "qtd": 5
-      }
-    ],
+    "nfSaidas": 2,
+    "totalClientes": 0,
+    "c100Total": 433221.91,
+    "clientes": [],
     "cfopSaidas": [
       {
         "cfop": "5-102",
-        "total": 332306.62,
-        "qtd": 172
+        "total": 386779.24,
+        "qtd": 1
       },
       {
         "cfop": "6-102",
-        "total": 49988.27,
-        "qtd": 34
+        "total": 46442.67,
+        "qtd": 1
       }
     ]
   },
@@ -1648,21 +1535,24 @@ const DASHBOARD_DATA = {
       "02",
       "03",
       "04",
-      "05"
+      "05",
+      "06"
     ],
     "mesLabels": [
       "Janeiro",
       "Fevereiro",
       "Março",
       "Abril",
-      "Maio"
+      "Maio",
+      "Junho"
     ],
     "monthShort": [
       "Jan",
       "Fev",
       "Mar",
       "Abr",
-      "Mai"
+      "Mai",
+      "Jun"
     ],
     "porMes": {
       "01": {
@@ -1731,7 +1621,7 @@ const DASHBOARD_DATA = {
             "debitoSaidas": 48446.87,
             "creditoEntradas": 18830.06,
             "outrosDebitos": 0.0,
-            "outrosCreditos": 0.0,
+            "outrosCreditos": 0,
             "saldoDevedor": 0.0,
             "saldoCredor": 0.0,
             "aRecolher": 29616.81,
@@ -2069,7 +1959,10 @@ const DASHBOARD_DATA = {
             "total": 450.0,
             "qtd": 1
           }
-        ]
+        ],
+        "irpj": 0.0,
+        "csll": 0.0,
+        "ganhoBeneficioFiscal": 0.0
       },
       "02": {
         "competencia": "2026-02",
@@ -2137,7 +2030,7 @@ const DASHBOARD_DATA = {
             "debitoSaidas": 65959.53,
             "creditoEntradas": 14342.9,
             "outrosDebitos": 0.0,
-            "outrosCreditos": 0.0,
+            "outrosCreditos": 0,
             "saldoDevedor": 0.0,
             "saldoCredor": 0.0,
             "aRecolher": 51616.63,
@@ -2419,7 +2312,10 @@ const DASHBOARD_DATA = {
             "total": 165.75,
             "qtd": 1
           }
-        ]
+        ],
+        "irpj": 0.0,
+        "csll": 0.0,
+        "ganhoBeneficioFiscal": 0.0
       },
       "03": {
         "competencia": "2026-03",
@@ -2487,7 +2383,7 @@ const DASHBOARD_DATA = {
             "debitoSaidas": 76868.25,
             "creditoEntradas": 25775.26,
             "outrosDebitos": 0.0,
-            "outrosCreditos": 0.0,
+            "outrosCreditos": 0,
             "saldoDevedor": 0.0,
             "saldoCredor": 0.0,
             "aRecolher": 51092.99,
@@ -2797,7 +2693,10 @@ const DASHBOARD_DATA = {
             "total": 4000.0,
             "qtd": 1
           }
-        ]
+        ],
+        "irpj": 0.0,
+        "csll": 0.0,
+        "ganhoBeneficioFiscal": 0.0
       },
       "04": {
         "competencia": "2026-04",
@@ -2865,7 +2764,7 @@ const DASHBOARD_DATA = {
             "debitoSaidas": 85110.04,
             "creditoEntradas": 24802.49,
             "outrosDebitos": 0.0,
-            "outrosCreditos": 0.0,
+            "outrosCreditos": 0,
             "saldoDevedor": 0.0,
             "saldoCredor": 0.0,
             "aRecolher": 60307.55,
@@ -3174,19 +3073,22 @@ const DASHBOARD_DATA = {
             "total": 1705.69,
             "qtd": 1
           }
-        ]
+        ],
+        "irpj": 0.0,
+        "csll": 0.0,
+        "ganhoBeneficioFiscal": 0.0
       },
       "05": {
         "competencia": "2026-05",
         "competenciaLabel": "Mai / 2026",
         "receitaBruta": 382294.89,
         "totalCompras": 269697.5,
-        "deducoes": 29387.26,
+        "deducoes": 29387.25,
         "dedPct": 7.69,
         "composicao": [
           {
             "label": "ICMS",
-            "valor": 18078.28
+            "valor": 18078.27
           },
           {
             "label": "ICMS ST",
@@ -3208,8 +3110,8 @@ const DASHBOARD_DATA = {
         "impostosTabela": [
           {
             "tributo": "ICMS",
-            "apurado": 72459.78,
-            "recolher": 18078.28,
+            "apurado": 72459.77,
+            "recolher": 18078.27,
             "pctRb": 4.73
           },
           {
@@ -3239,13 +3141,13 @@ const DASHBOARD_DATA = {
         ],
         "apuracao": {
           "icms": {
-            "debitoSaidas": 72459.78,
+            "debitoSaidas": 72459.77,
             "creditoEntradas": 18274.27,
             "outrosDebitos": 0.0,
-            "outrosCreditos": 0.0,
+            "outrosCreditos": 1499.65,
             "saldoDevedor": 0.0,
             "saldoCredor": 0.0,
-            "aRecolher": 18078.28,
+            "aRecolher": 18078.27,
             "saldoCredorTransportar": 0.0
           },
           "icmsSt": {
@@ -3538,7 +3440,207 @@ const DASHBOARD_DATA = {
             "total": 1790.0,
             "qtd": 1
           }
-        ]
+        ],
+        "irpj": 0.0,
+        "csll": 0.0,
+        "ganhoBeneficioFiscal": 34607.58
+      },
+      "06": {
+        "competencia": "2026-06",
+        "competenciaLabel": "Jun / 2026",
+        "receitaBruta": 433221.91,
+        "totalCompras": 452323.97,
+        "deducoes": 17080.06,
+        "dedPct": 3.94,
+        "composicao": [
+          {
+            "label": "ICMS",
+            "valor": 4294.37
+          },
+          {
+            "label": "ICMS ST",
+            "valor": 0.0
+          },
+          {
+            "label": "PIS",
+            "valor": 10508.79
+          },
+          {
+            "label": "COFINS",
+            "valor": 2276.9
+          },
+          {
+            "label": "IPI",
+            "valor": 0.0
+          }
+        ],
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 82928.85,
+            "recolher": 4294.37,
+            "pctRb": 0.99
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0.0,
+            "recolher": 0.0,
+            "pctRb": 0.0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0.0,
+            "recolher": 10508.79,
+            "pctRb": 2.43
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0.0,
+            "recolher": 2276.9,
+            "pctRb": 0.53
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 0.0,
+            "recolher": 0.0,
+            "pctRb": 0.0
+          }
+        ],
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 82928.85,
+            "creditoEntradas": 30313.88,
+            "outrosDebitos": 0.0,
+            "outrosCreditos": 1393.28,
+            "saldoDevedor": 0.0,
+            "saldoCredor": 0.0,
+            "aRecolher": 4294.37,
+            "saldoCredorTransportar": 0.0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0.0,
+            "creditoEntradas": 0.0,
+            "outrosDebitos": 0.0,
+            "outrosCreditos": 0.0,
+            "saldoDevedor": 0.0,
+            "saldoCredor": 0.0,
+            "aRecolher": 0.0,
+            "saldoCredorTransportar": 0.0
+          },
+          "pis": {
+            "debitoSaidas": 0.0,
+            "creditoEntradas": 0.0,
+            "outrosDebitos": 0.0,
+            "outrosCreditos": 0.0,
+            "saldoDevedor": 0.0,
+            "saldoCredor": 0.0,
+            "aRecolher": 10508.79,
+            "saldoCredorTransportar": 0.0
+          },
+          "cofins": {
+            "debitoSaidas": 0.0,
+            "creditoEntradas": 0.0,
+            "outrosDebitos": 0.0,
+            "outrosCreditos": 0.0,
+            "saldoDevedor": 0.0,
+            "saldoCredor": 0.0,
+            "aRecolher": 2276.9,
+            "saldoCredorTransportar": 0.0
+          },
+          "ipi": {
+            "debitoSaidas": 0.0,
+            "creditoEntradas": 0.0,
+            "outrosDebitos": 0.0,
+            "outrosCreditos": 0.0,
+            "saldoDevedor": 0.0,
+            "saldoCredor": 0.0,
+            "aRecolher": 0.0,
+            "saldoCredorTransportar": 0.0
+          }
+        },
+        "cfopEntradas": [
+          {
+            "cfop": "1-102",
+            "descricao": "Compra para comercialização",
+            "qtd": 1,
+            "contabil": 17.0,
+            "fiscal": 17.0,
+            "imposto": 0.0,
+            "finalidade": "Revenda",
+            "creditoPisCofins": true,
+            "debitaIcms": true,
+            "total": 17.0,
+            "fornecedores": []
+          },
+          {
+            "cfop": "2-102",
+            "descricao": "Compra para comercialização",
+            "qtd": 1,
+            "contabil": 450414.17,
+            "fiscal": 450414.17,
+            "imposto": 0.0,
+            "finalidade": "Revenda",
+            "creditoPisCofins": true,
+            "debitaIcms": true,
+            "total": 450414.17,
+            "fornecedores": []
+          },
+          {
+            "cfop": "2-910",
+            "descricao": "Entrada de bonificação, doação ou brinde",
+            "qtd": 1,
+            "contabil": 1892.8,
+            "fiscal": 1892.8,
+            "imposto": 0.0,
+            "finalidade": "Bonificação",
+            "creditoPisCofins": false,
+            "debitaIcms": true,
+            "total": 1892.8,
+            "fornecedores": []
+          }
+        ],
+        "cfopSaidas": [
+          {
+            "cfop": "5-102",
+            "descricao": "CFOP 5-102",
+            "qtd": 1,
+            "contabil": 386779.24,
+            "fiscal": 386779.24,
+            "imposto": 0.0
+          },
+          {
+            "cfop": "6-102",
+            "descricao": "CFOP 6-102",
+            "qtd": 1,
+            "contabil": 46442.67,
+            "fiscal": 46442.67,
+            "imposto": 0.0
+          }
+        ],
+        "cfopSaidasTotal": 433221.91,
+        "sped": {
+          "nfSaidas": 2,
+          "totalClientes": 0,
+          "c100Total": 433221.91,
+          "clientes": [],
+          "cfopSaidas": [
+            {
+              "cfop": "5-102",
+              "total": 386779.24,
+              "qtd": 1
+            },
+            {
+              "cfop": "6-102",
+              "total": 46442.67,
+              "qtd": 1
+            }
+          ]
+        },
+        "porUf": {},
+        "fornecedores": [],
+        "irpj": 19215.8,
+        "csll": 13628.19,
+        "ganhoBeneficioFiscal": 46927.32
       }
     }
   },
@@ -3548,14 +3650,16 @@ const DASHBOARD_DATA = {
       "02",
       "03",
       "04",
-      "05"
+      "05",
+      "06"
     ],
     "mesLabels": [
       "Janeiro",
       "Fevereiro",
       "Março",
       "Abril",
-      "Maio"
+      "Maio",
+      "Junho"
     ],
     "porMes": {
       "01": {
@@ -3598,10 +3702,19 @@ const DASHBOARD_DATA = {
         "receitaBruta": 382294.89,
         "cmv": 269697.5,
         "lucroBruto": 112597.39,
-        "deducoesTributarias": 29387.26,
-        "resultadoLiquido": 83210.13,
+        "deducoesTributarias": 29387.25,
+        "resultadoLiquido": 83210.14,
         "margemBrutaPct": 29.45,
         "margemLiquidaPct": 21.77
+      },
+      "06": {
+        "receitaBruta": 433221.91,
+        "cmv": 450431.17,
+        "lucroBruto": -17209.26,
+        "deducoesTributarias": 17080.06,
+        "resultadoLiquido": -34289.32,
+        "margemBrutaPct": -3.97,
+        "margemLiquidaPct": -7.91
       }
     }
   },
@@ -3611,14 +3724,16 @@ const DASHBOARD_DATA = {
       "02",
       "03",
       "04",
-      "05"
+      "05",
+      "06"
     ],
     "mesLabels": [
       "Janeiro",
       "Fevereiro",
       "Março",
       "Abril",
-      "Maio"
+      "Maio",
+      "Junho"
     ],
     "porMes": {
       "01": {
@@ -3818,6 +3933,38 @@ const DASHBOARD_DATA = {
             "icms": 72459.78
           }
         ]
+      },
+      "06": {
+        "dataRef": "2026-06-01",
+        "fonte": "apuracao-q2",
+        "contas": [
+          {
+            "codigo": "1",
+            "descricao": "Compras (apuração Q2)",
+            "nivel": 1,
+            "saldoAnterior": 0.0,
+            "naturezaAnterior": "D",
+            "debito": 452323.97,
+            "credito": 0.0,
+            "movimento": 452323.97,
+            "saldoAtual": 452323.97,
+            "naturezaAtual": "D",
+            "grupo": "ativo"
+          },
+          {
+            "codigo": "2",
+            "descricao": "Vendas (apuração Q2)",
+            "nivel": 1,
+            "saldoAnterior": 0.0,
+            "naturezaAnterior": "C",
+            "debito": 0.0,
+            "credito": 433221.91,
+            "movimento": 433221.91,
+            "saldoAtual": 433221.91,
+            "naturezaAtual": "C",
+            "grupo": "resultado"
+          }
+        ]
       }
     }
   },
@@ -3827,14 +3974,16 @@ const DASHBOARD_DATA = {
       "02",
       "03",
       "04",
-      "05"
+      "05",
+      "06"
     ],
     "mesLabels": [
       "Janeiro",
       "Fevereiro",
       "Março",
       "Abril",
-      "Maio"
+      "Maio",
+      "Junho"
     ],
     "porMes": {
       "01": {
@@ -4161,6 +4310,42 @@ const DASHBOARD_DATA = {
             "qtde": 0
           }
         ]
+      },
+      "06": {
+        "totais": {
+          "vendas": 433221.91,
+          "custo": 450431.17,
+          "lucroBruto": -17209.26,
+          "lucroLiquido": -17209.26,
+          "margemBrutaPct": -3.97,
+          "margemLiquidaPct": -3.97
+        },
+        "cidades": [],
+        "produtos": [
+          {
+            "codigo": "5102",
+            "nome": "CFOP 5-102",
+            "qtde": 1,
+            "total": 386779.24,
+            "custo": 0,
+            "lucroBruto": 386779.24,
+            "lucroLiquido": 386779.24,
+            "margemBrutaPct": 100,
+            "margemLiquidaPct": 100
+          },
+          {
+            "codigo": "6102",
+            "nome": "CFOP 6-102",
+            "qtde": 1,
+            "total": 46442.67,
+            "custo": 0,
+            "lucroBruto": 46442.67,
+            "lucroLiquido": 46442.67,
+            "margemBrutaPct": 100,
+            "margemLiquidaPct": 100
+          }
+        ],
+        "estados": []
       }
     }
   },
@@ -4170,7 +4355,8 @@ const DASHBOARD_DATA = {
       "02",
       "03",
       "04",
-      "05"
+      "05",
+      "06"
     ],
     "porMes": {
       "01": {
@@ -14687,6 +14873,35 @@ const DASHBOARD_DATA = {
         "totalReceber": 382294.89,
         "totalPagar": 269697.5,
         "saldo": 112597.39
+      },
+      "06": {
+        "aReceber": [
+          {
+            "tipo": "receber",
+            "nome": "Vendas consolidadas (apuração Q2)",
+            "cnpj": "",
+            "nota": "",
+            "data": "2026-06-01",
+            "valor": 433221.91,
+            "cfop": "—",
+            "uf": "—"
+          }
+        ],
+        "aPagar": [
+          {
+            "tipo": "pagar",
+            "nome": "Compras consolidadas (apuração Q2)",
+            "cnpj": "",
+            "nota": "",
+            "data": "2026-06-01",
+            "valor": 452323.97,
+            "cfop": "—",
+            "uf": "—"
+          }
+        ],
+        "totalReceber": 433221.91,
+        "totalPagar": 452323.97,
+        "saldo": -19102.06
       }
     }
   },
@@ -14701,6 +14916,12 @@ const DASHBOARD_DATA = {
       "descricao": "Compra para comercialização",
       "finalidade": "Revenda",
       "creditoPisCofins": true,
+      "debitaIcms": true
+    },
+    "2-910": {
+      "descricao": "Entrada de bonificação, doação ou brinde",
+      "finalidade": "Bonificação",
+      "creditoPisCofins": false,
       "debitaIcms": true
     },
     "5-102": {
@@ -14744,16 +14965,16 @@ const DASHBOARD_DATA = {
   },
   "fontes": {
     "trimestre1": "94-DU LANCHE 1° TRIM/94-DU LANCHE — Jan, Fev, Mar/2026",
-    "trimestre2": "94-DU LANCHES 2° TRIM/94-DU LANCHES — Abr, Mai/2026",
+    "trimestre2": "94-DU LANCHES 2° TRIM/94-DU LANCHES — Abr, Mai, Jun/2026",
     "movimento": "Entradas e Saídas EXITO",
     "resumo": "Resumo acumulador",
     "efd": "Demonstrativo EFD PIS e COFINS",
-    "icms": "Resumo acumulador + APURAÇÃO 5005 (Mai)"
+    "icms": "Resumo acumulador + APURAÇÃO 2º TRIMESTRE 2026 (5005)"
   },
   "inventario": {
     "resumo": {
-      "totalArquivos": 21,
-      "integrados": 21,
+      "totalArquivos": 22,
+      "integrados": 22,
       "redundantes": 0,
       "pendentes": 3,
       "ignorados": 0,
@@ -14858,6 +15079,14 @@ const DASHBOARD_DATA = {
       },
       {
         "modulo": "apuracao-icms",
+        "path": "94-DU LANCHES 2° TRIM/94-DU LANCHES/APURAÇÃO 2 TRIMESTRE DE 2026 DU LANCHES.xlsx",
+        "detalhe": "APURAÇÃO 2 TRIMESTRE DE 2026 DU LANCHES.xlsx",
+        "registros": 1,
+        "uso": "Dashboard DU LANCHE",
+        "parseOk": true
+      },
+      {
+        "modulo": "apuracao-icms",
         "path": "94-DU LANCHES 2° TRIM/94-DU LANCHES/APURAÇÃO 5005- 05-2026.xlsx",
         "detalhe": "APURAÇÃO 5005- 05-2026.xlsx",
         "registros": 1,
@@ -14956,7 +15185,8 @@ const DASHBOARD_DATA = {
       "02",
       "03",
       "04",
-      "05"
+      "05",
+      "06"
     ],
     "porMes": {
       "01": {
@@ -15003,6 +15233,15 @@ const DASHBOARD_DATA = {
         "liquidezCorrente": null,
         "liquidezSeca": null,
         "grauEndividamento": null
+      },
+      "06": {
+        "margemBruta": -3.97,
+        "margemLiquida": -7.91,
+        "cargaTributaria": 3.94,
+        "capitalGiroOperacional": -19102.06,
+        "liquidezCorrente": null,
+        "liquidezSeca": null,
+        "grauEndividamento": null
       }
     }
   },
@@ -15011,10 +15250,11 @@ const DASHBOARD_DATA = {
     "balancete": false,
     "fornecedores": false,
     "pessoal": true,
-    "irpj": true,
-    "csll": true,
+    "irpj": false,
+    "csll": false,
     "recebimentos": false,
-    "margens": false
+    "margens": false,
+    "junhoDetalheMovimento": true
   },
   "meta": {
     "meses": [
@@ -15022,21 +15262,24 @@ const DASHBOARD_DATA = {
       "02",
       "03",
       "04",
-      "05"
+      "05",
+      "06"
     ],
     "monthLabels": {
       "01": "Jan",
       "02": "Fev",
       "03": "Mar",
       "04": "Abr",
-      "05": "Mai"
+      "05": "Mai",
+      "06": "Jun"
     },
     "monthLabelsFull": {
       "01": "Janeiro",
       "02": "Fevereiro",
       "03": "Março",
       "04": "Abril",
-      "05": "Maio"
+      "05": "Maio",
+      "06": "Junho"
     },
     "trimestres": {
       "q1": {
@@ -15062,25 +15305,27 @@ const DASHBOARD_DATA = {
         "pasta": "94-DU LANCHES 2° TRIM/94-DU LANCHES",
         "meses": [
           "04",
-          "05"
+          "05",
+          "06"
         ],
-        "mesesLabel": "Abr – Mai / 2026",
+        "mesesLabel": "Abr – Jun / 2026",
         "resumo": {
-          "totalCompras": 633309.71,
-          "receitaBruta": 827568.3,
-          "cfopSaidasTotal": 827568.3,
-          "deducoes": 102861.81
+          "totalCompras": 1085633.68,
+          "receitaBruta": 1260790.21,
+          "cfopSaidasTotal": 1260790.21,
+          "deducoes": 119941.86
         }
       }
     },
     "periodoTotal": {
-      "label": "Total Jan – Mai / 2026",
+      "label": "Total Jan – Jun / 2026",
       "meses": [
         "01",
         "02",
         "03",
         "04",
-        "05"
+        "05",
+        "06"
       ]
     }
   }
@@ -15088,7 +15333,7 @@ const DASHBOARD_DATA = {
 
 </script>
 <script>
-/* DU LANCHE Dashboard — DASHBOARD_DATA Jan–Mai/2026 */
+/* DU LANCHE Dashboard — DASHBOARD_DATA Jan–Jun/2026 */
 (function () {
   'use strict';
 
@@ -15101,7 +15346,7 @@ const DASHBOARD_DATA = {
   const MONTH_KEYS = D.meta.meses;
   const MONTH_LABELS = D.meta.monthLabels;
   const TRIMESTRES = D.meta.trimestres || {};
-  const PERIODO_TOTAL = D.meta.periodoTotal || { label: 'Total Jan – Mai / 2026', meses: MONTH_KEYS };
+  const PERIODO_TOTAL = D.meta.periodoTotal || { label: 'Total Jan – Jun / 2026', meses: MONTH_KEYS };
   const Q1_MESES = (TRIMESTRES.q1 && TRIMESTRES.q1.meses) || ['01', '02', '03'];
   const Q2_MESES = (TRIMESTRES.q2 && TRIMESTRES.q2.meses) || ['04', '05', '06'];
   const UNIT_LABEL = 'DU LANCHE';
