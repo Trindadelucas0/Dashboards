@@ -78381,7 +78381,7 @@ function renderImpostosEvolution() {
         if (prev) prev.textContent = c.prev;
       }
     });
-    renderIrpjCsllCards();
+    renderIrpjCsllCards(mesKey);
     const evSub = document.getElementById('tax-chart-ev-sub');
     if (evSub) {
       evSub.textContent = mesKey === 'total'
@@ -78425,66 +78425,149 @@ function renderImpostosEvolution() {
     syncFiscalMesBars(mesKey);
   }
 
-  function renderIrpjCsllCards() {
-    const irpj = D().irpjCsll;
-    const period = (irpj && irpj.periodo) || 'Q2/2026';
-    if (!irpj) return;
-    setHTML('#tax-irpj-val', 'R$ ' + fmt(irpj.irpjTotal));
-    setText('#tax-irpj-prev', 'Lucro Presumido · Adicional R$ ' + fmt(irpj.adicionalIrpj) +
-      ' · IRRF R$ ' + fmt(irpj.irrf || 0));
-    setText('#tax-irpj-period', period);
-    setHTML('#tax-csll-val', 'R$ ' + fmt(irpj.csll));
-    setText('#tax-csll-prev', 'Lucro Presumido · BC R$ ' + fmt(irpj.baseCsll) + ' | 9%');
-    setText('#tax-csll-period', period);
+  function getIrpjCsllView(mesKey) {
+    const root = D().irpjCsll;
+    if (!root) return null;
+    const key = mesKey || appMesFiscal;
+    if (key === 'q2' || key === 'total') {
+      return {
+        mode: 'trimestre',
+        label: root.periodo || 'Q2/2026',
+        root: root,
+        irpjTotal: root.irpjTotal,
+        csll: root.csll,
+        adicionalIrpj: root.adicionalIrpj,
+        irrf: root.irrf,
+        baseCsll: root.baseCsll,
+        cotaIrpj: root.cotaIrpj,
+        cotaCsll: root.cotaCsll,
+      };
+    }
+    if (key === 'q1') return null;
+    if (key) {
+      const mm = mmOfKey(key);
+      if (['04', '05', '06'].includes(mm)) {
+        return {
+          mode: 'cota',
+          mesKey: key,
+          label: fiscalDisplayLabel(key) + ' (cota 1/3 do Q2)',
+          root: root,
+          irpjTotal: root.cotaIrpj,
+          csll: root.cotaCsll,
+          adicionalIrpj: null,
+          irrf: null,
+          baseCsll: root.baseCsll,
+          cotaIrpj: root.cotaIrpj,
+          cotaCsll: root.cotaCsll,
+        };
+      }
+    }
+    return null;
+  }
+
+  function renderIrpjCsllCards(mesKey) {
+    const view = getIrpjCsllView(mesKey);
+    const irpjVal = document.getElementById('tax-irpj-val');
+    const csllVal = document.getElementById('tax-csll-val');
+    if (!view) {
+      if (irpjVal) irpjVal.textContent = 'Sem dado';
+      setText('#tax-irpj-prev', 'Demonstrativo so no 2o trimestre');
+      setText('#tax-irpj-period', '—');
+      if (csllVal) csllVal.textContent = 'Sem dado';
+      setText('#tax-csll-prev', 'Demonstrativo so no 2o trimestre');
+      setText('#tax-csll-period', '—');
+      return;
+    }
+    setHTML('#tax-irpj-val', 'R$ ' + fmt(view.irpjTotal));
+    setHTML('#tax-csll-val', 'R$ ' + fmt(view.csll));
+    setText('#tax-irpj-period', view.label);
+    setText('#tax-csll-period', view.label);
+    if (view.mode === 'cota') {
+      setText('#tax-irpj-prev', 'Cota 1/3 do Q2 · Total trimestral R$ ' + fmt(view.root.irpjTotal));
+      setText('#tax-csll-prev', 'Cota 1/3 do Q2 · Total trimestral R$ ' + fmt(view.root.csll));
+    } else {
+      setText('#tax-irpj-prev', 'Lucro Presumido · Adicional R$ ' + fmt(view.adicionalIrpj) +
+        ' · IRRF R$ ' + fmt(view.irrf || 0));
+      setText('#tax-csll-prev', 'Lucro Presumido · BC R$ ' + fmt(view.baseCsll) + ' | 9%');
+    }
   }
 
   function pctLbl(p) {
     return (p != null ? Number(p).toFixed(2).replace('.', ',') : '—') + '%';
   }
 
-  function renderIrpjCsllMemoria() {
-    const irpj = D().irpjCsll;
-    if (!irpj) return;
-    const period = irpj.periodo || 'Q2/2026';
+  function renderIrpjCsllMemoria(mesKey) {
+    const view = getIrpjCsllView(mesKey);
     const chipI = document.getElementById('mem-irpj-chip');
     const chipC = document.getElementById('mem-csll-chip');
-    if (chipI) { chipI.textContent = 'Apurado'; chipI.className = 'chip cy'; }
-    if (chipC) { chipC.textContent = 'Apurado'; chipC.className = 'chip or'; }
-    const outras = irpj.outrasReceitas || {};
     const elI = document.getElementById('mem-irpj');
+    const elC = document.getElementById('mem-csll');
+    if (!view) {
+      if (chipI) { chipI.textContent = 'Pendente'; chipI.className = 'chip gy'; }
+      if (chipC) { chipC.textContent = 'Pendente'; chipC.className = 'chip gy'; }
+      if (elI) {
+        elI.innerHTML = '<div class="mem-row hl"><span class="lbl">Status</span><span class="val t-muted">Demonstrativo so no 2o trimestre</span></div>';
+      }
+      if (elC) {
+        elC.innerHTML = '<div class="mem-row hl"><span class="lbl">Status</span><span class="val t-muted">Demonstrativo so no 2o trimestre</span></div>';
+      }
+      return;
+    }
+    const root = view.root;
+    if (chipI) { chipI.textContent = view.mode === 'cota' ? 'Cota' : 'Apurado'; chipI.className = 'chip cy'; }
+    if (chipC) { chipC.textContent = view.mode === 'cota' ? 'Cota' : 'Apurado'; chipC.className = 'chip or'; }
+
+    if (view.mode === 'cota') {
+      if (elI) {
+        elI.innerHTML = ''
+          + '<div class="mem-row hl"><span class="lbl">Apuracao</span><span class="val">' + view.label + '</span></div>'
+          + memRow('IRPJ cota (1/3 do Q2)', view.irpjTotal, 'tot')
+          + '<div class="mem-row"><span class="lbl">Total trimestral IRPJ</span><span class="val">R$ ' + fmt(root.irpjTotal) + '</span></div>'
+          + '<div class="mem-row"><span class="lbl">CSLL trimestral</span><span class="val">R$ ' + fmt(root.csll) + '</span></div>';
+      }
+      if (elC) {
+        elC.innerHTML = ''
+          + '<div class="mem-row hl"><span class="lbl">Apuracao</span><span class="val">' + view.label + '</span></div>'
+          + memRow('CSLL cota (1/3 do Q2)', view.csll, 'tot')
+          + '<div class="mem-row"><span class="lbl">Total trimestral CSLL</span><span class="val">R$ ' + fmt(root.csll) + '</span></div>'
+          + '<div class="mem-row"><span class="lbl">Total trimestral IRPJ</span><span class="val">R$ ' + fmt(root.irpjTotal) + '</span></div>';
+      }
+      return;
+    }
+
+    const outras = root.outrasReceitas || {};
     if (elI) {
       let html = ''
-        + '<div class="mem-row hl"><span class="lbl">Apuracao</span><span class="val">' + period + ' — Lucro Presumido</span></div>'
-        + memRow('Receita tributavel', irpj.receitaTributavel, '');
-      (irpj.faixasIrpj || []).forEach((f) => {
+        + '<div class="mem-row hl"><span class="lbl">Apuracao</span><span class="val">' + view.label + ' — Lucro Presumido</span></div>'
+        + memRow('Receita tributavel', root.receitaTributavel, '');
+      (root.faixasIrpj || []).forEach((f) => {
         html += memRow('Presuncao ' + pctLbl(f.pct) + ' s/ R$ ' + fmt(f.receita), f.base, '');
       });
-      html += memRow('Base de presuncao IRPJ', irpj.basePresuncao, 'hl');
+      html += memRow('Base de presuncao IRPJ', root.basePresuncao, 'hl');
       (outras.itens || []).forEach((item) => {
         html += memRow(item.descricao, item.valor, '');
       });
       html += memRow('Total outras receitas', outras.total || 0, '')
-        + memRow('Base de calculo IRPJ', irpj.baseIrpj, 'hl')
-        + memRow('IRPJ 15%', irpj.irpj15, '')
-        + memRow('Adicional 10% s/ > R$60k/tri', irpj.adicionalIrpj, '')
-        + memRow('(-) IRRF', irpj.irrf || 0, '')
-        + memRow('IRPJ a pagar', irpj.irpjTotal, 'tot')
-        + memRow('Cota (/3)', irpj.cotaIrpj || 0, '');
+        + memRow('Base de calculo IRPJ', root.baseIrpj, 'hl')
+        + memRow('IRPJ 15%', root.irpj15, '')
+        + memRow('Adicional 10% s/ > R$60k/tri', root.adicionalIrpj, '')
+        + memRow('(-) IRRF', root.irrf || 0, '')
+        + memRow('IRPJ a pagar', root.irpjTotal, 'tot')
+        + memRow('Cota (/3)', root.cotaIrpj || 0, '');
       elI.innerHTML = html;
     }
-    const elC = document.getElementById('mem-csll');
     if (elC) {
       let html = ''
-        + '<div class="mem-row hl"><span class="lbl">Apuracao</span><span class="val">' + period + ' — Lucro Presumido</span></div>'
-        + memRow('Receita tributavel', irpj.receitaTributavel, '');
-      (irpj.faixasCsll || []).forEach((f) => {
+        + '<div class="mem-row hl"><span class="lbl">Apuracao</span><span class="val">' + view.label + ' — Lucro Presumido</span></div>'
+        + memRow('Receita tributavel', root.receitaTributavel, '');
+      (root.faixasCsll || []).forEach((f) => {
         html += memRow('Presuncao ' + pctLbl(f.pct) + ' s/ R$ ' + fmt(f.receita), f.base, '');
       });
-      html += memRow('Base de calculo CSLL', irpj.baseCsll, 'hl')
-        + '<div class="mem-row"><span class="lbl">Aliquota CSLL</span><span class="val">' + pctLbl(irpj.aliquotaCsll || 9) + '</span></div>'
-        + memRow('CSLL 9%', irpj.csll, '')
-        + memRow('CSLL a pagar', irpj.csll, 'tot')
-        + memRow('Cota (/3)', irpj.cotaCsll || 0, '');
+      html += memRow('Base de calculo CSLL', root.baseCsll, 'hl')
+        + '<div class="mem-row"><span class="lbl">Aliquota CSLL</span><span class="val">' + pctLbl(root.aliquotaCsll || 9) + '</span></div>'
+        + memRow('CSLL 9%', root.csll, '')
+        + memRow('CSLL a pagar', root.csll, 'tot')
+        + memRow('Cota (/3)', root.cotaCsll || 0, '');
       elC.innerHTML = html;
     }
   }
@@ -78569,7 +78652,7 @@ function renderMemoria(mesKey) {
       trTot.innerHTML = '<td colspan="2" class="fw8">TOTAL FISCAL</td><td class="fw8">R$ ' + fmt(totAp) + '</td><td class="r fw8 t-success">R$ (' + fmt(totCred) + ')</td><td class="r fw8 t-danger">R$ ' + fmt(totRec) + '</td><td class="r fw8">' + (rb > 0 ? ((totRec / rb) * 100).toFixed(2) : '0') + '%</td>';
       memTbody.appendChild(trTot);
     }
-    renderIrpjCsllMemoria();
+    renderIrpjCsllMemoria(mesKey);
     syncFiscalMesBars(mesKey);
   }
 
