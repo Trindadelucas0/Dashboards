@@ -1294,18 +1294,18 @@
             <div class="tax-foot"><span>Livro IPI</span><span class="var-neu" id="tax-foot-ipi">—</span></div>
           </div>
           <!-- IRPJ -->
-          <div class="tax-card">
+          <div class="tax-card" id="tax-irpj">
             <div class="tax-card-head"><div class="tax-name" style="color:var(--cyan)">IRPJ</div><span class="chip cy">Trimestral</span></div>
-            <div class="tax-cur t-muted" style="font-size:18px">Em apuração</div>
-            <div class="tax-prev">Regime Lucro Real — LALUR em elaboração</div>
-            <div class="tax-foot"><span>Alíquota: 15% + 10% adicional</span><span class="var-neu">Q2/2026</span></div>
+            <div class="tax-cur t-muted" style="font-size:18px" id="tax-irpj-cur">—</div>
+            <div class="tax-prev" id="tax-irpj-prev">Lucro Presumido</div>
+            <div class="tax-foot"><span>Alíquota: 15% + 10% adicional</span><span class="var-neu" id="tax-foot-irpj">Q2/2026</span></div>
           </div>
           <!-- CSLL -->
-          <div class="tax-card">
+          <div class="tax-card" id="tax-csll">
             <div class="tax-card-head"><div class="tax-name" style="color:var(--orange)">CSLL</div><span class="chip or">Trimestral</span></div>
-            <div class="tax-cur t-muted" style="font-size:18px">Em apuração</div>
-            <div class="tax-prev">Regime Lucro Real — apuração trimestral</div>
-            <div class="tax-foot"><span>Alíquota: 9%</span><span class="var-neu">Q2/2026</span></div>
+            <div class="tax-cur t-muted" style="font-size:18px" id="tax-csll-cur">—</div>
+            <div class="tax-prev" id="tax-csll-prev">Lucro Presumido</div>
+            <div class="tax-foot"><span>Alíquota: 9%</span><span class="var-neu" id="tax-foot-csll">Q2/2026</span></div>
           </div>
         </div>
 
@@ -1341,12 +1341,13 @@
         <div class="fiscal-data-status ok" id="mem-data-status">—</div>
 
         <div class="formula-box">
-          <div class="fttl"><i class="fas fa-function" style="margin-right:8px;"></i>Formulas de Apuracao – Lucro Real / Industria</div>
+          <div class="fttl"><i class="fas fa-function" style="margin-right:8px;"></i>Formulas de Apuracao – Industria / Lucro Presumido (IRPJ/CSLL)</div>
           <div class="fline">
             ICMS = Debitos de Saida – Creditos de Entrada + Outros Creditos/Debitos<br>
             PIS/COFINS = Debitos de Saida – Creditos de Entrada + Outros Creditos<br>
             IPI = Debitos de Saida – Creditos de Entrada<br>
-            IRPJ/CSLL = Lucro Real Ajustado (fonte contabil pendente)
+            IRPJ = (presunção + outras receitas) × 15% + adicional − IRRF<br>
+            CSLL = presunção × 9%
           </div>
         </div>
 
@@ -1372,29 +1373,8 @@
             <div id="mem-ipi"></div>
           </div>
 
-          <!-- IRPJ -->
-          <div class="mem-card">
-            <div class="mem-card-head"><span style="color:var(--cyan)" class="fw7">IRPJ — Lucro Real</span><span class="chip cy">Em Apuração</span></div>
-            <div class="mem-row hl"><span class="lbl">Apuração</span><span class="val">Trimestral (Q2)</span></div>
-            <div class="mem-row"><span class="lbl">Lucro Líquido Contábil Q2</span><span class="val t-muted">Em elaboração</span></div>
-            <div class="mem-row"><span class="lbl">(+/–) Ajustes LALUR</span><span class="val t-muted">—</span></div>
-            <div class="mem-row"><span class="lbl">Lucro Real (base IRPJ)</span><span class="val t-muted">—</span></div>
-            <div class="mem-row"><span class="lbl">Alíquota básica 15%</span><span class="val t-muted">—</span></div>
-            <div class="mem-row"><span class="lbl">Adicional 10% s/ &gt; R$60k/tri</span><span class="val t-muted">—</span></div>
-            <div class="mem-row tot"><span class="lbl">IRPJ Estimado Q2/2026</span><span class="val t-muted">Em apuração</span></div>
-          </div>
-
-          <!-- CSLL -->
-          <div class="mem-card">
-            <div class="mem-card-head"><span style="color:var(--orange)" class="fw7">CSLL — Lucro Real</span><span class="chip or">Em Apuração</span></div>
-            <div class="mem-row hl"><span class="lbl">Apuração</span><span class="val">Trimestral (Q2)</span></div>
-            <div class="mem-row"><span class="lbl">Lucro Líquido Contábil Q2</span><span class="val t-muted">Em elaboração</span></div>
-            <div class="mem-row"><span class="lbl">(+/–) Ajustes LACS</span><span class="val t-muted">—</span></div>
-            <div class="mem-row"><span class="lbl">Base de Cálculo CSLL</span><span class="val t-muted">—</span></div>
-            <div class="mem-row"><span class="lbl">Alíquota CSLL</span><span class="val">9,00%</span></div>
-            <div class="mem-row"><span class="lbl">CSLL Estimada</span><span class="val t-muted">—</span></div>
-            <div class="mem-row tot"><span class="lbl">CSLL Estimada Q2/2026</span><span class="val t-muted">Em apuração</span></div>
-          </div>
+          <!-- IRPJ / CSLL preenchidos via renderIrpjCsllMemCards -->
+          <div id="mem-irpj-csll" style="display:contents"></div>
         </div>
 
         <!-- Resumo consolidado -->
@@ -52829,13 +52809,70 @@ const DASHBOARD_DATA = {
       }
     }
   },
+  "irpjCsll": {
+    "regime": "Lucro Presumido",
+    "periodicidade": "trimestral",
+    "porTrimestre": {
+      "q2": {
+        "id": "q2",
+        "competencia": "2026-06",
+        "label": "2º Trimestre 2026",
+        "receitaTributavel": 16247792.89,
+        "irpj": {
+          "receitaTributavel": 16247792.89,
+          "faixas": [
+            { "pct": 8.0, "receita": 1250000.0, "base": 100000.0 },
+            { "pct": 8.8, "receita": 14997792.89, "base": 1319805.77 },
+            { "pct": 32.0, "receita": 393310.54, "base": 125859.37 }
+          ],
+          "basePresuncao": 1545665.15,
+          "outrasReceitas": {
+            "itens": [
+              { "descricao": "Juros recebidos", "valor": 22016.12 },
+              { "descricao": "Descontos obtidos", "valor": 48.01 },
+              { "descricao": "Juros sobre aplicações financeiras", "valor": 529395.24 },
+              { "descricao": "Outras receitas financeiras", "valor": 318129.75 }
+            ],
+            "total": 869589.12
+          },
+          "baseCalculo": 2415254.27,
+          "aliquota": 15.0,
+          "debitos": 362288.14,
+          "adicional": {
+            "basePresuncao": 1545665.15,
+            "limiteIsento": 60000.0,
+            "parcelaExcedente": 1485665.15,
+            "aliquota": 10.0,
+            "valor": 148566.51
+          },
+          "irrf": 221399.30,
+          "aRecolher": 289455.35,
+          "cota": 96485.12
+        },
+        "csll": {
+          "receitaTributavel": 16247792.89,
+          "faixas": [
+            { "pct": 12.0, "receita": 1250000.0, "base": 150000.0 },
+            { "pct": 13.2, "receita": 14997792.89, "base": 1979708.66 },
+            { "pct": 32.0, "receita": 393310.54, "base": 125859.37 }
+          ],
+          "baseCalculo": 2255568.03,
+          "aliquota": 9.0,
+          "debitos": 203001.12,
+          "aRecolher": 203001.12,
+          "cota": 67667.04
+        },
+        "fonte": "Demonstrativo IRPJ e CSLL 2º Trimestre 2026 — Lucro Presumido"
+      }
+    }
+  },
   "pendentes": {
     "dre": true,
     "balancete": false,
     "fornecedores": true,
     "pessoal": true,
-    "irpj": true,
-    "csll": true,
+    "irpj": false,
+    "csll": false,
     "recebimentos": true
   }
 };
@@ -54572,6 +54609,7 @@ function renderImpostosEvolution() {
     const ap = pack.apuracao;
     const rb = pack.receitaBruta;
     const lbl = fiscalDisplayLabel(mesKey);
+    const fed = getIrpjCsllPack(mesKey);
     const val = validateApuracaoPack(pack);
     setText('#tax-sec-competencia', lbl);
     setText('#tax-foot-icms', 'Apuracao ' + lbl);
@@ -54594,6 +54632,7 @@ function renderImpostosEvolution() {
         if (prev) prev.textContent = c.prev;
       }
     });
+    updateIrpjCsllTaxCards(fed);
     const evSub = document.getElementById('tax-chart-ev-sub');
     if (evSub) {
       evSub.textContent = mesKey === 'total'
@@ -54604,10 +54643,12 @@ function renderImpostosEvolution() {
     if (partTtl) partTtl.textContent = 'Participacao sobre Receita Bruta \u2014 ' + lbl;
     const partSub = document.getElementById('tax-chart-part-sub');
     if (partSub) partSub.textContent = '% de cada tributo apurado sobre RB de R$ ' + fmt(rb) + ' (' + lbl + ')';
+    const fedRec = fed ? (fed.irpj.aRecolher || 0) + (fed.csll.aRecolher || 0) : 0;
     setFiscalDataStatus(
       'tax-data-status',
       val,
-      'Conferido: apuracao fiscal coerente \u2014 total a recolher R$ ' + fmt(val.sumRec) + ' (' + lbl + ')',
+      'Conferido: apuracao fiscal coerente \u2014 total a recolher R$ ' + fmt(val.sumRec + fedRec) +
+        (fed ? ' (inclui IRPJ/CSLL ' + irpjCsllTrimLabel(fed) + ')' : '') + ' (' + lbl + ')',
       'Divergencia na apuracao: soma a recolher R$ ' + fmt(val.sumRec) + ' vs deducoes R$ ' + fmt(val.deducoes)
     );
     const partData = pack.impostosTabela.map((t) => (rb > 0 ? +((t.apurado / rb) * 100).toFixed(2) : 0));
@@ -54629,19 +54670,140 @@ function renderImpostosEvolution() {
     return '<div class="mem-row' + (cls ? ' ' + cls : '') + '"><span class="lbl">' + lbl + '</span><span class="val">R$ ' + fmt(val) + '</span></div>';
   }
 
+  function memRowText(lbl, val, cls) {
+    return '<div class="mem-row' + (cls ? ' ' + cls : '') + '"><span class="lbl">' + lbl + '</span><span class="val">' + val + '</span></div>';
+  }
+
+  function pctLabel(p) {
+    return (p != null ? Number(p).toFixed(2).replace('.', ',') : '—') + '%';
+  }
+
+  function getIrpjCsllPack(mesKey) {
+    const root = D().irpjCsll;
+    if (!root || !root.porTrimestre) return null;
+    const key = mesKey || appMesFiscal;
+    if (key === 'q2') return root.porTrimestre.q2 || null;
+    if (key === 'q1') return root.porTrimestre.q1 || null;
+    if (key === 'total') return root.porTrimestre.q2 || null;
+    if (key) {
+      const mm = mmOfKey(key);
+      if (['04', '05', '06'].includes(mm)) return root.porTrimestre.q2 || null;
+    }
+    return null;
+  }
+
+  function irpjCsllTrimLabel(pack) {
+    if (!pack) return '';
+    return pack.label || (pack.id === 'q2' ? '2º Trimestre 2026' : pack.id || '');
+  }
+
+  function renderIrpjCsllMemCards(pack) {
+    if (!pack) {
+      return '<div class="mem-card" style="grid-column:1/-1;opacity:.7">' +
+        '<div class="mem-card-head"><span class="fw7 t-muted">IRPJ / CSLL</span><span class="chip gy">Pendente</span></div>' +
+        memRowText('Status', 'Demonstrativo trimestral não disponível para esta competência') +
+        '</div>';
+    }
+    const trimLbl = irpjCsllTrimLabel(pack);
+    const irpj = pack.irpj || {};
+    const csll = pack.csll || {};
+    const adic = irpj.adicional || {};
+    const outras = irpj.outrasReceitas || {};
+
+    let irpjHtml = '<div class="mem-card">' +
+      '<div class="mem-card-head"><span style="color:var(--cyan)" class="fw7">IRPJ — Lucro Presumido</span><span class="chip cy">Trimestral</span></div>' +
+      memRowText('Apuração', trimLbl, 'hl') +
+      memRow('Receita tributável', irpj.receitaTributavel);
+    (irpj.faixas || []).forEach((f) => {
+      irpjHtml += memRow('Presunção ' + pctLabel(f.pct) + ' s/ R$ ' + fmt(f.receita), f.base);
+    });
+    irpjHtml += memRow('Base de presunção IRPJ', irpj.basePresuncao, 'hl');
+    (outras.itens || []).forEach((item) => {
+      irpjHtml += memRow(item.descricao, item.valor);
+    });
+    irpjHtml += memRow('Total outras receitas', outras.total || 0) +
+      memRow('Base de cálculo IRPJ', irpj.baseCalculo, 'hl') +
+      memRowText('Alíquota básica', pctLabel(irpj.aliquota)) +
+      memRow('IRPJ 15%', irpj.debitos) +
+      memRow('Adicional 10% s/ > R$60k/tri', adic.valor) +
+      memRow('(-) IRRF', irpj.irrf) +
+      memRow('IRPJ a pagar', irpj.aRecolher, 'tot') +
+      memRow('Cota (÷3)', irpj.cota) +
+      '</div>';
+
+    let csllHtml = '<div class="mem-card">' +
+      '<div class="mem-card-head"><span style="color:var(--orange)" class="fw7">CSLL — Lucro Presumido</span><span class="chip or">Trimestral</span></div>' +
+      memRowText('Apuração', trimLbl, 'hl') +
+      memRow('Receita tributável', csll.receitaTributavel);
+    (csll.faixas || []).forEach((f) => {
+      csllHtml += memRow('Presunção ' + pctLabel(f.pct) + ' s/ R$ ' + fmt(f.receita), f.base);
+    });
+    csllHtml += memRow('Base de cálculo CSLL', csll.baseCalculo, 'hl') +
+      memRowText('Alíquota CSLL', pctLabel(csll.aliquota)) +
+      memRow('CSLL 9%', csll.debitos) +
+      memRow('CSLL a pagar', csll.aRecolher, 'tot') +
+      memRow('Cota (÷3)', csll.cota) +
+      '</div>';
+
+    return irpjHtml + csllHtml;
+  }
+
+  function updateIrpjCsllTaxCards(fed) {
+    const irpjCur = document.getElementById('tax-irpj-cur');
+    const irpjPrev = document.getElementById('tax-irpj-prev');
+    const irpjFoot = document.getElementById('tax-foot-irpj');
+    const csllCur = document.getElementById('tax-csll-cur');
+    const csllPrev = document.getElementById('tax-csll-prev');
+    const csllFoot = document.getElementById('tax-foot-csll');
+    if (!irpjCur || !csllCur) return;
+    if (!fed) {
+      irpjCur.className = 'tax-cur t-muted';
+      irpjCur.style.fontSize = '18px';
+      irpjCur.textContent = 'Sem dado';
+      if (irpjPrev) irpjPrev.textContent = 'Demonstrativo só no 2º trimestre';
+      if (irpjFoot) irpjFoot.textContent = '—';
+      csllCur.className = 'tax-cur t-muted';
+      csllCur.style.fontSize = '18px';
+      csllCur.textContent = 'Sem dado';
+      if (csllPrev) csllPrev.textContent = 'Demonstrativo só no 2º trimestre';
+      if (csllFoot) csllFoot.textContent = '—';
+      return;
+    }
+    const trimLbl = irpjCsllTrimLabel(fed);
+    irpjCur.className = 'tax-cur';
+    irpjCur.style.color = 'var(--cyan)';
+    irpjCur.style.fontSize = '';
+    irpjCur.textContent = 'R$ ' + fmt(fed.irpj.aRecolher);
+    if (irpjPrev) {
+      irpjPrev.textContent = 'Lucro Presumido · Adicional R$ ' + fmt(fed.irpj.adicional?.valor || 0) +
+        ' · IRRF R$ ' + fmt(fed.irpj.irrf || 0);
+    }
+    if (irpjFoot) irpjFoot.textContent = trimLbl;
+    csllCur.className = 'tax-cur';
+    csllCur.style.color = 'var(--orange)';
+    csllCur.style.fontSize = '';
+    csllCur.textContent = 'R$ ' + fmt(fed.csll.aRecolher);
+    if (csllPrev) csllPrev.textContent = 'Lucro Presumido · BC R$ ' + fmt(fed.csll.baseCalculo);
+    if (csllFoot) csllFoot.textContent = trimLbl;
+  }
+
 function renderMemoria(mesKey) {
     const pack = getFiscalPack(mesKey);
     if (!pack) return;
     const ap = pack.apuracao;
     const lbl = fiscalDisplayLabel(mesKey);
+    const fed = getIrpjCsllPack(mesKey);
     const val = validateApuracaoPack(pack);
+    const fedRec = fed ? (fed.irpj.aRecolher || 0) + (fed.csll.aRecolher || 0) : 0;
     setText('#mem-sec-competencia', lbl);
-    setText('#mem-sec-sub', 'Fonte: Livros ENTRADA-SAIDA \u2014 ' + lbl);
+    setText('#mem-sec-sub', 'Fonte: Livros ENTRADA-SAIDA' +
+      (fed ? ' — IRPJ/CSLL ' + irpjCsllTrimLabel(fed) : '') + ' — ' + lbl);
     setText('#mem-table-ttl', 'Resumo Consolidado \u2014 ' + lbl);
     setFiscalDataStatus(
       'mem-data-status',
       val,
-      'Conferido: memoria de calculo alinhada \u2014 total a recolher R$ ' + fmt(val.sumRec) + ' (' + lbl + ')',
+      'Conferido: memoria de calculo alinhada \u2014 total a recolher R$ ' + fmt(val.sumRec + fedRec) +
+        (fed ? ' (inclui IRPJ/CSLL)' : '') + ' (' + lbl + ')',
       'Divergencia na memoria: soma a recolher R$ ' + fmt(val.sumRec) + ' vs deducoes R$ ' + fmt(val.deducoes)
     );
     const grids = {
@@ -54675,6 +54837,8 @@ function renderMemoria(mesKey) {
       const el = document.getElementById(id);
       if (el) el.innerHTML = grids[id].map(([l, v, c]) => memRow(l, v, c)).join('');
     });
+    const fedHost = document.getElementById('mem-irpj-csll');
+    if (fedHost) fedHost.innerHTML = renderIrpjCsllMemCards(fed);
     const rb = pack.receitaBruta;
     const rows = [
       { tributo: 'ICMS', apurado: ap.icms.debitoSaidas, credito: ap.icms.creditoEntradas + ap.icms.outrosCreditos, recolher: ap.icms.aRecolher, chip: 'bl' },
@@ -54683,6 +54847,12 @@ function renderMemoria(mesKey) {
       { tributo: 'COFINS', apurado: ap.cofins.debitoSaidas, credito: ap.cofins.creditoEntradas + ap.cofins.outrosCreditos, recolher: ap.cofins.aRecolher, chip: 'ye' },
       { tributo: 'IPI', apurado: ap.ipi.debitoSaidas, credito: ap.ipi.creditoEntradas, recolher: ap.ipi.aRecolher, chip: 'or' },
     ];
+    if (fed) {
+      rows.push(
+        { tributo: 'IRPJ', apurado: fed.irpj.debitos, credito: fed.irpj.irrf || 0, recolher: fed.irpj.aRecolher, chip: 'cy', venc: irpjCsllTrimLabel(fed) },
+        { tributo: 'CSLL', apurado: fed.csll.debitos, credito: 0, recolher: fed.csll.aRecolher, chip: 'or', venc: irpjCsllTrimLabel(fed) }
+      );
+    }
     const memTbody = document.getElementById('mem-obrigacoes-tbody');
     if (memTbody) {
       memTbody.innerHTML = '';
@@ -54691,12 +54861,12 @@ function renderMemoria(mesKey) {
         totAp += r.apurado; totCred += r.credito; totRec += r.recolher;
         const p = rb > 0 ? ((r.recolher / rb) * 100).toFixed(2) : '0.00';
         const tr = document.createElement('tr');
-        tr.innerHTML = '<td class="fw7">' + r.tributo + '</td><td>' + lbl + '</td><td class="r">R$ ' + fmt(r.apurado) + '</td><td class="r t-success">' + fmtCredito(r.credito) + '</td><td class="r td-val">R$ ' + fmt(r.recolher) + '</td><td class="r"><span class="chip ' + r.chip + '">' + p + '%</span></td>';
+        tr.innerHTML = '<td class="fw7">' + r.tributo + '</td><td>' + (r.venc || lbl) + '</td><td class="r">R$ ' + fmt(r.apurado) + '</td><td class="r t-success">' + fmtCredito(r.credito) + '</td><td class="r td-val">R$ ' + fmt(r.recolher) + '</td><td class="r"><span class="chip ' + r.chip + '">' + p + '%</span></td>';
         memTbody.appendChild(tr);
       });
       const trTot = document.createElement('tr');
       trTot.style.background = 'rgba(34,163,41,0.07)';
-      trTot.innerHTML = '<td colspan="2" class="fw8">TOTAL FISCAL</td><td class="fw8">R$ ' + fmt(totAp) + '</td><td class="r fw8 t-success">R$ (' + fmt(totCred) + ')</td><td class="r fw8 t-danger">R$ ' + fmt(totRec) + '</td><td class="r fw8">' + (rb > 0 ? ((totRec / rb) * 100).toFixed(2) : '0') + '%</td>';
+      trTot.innerHTML = '<td colspan="2" class="fw8">TOTAL FISCAL' + (fed ? ' (c/ IRPJ/CSLL)' : '') + '</td><td class="fw8">R$ ' + fmt(totAp) + '</td><td class="r fw8 t-success">R$ (' + fmt(totCred) + ')</td><td class="r fw8 t-danger">R$ ' + fmt(totRec) + '</td><td class="r fw8">' + (rb > 0 ? ((totRec / rb) * 100).toFixed(2) : '0') + '%</td>';
       memTbody.appendChild(trTot);
     }
     syncFiscalMesBars(mesKey);
