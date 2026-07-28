@@ -25330,17 +25330,25 @@ function escHtml(v) {
 }
 
 function openDrilldown(cfop, ctx) {
-  if (!ctx || !ctx.data) return;
-  if (activeDrilldownCfop === cfop) { closeDrilldown(); return; }
-  activeDrilldownCfop = cfop;
-  const item = (ctx.data.cfop_entradas || []).find((d) => d.cfop === cfop);
-  if (!item) return;
+  if (!ctx || !ctx.data) {
+    alert('Contexto da unidade nao disponivel. Selecione a unidade e abra Finalidade novamente.');
+    return;
+  }
+  const cf = String(cfop == null ? '' : cfop);
+  if (activeDrilldownCfop === cf) { closeDrilldown(); return; }
+  activeDrilldownCfop = cf;
+  const item = (ctx.data.cfop_entradas || []).find((d) => String(d.cfop) === cf);
+  if (!item) {
+    alert('CFOP ' + cf + ' nao encontrado nos dados da unidade ativa.');
+    activeDrilldownCfop = null;
+    return;
+  }
   const panel = document.getElementById('drilldown-panel');
   const title = document.getElementById('dd-title');
   const sub = document.getElementById('dd-sub');
   const tbody = document.getElementById('dd-tbody');
   if (!panel || !tbody) return;
-  if (title) title.textContent = 'CFOP ' + cfop + ' — ' + item.descricao;
+  if (title) title.textContent = 'CFOP ' + cf + ' — ' + item.descricao;
   if (sub) sub.textContent = (ctx.label ? ctx.label + ' · ' : '') + 'Finalidade: ' + item.finalidade + ' | Total: ' + brl(item.total);
   const forn = item.parties || [];
   if (!forn.length) {
@@ -25356,7 +25364,7 @@ function openDrilldown(cfop, ctx) {
     }).join('');
   }
   panel.style.display = 'block';
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function closeDrilldown() {
@@ -25364,6 +25372,9 @@ function closeDrilldown() {
   if (panel) panel.style.display = 'none';
   activeDrilldownCfop = null;
 }
+
+window.openDrilldown = openDrilldown;
+window.closeDrilldown = closeDrilldown;
 
 function openSupplierModal(ctx) {
   if (!ctx || !ctx.data) {

@@ -286,14 +286,22 @@
     /* VENDAS — seletor mes margens */
     .vd-mes-bar { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; align-items:center; }
     .vd-mes-chip {
-      padding:8px 14px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer;
+      display:inline-flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+      padding:7px 12px; border-radius:16px; font-size:12px; font-weight:600; cursor:pointer;
       border:1px solid var(--border); background:rgba(255,255,255,0.04); color:var(--text-sec);
-      transition:all .2s ease; font-family:inherit;
+      transition:all .2s ease; font-family:inherit; line-height:1.15; min-width:72px;
+    }
+    .vd-mes-chip-lbl { display:block; }
+    .vd-mes-chip-val {
+      display:block; font-size:10px; font-weight:700; color:var(--text-muted); letter-spacing:0.01em;
     }
     .vd-mes-chip:hover { border-color:var(--accent); color:var(--text); }
+    .vd-mes-chip:hover .vd-mes-chip-val { color:var(--text-sec); }
     .vd-mes-chip.active { background:rgba(34,163,41,0.2); border-color:var(--accent); color:var(--accent); }
+    .vd-mes-chip.active .vd-mes-chip-val { color:var(--accent); }
     .vd-mes-chip.tot { border-color:rgba(139,92,246,0.4); }
     .vd-mes-chip.tot.active { background:rgba(139,92,246,0.2); border-color:var(--purple); color:var(--purple); }
+    .vd-mes-chip.tot.active .vd-mes-chip-val { color:var(--purple); }
     .vd-mes-chip.in-trim { border-color:rgba(34,163,41,0.45); color:var(--text); }
     .vd-mes-chip.dim { opacity:0.42; }
     .vd-mes-chip.dim:hover { opacity:0.75; }
@@ -984,32 +992,32 @@
           </div>
         </div>
 
-        <!-- Tabela CFOP detalhada com drilldown -->
-        <div class="table-card">
-          <div class="table-head">
-            <div><div class="ttl">Detalhamento por CFOP — Clique para expandir fornecedores</div><div class="sub">Cada CFOP possui sua finalidade fiscal e créditos tributários permitidos</div></div>
-          </div>
-          <div class="tbl-scroll">
-            <table id="tbl-cfop">
-              <thead><tr><th>CFOP</th><th>Descrição</th><th>Finalidade</th><th>Créd. PIS/COFINS</th><th class="r">Nº NFs</th><th class="r">Total (R$)</th><th class="r">% Total</th><th class="c">Detalhes</th></tr></thead>
-              <tbody id="cfop-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Drilldown modal (expandido inline) -->
+        <!-- Drilldown inline: acima da tabela para ficar visível ao clicar em Ver -->
         <div id="drilldown-panel" style="display:none;background:var(--bg-card);border:1px solid var(--border-accent);border-radius:var(--radius);padding:20px;margin-bottom:24px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
             <div>
               <div id="dd-title" style="font-size:16px;font-weight:700;"></div>
               <div id="dd-sub" style="font-size:12px;color:var(--text-muted);margin-top:4px;"></div>
             </div>
-            <button onclick="closeDrilldown()" style="background:var(--bg-card-hover);border:1px solid var(--border);color:var(--text-sec);padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;">Fechar</button>
+            <button type="button" onclick="closeDrilldown()" style="background:var(--bg-card-hover);border:1px solid var(--border);color:var(--text-sec);padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;">Fechar</button>
           </div>
           <div class="tbl-scroll">
             <table id="tbl-drilldown">
               <thead><tr><th>#</th><th>Fornecedor</th><th>CNPJ</th><th>UF</th><th class="r">Nº NFs</th><th class="r">Total (R$)</th><th class="r">% CFOP</th></tr></thead>
               <tbody id="dd-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tabela CFOP detalhada com drilldown -->
+        <div class="table-card">
+          <div class="table-head">
+            <div><div class="ttl">Detalhamento por CFOP — Clique em Ver para expandir</div><div class="sub">Cada CFOP possui sua finalidade fiscal e créditos tributários permitidos</div></div>
+          </div>
+          <div class="tbl-scroll">
+            <table id="tbl-cfop">
+              <thead><tr><th>CFOP</th><th>Descrição</th><th>Finalidade</th><th>Créd. PIS/COFINS</th><th class="r">Nº NFs</th><th class="r">Total (R$)</th><th class="r">% Total</th><th class="c">Detalhes</th></tr></thead>
+              <tbody id="cfop-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -1367,13 +1375,12 @@
         <div class="fiscal-data-status ok" id="mem-data-status">—</div>
 
         <div class="formula-box">
-          <div class="fttl"><i class="fas fa-function" style="margin-right:8px;"></i>Formulas de Apuracao – Industria / Lucro Presumido (IRPJ/CSLL)</div>
+          <div class="fttl"><i class="fas fa-function" style="margin-right:8px;"></i>Formulas de Apuracao – Lucro Real / Industria</div>
           <div class="fline">
             ICMS = Debitos de Saida – Creditos de Entrada + Outros Creditos/Debitos<br>
             PIS/COFINS = Debitos de Saida – Creditos de Entrada + Outros Creditos<br>
             IPI = Debitos de Saida – Creditos de Entrada<br>
-            IRPJ = (presunção + outras receitas) × 15% + adicional − IRRF<br>
-            CSLL = presunção × 9%
+            IRPJ/CSLL = Lucro Presumido / bases do calculo trimestral (CONTABIL/IRPJ-CSLL)
           </div>
         </div>
 
@@ -75933,41 +75940,16 @@ const DASHBOARD_DATA = {
     "trimestre": 2,
     "ano": 2026,
     "arquivo": "CALCULO IRPJ E CSLL 2T 2026.xlsx",
-    "regime": "Lucro Presumido",
-    "receitaTributavel": 16247792.89,
-    "basePresuncao": 1545665.15,
-    "baseIrpj": 2415254.27,
-    "baseCsll": 2255568.03,
+    "baseIrpj": 1371333.92,
+    "baseCsll": 1994071.21,
     "aliquotaIrpj": 15.0,
     "aliquotaAdicional": 10.0,
     "aliquotaCsll": 9.0,
     "adicionalLimite": 60000.0,
-    "faixasIrpj": [
-      { "pct": 8.0, "receita": 1250000.0, "base": 100000.0 },
-      { "pct": 8.8, "receita": 14997792.89, "base": 1319805.77 },
-      { "pct": 32.0, "receita": 393310.54, "base": 125859.37 }
-    ],
-    "faixasCsll": [
-      { "pct": 12.0, "receita": 1250000.0, "base": 150000.0 },
-      { "pct": 13.2, "receita": 14997792.89, "base": 1979708.66 },
-      { "pct": 32.0, "receita": 393310.54, "base": 125859.37 }
-    ],
-    "outrasReceitas": {
-      "itens": [
-        { "descricao": "Juros recebidos", "valor": 22016.12 },
-        { "descricao": "Descontos obtidos", "valor": 48.01 },
-        { "descricao": "Juros sobre aplicações financeiras", "valor": 529395.24 },
-        { "descricao": "Outras receitas financeiras", "valor": 318129.75 }
-      ],
-      "total": 869589.12
-    },
-    "irpj15": 362288.14,
-    "adicionalIrpj": 148566.51,
-    "irrf": 221399.30,
-    "irpjTotal": 289455.35,
-    "cotaIrpj": 96485.12,
-    "csll": 203001.12,
-    "cotaCsll": 67667.04,
+    "irpj15": 186821.18,
+    "adicionalIrpj": 118547.45,
+    "irpjTotal": 305368.63,
+    "csll": 168139.06,
     "meses": [
       "2026-04",
       "2026-05",
@@ -76896,6 +76878,7 @@ const DASHBOARD_DATA = {
       totalLabel: 'Total',
       onSelect: (m) => setAppMesFiscal(m),
       skipInitialSelect: true,
+      valueFn: valueFnForFiscalBar(containerId),
     });
   }
 
@@ -76950,6 +76933,87 @@ const DASHBOARD_DATA = {
     FISCAL_MES_BAR_IDS.forEach((id) => setMesBarActive(id, mesKey));
   }
 
+  function chipValueHtml(label, value) {
+    const lbl = '<span class="vd-mes-chip-lbl">' + label + '</span>';
+    if (value == null || value === '' || (typeof value === 'number' && isNaN(value))) return lbl;
+    return lbl + '<span class="vd-mes-chip-val">' + fmtK(value) + '</span>';
+  }
+
+  function fiscalMetricValue(mesKey, metric) {
+    const pack = getFiscalPack(mesKey);
+    if (!pack) return null;
+    const v = pack[metric];
+    return v == null || isNaN(v) ? null : Number(v);
+  }
+
+  function sumDreReceita(keys) {
+    const dre = D().dre;
+    if (!dre || !dre.porMes) return null;
+    let sum = 0;
+    let n = 0;
+    keys.forEach((k) => {
+      const t = dre.porMes[k] && dre.porMes[k].totais;
+      if (t && t.receita != null) {
+        sum += t.receita;
+        n += 1;
+      }
+    });
+    return n ? sum : null;
+  }
+
+  function dreMetricValue(mesKey) {
+    const dre = D().dre;
+    if (!dre) return null;
+    if (mesKey === 'total') return sumDreReceita(dre.meses || []);
+    if (mesKey === 'q1' || mesKey === 'q2') {
+      const keys = (dre.meses || []).filter((m) => {
+        const mm = mmOfKey(m);
+        return mesKey === 'q1' ? ['01', '02', '03'].includes(mm) : !['01', '02', '03'].includes(mm);
+      });
+      return sumDreReceita(keys);
+    }
+    const t = dre.porMes && dre.porMes[mesKey] && dre.porMes[mesKey].totais;
+    return t && t.receita != null ? t.receita : null;
+  }
+
+  function mapaMetricValue(mesKey) {
+    const mapa = D().mapaAgrupamento;
+    if (!mapa || !mapa.totaisPorMes) return null;
+    if (mesKey === 'total') {
+      return (mapa.meses || []).reduce((a, m) => a + (mapa.totaisPorMes[m] || 0), 0);
+    }
+    if (mesKey === 'q1' || mesKey === 'q2') {
+      const keys = (mapa.meses || []).filter((m) => {
+        const mm = mmOfKey(m);
+        return mesKey === 'q1' ? ['01', '02', '03'].includes(mm) : !['01', '02', '03'].includes(mm);
+      });
+      return keys.reduce((a, m) => a + (mapa.totaisPorMes[m] || 0), 0);
+    }
+    return mapa.totaisPorMes[mesKey] != null ? mapa.totaisPorMes[mesKey] : null;
+  }
+
+  function margensMetricValue(mesKey) {
+    const pack = getMargensPack(mesKey);
+    if (!pack || !pack.totais) return null;
+    return pack.totais.vendas != null ? pack.totais.vendas : null;
+  }
+
+  const FISCAL_BAR_METRIC = {
+    'vg-mes-bar': 'receitaBruta',
+    'vd-fiscal-mes-bar': 'receitaBruta',
+    'cp-mes-bar': 'totalCompras',
+    'fn-mes-bar': 'totalCompras',
+    'tax-mes-bar': 'deducoes',
+    'mem-mes-bar': 'deducoes',
+  };
+
+  function valueFnForFiscalBar(containerId) {
+    if (containerId === 'dre-mes-bar') return (key) => dreMetricValue(key);
+    const metric = FISCAL_BAR_METRIC[containerId];
+    if (!metric) return null;
+    return (key) => fiscalMetricValue(key, metric);
+  }
+
   function buildMesBar(containerId, options) {
     const bar = document.getElementById(containerId);
     if (!bar) return;
@@ -76958,6 +77022,8 @@ const DASHBOARD_DATA = {
     const q1 = meses.filter((m) => ['01', '02', '03'].includes(mmOfKey(m)));
     const q2 = meses.filter((m) => !q1.includes(m));
     const trimCtx = activeTrimContextSchu();
+    const valueFn = typeof options.valueFn === 'function' ? options.valueFn : null;
+    const showTrim = options.showTrim !== false;
     bar.innerHTML = '';
 
     const addBtn = (key, label, extras) => {
@@ -76974,7 +77040,9 @@ const DASHBOARD_DATA = {
       }
       btn.className = classes.join(' ');
       btn.setAttribute('data-mes', key);
-      btn.textContent = label;
+      const val = valueFn ? valueFn(key) : null;
+      btn.innerHTML = chipValueHtml(label, val);
+      btn.title = label + (val != null && !isNaN(val) ? ' — ' + fmtK(val) : '');
       btn.onclick = () => {
         if (options.syncGlobal) setAppMesFiscal(key);
         else if (options.onSelect) options.onSelect(key);
@@ -76991,7 +77059,7 @@ const DASHBOARD_DATA = {
     if (options.showTotal !== false && meses.length) {
       addBtn(options.totalKey || 'total', options.totalLabel || 'Total', 'tot');
     }
-    if (q1.length) {
+    if (showTrim && q1.length) {
       sep();
       addBtn('q1', '1º Trim', 'tot');
       q1.forEach((m) => {
@@ -76999,7 +77067,7 @@ const DASHBOARD_DATA = {
         addBtn(m, mesLabels[i] || m, '');
       });
     }
-    if (q2.length) {
+    if (showTrim && q2.length) {
       sep();
       addBtn('q2', '2º Trim', 'tot');
       q2.forEach((m) => {
@@ -77007,8 +77075,12 @@ const DASHBOARD_DATA = {
         addBtn(m, mesLabels[i] || m, '');
       });
     }
-    if (!q1.length && !q2.length) {
-      meses.forEach((m, i) => addBtn(m, mesLabels[i] || m, ''));
+    if (!showTrim || (!q1.length && !q2.length)) {
+      if (!showTrim) {
+        meses.forEach((m, i) => addBtn(m, mesLabels[i] || m, ''));
+      } else if (!q1.length && !q2.length) {
+        meses.forEach((m, i) => addBtn(m, mesLabels[i] || m, ''));
+      }
     }
 
     const active = options.defaultKey || meses[meses.length - 1];
@@ -77031,6 +77103,7 @@ const DASHBOARD_DATA = {
       syncGlobal: !onSelect,
       onSelect: onSelect,
       skipInitialSelect: skipInitialSelect,
+      valueFn: valueFnForFiscalBar(containerId),
     });
   }
 
@@ -77083,16 +77156,20 @@ const DASHBOARD_DATA = {
     if (!sel || !fp.meses.length) return;
     const q1 = fp.meses.filter((m) => ['01', '02', '03'].includes(mmOfKey(m)));
     const q2 = fp.meses.filter((m) => !q1.includes(m));
+    const optLabel = (key, base) => {
+      const v = fiscalMetricValue(key, 'receitaBruta');
+      return base + (v != null ? ' — ' + fmtK(v) : '');
+    };
     let html = '<optgroup label="Período">';
-    html += '<option value="total">' + fiscalPeriodTotalLabel() + '</option>';
-    if (q1.length) html += '<option value="q1">1º Trimestre 2026</option>';
-    if (q2.length) html += '<option value="q2">2º Trimestre 2026</option>';
+    html += '<option value="total">' + optLabel('total', fiscalPeriodTotalLabel()) + '</option>';
+    if (q1.length) html += '<option value="q1">' + optLabel('q1', '1º Trimestre 2026') + '</option>';
+    if (q2.length) html += '<option value="q2">' + optLabel('q2', '2º Trimestre 2026') + '</option>';
     html += '</optgroup>';
     if (q1.length) {
       html += '<optgroup label="1º Trimestre — meses">';
       q1.forEach((m) => {
         const i = fp.meses.indexOf(m);
-        html += '<option value="' + m + '">' + (fp.mesLabels[i] || m) + '</option>';
+        html += '<option value="' + m + '">' + optLabel(m, fp.mesLabels[i] || m) + '</option>';
       });
       html += '</optgroup>';
     }
@@ -77100,12 +77177,19 @@ const DASHBOARD_DATA = {
       html += '<optgroup label="2º Trimestre — meses">';
       q2.forEach((m) => {
         const i = fp.meses.indexOf(m);
-        html += '<option value="' + m + '">' + (fp.mesLabels[i] || m) + '</option>';
+        html += '<option value="' + m + '">' + optLabel(m, fp.mesLabels[i] || m) + '</option>';
       });
       html += '</optgroup>';
     }
     sel.innerHTML = html;
-    const def = fp.meses[fp.meses.length - 1];
+    // Preferir mes com compras/CFOPs (ex.: Mai); ultimo mes pode estar zerado (Jun).
+    const withCompras = fp.meses.filter((m) => {
+      const p = fp.porMes && fp.porMes[m];
+      return p && ((p.totalCompras || 0) > 0 || (p.cfopEntradas || []).length > 0);
+    });
+    const def = D().competencia && fp.meses.includes(D().competencia)
+      ? D().competencia
+      : (withCompras[withCompras.length - 1] || fp.meses[fp.meses.length - 1]);
     appMesFiscal = def;
     sel.value = def;
     sel.onchange = () => setAppMesFiscal(sel.value);
@@ -77349,31 +77433,57 @@ function renderVisaoGeralCharts() {
     activeDrilldownCfop = null;
   };
   window.openDrilldown = function (cfop) {
-    if (activeDrilldownCfop === cfop) { closeDrilldown(); return; }
-    activeDrilldownCfop = cfop;
-    const pack = getFiscalPack(appMesFiscal);
-    const item = pack && pack.cfopEntradas ? pack.cfopEntradas.find((d) => d.cfop === cfop) : null;
-    if (!item) return;
-    document.getElementById('dd-title').textContent = 'CFOP ' + cfop + ' � ' + item.descricao;
-    document.getElementById('dd-sub').textContent = 'Finalidade: ' + item.finalidade + ' | Total: R$ ' + fmt(item.total);
-    const tbody = document.getElementById('dd-tbody');
-    tbody.innerHTML = '';
-    const forn = item.fornecedores || [];
-    if (!forn.length) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = '<td colspan="7" class="td-mute" style="text-align:center;padding:20px;">Detalhe por fornecedor indisponivel. Livro agrega por CFOP; envie SPED com entradas ou relatorio de fornecedores.</td>';
-      tbody.appendChild(tr);
-    } else {
-      forn.forEach((f, i) => {
-        const p = pct(f.total, item.total);
-        const tr = document.createElement('tr');
-        tr.innerHTML = '<td>' + (i + 1) + '</td><td><div class="fw7">' + f.nome + '</div></td><td><span class="td-mute">' + f.cnpj + '</span></td><td><span class="chip bl">' + f.uf + '</span></td><td class="r">' + f.qtd + '</td><td class="r td-val">R$ ' + fmt(f.total) + '</td><td class="r">' + p + '%</td>';
-        tbody.appendChild(tr);
-      });
+    const cf = String(cfop == null ? '' : cfop);
+    if (activeDrilldownCfop === cf) {
+      window.closeDrilldown();
+      return;
     }
+    activeDrilldownCfop = cf;
+    const pack = getFiscalPack(appMesFiscal);
+    const list = pack && pack.cfopEntradas ? pack.cfopEntradas : [];
+    const item = list.find((d) => String(d.cfop) === cf) || null;
     const panel = document.getElementById('drilldown-panel');
+    const title = document.getElementById('dd-title');
+    const sub = document.getElementById('dd-sub');
+    const tbody = document.getElementById('dd-tbody');
+    if (!panel || !tbody) {
+      console.error('drilldown-panel ou dd-tbody nao encontrados');
+      return;
+    }
+    if (!item) {
+      if (title) title.textContent = 'CFOP ' + cf;
+      if (sub) sub.textContent = 'CFOP nao encontrado na competencia ativa. Selecione Mai/2026 (ou outro mes com entradas).';
+      tbody.innerHTML = '<tr><td colspan="7" class="td-mute" style="text-align:center;padding:20px;">Sem dados deste CFOP no periodo selecionado.</td></tr>';
+      panel.style.display = 'block';
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    if (title) title.textContent = 'CFOP ' + cf + ' \u2014 ' + (item.descricao || '');
+    let forn = (item.fornecedores || []).filter((f) => f && (f.nome || f.cnpj || f.total));
+    const agregado = !forn.length;
+    if (agregado) {
+      forn = [{
+        nome: 'Agregado do livro ICMS (CNPJ nao disponivel neste pacote)',
+        cnpj: '\u2014',
+        uf: item.uf || '\u2014',
+        qtd: item.qtd || 1,
+        total: item.total || 0,
+      }];
+    }
+    if (sub) {
+      sub.textContent = 'Finalidade: ' + (item.finalidade || '\u2014') +
+        ' | Total: R$ ' + fmt(item.total) +
+        (agregado ? ' | Detalhe por CNPJ indisponivel (livro agrega por CFOP)' : '');
+    }
+    tbody.innerHTML = '';
+    forn.forEach((f, i) => {
+      const p = pct(f.total, item.total);
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + (i + 1) + '</td><td><div class="fw7">' + (f.nome || '\u2014') + '</div></td><td><span class="td-mute">' + (f.cnpj || '\u2014') + '</span></td><td><span class="chip bl">' + (f.uf || '\u2014') + '</span></td><td class="r">' + (f.qtd || 0) + '</td><td class="r td-val">R$ ' + fmt(f.total) + '</td><td class="r">' + p + '%</td>';
+      tbody.appendChild(tr);
+    });
     panel.style.display = 'block';
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
 function renderFinalidade(mesKey) {
@@ -77520,17 +77630,78 @@ function renderVendasFiscal(mesKey) {
 
   let vdMargMesKey = null;
 
+  function margensMonthKeys(mesKey) {
+    const marg = D().margens;
+    if (!marg || !marg.meses) return [];
+    if (mesKey === 'total') return marg.meses.slice();
+    if (mesKey === 'q1') return marg.meses.filter((m) => ['01', '02', '03'].includes(mmOfKey(m)));
+    if (mesKey === 'q2') return marg.meses.filter((m) => !['01', '02', '03'].includes(mmOfKey(m)));
+    return marg.meses.indexOf(mesKey) >= 0 ? [mesKey] : [];
+  }
+
+  function mergeMargensList(items, keyFn) {
+    const map = {};
+    (items || []).forEach((item) => {
+      const k = keyFn(item);
+      if (!k) return;
+      if (!map[k]) {
+        map[k] = Object.assign({}, item);
+        return;
+      }
+      const dest = map[k];
+      ['qtde', 'total', 'custo', 'lucroBruto', 'lucroLiquido'].forEach((f) => {
+        dest[f] = (dest[f] || 0) + (item[f] || 0);
+      });
+    });
+    return Object.values(map).map((row) => {
+      const vendas = row.total || 0;
+      row.margemBrutaPct = vendas > 0 ? ((row.lucroBruto || 0) / vendas) * 100 : 0;
+      row.margemLiquidaPct = vendas > 0 ? ((row.lucroLiquido || 0) / vendas) * 100 : 0;
+      return row;
+    }).sort((a, b) => (b.total || 0) - (a.total || 0));
+  }
+
+  function buildMargensAggregate(keys) {
+    const marg = D().margens;
+    if (!marg || !keys.length) return null;
+    const packs = keys.map((k) => marg.porMes && marg.porMes[k]).filter(Boolean);
+    if (!packs.length) return null;
+    const totais = { vendas: 0, custo: 0, lucroBruto: 0, lucroLiquido: 0 };
+    packs.forEach((p) => {
+      const t = p.totais || {};
+      totais.vendas += t.vendas || 0;
+      totais.custo += t.custo || 0;
+      totais.lucroBruto += t.lucroBruto || 0;
+      totais.lucroLiquido += t.lucroLiquido || 0;
+    });
+    totais.margemBrutaPct = totais.vendas > 0 ? (totais.lucroBruto / totais.vendas) * 100 : 0;
+    totais.margemLiquidaPct = totais.vendas > 0 ? (totais.lucroLiquido / totais.vendas) * 100 : 0;
+    return {
+      totais: totais,
+      produtos: mergeMargensList(packs.flatMap((p) => p.produtos || []), (p) => p.codigo || p.nome),
+      cidades: mergeMargensList(packs.flatMap((p) => p.cidades || []), (c) => (c.cidade || '') + '|' + (c.uf || '')),
+      estados: mergeMargensList(packs.flatMap((p) => p.estados || []), (e) => e.uf || e.estado || e.nome),
+    };
+  }
+
   function getMargensPack(mesKey) {
     const marg = D().margens;
     if (!marg) return null;
     if (mesKey === 'total' && marg.consolidado) return marg.consolidado;
+    if (mesKey === 'q1' || mesKey === 'q2') return buildMargensAggregate(margensMonthKeys(mesKey));
     return marg.porMes && marg.porMes[mesKey] ? marg.porMes[mesKey] : null;
   }
 
   function margPeriodLabel(mesKey) {
     const marg = D().margens;
     if (!marg) return mesKey;
-    if (mesKey === 'total') return 'Jan a Mai/2026 (consolidado)';
+    if (mesKey === 'total') {
+      const labels = marg.mesLabels || marg.meses || [];
+      if (labels.length > 1) return labels[0] + ' a ' + labels[labels.length - 1] + ' (consolidado)';
+      return 'Total consolidado';
+    }
+    if (mesKey === 'q1') return '1º Trimestre 2026';
+    if (mesKey === 'q2') return '2º Trimestre 2026';
     const i = marg.meses.indexOf(mesKey);
     return i >= 0 && marg.mesLabels ? marg.mesLabels[i] : mesKey;
   }
@@ -77814,27 +77985,19 @@ function renderVendasFiscal(mesKey) {
 
   function initMargensVendas() {
     const marg = D().margens;
-    const bar = document.getElementById('vd-marg-mes-bar');
-    if (!marg || !bar || !marg.meses || !marg.meses.length) return;
-    bar.innerHTML = '';
-    marg.meses.forEach((m, i) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'vd-mes-chip';
-      btn.setAttribute('data-mes', m);
-      btn.textContent = marg.mesLabels[i] || m;
-      btn.onclick = () => renderMargensVendas(m);
-      bar.appendChild(btn);
+    if (!marg || !marg.meses || !marg.meses.length) return;
+    const defaultKey = (D().competencia && marg.porMes[D().competencia])
+      ? D().competencia
+      : marg.meses[marg.meses.length - 1];
+    buildMesBar('vd-marg-mes-bar', {
+      meses: marg.meses,
+      mesLabels: marg.mesLabels || marg.meses,
+      defaultKey: defaultKey,
+      totalLabel: 'Total',
+      onSelect: (m) => renderMargensVendas(m),
+      valueFn: (key) => margensMetricValue(key),
     });
-    const btnTot = document.createElement('button');
-    btnTot.type = 'button';
-    btnTot.className = 'vd-mes-chip tot';
-    btnTot.setAttribute('data-mes', 'total');
-    btnTot.textContent = 'Total Jan\u2013Mai';
-    btnTot.onclick = () => renderMargensVendas('total');
-    bar.appendChild(btnTot);
-    const defaultKey = D().competencia || marg.meses[marg.meses.length - 1];
-    renderMargensVendas(marg.porMes[defaultKey] ? defaultKey : marg.meses[marg.meses.length - 1]);
+    renderMargensVendas(defaultKey);
   }
 
   let balMesKey = null;
@@ -78291,6 +78454,8 @@ function renderVendasFiscal(mesKey) {
       meses: bal.meses,
       mesLabels: bal.mesLabels,
       defaultKey: bal.meses[bal.meses.length - 1],
+      showTotal: false,
+      showTrim: false,
       onSelect: (m) => renderBalanceteMes(m),
     });
 
@@ -78381,7 +78546,7 @@ function renderImpostosEvolution() {
         if (prev) prev.textContent = c.prev;
       }
     });
-    renderIrpjCsllCards(mesKey);
+    renderIrpjCsllCards();
     const evSub = document.getElementById('tax-chart-ev-sub');
     if (evSub) {
       evSub.textContent = mesKey === 'total'
@@ -78425,150 +78590,42 @@ function renderImpostosEvolution() {
     syncFiscalMesBars(mesKey);
   }
 
-  function getIrpjCsllView(mesKey) {
-    const root = D().irpjCsll;
-    if (!root) return null;
-    const key = mesKey || appMesFiscal;
-    if (key === 'q2' || key === 'total') {
-      return {
-        mode: 'trimestre',
-        label: root.periodo || 'Q2/2026',
-        root: root,
-        irpjTotal: root.irpjTotal,
-        csll: root.csll,
-        adicionalIrpj: root.adicionalIrpj,
-        irrf: root.irrf,
-        baseCsll: root.baseCsll,
-        cotaIrpj: root.cotaIrpj,
-        cotaCsll: root.cotaCsll,
-      };
-    }
-    if (key === 'q1') return null;
-    if (key) {
-      const mm = mmOfKey(key);
-      if (['04', '05', '06'].includes(mm)) {
-        return {
-          mode: 'cota',
-          mesKey: key,
-          label: fiscalDisplayLabel(key) + ' (cota 1/3 do Q2)',
-          root: root,
-          irpjTotal: root.cotaIrpj,
-          csll: root.cotaCsll,
-          adicionalIrpj: null,
-          irrf: null,
-          baseCsll: root.baseCsll,
-          cotaIrpj: root.cotaIrpj,
-          cotaCsll: root.cotaCsll,
-        };
-      }
-    }
-    return null;
+  function renderIrpjCsllCards() {
+    const irpj = D().irpjCsll;
+    const period = (irpj && irpj.periodo) || 'Q2/2026';
+    if (!irpj) return;
+    setHTML('#tax-irpj-val', 'R$ ' + fmt(irpj.irpjTotal));
+    setText('#tax-irpj-prev', 'Base R$ ' + fmt(irpj.baseIrpj) + ' | 15% + adicional 10%');
+    setText('#tax-irpj-period', period);
+    setHTML('#tax-csll-val', 'R$ ' + fmt(irpj.csll));
+    setText('#tax-csll-prev', 'Base R$ ' + fmt(irpj.baseCsll) + ' | aliquota 9%');
+    setText('#tax-csll-period', period);
   }
 
-  function renderIrpjCsllCards(mesKey) {
-    const view = getIrpjCsllView(mesKey);
-    const irpjVal = document.getElementById('tax-irpj-val');
-    const csllVal = document.getElementById('tax-csll-val');
-    if (!view) {
-      if (irpjVal) irpjVal.textContent = 'Sem dado';
-      setText('#tax-irpj-prev', 'Demonstrativo so no 2o trimestre');
-      setText('#tax-irpj-period', '—');
-      if (csllVal) csllVal.textContent = 'Sem dado';
-      setText('#tax-csll-prev', 'Demonstrativo so no 2o trimestre');
-      setText('#tax-csll-period', '—');
-      return;
-    }
-    setHTML('#tax-irpj-val', 'R$ ' + fmt(view.irpjTotal));
-    setHTML('#tax-csll-val', 'R$ ' + fmt(view.csll));
-    setText('#tax-irpj-period', view.label);
-    setText('#tax-csll-period', view.label);
-    if (view.mode === 'cota') {
-      setText('#tax-irpj-prev', 'Cota 1/3 do Q2 · Total trimestral R$ ' + fmt(view.root.irpjTotal));
-      setText('#tax-csll-prev', 'Cota 1/3 do Q2 · Total trimestral R$ ' + fmt(view.root.csll));
-    } else {
-      setText('#tax-irpj-prev', 'Lucro Presumido · Adicional R$ ' + fmt(view.adicionalIrpj) +
-        ' · IRRF R$ ' + fmt(view.irrf || 0));
-      setText('#tax-csll-prev', 'Lucro Presumido · BC R$ ' + fmt(view.baseCsll) + ' | 9%');
-    }
-  }
-
-  function pctLbl(p) {
-    return (p != null ? Number(p).toFixed(2).replace('.', ',') : '—') + '%';
-  }
-
-  function renderIrpjCsllMemoria(mesKey) {
-    const view = getIrpjCsllView(mesKey);
+  function renderIrpjCsllMemoria() {
+    const irpj = D().irpjCsll;
+    if (!irpj) return;
+    const period = irpj.periodo || 'Q2/2026';
     const chipI = document.getElementById('mem-irpj-chip');
     const chipC = document.getElementById('mem-csll-chip');
+    if (chipI) { chipI.textContent = 'Apurado'; chipI.className = 'chip cy'; }
+    if (chipC) { chipC.textContent = 'Apurado'; chipC.className = 'chip or'; }
     const elI = document.getElementById('mem-irpj');
-    const elC = document.getElementById('mem-csll');
-    if (!view) {
-      if (chipI) { chipI.textContent = 'Pendente'; chipI.className = 'chip gy'; }
-      if (chipC) { chipC.textContent = 'Pendente'; chipC.className = 'chip gy'; }
-      if (elI) {
-        elI.innerHTML = '<div class="mem-row hl"><span class="lbl">Status</span><span class="val t-muted">Demonstrativo so no 2o trimestre</span></div>';
-      }
-      if (elC) {
-        elC.innerHTML = '<div class="mem-row hl"><span class="lbl">Status</span><span class="val t-muted">Demonstrativo so no 2o trimestre</span></div>';
-      }
-      return;
-    }
-    const root = view.root;
-    if (chipI) { chipI.textContent = view.mode === 'cota' ? 'Cota' : 'Apurado'; chipI.className = 'chip cy'; }
-    if (chipC) { chipC.textContent = view.mode === 'cota' ? 'Cota' : 'Apurado'; chipC.className = 'chip or'; }
-
-    if (view.mode === 'cota') {
-      if (elI) {
-        elI.innerHTML = ''
-          + '<div class="mem-row hl"><span class="lbl">Apuracao</span><span class="val">' + view.label + '</span></div>'
-          + memRow('IRPJ cota (1/3 do Q2)', view.irpjTotal, 'tot')
-          + '<div class="mem-row"><span class="lbl">Total trimestral IRPJ</span><span class="val">R$ ' + fmt(root.irpjTotal) + '</span></div>'
-          + '<div class="mem-row"><span class="lbl">CSLL trimestral</span><span class="val">R$ ' + fmt(root.csll) + '</span></div>';
-      }
-      if (elC) {
-        elC.innerHTML = ''
-          + '<div class="mem-row hl"><span class="lbl">Apuracao</span><span class="val">' + view.label + '</span></div>'
-          + memRow('CSLL cota (1/3 do Q2)', view.csll, 'tot')
-          + '<div class="mem-row"><span class="lbl">Total trimestral CSLL</span><span class="val">R$ ' + fmt(root.csll) + '</span></div>'
-          + '<div class="mem-row"><span class="lbl">Total trimestral IRPJ</span><span class="val">R$ ' + fmt(root.irpjTotal) + '</span></div>';
-      }
-      return;
-    }
-
-    const outras = root.outrasReceitas || {};
     if (elI) {
-      let html = ''
-        + '<div class="mem-row hl"><span class="lbl">Apuracao</span><span class="val">' + view.label + ' — Lucro Presumido</span></div>'
-        + memRow('Receita tributavel', root.receitaTributavel, '');
-      (root.faixasIrpj || []).forEach((f) => {
-        html += memRow('Presuncao ' + pctLbl(f.pct) + ' s/ R$ ' + fmt(f.receita), f.base, '');
-      });
-      html += memRow('Base de presuncao IRPJ', root.basePresuncao, 'hl');
-      (outras.itens || []).forEach((item) => {
-        html += memRow(item.descricao, item.valor, '');
-      });
-      html += memRow('Total outras receitas', outras.total || 0, '')
-        + memRow('Base de calculo IRPJ', root.baseIrpj, 'hl')
-        + memRow('IRPJ 15%', root.irpj15, '')
-        + memRow('Adicional 10% s/ > R$60k/tri', root.adicionalIrpj, '')
-        + memRow('(-) IRRF', root.irrf || 0, '')
-        + memRow('IRPJ a pagar', root.irpjTotal, 'tot')
-        + memRow('Cota (/3)', root.cotaIrpj || 0, '');
-      elI.innerHTML = html;
+      elI.innerHTML = ''
+        + '<div class="mem-row hl"><span class="lbl">Apuracao</span><span class="val">' + period + '</span></div>'
+        + memRow('Base IRPJ (trimestre)', irpj.baseIrpj, '')
+        + memRow('IRPJ 15%', irpj.irpj15, '')
+        + memRow('Adicional 10% s/ excedente', irpj.adicionalIrpj, '')
+        + memRow('IRPJ Total ' + period, irpj.irpjTotal, 'tot');
     }
+    const elC = document.getElementById('mem-csll');
     if (elC) {
-      let html = ''
-        + '<div class="mem-row hl"><span class="lbl">Apuracao</span><span class="val">' + view.label + ' — Lucro Presumido</span></div>'
-        + memRow('Receita tributavel', root.receitaTributavel, '');
-      (root.faixasCsll || []).forEach((f) => {
-        html += memRow('Presuncao ' + pctLbl(f.pct) + ' s/ R$ ' + fmt(f.receita), f.base, '');
-      });
-      html += memRow('Base de calculo CSLL', root.baseCsll, 'hl')
-        + '<div class="mem-row"><span class="lbl">Aliquota CSLL</span><span class="val">' + pctLbl(root.aliquotaCsll || 9) + '</span></div>'
-        + memRow('CSLL 9%', root.csll, '')
-        + memRow('CSLL a pagar', root.csll, 'tot')
-        + memRow('Cota (/3)', root.cotaCsll || 0, '');
-      elC.innerHTML = html;
+      elC.innerHTML = ''
+        + '<div class="mem-row hl"><span class="lbl">Apuracao</span><span class="val">' + period + '</span></div>'
+        + memRow('Base de Calculo CSLL', irpj.baseCsll, '')
+        + '<div class="mem-row"><span class="lbl">Aliquota CSLL</span><span class="val">' + (irpj.aliquotaCsll || 9).toFixed(2).replace('.', ',') + '%</span></div>'
+        + memRow('CSLL Estimada ' + period, irpj.csll, 'tot');
     }
   }
 
@@ -78576,6 +78633,7 @@ function renderImpostosEvolution() {
     buildFiscalTabMesBar('tax-mes-bar');
     renderImpostosEvolution();
     renderImpostos(appMesFiscal || getFiscal().meses[getFiscal().meses.length - 1]);
+    renderIrpjCsllCards();
   }
 
   function memRow(lbl, val, cls) {
@@ -78652,38 +78710,97 @@ function renderMemoria(mesKey) {
       trTot.innerHTML = '<td colspan="2" class="fw8">TOTAL FISCAL</td><td class="fw8">R$ ' + fmt(totAp) + '</td><td class="r fw8 t-success">R$ (' + fmt(totCred) + ')</td><td class="r fw8 t-danger">R$ ' + fmt(totRec) + '</td><td class="r fw8">' + (rb > 0 ? ((totRec / rb) * 100).toFixed(2) : '0') + '%</td>';
       memTbody.appendChild(trTot);
     }
-    renderIrpjCsllMemoria(mesKey);
+    renderIrpjCsllMemoria();
     syncFiscalMesBars(mesKey);
   }
 
   function initMemoria() {
     buildFiscalTabMesBar('mem-mes-bar');
     renderMemoria(appMesFiscal || getFiscal().meses[getFiscal().meses.length - 1]);
+    renderIrpjCsllMemoria();
+  }
+
+function resolveDreKeys(mesKey) {
+    const dreData = D().dre || {};
+    const dreMeses = dreData.meses || [];
+    if (mesKey === 'total') return { keys: dreMeses.slice(), lbl: fiscalPeriodTotalLabel(), active: 'total' };
+    if (mesKey === 'q1' || mesKey === 'q2') {
+      const keys = dreMeses.filter((m) => {
+        const mm = mmOfKey(m);
+        return mesKey === 'q1' ? ['01', '02', '03'].includes(mm) : !['01', '02', '03'].includes(mm);
+      });
+      return {
+        keys: keys,
+        lbl: mesKey === 'q1' ? '1º Trimestre 2026' : '2º Trimestre 2026',
+        active: mesKey,
+      };
+    }
+    if (mesKey && dreData.porMes && dreData.porMes[mesKey]) {
+      const i = dreMeses.indexOf(mesKey);
+      return {
+        keys: [mesKey],
+        lbl: (i >= 0 && dreData.mesLabels) ? dreData.mesLabels[i] : mesKey,
+        active: mesKey,
+      };
+    }
+    const fallback = dreMeses.length ? dreMeses[dreMeses.length - 1] : mesKey;
+    const i = dreMeses.indexOf(fallback);
+    return {
+      keys: fallback ? [fallback] : [],
+      lbl: (i >= 0 && dreData.mesLabels) ? dreData.mesLabels[i] : fiscalMesLabel(fallback),
+      active: fallback,
+    };
+  }
+
+  function buildDreAggregate(keys) {
+    const dreData = D().dre || {};
+    const packs = keys.map((k) => dreData.porMes && dreData.porMes[k]).filter(Boolean);
+    if (!packs.length) return null;
+    if (packs.length === 1) return packs[0];
+    const lineMap = {};
+    const order = [];
+    packs.forEach((p) => {
+      (p.linhas || []).forEach((ln) => {
+        if (!ln.descricao) return;
+        if (!lineMap[ln.descricao]) {
+          lineMap[ln.descricao] = { descricao: ln.descricao, valor: 0 };
+          order.push(ln.descricao);
+        }
+        lineMap[ln.descricao].valor += ln.valor || 0;
+      });
+    });
+    const totais = { receita: 0, cmv: 0, lucroBruto: 0, lucroLiquido: 0 };
+    packs.forEach((p) => {
+      const t = p.totais || {};
+      totais.receita += t.receita || 0;
+      totais.cmv += t.cmv || 0;
+      totais.lucroBruto += t.lucroBruto || 0;
+      totais.lucroLiquido += t.lucroLiquido || 0;
+    });
+    totais.margemBrutaPct = totais.receita > 0 ? (totais.lucroBruto / totais.receita) * 100 : 0;
+    totais.margemLiquidaPct = totais.receita > 0 ? (totais.lucroLiquido / totais.receita) * 100 : 0;
+    return {
+      linhas: order.map((d) => lineMap[d]),
+      totais: totais,
+      arquivo: 'soma ' + keys.length + ' competencias',
+    };
   }
 
 function renderDRE(mesKey) {
     const dreData = D().dre || {};
-    const dreMeses = dreData.meses || [];
-    const key = (mesKey && dreData.porMes && dreData.porMes[mesKey])
-      ? mesKey
-      : (dreMeses.length ? dreMeses[dreMeses.length - 1] : mesKey);
-    let lbl = key;
-    if (dreMeses.length) {
-      const i = dreMeses.indexOf(key);
-      if (i >= 0 && dreData.mesLabels) lbl = dreData.mesLabels[i];
-    } else {
-      lbl = fiscalMesLabel(key);
-    }
+    const resolved = resolveDreKeys(mesKey);
+    const lbl = resolved.lbl;
+    const active = resolved.active;
     setText('#dre-sec-competencia', lbl);
-    setMesBarActive('dre-mes-bar', key);
-    const pack = getFiscalPack(key);
+    setMesBarActive('dre-mes-bar', active);
+    const pack = getFiscalPack(active === 'total' || active === 'q1' || active === 'q2' ? active : resolved.keys[0]);
     const el = document.getElementById('dre-carga-trib');
     if (el && pack) el.textContent = pack.dedPct.toFixed(2) + '%';
     else if (el) el.textContent = '—';
     const alertBox = document.getElementById('dre-alert-box');
     const tbody = document.getElementById('dre-tbody');
     if (!tbody) return;
-    const drePack = dreData.porMes ? dreData.porMes[key] : null;
+    const drePack = buildDreAggregate(resolved.keys);
     if (drePack && drePack.linhas && drePack.linhas.length) {
       if (alertBox) alertBox.style.display = 'none';
       setText('#dre-sec-sub', 'DRE contabil — ' + lbl + (drePack.arquivo ? ' (' + drePack.arquivo + ')' : ''));
@@ -78722,7 +78839,9 @@ function renderDRE(mesKey) {
       meses: meses,
       mesLabels: labels,
       defaultKey: defaultKey,
-      onSelect: (m) => renderDRE(m),
+      syncGlobal: true,
+      skipInitialSelect: true,
+      valueFn: (key) => dreMetricValue(key),
     });
     renderDRE(defaultKey);
   }
@@ -78739,25 +78858,48 @@ function renderDRE(mesKey) {
     }
     if (card) card.style.display = '';
     const meses = mapa.meses || [];
-    const key = mesKey && meses.indexOf(mesKey) >= 0 ? mesKey : (meses[meses.length - 1] || null);
-    mapaMesKey = key;
-    setMesBarActive('vd-mapa-mes-bar', key);
-    const i = meses.indexOf(key);
-    const lbl = (i >= 0 && mapa.mesLabels) ? mapa.mesLabels[i] : key;
+    let keys = [];
+    let key = mesKey;
+    let lbl = mesKey;
+    if (mesKey === 'total') {
+      keys = meses.slice();
+      lbl = fiscalPeriodTotalLabel();
+    } else if (mesKey === 'q1' || mesKey === 'q2') {
+      keys = meses.filter((m) => {
+        const mm = mmOfKey(m);
+        return mesKey === 'q1' ? ['01', '02', '03'].includes(mm) : !['01', '02', '03'].includes(mm);
+      });
+      lbl = mesKey === 'q1' ? '1º Trimestre 2026' : '2º Trimestre 2026';
+    } else if (mesKey && meses.indexOf(mesKey) >= 0) {
+      keys = [mesKey];
+      const i = meses.indexOf(mesKey);
+      lbl = (mapa.mesLabels && mapa.mesLabels[i]) ? mapa.mesLabels[i] : mesKey;
+      key = mesKey;
+    } else {
+      key = meses[meses.length - 1] || null;
+      keys = key ? [key] : [];
+      const i = meses.indexOf(key);
+      lbl = (i >= 0 && mapa.mesLabels) ? mapa.mesLabels[i] : key;
+    }
+    mapaMesKey = mesKey || key;
+    setMesBarActive('vd-mapa-mes-bar', mapaMesKey);
     setText('#vd-mapa-sub', 'Fonte FISCAL/MAPA POR AGRUPAMENTO — ' + (mapa.clientes.length) + ' clientes | ' + lbl);
     setText('#vd-mapa-col-mes', lbl || 'Mes');
     if (!tbody) return;
     tbody.innerHTML = '';
     const ranked = mapa.clientes
-      .map((c) => ({
-        codigo: c.codigo,
-        nome: c.nome,
-        cidade: c.cidade,
-        uf: c.uf,
-        total: c.total,
-        mesVal: key && c.valores ? (c.valores[key] || 0) : 0,
-      }))
-      .filter((c) => c.mesVal > 0 || !key)
+      .map((c) => {
+        const mesVal = keys.reduce((a, m) => a + ((c.valores && c.valores[m]) || 0), 0);
+        return {
+          codigo: c.codigo,
+          nome: c.nome,
+          cidade: c.cidade,
+          uf: c.uf,
+          total: c.total,
+          mesVal: mesVal,
+        };
+      })
+      .filter((c) => c.mesVal > 0 || !keys.length)
       .sort((a, b) => b.mesVal - a.mesVal)
       .slice(0, 25);
     ranked.forEach((c, idx) => {
@@ -78788,6 +78930,7 @@ function renderDRE(mesKey) {
       mesLabels: mapa.mesLabels || mapa.meses,
       defaultKey: mapa.meses[mapa.meses.length - 1],
       onSelect: (m) => renderMapaAgrupamento(m),
+      valueFn: (key) => mapaMetricValue(key),
     });
     renderMapaAgrupamento(mapa.meses[mapa.meses.length - 1]);
   }
@@ -78927,6 +79070,7 @@ function renderIndicadoresFiscal(mesKey) {
         indMesKey = m;
         renderIndicadoresFiscal(m);
       },
+      valueFn: (key) => fiscalMetricValue(key, 'receitaBruta'),
     });
     indMesKey = defaultKey;
     renderIndicadoresFiscal(defaultKey);
@@ -78937,6 +79081,8 @@ function renderIndicadoresFiscal(mesKey) {
         meses: pat.meses,
         mesLabels: pat.meses.map((m, i) => (bal && bal.mesLabels && bal.mesLabels[i]) ? bal.mesLabels[i] : m),
         defaultKey: pat.mesRef || pat.meses[pat.meses.length - 1],
+        showTotal: false,
+        showTrim: false,
         onSelect: (m) => {
           patrimMesKey = m;
           renderIndicadoresPatrimoniais(m);
@@ -78979,7 +79125,7 @@ function renderIndicadoresFiscal(mesKey) {
     initPeriodSelector();
     const vgAlert = document.getElementById('vg-fontes-alert');
     if (vgAlert) vgAlert.textContent = DASHBOARD_DATA.empresa.nome;
-    showTab('visao-geral');
+    window.showTab('visao-geral');
   });
   window.chartInst = chartInst;
   window.SchumacherDashboard = {
