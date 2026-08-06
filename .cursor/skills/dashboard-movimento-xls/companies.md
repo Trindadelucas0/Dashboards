@@ -8,7 +8,7 @@ Identificação **sempre pelo CNPJ do cabeçalho**, nunca só pelo nome do arqui
 | `egaplast` | EGAPLAST ARTEFATOS | `03185564000134` | `src/views/egaplast.ejs` | Matriz `37` → `unidades.matriz` + copiar movimento para `consolidado`. Filial `61` só se houver planilha própria |
 | `loja` | LOJA DAS MAQUINAS | `13983066000190` | `src/views/loja-maquinas.ejs` | `FISCAL_POR_MES["YYYY-MM"]`; chave de mês diferente (`2026-07`) |
 | `baifer` | BAIFER DISTRIBUIDORA | `52005382000140` | `src/views/baifer2trm.ejs` | `unidades.consolidado.fiscalPorMes.porMes["MM"]` (getPack lê `porMes`) |
-| `jpg` | JPG - PRODUTOS FUNCIONAIS | ver filiais | `src/views/jpg.ejs` | `JPG_DATA.fiscalPorMes.porMes["YYYY-MM"].filiais[key]` — PR=`21051983000670` (81), MG=`…/0005-99` (90), SP=`…/0007-50` (82), ASA_SUL / Filial Asa Sul DF=`…/0003-27` (712, pasta `JPG\ASA SUL`), MATRIZ/Filial DF=`…/0003-27` (712, distinta na UI), SEDE/Matriz Sede=`…/0001-65` (711). Não confiar no nome da pasta (`ind`=Matriz DF; `matriz e filial`=SEDE). |
+| `jpg` | JPG - PRODUTOS FUNCIONAIS | ver filiais | `src/views/jpg.ejs` | `JPG_DATA.fiscalPorMes.porMes["YYYY-MM"].filiais[key]` — PR=`21051983000670` (81), MG=`…/0005-99` (90), SP=`…/0007-50` (82), ASA_SUL / Filial Asa Sul DF=`…/0003-27` (712, pasta `JPG\ASA SUL`), MATRIZ/Filial DF=`…/0003-27` (712, distinta na UI), SEDE/Matriz Sede=`…/0001-65` (711), LANNIC Dermocomestic=`48285395000142` (Simples Nacional — faturamento+DAS). Não confiar no nome da pasta (`ind`=Matriz DF; `matriz e filial`=SEDE). |
 
 Rotas de autenticação (smoke):
 

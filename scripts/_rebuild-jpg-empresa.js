@@ -9,7 +9,7 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const EJS = path.join(ROOT, 'src', 'views', 'jpg.ejs');
 const TOL = 0.02;
-const ORDEM = ['MG', 'PR', 'SP', 'MATRIZ', 'SEDE'];
+const ORDEM = ['MG', 'PR', 'SP', 'MATRIZ', 'ASA_SUL', 'SEDE', 'LANNIC'];
 
 function round2(n) {
   return Math.round((Number(n) || 0) * 100) / 100;

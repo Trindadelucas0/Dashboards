@@ -12,14 +12,16 @@ const RAW = path.join(ROOT, 'relatorios', 'jpg-sede-df-2026', 'raw');
 const OUT = path.join(ROOT, 'relatorios', 'jpg-sede-df-2026');
 const EJS = path.join(ROOT, 'src', 'views', 'jpg.ejs');
 const TOL = 0.02;
-const ORDEM = ['MG', 'PR', 'SP', 'MATRIZ', 'SEDE'];
+const ORDEM = ['MG', 'PR', 'SP', 'MATRIZ', 'ASA_SUL', 'SEDE', 'LANNIC'];
 
 const META_U = {
   MG: { codigo: '90', cnpj: '21.051.983/0005-99', label: 'Filial MG', uf: 'MG' },
   PR: { codigo: '81', cnpj: '21.051.983/0006-70', label: 'Filial PR', uf: 'PR' },
   SP: { codigo: '82', cnpj: '21.051.983/0007-50', label: 'Filial SP', uf: 'SP' },
   MATRIZ: { codigo: '712', cnpj: '21.051.983/0003-27', label: 'Filial DF', uf: 'DF', ie: '0769567200215' },
+  ASA_SUL: { codigo: '712', cnpj: '21.051.983/0003-27', label: 'Filial Asa Sul DF', uf: 'DF', ie: '07.695.672/002-15' },
   SEDE: { codigo: '711', cnpj: '21.051.983/0001-65', label: 'Matriz Sede', uf: 'DF', ie: '07.695.672/001-34' },
+  LANNIC: { codigo: 'SN', cnpj: '48.285.395/0001-42', label: 'LANNIC Dermocomestic', uf: 'DF', ie: '—' },
 };
 
 const CFOP_META = {
@@ -604,7 +606,7 @@ const data = JSON.parse(lit.text);
 const preserve = {};
 for (const mes of Object.keys(data.fiscalPorMes.porMes).sort()) {
   preserve[mes] = {};
-  for (const u of ['MG', 'PR', 'SP']) {
+  for (const u of ['MG', 'PR', 'SP', 'ASA_SUL', 'LANNIC']) {
     const f = data.fiscalPorMes.porMes[mes].filiais[u];
     if (!f) continue;
     preserve[mes][u] = {
@@ -664,7 +666,7 @@ let ok = true;
 const post = [];
 
 for (const mes of Object.keys(preserve).sort()) {
-  for (const u of ['MG', 'PR', 'SP']) {
+  for (const u of ['MG', 'PR', 'SP', 'ASA_SUL', 'LANNIC']) {
     const exp = preserve[mes][u];
     if (!exp) continue;
     const k = check.fiscalPorMes.porMes[mes].filiais[u].kpis;
