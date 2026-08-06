@@ -1,0 +1,50 @@
+[
+  {
+    "key": "jpg-mg-entradas",
+    "unit": "MG",
+    "tipo": "entradas",
+    "sum": 84414.21,
+    "tg": 84414.21,
+    "fails": [],
+    "ok": true,
+    "period": "01/07/2026 até 31/07/2026",
+    "cnpj": "21051983000599",
+    "lines": 32
+  },
+  {
+    "key": "jpg-mg-saidas",
+    "unit": "MG",
+    "tipo": "saidas",
+    "sum": 342176.13,
+    "tg": 342176.13,
+    "fails": [],
+    "ok": true,
+    "period": "01/07/2026 até 31/07/2026",
+    "cnpj": "21.051.983/0005-99",
+    "lines": 41
+  },
+  {
+    "key": "jpg-sp-entradas",
+    "unit": "SP",
+    "tipo": "entradas",
+    "sum": 117586.2,
+    "tg": 117586.2,
+    "fails": [],
+    "ok": true,
+    "period": "01/07/2026 até 31/07/2026",
+    "cnpj": "21051983000750",
+    "lines": 53
+  },
+  {
+    "key": "jpg-sp-saidas",
+    "unit": "SP",
+    "tipo": "saidas",
+    "sum": 664552.78,
+    "tg": 664552.78,
+    "fails": [],
+    "ok": true,
+    "period": "01/07/2026 até 31/07/2026",
+    "cnpj": "21.051.983/0007-50",
+    "lines": 82
+  }
+]

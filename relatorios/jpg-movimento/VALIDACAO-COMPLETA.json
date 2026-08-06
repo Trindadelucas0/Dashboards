@@ -1,0 +1,930 @@
+{
+  "results": [
+    {
+      "id": "syntax-0",
+      "status": "OK",
+      "msg": "script 0"
+    },
+    {
+      "id": "syntax-1",
+      "status": "OK",
+      "msg": "script 1"
+    },
+    {
+      "id": "syntax-2",
+      "status": "OK",
+      "msg": "script 2"
+    },
+    {
+      "id": "syntax-3",
+      "status": "OK",
+      "msg": "script 3"
+    },
+    {
+      "id": "meses",
+      "status": "OK",
+      "msg": "2026-01, 2026-02, 2026-03, 2026-04, 2026-05, 2026-06, 2026-07"
+    },
+    {
+      "id": "2026-01-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "id": "2026-01-MG-cfop-e",
+      "status": "OK",
+      "msg": "50689.93"
+    },
+    {
+      "id": "2026-01-MG-cfop-s",
+      "status": "OK",
+      "msg": "218532.55"
+    },
+    {
+      "id": "2026-01-MG-vs-pack-e",
+      "status": "OK",
+      "msg": "50689.93"
+    },
+    {
+      "id": "2026-01-MG-vs-pack-s",
+      "status": "OK",
+      "msg": "218532.55"
+    },
+    {
+      "id": "2026-01-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "id": "2026-01-PR-cfop-e",
+      "status": "OK",
+      "msg": "9107.92"
+    },
+    {
+      "id": "2026-01-PR-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-01-PR-vs-pack-e",
+      "status": "OK",
+      "msg": "9107.92"
+    },
+    {
+      "id": "2026-01-PR-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-01-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "id": "2026-01-SP-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-01-SP-cfop-s",
+      "status": "OK",
+      "msg": "337216.1"
+    },
+    {
+      "id": "2026-01-SP-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-01-SP-vs-pack-s",
+      "status": "OK",
+      "msg": "337216.1"
+    },
+    {
+      "id": "2026-01-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-01-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "689985.86"
+    },
+    {
+      "id": "2026-01-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "1676310.11"
+    },
+    {
+      "id": "2026-01-MATRIZ-vs-pack-e",
+      "status": "OK",
+      "msg": "689985.86"
+    },
+    {
+      "id": "2026-01-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "1676310.11"
+    },
+    {
+      "id": "2026-01-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "id": "2026-01-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "308131.35"
+    },
+    {
+      "id": "2026-01-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "22.75"
+    },
+    {
+      "id": "2026-01-SEDE-vs-pack-e",
+      "status": "OK",
+      "msg": "308131.35"
+    },
+    {
+      "id": "2026-01-SEDE-vs-pack-s",
+      "status": "OK",
+      "msg": "22.75"
+    },
+    {
+      "id": "2026-01-consol-e",
+      "status": "OK",
+      "msg": "1057915.06"
+    },
+    {
+      "id": "2026-01-consol-s",
+      "status": "OK",
+      "msg": "2232081.51"
+    },
+    {
+      "id": "2026-02-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "id": "2026-02-MG-cfop-e",
+      "status": "OK",
+      "msg": "79979.77"
+    },
+    {
+      "id": "2026-02-MG-cfop-s",
+      "status": "OK",
+      "msg": "249580.75"
+    },
+    {
+      "id": "2026-02-MG-vs-pack-e",
+      "status": "OK",
+      "msg": "79979.77"
+    },
+    {
+      "id": "2026-02-MG-vs-pack-s",
+      "status": "OK",
+      "msg": "249580.75"
+    },
+    {
+      "id": "2026-02-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "id": "2026-02-PR-cfop-e",
+      "status": "OK",
+      "msg": "18881.74"
+    },
+    {
+      "id": "2026-02-PR-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-02-PR-vs-pack-e",
+      "status": "OK",
+      "msg": "18881.74"
+    },
+    {
+      "id": "2026-02-PR-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-02-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "id": "2026-02-SP-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-02-SP-cfop-s",
+      "status": "OK",
+      "msg": "538694.5"
+    },
+    {
+      "id": "2026-02-SP-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-02-SP-vs-pack-s",
+      "status": "OK",
+      "msg": "538694.5"
+    },
+    {
+      "id": "2026-02-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-02-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "11447.6"
+    },
+    {
+      "id": "2026-02-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "3099565.44"
+    },
+    {
+      "id": "2026-02-MATRIZ-vs-pack-e",
+      "status": "OK",
+      "msg": "11447.6"
+    },
+    {
+      "id": "2026-02-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "3099565.44"
+    },
+    {
+      "id": "2026-02-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "id": "2026-02-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "781661.45"
+    },
+    {
+      "id": "2026-02-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-02-SEDE-vs-pack-e",
+      "status": "OK",
+      "msg": "781661.45"
+    },
+    {
+      "id": "2026-02-SEDE-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-02-consol-e",
+      "status": "OK",
+      "msg": "891970.56"
+    },
+    {
+      "id": "2026-02-consol-s",
+      "status": "OK",
+      "msg": "3887840.69"
+    },
+    {
+      "id": "2026-03-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "id": "2026-03-MG-cfop-e",
+      "status": "OK",
+      "msg": "130954.45"
+    },
+    {
+      "id": "2026-03-MG-cfop-s",
+      "status": "OK",
+      "msg": "437277.37"
+    },
+    {
+      "id": "2026-03-MG-vs-pack-e",
+      "status": "OK",
+      "msg": "130954.45"
+    },
+    {
+      "id": "2026-03-MG-vs-pack-s",
+      "status": "OK",
+      "msg": "437277.37"
+    },
+    {
+      "id": "2026-03-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "id": "2026-03-PR-cfop-e",
+      "status": "OK",
+      "msg": "46228.04"
+    },
+    {
+      "id": "2026-03-PR-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-03-PR-vs-pack-e",
+      "status": "OK",
+      "msg": "46228.04"
+    },
+    {
+      "id": "2026-03-PR-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-03-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "id": "2026-03-SP-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-03-SP-cfop-s",
+      "status": "OK",
+      "msg": "584827.43"
+    },
+    {
+      "id": "2026-03-SP-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-03-SP-vs-pack-s",
+      "status": "OK",
+      "msg": "584827.43"
+    },
+    {
+      "id": "2026-03-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-03-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "1590701.07"
+    },
+    {
+      "id": "2026-03-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "3250821.47"
+    },
+    {
+      "id": "2026-03-MATRIZ-vs-pack-e",
+      "status": "OK",
+      "msg": "1590701.07"
+    },
+    {
+      "id": "2026-03-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "3250821.47"
+    },
+    {
+      "id": "2026-03-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "id": "2026-03-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "511343.27"
+    },
+    {
+      "id": "2026-03-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "467742.4"
+    },
+    {
+      "id": "2026-03-SEDE-vs-pack-e",
+      "status": "OK",
+      "msg": "511343.27"
+    },
+    {
+      "id": "2026-03-SEDE-vs-pack-s",
+      "status": "OK",
+      "msg": "467742.4"
+    },
+    {
+      "id": "2026-03-consol-e",
+      "status": "OK",
+      "msg": "2279226.83"
+    },
+    {
+      "id": "2026-03-consol-s",
+      "status": "OK",
+      "msg": "4740668.67"
+    },
+    {
+      "id": "2026-04-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "id": "2026-04-MG-cfop-e",
+      "status": "OK",
+      "msg": "47337.72"
+    },
+    {
+      "id": "2026-04-MG-cfop-s",
+      "status": "OK",
+      "msg": "235612.09"
+    },
+    {
+      "id": "2026-04-MG-vs-pack-e",
+      "status": "OK",
+      "msg": "47337.72"
+    },
+    {
+      "id": "2026-04-MG-vs-pack-s",
+      "status": "OK",
+      "msg": "235612.09"
+    },
+    {
+      "id": "2026-04-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "id": "2026-04-PR-cfop-e",
+      "status": "OK",
+      "msg": "21979.4"
+    },
+    {
+      "id": "2026-04-PR-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-04-PR-vs-pack-e",
+      "status": "OK",
+      "msg": "21979.4"
+    },
+    {
+      "id": "2026-04-PR-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-04-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "id": "2026-04-SP-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-04-SP-cfop-s",
+      "status": "OK",
+      "msg": "595601.23"
+    },
+    {
+      "id": "2026-04-SP-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-04-SP-vs-pack-s",
+      "status": "OK",
+      "msg": "595601.23"
+    },
+    {
+      "id": "2026-04-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-04-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "846958.38"
+    },
+    {
+      "id": "2026-04-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "3396918.75"
+    },
+    {
+      "id": "2026-04-MATRIZ-vs-pack-e",
+      "status": "OK",
+      "msg": "846958.38"
+    },
+    {
+      "id": "2026-04-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "3396918.75"
+    },
+    {
+      "id": "2026-04-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "id": "2026-04-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "380672.67"
+    },
+    {
+      "id": "2026-04-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-04-SEDE-vs-pack-e",
+      "status": "OK",
+      "msg": "380672.67"
+    },
+    {
+      "id": "2026-04-SEDE-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-04-consol-e",
+      "status": "OK",
+      "msg": "1296948.17"
+    },
+    {
+      "id": "2026-04-consol-s",
+      "status": "OK",
+      "msg": "4228132.07"
+    },
+    {
+      "id": "2026-05-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "id": "2026-05-MG-cfop-e",
+      "status": "OK",
+      "msg": "39361.58"
+    },
+    {
+      "id": "2026-05-MG-cfop-s",
+      "status": "OK",
+      "msg": "260565.75"
+    },
+    {
+      "id": "2026-05-MG-vs-pack-e",
+      "status": "OK",
+      "msg": "39361.58"
+    },
+    {
+      "id": "2026-05-MG-vs-pack-s",
+      "status": "OK",
+      "msg": "260565.75"
+    },
+    {
+      "id": "2026-05-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "id": "2026-05-PR-cfop-e",
+      "status": "OK",
+      "msg": "16246.14"
+    },
+    {
+      "id": "2026-05-PR-cfop-s",
+      "status": "OK",
+      "msg": "104754.64"
+    },
+    {
+      "id": "2026-05-PR-vs-pack-e",
+      "status": "OK",
+      "msg": "16246.14"
+    },
+    {
+      "id": "2026-05-PR-vs-pack-s",
+      "status": "OK",
+      "msg": "104754.64"
+    },
+    {
+      "id": "2026-05-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "id": "2026-05-SP-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-05-SP-cfop-s",
+      "status": "OK",
+      "msg": "430879.84"
+    },
+    {
+      "id": "2026-05-SP-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-05-SP-vs-pack-s",
+      "status": "OK",
+      "msg": "430879.84"
+    },
+    {
+      "id": "2026-05-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-05-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "77484.5"
+    },
+    {
+      "id": "2026-05-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "2770103.57"
+    },
+    {
+      "id": "2026-05-MATRIZ-vs-pack-e",
+      "status": "OK",
+      "msg": "77484.5"
+    },
+    {
+      "id": "2026-05-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "2770103.57"
+    },
+    {
+      "id": "2026-05-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "id": "2026-05-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "254121.93"
+    },
+    {
+      "id": "2026-05-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-05-SEDE-vs-pack-e",
+      "status": "OK",
+      "msg": "254121.93"
+    },
+    {
+      "id": "2026-05-SEDE-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-05-consol-e",
+      "status": "OK",
+      "msg": "387214.15"
+    },
+    {
+      "id": "2026-05-consol-s",
+      "status": "OK",
+      "msg": "3566303.8"
+    },
+    {
+      "id": "2026-06-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "id": "2026-06-MG-cfop-e",
+      "status": "OK",
+      "msg": "97994.17"
+    },
+    {
+      "id": "2026-06-MG-cfop-s",
+      "status": "OK",
+      "msg": "496831.66"
+    },
+    {
+      "id": "2026-06-MG-vs-pack-e",
+      "status": "OK",
+      "msg": "97994.17"
+    },
+    {
+      "id": "2026-06-MG-vs-pack-s",
+      "status": "OK",
+      "msg": "496831.66"
+    },
+    {
+      "id": "2026-06-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "id": "2026-06-PR-cfop-e",
+      "status": "OK",
+      "msg": "14539.1"
+    },
+    {
+      "id": "2026-06-PR-cfop-s",
+      "status": "OK",
+      "msg": "99404.74"
+    },
+    {
+      "id": "2026-06-PR-vs-pack-e",
+      "status": "OK",
+      "msg": "14539.1"
+    },
+    {
+      "id": "2026-06-PR-vs-pack-s",
+      "status": "OK",
+      "msg": "99404.74"
+    },
+    {
+      "id": "2026-06-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "id": "2026-06-SP-cfop-e",
+      "status": "OK",
+      "msg": "112749.13"
+    },
+    {
+      "id": "2026-06-SP-cfop-s",
+      "status": "OK",
+      "msg": "810686.49"
+    },
+    {
+      "id": "2026-06-SP-vs-pack-e",
+      "status": "OK",
+      "msg": "112749.13"
+    },
+    {
+      "id": "2026-06-SP-vs-pack-s",
+      "status": "OK",
+      "msg": "810686.49"
+    },
+    {
+      "id": "2026-06-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-06-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "1703640.89"
+    },
+    {
+      "id": "2026-06-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "3649924.21"
+    },
+    {
+      "id": "2026-06-MATRIZ-vs-pack-e",
+      "status": "OK",
+      "msg": "1703640.89"
+    },
+    {
+      "id": "2026-06-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "3649924.21"
+    },
+    {
+      "id": "2026-06-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "id": "2026-06-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "255264.64"
+    },
+    {
+      "id": "2026-06-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-06-SEDE-vs-pack-e",
+      "status": "OK",
+      "msg": "255264.64"
+    },
+    {
+      "id": "2026-06-SEDE-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-06-consol-e",
+      "status": "OK",
+      "msg": "2184187.93"
+    },
+    {
+      "id": "2026-06-consol-s",
+      "status": "OK",
+      "msg": "5056847.1"
+    },
+    {
+      "id": "2026-07-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "id": "2026-07-MG-cfop-e",
+      "status": "OK",
+      "msg": "84414.21"
+    },
+    {
+      "id": "2026-07-MG-cfop-s",
+      "status": "OK",
+      "msg": "342176.13"
+    },
+    {
+      "id": "2026-07-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "id": "2026-07-PR-cfop-e",
+      "status": "OK",
+      "msg": "8729.12"
+    },
+    {
+      "id": "2026-07-PR-cfop-s",
+      "status": "OK",
+      "msg": "71589.79"
+    },
+    {
+      "id": "2026-07-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "id": "2026-07-SP-cfop-e",
+      "status": "OK",
+      "msg": "117586.2"
+    },
+    {
+      "id": "2026-07-SP-cfop-s",
+      "status": "OK",
+      "msg": "664552.78"
+    },
+    {
+      "id": "2026-07-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-07-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-07-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-07-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "id": "2026-07-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-07-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-07-consol-e",
+      "status": "OK",
+      "msg": "210729.53"
+    },
+    {
+      "id": "2026-07-consol-s",
+      "status": "OK",
+      "msg": "1078318.7"
+    },
+    {
+      "id": "jul-pr-regression",
+      "status": "OK",
+      "msg": "PR Jul preservado"
+    }
+  ],
+  "fails": 0
+}

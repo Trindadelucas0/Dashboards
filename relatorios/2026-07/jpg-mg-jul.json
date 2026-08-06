@@ -1,0 +1,917 @@
+{
+  "meta": {
+    "codigo": "90",
+    "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS",
+    "cnpj": "21.051.983/0005-99",
+    "ie": "—",
+    "periodo": "01/07/2026 até 31/07/2026",
+    "uf": "MG",
+    "filial_key": "MG",
+    "filial_label": "Filial MG",
+    "alerta": ""
+  },
+  "fornecedor_keys": [
+    "21.051.983/0003-27",
+    "12083387651"
+  ],
+  "cliente_keys": [
+    "67.610.126/0001-59",
+    "29.535.183/0001-21",
+    "25977296649",
+    "26.304.688/0001-97",
+    "48.427.486/0001-75",
+    "43.894.044/0001-15",
+    "09001331637",
+    "09940252625",
+    "03009952619",
+    "35.006.646/0001-60",
+    "12.869.310/0001-26",
+    "10757820662",
+    "06576864680",
+    "03279378150",
+    "65.020.746/0001-02",
+    "07443881630",
+    "18.341.788/0001-65",
+    "22.621.915/0001-57",
+    "04620001686",
+    "13339119635",
+    "11542647690",
+    "46.264.187/0001-31",
+    "01455539651",
+    "06782757699",
+    "53.270.303/0001-90",
+    "01178197603",
+    "01318798639",
+    "24.397.144/0001-91",
+    "07877152639",
+    "09938635660",
+    "07592653648",
+    "03865796605",
+    "28.667.229/0001-01",
+    "10.801.054/0001-00",
+    "09622051685"
+  ],
+  "kpis": {
+    "entradas": 84414.21,
+    "saidas": 342176.13,
+    "icms_credito": 2934.91,
+    "icms_debito": 0,
+    "base_icms_ent": 73372,
+    "base_icms_sai": 0,
+    "ipi_ent": 10492.21,
+    "ipi_sai": 65519.09,
+    "saldo_icms": -2934.91,
+    "n_nf_ent": 32,
+    "n_nf_sai": 41,
+    "n_fornecedores": 2,
+    "n_clientes": 35
+  },
+  "cfop_entradas": [
+    {
+      "cfop": "2-152",
+      "descricao": "Transferência recebida da matriz",
+      "finalidade": "Transferência Matriz",
+      "qtd": 31,
+      "total": 83864.21,
+      "icms": 2934.91,
+      "base": 73372,
+      "ipi": 20747.94,
+      "credito_icms": true,
+      "pct": 99.35,
+      "parties": [
+        {
+          "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+          "total": 83864.21,
+          "qtd": 31,
+          "uf": "DF",
+          "cnpj": "21.051.983/0003-27",
+          "icms": 2934.91,
+          "base": 73372,
+          "ipi": 20747.94
+        }
+      ]
+    },
+    {
+      "cfop": "1-411",
+      "descricao": "1-411",
+      "finalidade": "Outras",
+      "qtd": 1,
+      "total": 550,
+      "icms": 0,
+      "base": 0,
+      "ipi": 0,
+      "credito_icms": false,
+      "pct": 0.65,
+      "parties": [
+        {
+          "nome": "GEOVANNA MORAIS",
+          "total": 550,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "12083387651",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        }
+      ]
+    }
+  ],
+  "cfop_saidas": [
+    {
+      "cfop": "5-405",
+      "descricao": "Venda com ST",
+      "finalidade": "Venda com ST",
+      "qtd": 39,
+      "total": 337943.33,
+      "icms": 0,
+      "base": 0,
+      "ipi": 63741.58,
+      "credito_icms": false,
+      "pct": 98.76,
+      "parties": [
+        {
+          "nome": "LT COMERCIO LTDA",
+          "total": 98910,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "67.610.126/0001-59",
+          "icms": 0,
+          "base": 0,
+          "ipi": 14144.13
+        },
+        {
+          "nome": "CHRIS MEDIC PRODUTOS HOSPITALARES E CIRURGICOS LTDA",
+          "total": 94256.5,
+          "qtd": 2,
+          "uf": "MG",
+          "cnpj": "29.535.183/0001-21",
+          "icms": 0,
+          "base": 0,
+          "ipi": 23751.53
+        },
+        {
+          "nome": "MYRIAN DE OLIVEIRA GOLCALVES PRINCE SOARES",
+          "total": 23588.7,
+          "qtd": 2,
+          "uf": "MG",
+          "cnpj": "25977296649",
+          "icms": 0,
+          "base": 0,
+          "ipi": 6343.49
+        },
+        {
+          "nome": "LAGOLD COMERCIO HOSPITALAR LTDA",
+          "total": 19955,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "26.304.688/0001-97",
+          "icms": 0,
+          "base": 0,
+          "ipi": 2853.56
+        },
+        {
+          "nome": "RAFAEL RIBEIRO TRINDADE MELO",
+          "total": 11276,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "43.894.044/0001-15",
+          "icms": 0,
+          "base": 0,
+          "ipi": 1950.52
+        },
+        {
+          "nome": "HARMONIC SOLUCOES TERAPEUTICAS LTDA",
+          "total": 10166,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "48.427.486/0001-75",
+          "icms": 0,
+          "base": 0,
+          "ipi": 1453.75
+        },
+        {
+          "nome": "LETICIA SANTOS GARCIA",
+          "total": 8667,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "09001331637",
+          "icms": 0,
+          "base": 0,
+          "ipi": 1377.09
+        },
+        {
+          "nome": "SANDRA NAIARA COSTA ANDRADE DE CAMARGOS",
+          "total": 7119,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "09940252625",
+          "icms": 0,
+          "base": 0,
+          "ipi": 1131.13
+        },
+        {
+          "nome": "ARICELIA PIRES DA FONSECA BARBOSA",
+          "total": 6999.99,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "03009952619",
+          "icms": 0,
+          "base": 0,
+          "ipi": 1000.99
+        },
+        {
+          "nome": "GN LIDER LTDA",
+          "total": 6583.85,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "35.006.646/0001-60",
+          "icms": 0,
+          "base": 0,
+          "ipi": 941.49
+        },
+        {
+          "nome": "DIVILASER LTDA",
+          "total": 5925.73,
+          "qtd": 2,
+          "uf": "MG",
+          "cnpj": "12.869.310/0001-26",
+          "icms": 0,
+          "base": 0,
+          "ipi": 1455.63
+        },
+        {
+          "nome": "MARINA CARDOSO VILELA FARIA",
+          "total": 5280.11,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "10757820662",
+          "icms": 0,
+          "base": 0,
+          "ipi": 888.18
+        },
+        {
+          "nome": "JULIANA APARECIDA LOPES",
+          "total": 4700,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "06576864680",
+          "icms": 0,
+          "base": 0,
+          "ipi": 672.1
+        },
+        {
+          "nome": "ANGELA DE ALCANTARA MAGNANI BEZERRA",
+          "total": 3676,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "03279378150",
+          "icms": 0,
+          "base": 0,
+          "ipi": 567.71
+        },
+        {
+          "nome": "LAMUR ESTETICA AVANCADA LTDA",
+          "total": 3132.9,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "65.020.746/0001-02",
+          "icms": 0,
+          "base": 0,
+          "ipi": 497.2
+        },
+        {
+          "nome": "SETE LAGOAS DEPILACAO A LASER LTDA",
+          "total": 2564,
+          "qtd": 2,
+          "uf": "MG",
+          "cnpj": "18.341.788/0001-65",
+          "icms": 0,
+          "base": 0,
+          "ipi": 571.41
+        },
+        {
+          "nome": "MARIA CYNTIA FERREIRA ALMADA",
+          "total": 2358.5,
+          "qtd": 2,
+          "uf": "MG",
+          "cnpj": "22.621.915/0001-57",
+          "icms": 0,
+          "base": 0,
+          "ipi": 561.99
+        },
+        {
+          "nome": "CAROLINA FRANCISCA SOARES VIEIRA",
+          "total": 2279.5,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "04620001686",
+          "icms": 0,
+          "base": 0,
+          "ipi": 343.2
+        },
+        {
+          "nome": "CLAUDIA VIRGINIA VARGAS CUNHA",
+          "total": 2275.5,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "13339119635",
+          "icms": 0,
+          "base": 0,
+          "ipi": 342.2
+        },
+        {
+          "nome": "FERNANDA XAVIER DE OLIVEIRA",
+          "total": 2207.01,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "11542647690",
+          "icms": 0,
+          "base": 0,
+          "ipi": 340.34
+        },
+        {
+          "nome": "INSTITUTO HARMONIZE LTDA",
+          "total": 1997.5,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "46.264.187/0001-31",
+          "icms": 0,
+          "base": 0,
+          "ipi": 336.05
+        },
+        {
+          "nome": "WANESSA CRISTINA DE OLIVEIRA",
+          "total": 1683,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "01455539651",
+          "icms": 0,
+          "base": 0,
+          "ipi": 240.67
+        },
+        {
+          "nome": "NAYARA MONT MOR SILVA",
+          "total": 1588.6,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "06782757699",
+          "icms": 0,
+          "base": 0,
+          "ipi": 321.46
+        },
+        {
+          "nome": "CLAUDIO DEPILACAO A LASER LTDA",
+          "total": 1383,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "53.270.303/0001-90",
+          "icms": 0,
+          "base": 0,
+          "ipi": 197.77
+        },
+        {
+          "nome": "KENNEA FERNANDA LUIZ CALDEIRA",
+          "total": 1290.03,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "01178197603",
+          "icms": 0,
+          "base": 0,
+          "ipi": 190.05
+        },
+        {
+          "nome": "JOAO PAULO BRAGA FERNANDES SOBREIRA",
+          "total": 1149,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "01318798639",
+          "icms": 0,
+          "base": 0,
+          "ipi": 164.31
+        },
+        {
+          "nome": "NATALIA DELAGE GOMES LTDA",
+          "total": 1020,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "24.397.144/0001-91",
+          "icms": 0,
+          "base": 0,
+          "ipi": 145.86
+        },
+        {
+          "nome": "LAIZ NAVES",
+          "total": 1010.8,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "07877152639",
+          "icms": 0,
+          "base": 0,
+          "ipi": 159.42
+        },
+        {
+          "nome": "LAYANNE CHISTINE DE PAULA MIRANDA ALCANTARA",
+          "total": 990.5,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "09938635660",
+          "icms": 0,
+          "base": 0,
+          "ipi": 148.72
+        },
+        {
+          "nome": "VICTOR FERNANDES GASPAR CAIXETA",
+          "total": 990.3,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "07592653648",
+          "icms": 0,
+          "base": 0,
+          "ipi": 145.86
+        },
+        {
+          "nome": "LETICIA BICALHO MACRUZ FARIA",
+          "total": 987.5,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "03865796605",
+          "icms": 0,
+          "base": 0,
+          "ipi": 185.9
+        },
+        {
+          "nome": "LCB SAUDE INTEGRADA LTDA",
+          "total": 874.25,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "28.667.229/0001-01",
+          "icms": 0,
+          "base": 0,
+          "ipi": 164.31
+        },
+        {
+          "nome": "BETIM DEPILACAO A LASER EIRELI",
+          "total": 699,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "10.801.054/0001-00",
+          "icms": 0,
+          "base": 0,
+          "ipi": 99.96
+        },
+        {
+          "nome": "ZILDA ELIETE DE OLIVEIRA",
+          "total": 358.56,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "09622051685",
+          "icms": 0,
+          "base": 0,
+          "ipi": 53.6
+        }
+      ]
+    },
+    {
+      "cfop": "5-102",
+      "descricao": "Venda",
+      "finalidade": "Venda",
+      "qtd": 1,
+      "total": 3093.8,
+      "icms": 0,
+      "base": 0,
+      "ipi": 160.88,
+      "credito_icms": false,
+      "pct": 0.9,
+      "parties": [
+        {
+          "nome": "JULIANA DE CARVALHO FREITAS DAMASCENO",
+          "total": 3093.8,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "07443881630",
+          "icms": 0,
+          "base": 0,
+          "ipi": 160.88
+        }
+      ]
+    },
+    {
+      "cfop": "5-910",
+      "descricao": "Bonificação / doação",
+      "finalidade": "Bonificação / doação",
+      "qtd": 1,
+      "total": 1139,
+      "icms": 0,
+      "base": 0,
+      "ipi": 1616.63,
+      "credito_icms": false,
+      "pct": 0.33,
+      "parties": [
+        {
+          "nome": "HARMONIC SOLUCOES TERAPEUTICAS LTDA",
+          "total": 1139,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "48.427.486/0001-75",
+          "icms": 0,
+          "base": 0,
+          "ipi": 1616.63
+        }
+      ]
+    }
+  ],
+  "finalidade": [
+    {
+      "finalidade": "Transferência Matriz",
+      "total": 83864.21,
+      "qtd": 31,
+      "pct": 99.35
+    },
+    {
+      "finalidade": "Outras",
+      "total": 550,
+      "qtd": 1,
+      "pct": 0.65
+    }
+  ],
+  "ranking_fornecedores": [
+    {
+      "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+      "total": 83864.21,
+      "qtd": 31,
+      "uf": "DF",
+      "cnpj": "21.051.983/0003-27",
+      "pct": 99.35
+    },
+    {
+      "nome": "GEOVANNA MORAIS",
+      "total": 550,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "12083387651",
+      "pct": 0.65
+    }
+  ],
+  "ranking_clientes": [
+    {
+      "nome": "LT COMERCIO LTDA",
+      "total": 98910,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "67.610.126/0001-59",
+      "pct": 28.91
+    },
+    {
+      "nome": "CHRIS MEDIC PRODUTOS HOSPITALARES E CIRURGICOS LTDA",
+      "total": 94256.5,
+      "qtd": 2,
+      "uf": "MG",
+      "cnpj": "29.535.183/0001-21",
+      "pct": 27.55
+    },
+    {
+      "nome": "MYRIAN DE OLIVEIRA GOLCALVES PRINCE SOARES",
+      "total": 23588.7,
+      "qtd": 2,
+      "uf": "MG",
+      "cnpj": "25977296649",
+      "pct": 6.89
+    },
+    {
+      "nome": "LAGOLD COMERCIO HOSPITALAR LTDA",
+      "total": 19955,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "26.304.688/0001-97",
+      "pct": 5.83
+    },
+    {
+      "nome": "HARMONIC SOLUCOES TERAPEUTICAS LTDA",
+      "total": 11305,
+      "qtd": 2,
+      "uf": "MG",
+      "cnpj": "48.427.486/0001-75",
+      "pct": 3.3
+    },
+    {
+      "nome": "RAFAEL RIBEIRO TRINDADE MELO",
+      "total": 11276,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "43.894.044/0001-15",
+      "pct": 3.3
+    },
+    {
+      "nome": "LETICIA SANTOS GARCIA",
+      "total": 8667,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "09001331637",
+      "pct": 2.53
+    },
+    {
+      "nome": "SANDRA NAIARA COSTA ANDRADE DE CAMARGOS",
+      "total": 7119,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "09940252625",
+      "pct": 2.08
+    },
+    {
+      "nome": "ARICELIA PIRES DA FONSECA BARBOSA",
+      "total": 6999.99,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "03009952619",
+      "pct": 2.05
+    },
+    {
+      "nome": "GN LIDER LTDA",
+      "total": 6583.85,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "35.006.646/0001-60",
+      "pct": 1.92
+    },
+    {
+      "nome": "DIVILASER LTDA",
+      "total": 5925.73,
+      "qtd": 2,
+      "uf": "MG",
+      "cnpj": "12.869.310/0001-26",
+      "pct": 1.73
+    },
+    {
+      "nome": "MARINA CARDOSO VILELA FARIA",
+      "total": 5280.11,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "10757820662",
+      "pct": 1.54
+    },
+    {
+      "nome": "JULIANA APARECIDA LOPES",
+      "total": 4700,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "06576864680",
+      "pct": 1.37
+    },
+    {
+      "nome": "ANGELA DE ALCANTARA MAGNANI BEZERRA",
+      "total": 3676,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "03279378150",
+      "pct": 1.07
+    },
+    {
+      "nome": "LAMUR ESTETICA AVANCADA LTDA",
+      "total": 3132.9,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "65.020.746/0001-02",
+      "pct": 0.92
+    },
+    {
+      "nome": "JULIANA DE CARVALHO FREITAS DAMASCENO",
+      "total": 3093.8,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "07443881630",
+      "pct": 0.9
+    },
+    {
+      "nome": "SETE LAGOAS DEPILACAO A LASER LTDA",
+      "total": 2564,
+      "qtd": 2,
+      "uf": "MG",
+      "cnpj": "18.341.788/0001-65",
+      "pct": 0.75
+    },
+    {
+      "nome": "MARIA CYNTIA FERREIRA ALMADA",
+      "total": 2358.5,
+      "qtd": 2,
+      "uf": "MG",
+      "cnpj": "22.621.915/0001-57",
+      "pct": 0.69
+    },
+    {
+      "nome": "CAROLINA FRANCISCA SOARES VIEIRA",
+      "total": 2279.5,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "04620001686",
+      "pct": 0.67
+    },
+    {
+      "nome": "CLAUDIA VIRGINIA VARGAS CUNHA",
+      "total": 2275.5,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "13339119635",
+      "pct": 0.67
+    },
+    {
+      "nome": "FERNANDA XAVIER DE OLIVEIRA",
+      "total": 2207.01,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "11542647690",
+      "pct": 0.64
+    },
+    {
+      "nome": "INSTITUTO HARMONIZE LTDA",
+      "total": 1997.5,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "46.264.187/0001-31",
+      "pct": 0.58
+    },
+    {
+      "nome": "WANESSA CRISTINA DE OLIVEIRA",
+      "total": 1683,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "01455539651",
+      "pct": 0.49
+    },
+    {
+      "nome": "NAYARA MONT MOR SILVA",
+      "total": 1588.6,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "06782757699",
+      "pct": 0.46
+    },
+    {
+      "nome": "CLAUDIO DEPILACAO A LASER LTDA",
+      "total": 1383,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "53.270.303/0001-90",
+      "pct": 0.4
+    },
+    {
+      "nome": "KENNEA FERNANDA LUIZ CALDEIRA",
+      "total": 1290.03,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "01178197603",
+      "pct": 0.38
+    },
+    {
+      "nome": "JOAO PAULO BRAGA FERNANDES SOBREIRA",
+      "total": 1149,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "01318798639",
+      "pct": 0.34
+    },
+    {
+      "nome": "NATALIA DELAGE GOMES LTDA",
+      "total": 1020,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "24.397.144/0001-91",
+      "pct": 0.3
+    },
+    {
+      "nome": "LAIZ NAVES",
+      "total": 1010.8,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "07877152639",
+      "pct": 0.3
+    },
+    {
+      "nome": "LAYANNE CHISTINE DE PAULA MIRANDA ALCANTARA",
+      "total": 990.5,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "09938635660",
+      "pct": 0.29
+    },
+    {
+      "nome": "VICTOR FERNANDES GASPAR CAIXETA",
+      "total": 990.3,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "07592653648",
+      "pct": 0.29
+    },
+    {
+      "nome": "LETICIA BICALHO MACRUZ FARIA",
+      "total": 987.5,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "03865796605",
+      "pct": 0.29
+    },
+    {
+      "nome": "LCB SAUDE INTEGRADA LTDA",
+      "total": 874.25,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "28.667.229/0001-01",
+      "pct": 0.26
+    },
+    {
+      "nome": "BETIM DEPILACAO A LASER EIRELI",
+      "total": 699,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "10.801.054/0001-00",
+      "pct": 0.2
+    },
+    {
+      "nome": "ZILDA ELIETE DE OLIVEIRA",
+      "total": 358.56,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "09622051685",
+      "pct": 0.1
+    }
+  ],
+  "notas_entradas": [],
+  "notas_saidas": [],
+  "ufs_entradas": {
+    "MG": 550,
+    "DF": 83864.21
+  },
+  "ufs_saidas": {
+    "MG": 342176.13
+  },
+  "serie_diaria": {
+    "labels": [
+      "01/07/2026",
+      "02/07/2026",
+      "03/07/2026",
+      "06/07/2026",
+      "07/07/2026",
+      "08/07/2026",
+      "09/07/2026",
+      "10/07/2026",
+      "14/07/2026",
+      "15/07/2026",
+      "16/07/2026",
+      "17/07/2026",
+      "20/07/2026",
+      "22/07/2026",
+      "23/07/2026",
+      "28/07/2026",
+      "30/07/2026"
+    ],
+    "entradas": [
+      9620.77,
+      368.52,
+      616.55,
+      917.1,
+      2409.94,
+      27700.78,
+      517.5,
+      3201.2,
+      3337.74,
+      0,
+      16952.98,
+      163.62,
+      2125.2,
+      2613.04,
+      6465.5,
+      5513.6,
+      1890.17
+    ],
+    "saidas": [
+      8960.61,
+      6907.01,
+      5699.25,
+      3286.3,
+      5636.5,
+      99609,
+      0,
+      26286,
+      21965.3,
+      1648.59,
+      85421.84,
+      3132.9,
+      0,
+      11243.1,
+      26376.73,
+      24698,
+      11305
+    ]
+  },
+  "dre": {
+    "receita": 342176.13,
+    "receita_externa": 342176.13,
+    "cmv": 84414.21,
+    "lucro_bruto": 257761.92,
+    "margem_bruta_pct": 75.33,
+    "icms_debito": 0,
+    "icms_credito": 2934.91,
+    "saldo_icms": -2934.91,
+    "resultado": 260696.83,
+    "margem_resultado_pct": 76.19
+  }
+}

@@ -1069,8 +1069,8 @@ const JPG_DATA = {
     "empresa": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS",
     "periodoRange": "Jan–Jul/2026",
     "competenciaDefault": "2026-07",
-    "gerado_em": "06/08/2026, 15:02:51",
-    "fonte": "Relatórios ICMS (.xls) — Jan–Jun/2026 (MG/PR/SP/Matriz DF/Matriz Sede) + Jul PR",
+    "gerado_em": "06/08/2026, 15:17:37",
+    "fonte": "Relatórios ICMS (.xls) — Jan–Jun multiunidade + Jul MG/PR/SP",
     "unidades": 5,
     "nCompetencias": 7
   },
@@ -78289,52 +78289,73 @@ const JPG_DATA = {
             "uf": "BR",
             "filial_key": "EMPRESA",
             "filial_label": "Empresa (consolidado)",
-            "alerta": "Jul/2026: consolidado com Filial PR preenchida; demais unidades conforme planilhas disponíveis."
+            "alerta": "Jul/2026: MG, PR e SP com movimento; Matriz DF/SEDE pendentes nestas planilhas."
           },
           "fornecedor_keys": [
             "21.051.983/0003-27",
-            "726.700.299-49"
+            "726.700.299-49",
+            "12083387651"
           ],
           "cliente_keys": [
+            "16.918.361/0001-51",
+            "67.610.126/0001-59",
+            "29.535.183/0001-21",
+            "55.847.801/0001-89",
+            "45.188.118/0001-23",
             "51.849.308/0001-47",
+            "26.457.795/0001-55",
+            "52.478.833/0001-66",
+            "25977296649",
+            "47.067.312/0001-86",
+            "15.234.351/0001-34",
+            "26.304.688/0001-97",
+            "22730549803",
+            "07279822819",
+            "54.288.917/0001-62",
+            "19.856.904/0001-41",
             "53.212.660/0001-00",
-            "41.948.967/0001-87",
-            "040.480.389-07",
-            "07.964.397/0001-80",
-            "45.188.118/0002-04",
-            "62.290.670/0001-47",
-            "934.922.869-68",
-            "024.399.459-19",
-            "074.673.479-44"
+            "48.427.486/0001-75",
+            "43.894.044/0001-15",
+            "36.070.938/0001-25",
+            "76959228549",
+            "42.245.644/0001-90",
+            "09001331637",
+            "09.395.405/0001-40",
+            "56.160.599/0001-85",
+            "29.797.229/0001-80",
+            "09940252625",
+            "03009952619",
+            "26178210809",
+            "35.006.646/0001-60"
           ],
           "kpis": {
-            "entradas": 8729.12,
-            "saidas": 71589.79,
-            "icms_credito": 278.89,
-            "icms_debito": 0,
-            "base_icms_ent": 6972.12,
-            "base_icms_sai": 0,
-            "ipi_ent": 997,
-            "ipi_sai": 14461.77,
-            "saldo_icms": -278.89,
-            "n_nf_ent": 7,
-            "n_nf_sai": 11,
-            "n_fornecedores": 2,
-            "n_clientes": 10
+            "entradas": 210729.53,
+            "saidas": 1078318.7,
+            "icms_credito": 7328.84,
+            "icms_debito": 41304.73,
+            "base_icms_ent": 183219.14,
+            "base_icms_sai": 424676.58,
+            "ipi_ent": 26200.39,
+            "ipi_sai": 201092.59,
+            "n_nf_ent": 92,
+            "n_nf_sai": 134,
+            "n_fornecedores": 5,
+            "n_clientes": 112,
+            "saldo_icms": 33975.89
           },
           "cfop_entradas": [
             {
               "cfop": "2-152",
               "descricao": "Transferência recebida da matriz",
               "finalidade": "Transferência Matriz",
-              "qtd": 6,
-              "total": 7969.12,
-              "icms": 278.89,
-              "base": 6972.12,
-              "ipi": 1901.2,
+              "qtd": 90,
+              "total": 209419.53,
+              "icms": 7328.84,
+              "base": 183219.14,
+              "ipi": 52052.8,
               "credito_icms": true,
               "parties": [],
-              "pct": 91.29
+              "pct": 99.38
             },
             {
               "cfop": "1-949",
@@ -78347,7 +78368,20 @@ const JPG_DATA = {
               "ipi": 0,
               "credito_icms": false,
               "parties": [],
-              "pct": 8.71
+              "pct": 0.36
+            },
+            {
+              "cfop": "1-411",
+              "descricao": "1-411",
+              "finalidade": "Outras",
+              "qtd": 1,
+              "total": 550,
+              "icms": 0,
+              "base": 0,
+              "ipi": 0,
+              "credito_icms": false,
+              "parties": [],
+              "pct": 0.26
             }
           ],
           "cfop_saidas": [
@@ -78355,38 +78389,90 @@ const JPG_DATA = {
               "cfop": "5-405",
               "descricao": "Venda com ST",
               "finalidade": "Venda com ST",
-              "qtd": 11,
-              "total": 71589.79,
+              "qtd": 50,
+              "total": 409533.12,
               "icms": 0,
               "base": 0,
-              "ipi": 14461.77,
+              "ipi": 78203.35,
               "credito_icms": false,
               "parties": [],
-              "pct": 100
+              "pct": 37.98
+            },
+            {
+              "cfop": "6-102",
+              "descricao": "Venda interestadual",
+              "finalidade": "Venda",
+              "qtd": 17,
+              "total": 353199.63,
+              "icms": 12099.13,
+              "base": 302477.1,
+              "ipi": 59785.55,
+              "credito_icms": false,
+              "parties": [],
+              "pct": 32.75
+            },
+            {
+              "cfop": "5-102",
+              "descricao": "Venda",
+              "finalidade": "Venda",
+              "qtd": 61,
+              "total": 255610.4,
+              "icms": 28949.52,
+              "base": 115797.69,
+              "ipi": 53073.42,
+              "credito_icms": false,
+              "parties": [],
+              "pct": 23.7
+            },
+            {
+              "cfop": "5-910",
+              "descricao": "Bonificação / doação",
+              "finalidade": "Bonificação / doação",
+              "qtd": 3,
+              "total": 52505.55,
+              "icms": 0,
+              "base": 0,
+              "ipi": 8962.06,
+              "credito_icms": false,
+              "parties": [],
+              "pct": 4.87
+            },
+            {
+              "cfop": "6-910",
+              "descricao": "Remessa",
+              "finalidade": "Remessa p/ Filial",
+              "qtd": 3,
+              "total": 7470,
+              "icms": 256.08,
+              "base": 6401.79,
+              "ipi": 1068.21,
+              "credito_icms": false,
+              "parties": [],
+              "pct": 0.69
             }
           ],
           "finalidade": [
             {
               "finalidade": "Transferência Matriz",
-              "total": 7969.12,
-              "qtd": 6,
-              "pct": 91.29
+              "total": 209419.53,
+              "qtd": 90,
+              "pct": 99.38
             },
             {
               "finalidade": "Outras",
-              "total": 760,
-              "qtd": 1,
-              "pct": 8.71
+              "total": 1310,
+              "qtd": 2,
+              "pct": 0.62
             }
           ],
           "ranking_fornecedores": [
             {
               "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
-              "total": 7969.12,
-              "qtd": 6,
+              "total": 209419.53,
+              "qtd": 90,
               "uf": "DF",
               "cnpj": "21.051.983/0003-27",
-              "pct": 91.29
+              "pct": 99.38
             },
             {
               "nome": "INGRID BIBERG KOLLER",
@@ -78394,17 +78480,145 @@ const JPG_DATA = {
               "qtd": 1,
               "uf": "PR",
               "cnpj": "726.700.299-49",
-              "pct": 8.71
+              "pct": 0.36
+            },
+            {
+              "nome": "GEOVANNA MORAIS",
+              "total": 550,
+              "qtd": 1,
+              "uf": "MG",
+              "cnpj": "12083387651",
+              "pct": 0.26
             }
           ],
           "ranking_clientes": [
+            {
+              "nome": "VELLOZIA PRODUTOS HOSPITALARES EIRELI",
+              "total": 218237.5,
+              "qtd": 1,
+              "uf": "DF",
+              "cnpj": "16.918.361/0001-51",
+              "pct": 20.24
+            },
+            {
+              "nome": "LT COMERCIO LTDA",
+              "total": 98910,
+              "qtd": 1,
+              "uf": "MG",
+              "cnpj": "67.610.126/0001-59",
+              "pct": 9.17
+            },
+            {
+              "nome": "CHRIS MEDIC PRODUTOS HOSPITALARES E CIRURGICOS LTDA",
+              "total": 94256.5,
+              "qtd": 2,
+              "uf": "MG",
+              "cnpj": "29.535.183/0001-21",
+              "pct": 8.74
+            },
+            {
+              "nome": "RDL MEDICAL LTDA",
+              "total": 64499.5,
+              "qtd": 2,
+              "uf": "DF",
+              "cnpj": "55.847.801/0001-89",
+              "pct": 5.98
+            },
+            {
+              "nome": "NAGA MEDICAL LTDA",
+              "total": 50186.55,
+              "qtd": 2,
+              "uf": "SP",
+              "cnpj": "45.188.118/0001-23",
+              "pct": 4.65
+            },
             {
               "nome": "IRIS CENTRO DE SAUDE LTDA",
               "total": 34930,
               "qtd": 1,
               "uf": "PR",
               "cnpj": "51.849.308/0001-47",
-              "pct": 48.79
+              "pct": 3.24
+            },
+            {
+              "nome": "BIOMEDICLIN PRODUTOS FARMACEUTICOS LTDA.",
+              "total": 28580.4,
+              "qtd": 2,
+              "uf": "SP",
+              "cnpj": "26.457.795/0001-55",
+              "pct": 2.65
+            },
+            {
+              "nome": "LUMIS PRODUTOS HOF LTDA",
+              "total": 28021.5,
+              "qtd": 1,
+              "uf": "SP",
+              "cnpj": "52.478.833/0001-66",
+              "pct": 2.6
+            },
+            {
+              "nome": "MYRIAN DE OLIVEIRA GOLCALVES PRINCE SOARES",
+              "total": 23588.7,
+              "qtd": 2,
+              "uf": "MG",
+              "cnpj": "25977296649",
+              "pct": 2.19
+            },
+            {
+              "nome": "INSTITUTO LAIS FERRO LTDA",
+              "total": 22149.3,
+              "qtd": 4,
+              "uf": "SP",
+              "cnpj": "47.067.312/0001-86",
+              "pct": 2.05
+            },
+            {
+              "nome": "POLY HEALTH COMERCIO E PRESTACAO DE SERV LTDA ME",
+              "total": 21198.45,
+              "qtd": 2,
+              "uf": "SP",
+              "cnpj": "15.234.351/0001-34",
+              "pct": 1.97
+            },
+            {
+              "nome": "LAGOLD COMERCIO HOSPITALAR LTDA",
+              "total": 19955,
+              "qtd": 1,
+              "uf": "MG",
+              "cnpj": "26.304.688/0001-97",
+              "pct": 1.85
+            },
+            {
+              "nome": "SUZANA FONTANETTI",
+              "total": 17662,
+              "qtd": 2,
+              "uf": "SP",
+              "cnpj": "22730549803",
+              "pct": 1.64
+            },
+            {
+              "nome": "MARCIA CAPUTO",
+              "total": 16575.98,
+              "qtd": 1,
+              "uf": "SP",
+              "cnpj": "07279822819",
+              "pct": 1.54
+            },
+            {
+              "nome": "CHRIS MEDI PRODUTOS MEDICOS E HOSPITALARES LTDA",
+              "total": 15821,
+              "qtd": 1,
+              "uf": "DF",
+              "cnpj": "54.288.917/0001-62",
+              "pct": 1.47
+            },
+            {
+              "nome": "RENATA MOURA CASSARA SERVICOS DE ESTETICA",
+              "total": 15308.5,
+              "qtd": 2,
+              "uf": "SP",
+              "cnpj": "19.856.904/0001-41",
+              "pct": 1.42
             },
             {
               "nome": "JESSICA BOZA BIOMEDICINA ESTETICA LTDA",
@@ -78412,98 +78626,133 @@ const JPG_DATA = {
               "qtd": 2,
               "uf": "PR",
               "cnpj": "53.212.660/0001-00",
-              "pct": 16.15
+              "pct": 1.07
             },
             {
-              "nome": "NATOMEDIC PRODUTOS DE SAUDE LTDA",
-              "total": 5548,
-              "qtd": 1,
-              "uf": "PR",
-              "cnpj": "41.948.967/0001-87",
-              "pct": 7.75
+              "nome": "HARMONIC SOLUCOES TERAPEUTICAS LTDA",
+              "total": 11305,
+              "qtd": 2,
+              "uf": "MG",
+              "cnpj": "48.427.486/0001-75",
+              "pct": 1.05
             },
             {
-              "nome": "LARISSA DANIELE GREGORIO",
-              "total": 5174.46,
+              "nome": "RAFAEL RIBEIRO TRINDADE MELO",
+              "total": 11276,
               "qtd": 1,
-              "uf": "PR",
-              "cnpj": "040.480.389-07",
-              "pct": 7.23
+              "uf": "MG",
+              "cnpj": "43.894.044/0001-15",
+              "pct": 1.05
             },
             {
-              "nome": "CLINICA MEDICA VIEIRA LTDA",
-              "total": 4455,
+              "nome": "VISTA ODONTOLOGIA LTDA",
+              "total": 9651.5,
               "qtd": 1,
-              "uf": "PR",
-              "cnpj": "07.964.397/0001-80",
-              "pct": 6.22
+              "uf": "DF",
+              "cnpj": "36.070.938/0001-25",
+              "pct": 0.9
             },
             {
-              "nome": "NAGA MEDICAL LTDA",
-              "total": 3502,
-              "qtd": 1,
-              "uf": "PR",
-              "cnpj": "45.188.118/0002-04",
-              "pct": 4.89
+              "nome": "RAQUEL OLIVEIRA SILVA",
+              "total": 9520.78,
+              "qtd": 2,
+              "uf": "SP",
+              "cnpj": "76959228549",
+              "pct": 0.88
             },
             {
-              "nome": "EDUARDA MAZUR LTDA",
-              "total": 2215.53,
+              "nome": "CLINICA DERMATOLOGICA E ESTETICA PELLIER LUANNA CAIRES P...",
+              "total": 9126,
               "qtd": 1,
-              "uf": "PR",
-              "cnpj": "62.290.670/0001-47",
-              "pct": 3.09
+              "uf": "DF",
+              "cnpj": "42.245.644/0001-90",
+              "pct": 0.85
             },
             {
-              "nome": "CRISTIANE MOLIANI SOBREIRA MORAES",
-              "total": 1749.5,
+              "nome": "LETICIA SANTOS GARCIA",
+              "total": 8667,
               "qtd": 1,
-              "uf": "PR",
-              "cnpj": "934.922.869-68",
-              "pct": 2.44
+              "uf": "MG",
+              "cnpj": "09001331637",
+              "pct": 0.8
             },
             {
-              "nome": "CLAUDINEIA W. TOZETTO",
-              "total": 1499.4,
-              "qtd": 1,
-              "uf": "PR",
-              "cnpj": "024.399.459-19",
-              "pct": 2.09
+              "nome": "SEIVA CLINICA DE ESTETICA E PROCEDIMENTOS LTDA",
+              "total": 7866.2,
+              "qtd": 3,
+              "uf": "DF",
+              "cnpj": "09.395.405/0001-40",
+              "pct": 0.73
             },
             {
-              "nome": "ISADORA SALVADOR ANTIVERE",
-              "total": 950.9,
+              "nome": "INSTITUTO EQUILIBRIA LTDA",
+              "total": 7701.67,
               "qtd": 1,
-              "uf": "PR",
-              "cnpj": "074.673.479-44",
-              "pct": 1.33
+              "uf": "SP",
+              "cnpj": "56.160.599/0001-85",
+              "pct": 0.71
+            },
+            {
+              "nome": "BOUTIQUE DA PELE LTDA",
+              "total": 7344,
+              "qtd": 1,
+              "uf": "DF",
+              "cnpj": "29.797.229/0001-80",
+              "pct": 0.68
+            },
+            {
+              "nome": "SANDRA NAIARA COSTA ANDRADE DE CAMARGOS",
+              "total": 7119,
+              "qtd": 1,
+              "uf": "MG",
+              "cnpj": "09940252625",
+              "pct": 0.66
+            },
+            {
+              "nome": "ARICELIA PIRES DA FONSECA BARBOSA",
+              "total": 6999.99,
+              "qtd": 1,
+              "uf": "MG",
+              "cnpj": "03009952619",
+              "pct": 0.65
+            },
+            {
+              "nome": "DANIELA FERNANDA JULIETA BRAGA DE MEDEIROS ZANETTI",
+              "total": 6840,
+              "qtd": 1,
+              "uf": "SP",
+              "cnpj": "26178210809",
+              "pct": 0.63
+            },
+            {
+              "nome": "GN LIDER LTDA",
+              "total": 6583.85,
+              "qtd": 1,
+              "uf": "MG",
+              "cnpj": "35.006.646/0001-60",
+              "pct": 0.61
             }
           ],
           "notas_entradas": [],
           "notas_saidas": [],
-          "ufs_entradas": {
-            "PR": 760,
-            "DF": 7969.12
-          },
-          "ufs_saidas": {
-            "PR": 71589.79
-          },
+          "ufs_entradas": {},
+          "ufs_saidas": {},
           "serie_diaria": {
             "labels": [],
             "entradas": [],
             "saidas": []
           },
           "dre": {
-            "receita": 71589.79,
-            "receita_externa": 71589.79,
-            "cmv": 8729.12,
-            "lucro_bruto": 62860.67,
-            "margem_bruta_pct": 87.81,
-            "icms_debito": 0,
-            "icms_credito": 278.89,
-            "saldo_icms": -278.89,
-            "resultado": 63139.56,
-            "margem_resultado_pct": 88.2
+            "receita": 1078318.7,
+            "receita_externa": 1078318.7,
+            "cmv": 210729.53,
+            "lucro_bruto": 867589.17,
+            "margem_bruta_pct": 80.46,
+            "icms_debito": 41304.73,
+            "icms_credito": 7328.84,
+            "saldo_icms": 33975.89,
+            "resultado": 833613.28,
+            "margem_resultado_pct": 77.31
           }
         },
         "filiais": {
@@ -78517,50 +78766,911 @@ const JPG_DATA = {
               "uf": "MG",
               "filial_key": "MG",
               "filial_label": "Filial MG",
-              "alerta": "Planilha de movimento Jul/2026 ausente para Filial MG."
+              "alerta": ""
             },
-            "fornecedor_keys": [],
-            "cliente_keys": [],
+            "fornecedor_keys": [
+              "21.051.983/0003-27",
+              "12083387651"
+            ],
+            "cliente_keys": [
+              "67.610.126/0001-59",
+              "29.535.183/0001-21",
+              "25977296649",
+              "26.304.688/0001-97",
+              "48.427.486/0001-75",
+              "43.894.044/0001-15",
+              "09001331637",
+              "09940252625",
+              "03009952619",
+              "35.006.646/0001-60",
+              "12.869.310/0001-26",
+              "10757820662",
+              "06576864680",
+              "03279378150",
+              "65.020.746/0001-02",
+              "07443881630",
+              "18.341.788/0001-65",
+              "22.621.915/0001-57",
+              "04620001686",
+              "13339119635",
+              "11542647690",
+              "46.264.187/0001-31",
+              "01455539651",
+              "06782757699",
+              "53.270.303/0001-90",
+              "01178197603",
+              "01318798639",
+              "24.397.144/0001-91",
+              "07877152639",
+              "09938635660",
+              "07592653648",
+              "03865796605",
+              "28.667.229/0001-01",
+              "10.801.054/0001-00",
+              "09622051685"
+            ],
             "kpis": {
-              "entradas": 0,
-              "saidas": 0,
-              "icms_credito": 0,
+              "entradas": 84414.21,
+              "saidas": 342176.13,
+              "icms_credito": 2934.91,
               "icms_debito": 0,
-              "base_icms_ent": 0,
+              "base_icms_ent": 73372,
               "base_icms_sai": 0,
-              "ipi_ent": 0,
-              "ipi_sai": 0,
-              "saldo_icms": 0,
-              "n_nf_ent": 0,
-              "n_nf_sai": 0,
-              "n_fornecedores": 0,
-              "n_clientes": 0
+              "ipi_ent": 10492.21,
+              "ipi_sai": 65519.09,
+              "saldo_icms": -2934.91,
+              "n_nf_ent": 32,
+              "n_nf_sai": 41,
+              "n_fornecedores": 2,
+              "n_clientes": 35
             },
-            "cfop_entradas": [],
-            "cfop_saidas": [],
-            "finalidade": [],
-            "ranking_fornecedores": [],
-            "ranking_clientes": [],
+            "cfop_entradas": [
+              {
+                "cfop": "2-152",
+                "descricao": "Transferência recebida da matriz",
+                "finalidade": "Transferência Matriz",
+                "qtd": 31,
+                "total": 83864.21,
+                "icms": 2934.91,
+                "base": 73372,
+                "ipi": 20747.94,
+                "credito_icms": true,
+                "pct": 99.35,
+                "parties": [
+                  {
+                    "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+                    "total": 83864.21,
+                    "qtd": 31,
+                    "uf": "DF",
+                    "cnpj": "21.051.983/0003-27",
+                    "icms": 2934.91,
+                    "base": 73372,
+                    "ipi": 20747.94
+                  }
+                ]
+              },
+              {
+                "cfop": "1-411",
+                "descricao": "1-411",
+                "finalidade": "Outras",
+                "qtd": 1,
+                "total": 550,
+                "icms": 0,
+                "base": 0,
+                "ipi": 0,
+                "credito_icms": false,
+                "pct": 0.65,
+                "parties": [
+                  {
+                    "nome": "GEOVANNA MORAIS",
+                    "total": 550,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "12083387651",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 0
+                  }
+                ]
+              }
+            ],
+            "cfop_saidas": [
+              {
+                "cfop": "5-405",
+                "descricao": "Venda com ST",
+                "finalidade": "Venda com ST",
+                "qtd": 39,
+                "total": 337943.33,
+                "icms": 0,
+                "base": 0,
+                "ipi": 63741.58,
+                "credito_icms": false,
+                "pct": 98.76,
+                "parties": [
+                  {
+                    "nome": "LT COMERCIO LTDA",
+                    "total": 98910,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "67.610.126/0001-59",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 14144.13
+                  },
+                  {
+                    "nome": "CHRIS MEDIC PRODUTOS HOSPITALARES E CIRURGICOS LTDA",
+                    "total": 94256.5,
+                    "qtd": 2,
+                    "uf": "MG",
+                    "cnpj": "29.535.183/0001-21",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 23751.53
+                  },
+                  {
+                    "nome": "MYRIAN DE OLIVEIRA GOLCALVES PRINCE SOARES",
+                    "total": 23588.7,
+                    "qtd": 2,
+                    "uf": "MG",
+                    "cnpj": "25977296649",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 6343.49
+                  },
+                  {
+                    "nome": "LAGOLD COMERCIO HOSPITALAR LTDA",
+                    "total": 19955,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "26.304.688/0001-97",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 2853.56
+                  },
+                  {
+                    "nome": "RAFAEL RIBEIRO TRINDADE MELO",
+                    "total": 11276,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "43.894.044/0001-15",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 1950.52
+                  },
+                  {
+                    "nome": "HARMONIC SOLUCOES TERAPEUTICAS LTDA",
+                    "total": 10166,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "48.427.486/0001-75",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 1453.75
+                  },
+                  {
+                    "nome": "LETICIA SANTOS GARCIA",
+                    "total": 8667,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "09001331637",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 1377.09
+                  },
+                  {
+                    "nome": "SANDRA NAIARA COSTA ANDRADE DE CAMARGOS",
+                    "total": 7119,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "09940252625",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 1131.13
+                  },
+                  {
+                    "nome": "ARICELIA PIRES DA FONSECA BARBOSA",
+                    "total": 6999.99,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "03009952619",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 1000.99
+                  },
+                  {
+                    "nome": "GN LIDER LTDA",
+                    "total": 6583.85,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "35.006.646/0001-60",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 941.49
+                  },
+                  {
+                    "nome": "DIVILASER LTDA",
+                    "total": 5925.73,
+                    "qtd": 2,
+                    "uf": "MG",
+                    "cnpj": "12.869.310/0001-26",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 1455.63
+                  },
+                  {
+                    "nome": "MARINA CARDOSO VILELA FARIA",
+                    "total": 5280.11,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "10757820662",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 888.18
+                  },
+                  {
+                    "nome": "JULIANA APARECIDA LOPES",
+                    "total": 4700,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "06576864680",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 672.1
+                  },
+                  {
+                    "nome": "ANGELA DE ALCANTARA MAGNANI BEZERRA",
+                    "total": 3676,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "03279378150",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 567.71
+                  },
+                  {
+                    "nome": "LAMUR ESTETICA AVANCADA LTDA",
+                    "total": 3132.9,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "65.020.746/0001-02",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 497.2
+                  },
+                  {
+                    "nome": "SETE LAGOAS DEPILACAO A LASER LTDA",
+                    "total": 2564,
+                    "qtd": 2,
+                    "uf": "MG",
+                    "cnpj": "18.341.788/0001-65",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 571.41
+                  },
+                  {
+                    "nome": "MARIA CYNTIA FERREIRA ALMADA",
+                    "total": 2358.5,
+                    "qtd": 2,
+                    "uf": "MG",
+                    "cnpj": "22.621.915/0001-57",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 561.99
+                  },
+                  {
+                    "nome": "CAROLINA FRANCISCA SOARES VIEIRA",
+                    "total": 2279.5,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "04620001686",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 343.2
+                  },
+                  {
+                    "nome": "CLAUDIA VIRGINIA VARGAS CUNHA",
+                    "total": 2275.5,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "13339119635",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 342.2
+                  },
+                  {
+                    "nome": "FERNANDA XAVIER DE OLIVEIRA",
+                    "total": 2207.01,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "11542647690",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 340.34
+                  },
+                  {
+                    "nome": "INSTITUTO HARMONIZE LTDA",
+                    "total": 1997.5,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "46.264.187/0001-31",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 336.05
+                  },
+                  {
+                    "nome": "WANESSA CRISTINA DE OLIVEIRA",
+                    "total": 1683,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "01455539651",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 240.67
+                  },
+                  {
+                    "nome": "NAYARA MONT MOR SILVA",
+                    "total": 1588.6,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "06782757699",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 321.46
+                  },
+                  {
+                    "nome": "CLAUDIO DEPILACAO A LASER LTDA",
+                    "total": 1383,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "53.270.303/0001-90",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 197.77
+                  },
+                  {
+                    "nome": "KENNEA FERNANDA LUIZ CALDEIRA",
+                    "total": 1290.03,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "01178197603",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 190.05
+                  },
+                  {
+                    "nome": "JOAO PAULO BRAGA FERNANDES SOBREIRA",
+                    "total": 1149,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "01318798639",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 164.31
+                  },
+                  {
+                    "nome": "NATALIA DELAGE GOMES LTDA",
+                    "total": 1020,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "24.397.144/0001-91",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 145.86
+                  },
+                  {
+                    "nome": "LAIZ NAVES",
+                    "total": 1010.8,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "07877152639",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 159.42
+                  },
+                  {
+                    "nome": "LAYANNE CHISTINE DE PAULA MIRANDA ALCANTARA",
+                    "total": 990.5,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "09938635660",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 148.72
+                  },
+                  {
+                    "nome": "VICTOR FERNANDES GASPAR CAIXETA",
+                    "total": 990.3,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "07592653648",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 145.86
+                  },
+                  {
+                    "nome": "LETICIA BICALHO MACRUZ FARIA",
+                    "total": 987.5,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "03865796605",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 185.9
+                  },
+                  {
+                    "nome": "LCB SAUDE INTEGRADA LTDA",
+                    "total": 874.25,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "28.667.229/0001-01",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 164.31
+                  },
+                  {
+                    "nome": "BETIM DEPILACAO A LASER EIRELI",
+                    "total": 699,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "10.801.054/0001-00",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 99.96
+                  },
+                  {
+                    "nome": "ZILDA ELIETE DE OLIVEIRA",
+                    "total": 358.56,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "09622051685",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 53.6
+                  }
+                ]
+              },
+              {
+                "cfop": "5-102",
+                "descricao": "Venda",
+                "finalidade": "Venda",
+                "qtd": 1,
+                "total": 3093.8,
+                "icms": 0,
+                "base": 0,
+                "ipi": 160.88,
+                "credito_icms": false,
+                "pct": 0.9,
+                "parties": [
+                  {
+                    "nome": "JULIANA DE CARVALHO FREITAS DAMASCENO",
+                    "total": 3093.8,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "07443881630",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 160.88
+                  }
+                ]
+              },
+              {
+                "cfop": "5-910",
+                "descricao": "Bonificação / doação",
+                "finalidade": "Bonificação / doação",
+                "qtd": 1,
+                "total": 1139,
+                "icms": 0,
+                "base": 0,
+                "ipi": 1616.63,
+                "credito_icms": false,
+                "pct": 0.33,
+                "parties": [
+                  {
+                    "nome": "HARMONIC SOLUCOES TERAPEUTICAS LTDA",
+                    "total": 1139,
+                    "qtd": 1,
+                    "uf": "MG",
+                    "cnpj": "48.427.486/0001-75",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 1616.63
+                  }
+                ]
+              }
+            ],
+            "finalidade": [
+              {
+                "finalidade": "Transferência Matriz",
+                "total": 83864.21,
+                "qtd": 31,
+                "pct": 99.35
+              },
+              {
+                "finalidade": "Outras",
+                "total": 550,
+                "qtd": 1,
+                "pct": 0.65
+              }
+            ],
+            "ranking_fornecedores": [
+              {
+                "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+                "total": 83864.21,
+                "qtd": 31,
+                "uf": "DF",
+                "cnpj": "21.051.983/0003-27",
+                "pct": 99.35
+              },
+              {
+                "nome": "GEOVANNA MORAIS",
+                "total": 550,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "12083387651",
+                "pct": 0.65
+              }
+            ],
+            "ranking_clientes": [
+              {
+                "nome": "LT COMERCIO LTDA",
+                "total": 98910,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "67.610.126/0001-59",
+                "pct": 28.91
+              },
+              {
+                "nome": "CHRIS MEDIC PRODUTOS HOSPITALARES E CIRURGICOS LTDA",
+                "total": 94256.5,
+                "qtd": 2,
+                "uf": "MG",
+                "cnpj": "29.535.183/0001-21",
+                "pct": 27.55
+              },
+              {
+                "nome": "MYRIAN DE OLIVEIRA GOLCALVES PRINCE SOARES",
+                "total": 23588.7,
+                "qtd": 2,
+                "uf": "MG",
+                "cnpj": "25977296649",
+                "pct": 6.89
+              },
+              {
+                "nome": "LAGOLD COMERCIO HOSPITALAR LTDA",
+                "total": 19955,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "26.304.688/0001-97",
+                "pct": 5.83
+              },
+              {
+                "nome": "HARMONIC SOLUCOES TERAPEUTICAS LTDA",
+                "total": 11305,
+                "qtd": 2,
+                "uf": "MG",
+                "cnpj": "48.427.486/0001-75",
+                "pct": 3.3
+              },
+              {
+                "nome": "RAFAEL RIBEIRO TRINDADE MELO",
+                "total": 11276,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "43.894.044/0001-15",
+                "pct": 3.3
+              },
+              {
+                "nome": "LETICIA SANTOS GARCIA",
+                "total": 8667,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "09001331637",
+                "pct": 2.53
+              },
+              {
+                "nome": "SANDRA NAIARA COSTA ANDRADE DE CAMARGOS",
+                "total": 7119,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "09940252625",
+                "pct": 2.08
+              },
+              {
+                "nome": "ARICELIA PIRES DA FONSECA BARBOSA",
+                "total": 6999.99,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "03009952619",
+                "pct": 2.05
+              },
+              {
+                "nome": "GN LIDER LTDA",
+                "total": 6583.85,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "35.006.646/0001-60",
+                "pct": 1.92
+              },
+              {
+                "nome": "DIVILASER LTDA",
+                "total": 5925.73,
+                "qtd": 2,
+                "uf": "MG",
+                "cnpj": "12.869.310/0001-26",
+                "pct": 1.73
+              },
+              {
+                "nome": "MARINA CARDOSO VILELA FARIA",
+                "total": 5280.11,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "10757820662",
+                "pct": 1.54
+              },
+              {
+                "nome": "JULIANA APARECIDA LOPES",
+                "total": 4700,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "06576864680",
+                "pct": 1.37
+              },
+              {
+                "nome": "ANGELA DE ALCANTARA MAGNANI BEZERRA",
+                "total": 3676,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "03279378150",
+                "pct": 1.07
+              },
+              {
+                "nome": "LAMUR ESTETICA AVANCADA LTDA",
+                "total": 3132.9,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "65.020.746/0001-02",
+                "pct": 0.92
+              },
+              {
+                "nome": "JULIANA DE CARVALHO FREITAS DAMASCENO",
+                "total": 3093.8,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "07443881630",
+                "pct": 0.9
+              },
+              {
+                "nome": "SETE LAGOAS DEPILACAO A LASER LTDA",
+                "total": 2564,
+                "qtd": 2,
+                "uf": "MG",
+                "cnpj": "18.341.788/0001-65",
+                "pct": 0.75
+              },
+              {
+                "nome": "MARIA CYNTIA FERREIRA ALMADA",
+                "total": 2358.5,
+                "qtd": 2,
+                "uf": "MG",
+                "cnpj": "22.621.915/0001-57",
+                "pct": 0.69
+              },
+              {
+                "nome": "CAROLINA FRANCISCA SOARES VIEIRA",
+                "total": 2279.5,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "04620001686",
+                "pct": 0.67
+              },
+              {
+                "nome": "CLAUDIA VIRGINIA VARGAS CUNHA",
+                "total": 2275.5,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "13339119635",
+                "pct": 0.67
+              },
+              {
+                "nome": "FERNANDA XAVIER DE OLIVEIRA",
+                "total": 2207.01,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "11542647690",
+                "pct": 0.64
+              },
+              {
+                "nome": "INSTITUTO HARMONIZE LTDA",
+                "total": 1997.5,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "46.264.187/0001-31",
+                "pct": 0.58
+              },
+              {
+                "nome": "WANESSA CRISTINA DE OLIVEIRA",
+                "total": 1683,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "01455539651",
+                "pct": 0.49
+              },
+              {
+                "nome": "NAYARA MONT MOR SILVA",
+                "total": 1588.6,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "06782757699",
+                "pct": 0.46
+              },
+              {
+                "nome": "CLAUDIO DEPILACAO A LASER LTDA",
+                "total": 1383,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "53.270.303/0001-90",
+                "pct": 0.4
+              },
+              {
+                "nome": "KENNEA FERNANDA LUIZ CALDEIRA",
+                "total": 1290.03,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "01178197603",
+                "pct": 0.38
+              },
+              {
+                "nome": "JOAO PAULO BRAGA FERNANDES SOBREIRA",
+                "total": 1149,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "01318798639",
+                "pct": 0.34
+              },
+              {
+                "nome": "NATALIA DELAGE GOMES LTDA",
+                "total": 1020,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "24.397.144/0001-91",
+                "pct": 0.3
+              },
+              {
+                "nome": "LAIZ NAVES",
+                "total": 1010.8,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "07877152639",
+                "pct": 0.3
+              },
+              {
+                "nome": "LAYANNE CHISTINE DE PAULA MIRANDA ALCANTARA",
+                "total": 990.5,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "09938635660",
+                "pct": 0.29
+              },
+              {
+                "nome": "VICTOR FERNANDES GASPAR CAIXETA",
+                "total": 990.3,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "07592653648",
+                "pct": 0.29
+              },
+              {
+                "nome": "LETICIA BICALHO MACRUZ FARIA",
+                "total": 987.5,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "03865796605",
+                "pct": 0.29
+              },
+              {
+                "nome": "LCB SAUDE INTEGRADA LTDA",
+                "total": 874.25,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "28.667.229/0001-01",
+                "pct": 0.26
+              },
+              {
+                "nome": "BETIM DEPILACAO A LASER EIRELI",
+                "total": 699,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "10.801.054/0001-00",
+                "pct": 0.2
+              },
+              {
+                "nome": "ZILDA ELIETE DE OLIVEIRA",
+                "total": 358.56,
+                "qtd": 1,
+                "uf": "MG",
+                "cnpj": "09622051685",
+                "pct": 0.1
+              }
+            ],
             "notas_entradas": [],
             "notas_saidas": [],
-            "ufs_entradas": {},
-            "ufs_saidas": {},
+            "ufs_entradas": {
+              "MG": 550,
+              "DF": 83864.21
+            },
+            "ufs_saidas": {
+              "MG": 342176.13
+            },
             "serie_diaria": {
-              "labels": [],
-              "entradas": [],
-              "saidas": []
+              "labels": [
+                "01/07/2026",
+                "02/07/2026",
+                "03/07/2026",
+                "06/07/2026",
+                "07/07/2026",
+                "08/07/2026",
+                "09/07/2026",
+                "10/07/2026",
+                "14/07/2026",
+                "15/07/2026",
+                "16/07/2026",
+                "17/07/2026",
+                "20/07/2026",
+                "22/07/2026",
+                "23/07/2026",
+                "28/07/2026",
+                "30/07/2026"
+              ],
+              "entradas": [
+                9620.77,
+                368.52,
+                616.55,
+                917.1,
+                2409.94,
+                27700.78,
+                517.5,
+                3201.2,
+                3337.74,
+                0,
+                16952.98,
+                163.62,
+                2125.2,
+                2613.04,
+                6465.5,
+                5513.6,
+                1890.17
+              ],
+              "saidas": [
+                8960.61,
+                6907.01,
+                5699.25,
+                3286.3,
+                5636.5,
+                99609,
+                0,
+                26286,
+                21965.3,
+                1648.59,
+                85421.84,
+                3132.9,
+                0,
+                11243.1,
+                26376.73,
+                24698,
+                11305
+              ]
             },
             "dre": {
-              "receita": 0,
-              "receita_externa": 0,
-              "cmv": 0,
-              "lucro_bruto": 0,
-              "margem_bruta_pct": null,
+              "receita": 342176.13,
+              "receita_externa": 342176.13,
+              "cmv": 84414.21,
+              "lucro_bruto": 257761.92,
+              "margem_bruta_pct": 75.33,
               "icms_debito": 0,
-              "icms_credito": 0,
-              "saldo_icms": 0,
-              "resultado": 0,
-              "margem_resultado_pct": null
+              "icms_credito": 2934.91,
+              "saldo_icms": -2934.91,
+              "resultado": 260696.83,
+              "margem_resultado_pct": 76.19
             }
           },
           "PR": {
@@ -78956,50 +80066,1532 @@ const JPG_DATA = {
               "uf": "SP",
               "filial_key": "SP",
               "filial_label": "Filial SP",
-              "alerta": "Planilha de movimento Jul/2026 ausente para Filial SP."
+              "alerta": ""
             },
-            "fornecedor_keys": [],
-            "cliente_keys": [],
+            "fornecedor_keys": [
+              "21.051.983/0003-27"
+            ],
+            "cliente_keys": [
+              "16.918.361/0001-51",
+              "55.847.801/0001-89",
+              "45.188.118/0001-23",
+              "26.457.795/0001-55",
+              "52.478.833/0001-66",
+              "47.067.312/0001-86",
+              "15.234.351/0001-34",
+              "22730549803",
+              "07279822819",
+              "54.288.917/0001-62",
+              "19.856.904/0001-41",
+              "36.070.938/0001-25",
+              "76959228549",
+              "42.245.644/0001-90",
+              "09.395.405/0001-40",
+              "56.160.599/0001-85",
+              "29.797.229/0001-80",
+              "26178210809",
+              "44750802824",
+              "38.391.310/0001-57",
+              "00.537.860/0001-69",
+              "16390507879",
+              "35302353857",
+              "23.010.670/0001-94",
+              "05.639.032/0001-55",
+              "28.804.239/0001-33",
+              "47.167.167/0001-05",
+              "21.103.636/0001-39",
+              "25129187857",
+              "30426095880",
+              "52.974.248/0001-57",
+              "25533753877",
+              "46127095867",
+              "61901342204",
+              "33303234850",
+              "33718757842",
+              "06808227632",
+              "57.934.107/0001-24",
+              "57.787.229/0001-35",
+              "24.249.343/0001-52",
+              "26234889832",
+              "33479650864",
+              "38925110806",
+              "17286168835",
+              "12254692607",
+              "30621646890",
+              "40240898893",
+              "41.772.562/0001-30",
+              "42826695860",
+              "11.428.722/0001-68",
+              "44.660.860/0001-27",
+              "11139607600",
+              "16582699857",
+              "29177434846",
+              "27016851842",
+              "29.875.170/0001-00",
+              "52.668.833/0001-29",
+              "33738647805",
+              "14386654828",
+              "94463883768",
+              "61.289.947/0001-59",
+              "39882800890",
+              "96215925691",
+              "02514142806",
+              "84848120810",
+              "32563257859",
+              "50.232.666/0001-43"
+            ],
             "kpis": {
-              "entradas": 0,
-              "saidas": 0,
-              "icms_credito": 0,
-              "icms_debito": 0,
-              "base_icms_ent": 0,
-              "base_icms_sai": 0,
-              "ipi_ent": 0,
-              "ipi_sai": 0,
-              "saldo_icms": 0,
-              "n_nf_ent": 0,
-              "n_nf_sai": 0,
-              "n_fornecedores": 0,
-              "n_clientes": 0
+              "entradas": 117586.2,
+              "saidas": 664552.78,
+              "icms_credito": 4115.04,
+              "icms_debito": 41304.73,
+              "base_icms_ent": 102875.02,
+              "base_icms_sai": 424676.58,
+              "ipi_ent": 14711.18,
+              "ipi_sai": 121111.73,
+              "saldo_icms": 37189.69,
+              "n_nf_ent": 53,
+              "n_nf_sai": 82,
+              "n_fornecedores": 1,
+              "n_clientes": 67
             },
-            "cfop_entradas": [],
-            "cfop_saidas": [],
-            "finalidade": [],
-            "ranking_fornecedores": [],
-            "ranking_clientes": [],
+            "cfop_entradas": [
+              {
+                "cfop": "2-152",
+                "descricao": "Transferência recebida da matriz",
+                "finalidade": "Transferência Matriz",
+                "qtd": 53,
+                "total": 117586.2,
+                "icms": 4115.04,
+                "base": 102875.02,
+                "ipi": 29403.66,
+                "credito_icms": true,
+                "pct": 100,
+                "parties": [
+                  {
+                    "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+                    "total": 117586.2,
+                    "qtd": 53,
+                    "uf": "DF",
+                    "cnpj": "21.051.983/0003-27",
+                    "icms": 4115.04,
+                    "base": 102875.02,
+                    "ipi": 29403.66
+                  }
+                ]
+              }
+            ],
+            "cfop_saidas": [
+              {
+                "cfop": "6-102",
+                "descricao": "Venda interestadual",
+                "finalidade": "Venda",
+                "qtd": 17,
+                "total": 353199.63,
+                "icms": 12099.13,
+                "base": 302477.1,
+                "ipi": 59785.55,
+                "credito_icms": false,
+                "pct": 53.15,
+                "parties": [
+                  {
+                    "nome": "VELLOZIA PRODUTOS HOSPITALARES EIRELI",
+                    "total": 218237.5,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "16.918.361/0001-51",
+                    "icms": 7481.18,
+                    "base": 187029.54,
+                    "ipi": 31207.96
+                  },
+                  {
+                    "nome": "RDL MEDICAL LTDA",
+                    "total": 64499.5,
+                    "qtd": 2,
+                    "uf": "DF",
+                    "cnpj": "55.847.801/0001-89",
+                    "icms": 2211.07,
+                    "base": 55276.08,
+                    "ipi": 16790.48
+                  },
+                  {
+                    "nome": "CHRIS MEDI PRODUTOS MEDICOS E HOSPITALARES LTDA",
+                    "total": 15821,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "54.288.917/0001-62",
+                    "icms": 542.34,
+                    "base": 13558.59,
+                    "ipi": 2262.41
+                  },
+                  {
+                    "nome": "VISTA ODONTOLOGIA LTDA",
+                    "total": 9651.5,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "36.070.938/0001-25",
+                    "icms": 329.15,
+                    "base": 8228.65,
+                    "ipi": 1422.85
+                  },
+                  {
+                    "nome": "CLINICA DERMATOLOGICA E ESTETICA PELLIER LUANNA CAIRES P...",
+                    "total": 9126,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "42.245.644/0001-90",
+                    "icms": 307.04,
+                    "base": 7675.98,
+                    "ipi": 1450.02
+                  },
+                  {
+                    "nome": "SEIVA CLINICA DE ESTETICA E PROCEDIMENTOS LTDA",
+                    "total": 7526.2,
+                    "qtd": 2,
+                    "uf": "DF",
+                    "cnpj": "09.395.405/0001-40",
+                    "icms": 253.46,
+                    "base": 6336.44,
+                    "ipi": 2155.01
+                  },
+                  {
+                    "nome": "BOUTIQUE DA PELE LTDA",
+                    "total": 7344,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "29.797.229/0001-80",
+                    "icms": 244.34,
+                    "base": 6108.48,
+                    "ipi": 1235.52
+                  },
+                  {
+                    "nome": "UNIPEL UNIDADE INTEGRADA DE TRATAMENTO DA PELE LTDA",
+                    "total": 5238,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "00.537.860/0001-69",
+                    "icms": 179.56,
+                    "base": 4488.97,
+                    "ipi": 749.03
+                  },
+                  {
+                    "nome": "CURANTE FARMACIA DE MANIPULACAO",
+                    "total": 4615.8,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "05.639.032/0001-55",
+                    "icms": 158.23,
+                    "base": 3955.74,
+                    "ipi": 660.06
+                  },
+                  {
+                    "nome": "CM SERVICOS MEDICOS LTDA",
+                    "total": 4104,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "28.804.239/0001-33",
+                    "icms": 139.45,
+                    "base": 3486.24,
+                    "ipi": 617.76
+                  },
+                  {
+                    "nome": "CR HARMONIZACAO FACIAL CORPORAL E ESTETICA AVANCADA LTDA",
+                    "total": 2805.13,
+                    "qtd": 2,
+                    "uf": "DF",
+                    "cnpj": "52.974.248/0001-57",
+                    "icms": 95.39,
+                    "base": 2384.53,
+                    "ipi": 615.26
+                  },
+                  {
+                    "nome": "CLINICA DE ESTETICA AVANCADA BEATRIZ SALIGNAC LTDA",
+                    "total": 2350,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "57.934.107/0001-24",
+                    "icms": 94,
+                    "base": 2350,
+                    "ipi": 336.05
+                  },
+                  {
+                    "nome": "ATELIE FACIAL ODONTOLOGIA LTDA",
+                    "total": 1881,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "24.249.343/0001-52",
+                    "icms": 63.92,
+                    "base": 1597.86,
+                    "ipi": 283.14
+                  },
+                  {
+                    "nome": "TAMYRYS ALVES BOMFIM",
+                    "total": 0,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "50.232.666/0001-43",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 0
+                  }
+                ]
+              },
+              {
+                "cfop": "5-102",
+                "descricao": "Venda",
+                "finalidade": "Venda",
+                "qtd": 60,
+                "total": 252516.6,
+                "icms": 28949.52,
+                "base": 115797.69,
+                "ipi": 52912.54,
+                "credito_icms": false,
+                "pct": 38,
+                "parties": [
+                  {
+                    "nome": "BIOMEDICLIN PRODUTOS FARMACEUTICOS LTDA.",
+                    "total": 28580.4,
+                    "qtd": 2,
+                    "uf": "SP",
+                    "cnpj": "26.457.795/0001-55",
+                    "icms": 2939.2,
+                    "base": 11756.83,
+                    "ipi": 4927.17
+                  },
+                  {
+                    "nome": "LUMIS PRODUTOS HOF LTDA",
+                    "total": 28021.5,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "52.478.833/0001-66",
+                    "icms": 2881.73,
+                    "base": 11526.92,
+                    "ipi": 4007.07
+                  },
+                  {
+                    "nome": "INSTITUTO LAIS FERRO LTDA",
+                    "total": 22149.3,
+                    "qtd": 4,
+                    "uf": "SP",
+                    "cnpj": "47.067.312/0001-86",
+                    "icms": 2657.91,
+                    "base": 10631.65,
+                    "ipi": 7176.89
+                  },
+                  {
+                    "nome": "POLY HEALTH COMERCIO E PRESTACAO DE SERV LTDA ME",
+                    "total": 21198.45,
+                    "qtd": 2,
+                    "uf": "SP",
+                    "cnpj": "15.234.351/0001-34",
+                    "icms": 2180.05,
+                    "base": 8720.19,
+                    "ipi": 3627.83
+                  },
+                  {
+                    "nome": "MARCIA CAPUTO",
+                    "total": 16575.98,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "07279822819",
+                    "icms": 1989.12,
+                    "base": 7956.47,
+                    "ipi": 2709.71
+                  },
+                  {
+                    "nome": "SUZANA FONTANETTI",
+                    "total": 16482,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "22730549803",
+                    "icms": 1977.84,
+                    "base": 7911.35,
+                    "ipi": 2804.46
+                  },
+                  {
+                    "nome": "RENATA MOURA CASSARA SERVICOS DE ESTETICA",
+                    "total": 15308.5,
+                    "qtd": 2,
+                    "uf": "SP",
+                    "cnpj": "19.856.904/0001-41",
+                    "icms": 1837.02,
+                    "base": 7348.08,
+                    "ipi": 2575.43
+                  },
+                  {
+                    "nome": "RAQUEL OLIVEIRA SILVA",
+                    "total": 9520.78,
+                    "qtd": 2,
+                    "uf": "SP",
+                    "cnpj": "76959228549",
+                    "icms": 1142.51,
+                    "base": 4569.97,
+                    "ipi": 2244.25
+                  },
+                  {
+                    "nome": "INSTITUTO EQUILIBRIA LTDA",
+                    "total": 7701.67,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "56.160.599/0001-85",
+                    "icms": 924.21,
+                    "base": 3696.8,
+                    "ipi": 1101.34
+                  },
+                  {
+                    "nome": "DANIELA FERNANDA JULIETA BRAGA DE MEDEIROS ZANETTI",
+                    "total": 6840,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "26178210809",
+                    "icms": 820.8,
+                    "base": 3283.2,
+                    "ipi": 1086.8
+                  },
+                  {
+                    "nome": "EDUARDO GALETI",
+                    "total": 6187.63,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "44750802824",
+                    "icms": 742.52,
+                    "base": 2970.06,
+                    "ipi": 912.2
+                  },
+                  {
+                    "nome": "MARILISA LISBOA BENINCASA",
+                    "total": 4984.5,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "16390507879",
+                    "icms": 598.15,
+                    "base": 2392.56,
+                    "ipi": 868.01
+                  },
+                  {
+                    "nome": "ANA PAULA GERALDI DO AMARAL",
+                    "total": 4723.85,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "35302353857",
+                    "icms": 566.87,
+                    "base": 2267.45,
+                    "ipi": 741.43
+                  },
+                  {
+                    "nome": "DIANA FERREIRA PAULO",
+                    "total": 4700,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "23.010.670/0001-94",
+                    "icms": 564,
+                    "base": 2256,
+                    "ipi": 1100.81
+                  },
+                  {
+                    "nome": "GP ESTETICA E ASSOCIADOS LTDA",
+                    "total": 3697,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "47.167.167/0001-05",
+                    "icms": 443.64,
+                    "base": 1774.56,
+                    "ipi": 713.57
+                  },
+                  {
+                    "nome": "CLINICA MEDICA ADDARIO CAMARGO LTDA",
+                    "total": 3537,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "21.103.636/0001-39",
+                    "icms": 424.44,
+                    "base": 1697.76,
+                    "ipi": 561.99
+                  },
+                  {
+                    "nome": "DANIELA TEIXEIRA DE AGOSTINHO",
+                    "total": 3534.91,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "25129187857",
+                    "icms": 424.19,
+                    "base": 1696.76,
+                    "ipi": 505.48
+                  },
+                  {
+                    "nome": "FERNANDA FERNANDES IORIO",
+                    "total": 3148,
+                    "qtd": 2,
+                    "uf": "SP",
+                    "cnpj": "30426095880",
+                    "icms": 377.76,
+                    "base": 1511.04,
+                    "ipi": 1012.44
+                  },
+                  {
+                    "nome": "JULIANA DIEGUES DA SILVA OLIVEIRA",
+                    "total": 2603.75,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "25533753877",
+                    "icms": 312.45,
+                    "base": 1249.8,
+                    "ipi": 412.91
+                  },
+                  {
+                    "nome": "ELIDIANE ALMEIDA",
+                    "total": 2434.3,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "46127095867",
+                    "icms": 292.12,
+                    "base": 1168.47,
+                    "ipi": 412.41
+                  },
+                  {
+                    "nome": "PATRICIA RANGEL DA SILVA MESQUITA",
+                    "total": 2415.5,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "61901342204",
+                    "icms": 289.87,
+                    "base": 1159.44,
+                    "ipi": 363.22
+                  },
+                  {
+                    "nome": "ELAINE SANTOS FERREIRA",
+                    "total": 2400,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "33303234850",
+                    "icms": 288,
+                    "base": 1152,
+                    "ipi": 343.2
+                  },
+                  {
+                    "nome": "JULIANA NIFOSSI PRADO",
+                    "total": 2400,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "33718757842",
+                    "icms": 288,
+                    "base": 1152,
+                    "ipi": 343.2
+                  },
+                  {
+                    "nome": "JENNIFER NASCIMENTO CLEMENTE ARAGAO",
+                    "total": 2368.2,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "06808227632",
+                    "icms": 284.19,
+                    "base": 1136.74,
+                    "ipi": 375.8
+                  },
+                  {
+                    "nome": "CENTRO CIRURGIA PLASTICA MARCELO ARAUJO LTDA",
+                    "total": 2262.5,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "57.787.229/0001-35",
+                    "icms": 271.5,
+                    "base": 1086,
+                    "ipi": 340.34
+                  },
+                  {
+                    "nome": "MARCELA FAVILLA",
+                    "total": 1800,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "26234889832",
+                    "icms": 216,
+                    "base": 864,
+                    "ipi": 321.75
+                  },
+                  {
+                    "nome": "LUCIANA ELISA BARANDAS GARBELINI",
+                    "total": 1760,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "33479650864",
+                    "icms": 211.2,
+                    "base": 844.8,
+                    "ipi": 251.68
+                  },
+                  {
+                    "nome": "VERONICA DE PAULA MAXIMO",
+                    "total": 1730,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "38925110806",
+                    "icms": 207.61,
+                    "base": 830.4,
+                    "ipi": 247.39
+                  },
+                  {
+                    "nome": "PATRICIA PIERI GAMA DA SILVA",
+                    "total": 1655,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "17286168835",
+                    "icms": 198.6,
+                    "base": 794.4,
+                    "ipi": 250.25
+                  },
+                  {
+                    "nome": "EMILAYNE KARINA DE SOUZA",
+                    "total": 1521.73,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "12254692607",
+                    "icms": 182.61,
+                    "base": 730.43,
+                    "ipi": 262.91
+                  },
+                  {
+                    "nome": "DANIELA DE ABREU",
+                    "total": 1488,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "30621646890",
+                    "icms": 178.56,
+                    "base": 714.24,
+                    "ipi": 235.95
+                  },
+                  {
+                    "nome": "DRA JULIA BENINI",
+                    "total": 1452,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "40240898893",
+                    "icms": 174.25,
+                    "base": 696.96,
+                    "ipi": 230.23
+                  },
+                  {
+                    "nome": "ISABELA VALENTE DUARTE CHAVES",
+                    "total": 1389.3,
+                    "qtd": 2,
+                    "uf": "SP",
+                    "cnpj": "42826695860",
+                    "icms": 166.71,
+                    "base": 666.86,
+                    "ipi": 224.37
+                  },
+                  {
+                    "nome": "ALN-SERVICOS MEDICOS LTDA",
+                    "total": 1331.5,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "11.428.722/0001-68",
+                    "icms": 159.78,
+                    "base": 639.12,
+                    "ipi": 190.4
+                  },
+                  {
+                    "nome": "RENATA FALCAO CLINICA MEDICA LTDA",
+                    "total": 1320.03,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "44.660.860/0001-27",
+                    "icms": 158.4,
+                    "base": 633.61,
+                    "ipi": 194.34
+                  },
+                  {
+                    "nome": "THAIS ALVES GONCALVES",
+                    "total": 1290.03,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "11139607600",
+                    "icms": 154.8,
+                    "base": 619.21,
+                    "ipi": 190.05
+                  },
+                  {
+                    "nome": "CATARINA MACHADO MENDES CAPELA",
+                    "total": 1079.3,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "16582699857",
+                    "icms": 129.52,
+                    "base": 518.06,
+                    "ipi": 218.65
+                  },
+                  {
+                    "nome": "BRUNA REGINA PERIM DE QUEIROZ",
+                    "total": 1040,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "29177434846",
+                    "icms": 124.8,
+                    "base": 499.2,
+                    "ipi": 148.72
+                  },
+                  {
+                    "nome": "ARIANE ANGELI DE SOUZA MANOEL",
+                    "total": 1020,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "27016851842",
+                    "icms": 122.4,
+                    "base": 489.6,
+                    "ipi": 145.86
+                  },
+                  {
+                    "nome": "MAYARA MARQUES TEODORO",
+                    "total": 1020,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "29.875.170/0001-00",
+                    "icms": 104.9,
+                    "base": 419.59,
+                    "ipi": 145.86
+                  },
+                  {
+                    "nome": "INSTITUTO DERMACLIN CARE LTDA",
+                    "total": 1010.3,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "52.668.833/0001-29",
+                    "icms": 121.24,
+                    "base": 484.94,
+                    "ipi": 148.72
+                  },
+                  {
+                    "nome": "LARA DUTRA DIAS",
+                    "total": 990.5,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "33738647805",
+                    "icms": 118.86,
+                    "base": 475.44,
+                    "ipi": 148.72
+                  },
+                  {
+                    "nome": "BIBIANA DONATILA DE LINA",
+                    "total": 988,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "14386654828",
+                    "icms": 118.56,
+                    "base": 474.24,
+                    "ipi": 148.72
+                  },
+                  {
+                    "nome": "ANA BEATRIZ ARBEX FERREIRA",
+                    "total": 957,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "94463883768",
+                    "icms": 114.84,
+                    "base": 459.36,
+                    "ipi": 151.58
+                  },
+                  {
+                    "nome": "IFD SERVICOS MEDICOS LTDA",
+                    "total": 942.29,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "61.289.947/0001-59",
+                    "icms": 113.08,
+                    "base": 452.3,
+                    "ipi": 145.86
+                  },
+                  {
+                    "nome": "CAMILA VARIN DE ASSIS",
+                    "total": 921,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "39882800890",
+                    "icms": 110.52,
+                    "base": 442.08,
+                    "ipi": 145.86
+                  },
+                  {
+                    "nome": "GIULIANA FRITTELLA BUENO",
+                    "total": 772,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "96215925691",
+                    "icms": 92.64,
+                    "base": 370.56,
+                    "ipi": 115.83
+                  },
+                  {
+                    "nome": "LINA MARCELA GONZALEZ",
+                    "total": 720,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "02514142806",
+                    "icms": 86.4,
+                    "base": 345.6,
+                    "ipi": 102.96
+                  },
+                  {
+                    "nome": "ERCILIA RIBEIRO BORGES",
+                    "total": 415,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "84848120810",
+                    "icms": 49.8,
+                    "base": 199.2,
+                    "ipi": 82.94
+                  },
+                  {
+                    "nome": "LUCIANA CATAPANI CAPUTO",
+                    "total": 127.9,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "32563257859",
+                    "icms": 15.35,
+                    "base": 61.39,
+                    "ipi": 18.29
+                  },
+                  {
+                    "nome": "NAGA MEDICAL LTDA",
+                    "total": 0,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "45.188.118/0001-23",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 7176.69
+                  }
+                ]
+              },
+              {
+                "cfop": "5-910",
+                "descricao": "Bonificação / doação",
+                "finalidade": "Bonificação / doação",
+                "qtd": 2,
+                "total": 51366.55,
+                "icms": 0,
+                "base": 0,
+                "ipi": 7345.43,
+                "credito_icms": false,
+                "pct": 7.73,
+                "parties": [
+                  {
+                    "nome": "NAGA MEDICAL LTDA",
+                    "total": 50186.55,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "45.188.118/0001-23",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 7176.69
+                  },
+                  {
+                    "nome": "SUZANA FONTANETTI",
+                    "total": 1180,
+                    "qtd": 1,
+                    "uf": "SP",
+                    "cnpj": "22730549803",
+                    "icms": 0,
+                    "base": 0,
+                    "ipi": 168.74
+                  }
+                ]
+              },
+              {
+                "cfop": "6-910",
+                "descricao": "Remessa",
+                "finalidade": "Remessa p/ Filial",
+                "qtd": 3,
+                "total": 7470,
+                "icms": 256.08,
+                "base": 6401.79,
+                "ipi": 1068.21,
+                "credito_icms": false,
+                "pct": 1.12,
+                "parties": [
+                  {
+                    "nome": "CLINICA AVLIS PROCEDIMENTOS ESTETICOS LTDA",
+                    "total": 5730,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "38.391.310/0001-57",
+                    "icms": 196.43,
+                    "base": 4910.61,
+                    "ipi": 819.39
+                  },
+                  {
+                    "nome": "PATRICIA REGINA ACADEMY ODONTOLOGIA E TREINAMENTOS LTDA",
+                    "total": 1400,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "41.772.562/0001-30",
+                    "icms": 47.99,
+                    "base": 1199.8,
+                    "ipi": 200.2
+                  },
+                  {
+                    "nome": "SEIVA CLINICA DE ESTETICA E PROCEDIMENTOS LTDA",
+                    "total": 340,
+                    "qtd": 1,
+                    "uf": "DF",
+                    "cnpj": "09.395.405/0001-40",
+                    "icms": 11.66,
+                    "base": 291.38,
+                    "ipi": 48.62
+                  }
+                ]
+              }
+            ],
+            "finalidade": [
+              {
+                "finalidade": "Transferência Matriz",
+                "total": 117586.2,
+                "qtd": 53,
+                "pct": 100
+              }
+            ],
+            "ranking_fornecedores": [
+              {
+                "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+                "total": 117586.2,
+                "qtd": 53,
+                "uf": "DF",
+                "cnpj": "21.051.983/0003-27",
+                "pct": 100
+              }
+            ],
+            "ranking_clientes": [
+              {
+                "nome": "VELLOZIA PRODUTOS HOSPITALARES EIRELI",
+                "total": 218237.5,
+                "qtd": 1,
+                "uf": "DF",
+                "cnpj": "16.918.361/0001-51",
+                "pct": 32.84
+              },
+              {
+                "nome": "RDL MEDICAL LTDA",
+                "total": 64499.5,
+                "qtd": 2,
+                "uf": "DF",
+                "cnpj": "55.847.801/0001-89",
+                "pct": 9.71
+              },
+              {
+                "nome": "NAGA MEDICAL LTDA",
+                "total": 50186.55,
+                "qtd": 2,
+                "uf": "SP",
+                "cnpj": "45.188.118/0001-23",
+                "pct": 7.55
+              },
+              {
+                "nome": "BIOMEDICLIN PRODUTOS FARMACEUTICOS LTDA.",
+                "total": 28580.4,
+                "qtd": 2,
+                "uf": "SP",
+                "cnpj": "26.457.795/0001-55",
+                "pct": 4.3
+              },
+              {
+                "nome": "LUMIS PRODUTOS HOF LTDA",
+                "total": 28021.5,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "52.478.833/0001-66",
+                "pct": 4.22
+              },
+              {
+                "nome": "INSTITUTO LAIS FERRO LTDA",
+                "total": 22149.3,
+                "qtd": 4,
+                "uf": "SP",
+                "cnpj": "47.067.312/0001-86",
+                "pct": 3.33
+              },
+              {
+                "nome": "POLY HEALTH COMERCIO E PRESTACAO DE SERV LTDA ME",
+                "total": 21198.45,
+                "qtd": 2,
+                "uf": "SP",
+                "cnpj": "15.234.351/0001-34",
+                "pct": 3.19
+              },
+              {
+                "nome": "SUZANA FONTANETTI",
+                "total": 17662,
+                "qtd": 2,
+                "uf": "SP",
+                "cnpj": "22730549803",
+                "pct": 2.66
+              },
+              {
+                "nome": "MARCIA CAPUTO",
+                "total": 16575.98,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "07279822819",
+                "pct": 2.49
+              },
+              {
+                "nome": "CHRIS MEDI PRODUTOS MEDICOS E HOSPITALARES LTDA",
+                "total": 15821,
+                "qtd": 1,
+                "uf": "DF",
+                "cnpj": "54.288.917/0001-62",
+                "pct": 2.38
+              },
+              {
+                "nome": "RENATA MOURA CASSARA SERVICOS DE ESTETICA",
+                "total": 15308.5,
+                "qtd": 2,
+                "uf": "SP",
+                "cnpj": "19.856.904/0001-41",
+                "pct": 2.3
+              },
+              {
+                "nome": "VISTA ODONTOLOGIA LTDA",
+                "total": 9651.5,
+                "qtd": 1,
+                "uf": "DF",
+                "cnpj": "36.070.938/0001-25",
+                "pct": 1.45
+              },
+              {
+                "nome": "RAQUEL OLIVEIRA SILVA",
+                "total": 9520.78,
+                "qtd": 2,
+                "uf": "SP",
+                "cnpj": "76959228549",
+                "pct": 1.43
+              },
+              {
+                "nome": "CLINICA DERMATOLOGICA E ESTETICA PELLIER LUANNA CAIRES P...",
+                "total": 9126,
+                "qtd": 1,
+                "uf": "DF",
+                "cnpj": "42.245.644/0001-90",
+                "pct": 1.37
+              },
+              {
+                "nome": "SEIVA CLINICA DE ESTETICA E PROCEDIMENTOS LTDA",
+                "total": 7866.2,
+                "qtd": 3,
+                "uf": "DF",
+                "cnpj": "09.395.405/0001-40",
+                "pct": 1.18
+              },
+              {
+                "nome": "INSTITUTO EQUILIBRIA LTDA",
+                "total": 7701.67,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "56.160.599/0001-85",
+                "pct": 1.16
+              },
+              {
+                "nome": "BOUTIQUE DA PELE LTDA",
+                "total": 7344,
+                "qtd": 1,
+                "uf": "DF",
+                "cnpj": "29.797.229/0001-80",
+                "pct": 1.11
+              },
+              {
+                "nome": "DANIELA FERNANDA JULIETA BRAGA DE MEDEIROS ZANETTI",
+                "total": 6840,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "26178210809",
+                "pct": 1.03
+              },
+              {
+                "nome": "EDUARDO GALETI",
+                "total": 6187.63,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "44750802824",
+                "pct": 0.93
+              },
+              {
+                "nome": "CLINICA AVLIS PROCEDIMENTOS ESTETICOS LTDA",
+                "total": 5730,
+                "qtd": 1,
+                "uf": "DF",
+                "cnpj": "38.391.310/0001-57",
+                "pct": 0.86
+              },
+              {
+                "nome": "UNIPEL UNIDADE INTEGRADA DE TRATAMENTO DA PELE LTDA",
+                "total": 5238,
+                "qtd": 1,
+                "uf": "DF",
+                "cnpj": "00.537.860/0001-69",
+                "pct": 0.79
+              },
+              {
+                "nome": "MARILISA LISBOA BENINCASA",
+                "total": 4984.5,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "16390507879",
+                "pct": 0.75
+              },
+              {
+                "nome": "ANA PAULA GERALDI DO AMARAL",
+                "total": 4723.85,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "35302353857",
+                "pct": 0.71
+              },
+              {
+                "nome": "DIANA FERREIRA PAULO",
+                "total": 4700,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "23.010.670/0001-94",
+                "pct": 0.71
+              },
+              {
+                "nome": "CURANTE FARMACIA DE MANIPULACAO",
+                "total": 4615.8,
+                "qtd": 1,
+                "uf": "DF",
+                "cnpj": "05.639.032/0001-55",
+                "pct": 0.69
+              },
+              {
+                "nome": "CM SERVICOS MEDICOS LTDA",
+                "total": 4104,
+                "qtd": 1,
+                "uf": "DF",
+                "cnpj": "28.804.239/0001-33",
+                "pct": 0.62
+              },
+              {
+                "nome": "GP ESTETICA E ASSOCIADOS LTDA",
+                "total": 3697,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "47.167.167/0001-05",
+                "pct": 0.56
+              },
+              {
+                "nome": "CLINICA MEDICA ADDARIO CAMARGO LTDA",
+                "total": 3537,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "21.103.636/0001-39",
+                "pct": 0.53
+              },
+              {
+                "nome": "DANIELA TEIXEIRA DE AGOSTINHO",
+                "total": 3534.91,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "25129187857",
+                "pct": 0.53
+              },
+              {
+                "nome": "FERNANDA FERNANDES IORIO",
+                "total": 3148,
+                "qtd": 2,
+                "uf": "SP",
+                "cnpj": "30426095880",
+                "pct": 0.47
+              },
+              {
+                "nome": "CR HARMONIZACAO FACIAL CORPORAL E ESTETICA AVANCADA LTDA",
+                "total": 2805.13,
+                "qtd": 2,
+                "uf": "DF",
+                "cnpj": "52.974.248/0001-57",
+                "pct": 0.42
+              },
+              {
+                "nome": "JULIANA DIEGUES DA SILVA OLIVEIRA",
+                "total": 2603.75,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "25533753877",
+                "pct": 0.39
+              },
+              {
+                "nome": "ELIDIANE ALMEIDA",
+                "total": 2434.3,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "46127095867",
+                "pct": 0.37
+              },
+              {
+                "nome": "PATRICIA RANGEL DA SILVA MESQUITA",
+                "total": 2415.5,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "61901342204",
+                "pct": 0.36
+              },
+              {
+                "nome": "ELAINE SANTOS FERREIRA",
+                "total": 2400,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "33303234850",
+                "pct": 0.36
+              },
+              {
+                "nome": "JULIANA NIFOSSI PRADO",
+                "total": 2400,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "33718757842",
+                "pct": 0.36
+              },
+              {
+                "nome": "JENNIFER NASCIMENTO CLEMENTE ARAGAO",
+                "total": 2368.2,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "06808227632",
+                "pct": 0.36
+              },
+              {
+                "nome": "CLINICA DE ESTETICA AVANCADA BEATRIZ SALIGNAC LTDA",
+                "total": 2350,
+                "qtd": 1,
+                "uf": "DF",
+                "cnpj": "57.934.107/0001-24",
+                "pct": 0.35
+              },
+              {
+                "nome": "CENTRO CIRURGIA PLASTICA MARCELO ARAUJO LTDA",
+                "total": 2262.5,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "57.787.229/0001-35",
+                "pct": 0.34
+              },
+              {
+                "nome": "ATELIE FACIAL ODONTOLOGIA LTDA",
+                "total": 1881,
+                "qtd": 1,
+                "uf": "DF",
+                "cnpj": "24.249.343/0001-52",
+                "pct": 0.28
+              },
+              {
+                "nome": "MARCELA FAVILLA",
+                "total": 1800,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "26234889832",
+                "pct": 0.27
+              },
+              {
+                "nome": "LUCIANA ELISA BARANDAS GARBELINI",
+                "total": 1760,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "33479650864",
+                "pct": 0.26
+              },
+              {
+                "nome": "VERONICA DE PAULA MAXIMO",
+                "total": 1730,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "38925110806",
+                "pct": 0.26
+              },
+              {
+                "nome": "PATRICIA PIERI GAMA DA SILVA",
+                "total": 1655,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "17286168835",
+                "pct": 0.25
+              },
+              {
+                "nome": "EMILAYNE KARINA DE SOUZA",
+                "total": 1521.73,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "12254692607",
+                "pct": 0.23
+              },
+              {
+                "nome": "DANIELA DE ABREU",
+                "total": 1488,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "30621646890",
+                "pct": 0.22
+              },
+              {
+                "nome": "DRA JULIA BENINI",
+                "total": 1452,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "40240898893",
+                "pct": 0.22
+              },
+              {
+                "nome": "PATRICIA REGINA ACADEMY ODONTOLOGIA E TREINAMENTOS LTDA",
+                "total": 1400,
+                "qtd": 1,
+                "uf": "DF",
+                "cnpj": "41.772.562/0001-30",
+                "pct": 0.21
+              },
+              {
+                "nome": "ISABELA VALENTE DUARTE CHAVES",
+                "total": 1389.3,
+                "qtd": 2,
+                "uf": "SP",
+                "cnpj": "42826695860",
+                "pct": 0.21
+              },
+              {
+                "nome": "ALN-SERVICOS MEDICOS LTDA",
+                "total": 1331.5,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "11.428.722/0001-68",
+                "pct": 0.2
+              },
+              {
+                "nome": "RENATA FALCAO CLINICA MEDICA LTDA",
+                "total": 1320.03,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "44.660.860/0001-27",
+                "pct": 0.2
+              },
+              {
+                "nome": "THAIS ALVES GONCALVES",
+                "total": 1290.03,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "11139607600",
+                "pct": 0.19
+              },
+              {
+                "nome": "CATARINA MACHADO MENDES CAPELA",
+                "total": 1079.3,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "16582699857",
+                "pct": 0.16
+              },
+              {
+                "nome": "BRUNA REGINA PERIM DE QUEIROZ",
+                "total": 1040,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "29177434846",
+                "pct": 0.16
+              },
+              {
+                "nome": "ARIANE ANGELI DE SOUZA MANOEL",
+                "total": 1020,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "27016851842",
+                "pct": 0.15
+              },
+              {
+                "nome": "MAYARA MARQUES TEODORO",
+                "total": 1020,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "29.875.170/0001-00",
+                "pct": 0.15
+              },
+              {
+                "nome": "INSTITUTO DERMACLIN CARE LTDA",
+                "total": 1010.3,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "52.668.833/0001-29",
+                "pct": 0.15
+              },
+              {
+                "nome": "LARA DUTRA DIAS",
+                "total": 990.5,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "33738647805",
+                "pct": 0.15
+              },
+              {
+                "nome": "BIBIANA DONATILA DE LINA",
+                "total": 988,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "14386654828",
+                "pct": 0.15
+              },
+              {
+                "nome": "ANA BEATRIZ ARBEX FERREIRA",
+                "total": 957,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "94463883768",
+                "pct": 0.14
+              },
+              {
+                "nome": "IFD SERVICOS MEDICOS LTDA",
+                "total": 942.29,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "61.289.947/0001-59",
+                "pct": 0.14
+              },
+              {
+                "nome": "CAMILA VARIN DE ASSIS",
+                "total": 921,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "39882800890",
+                "pct": 0.14
+              },
+              {
+                "nome": "GIULIANA FRITTELLA BUENO",
+                "total": 772,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "96215925691",
+                "pct": 0.12
+              },
+              {
+                "nome": "LINA MARCELA GONZALEZ",
+                "total": 720,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "02514142806",
+                "pct": 0.11
+              },
+              {
+                "nome": "ERCILIA RIBEIRO BORGES",
+                "total": 415,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "84848120810",
+                "pct": 0.06
+              },
+              {
+                "nome": "LUCIANA CATAPANI CAPUTO",
+                "total": 127.9,
+                "qtd": 1,
+                "uf": "SP",
+                "cnpj": "32563257859",
+                "pct": 0.02
+              },
+              {
+                "nome": "TAMYRYS ALVES BOMFIM",
+                "total": 0,
+                "qtd": 1,
+                "uf": "DF",
+                "cnpj": "50.232.666/0001-43",
+                "pct": 0
+              }
+            ],
             "notas_entradas": [],
             "notas_saidas": [],
-            "ufs_entradas": {},
-            "ufs_saidas": {},
+            "ufs_entradas": {
+              "DF": 117586.2
+            },
+            "ufs_saidas": {
+              "SP": 303883.15,
+              "DF": 360669.63
+            },
             "serie_diaria": {
-              "labels": [],
-              "entradas": [],
-              "saidas": []
+              "labels": [
+                "01/07/2026",
+                "02/07/2026",
+                "03/07/2026",
+                "06/07/2026",
+                "07/07/2026",
+                "08/07/2026",
+                "09/07/2026",
+                "10/07/2026",
+                "13/07/2026",
+                "14/07/2026",
+                "15/07/2026",
+                "16/07/2026",
+                "17/07/2026",
+                "20/07/2026",
+                "21/07/2026",
+                "22/07/2026",
+                "23/07/2026",
+                "24/07/2026",
+                "27/07/2026",
+                "28/07/2026",
+                "29/07/2026",
+                "30/07/2026",
+                "31/07/2026"
+              ],
+              "entradas": [
+                8746.02,
+                17783.33,
+                4895.59,
+                725.28,
+                50704.78,
+                807.12,
+                1865.26,
+                0,
+                0,
+                240.23,
+                4119.29,
+                3528.09,
+                3408.87,
+                0,
+                7095.33,
+                1698.09,
+                4187.92,
+                0,
+                1304.93,
+                5180.1,
+                1295.97,
+                0,
+                0
+              ],
+              "saidas": [
+                102111.23,
+                0,
+                101672.7,
+                3355.3,
+                230741.33,
+                7676,
+                6840,
+                5975,
+                14279.8,
+                14291.61,
+                17111.03,
+                8677.18,
+                17912.25,
+                15556,
+                42816.27,
+                16023.93,
+                30593.27,
+                2879.3,
+                5443.85,
+                5277,
+                9694,
+                1521.73,
+                4104
+              ]
             },
             "dre": {
-              "receita": 0,
-              "receita_externa": 0,
-              "cmv": 0,
-              "lucro_bruto": 0,
-              "margem_bruta_pct": null,
-              "icms_debito": 0,
-              "icms_credito": 0,
-              "saldo_icms": 0,
-              "resultado": 0,
-              "margem_resultado_pct": null
+              "receita": 664552.78,
+              "receita_externa": 664552.78,
+              "cmv": 117586.2,
+              "lucro_bruto": 546966.58,
+              "margem_bruta_pct": 82.31,
+              "icms_debito": 41304.73,
+              "icms_credito": 4115.04,
+              "saldo_icms": 37189.69,
+              "resultado": 509776.89,
+              "margem_resultado_pct": 76.71
             }
           },
           "MATRIZ": {
