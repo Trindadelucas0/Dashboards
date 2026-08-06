@@ -13,7 +13,7 @@ const EJS = path.join(ROOT, 'src', 'views', 'jpg.ejs');
 const PACKS_PATH = path.join(ROOT, 'relatorios', 'jpg-movimento', 'packs-por-mes.json');
 const TOL = 0.02;
 const CNPJ = '21051983000327';
-const ORDEM = ['MG', 'PR', 'SP', 'MATRIZ', 'ASA_SUL', 'SEDE'];
+const ORDEM_DEFAULT = ['MG', 'PR', 'SP', 'MATRIZ', 'ASA_SUL', 'SEDE', 'LANNIC'];
 const MESES = ['2026-01', '2026-02', '2026-03', '2026-04', '2026-05', '2026-06', '2026-07'];
 const EXPECT_TOTAL = { e: 5065987.85, s: 21023979.38 };
 const TRANSFER_CFOPS = new Set(['5-152', '6-152', '5-155', '6-155', '6-910', '5-914', '6-914']);
@@ -348,8 +348,15 @@ function mergeRanking(lists, limit = 30) {
   return [...map.values()].map((p) => ({ ...p, pct: round2((p.total / total) * 100) }))
     .sort((a, b) => b.total - a.total).slice(0, limit);
 }
-function buildEmpresa(filiais, mesKey) {
-  const list = ORDEM.map((k) => filiais[k]).filter(Boolean);
+function buildEmpresa(filiais, mesKey, ordem) {
+  const ord = (ordem && ordem.length) ? ordem.slice() : ORDEM_DEFAULT.slice();
+  // ensure ASA_SUL present and MATRIZ present
+  if (!ord.includes('ASA_SUL')) {
+    const i = ord.indexOf('MATRIZ');
+    if (i >= 0) ord.splice(i + 1, 0, 'ASA_SUL');
+    else ord.push('ASA_SUL');
+  }
+  const list = ord.map((k) => filiais[k]).filter(Boolean);
   const kpis = sumKpis(list);
   const cfop_entradas = mergeCfops(list.map((f) => f.cfop_entradas));
   const cfop_saidas = mergeCfops(list.map((f) => f.cfop_saidas));
@@ -357,7 +364,7 @@ function buildEmpresa(filiais, mesKey) {
   const ranking_clientes = mergeRanking(list.map((f) => f.ranking_clientes));
   return {
     meta: {
-      codigo: 'TODAS', nome: 'JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS', cnpj: '6 unidades', ie: '—',
+      codigo: 'TODAS', nome: 'JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS', cnpj: `${ord.length} unidades`, ie: '—',
       periodo: periodLabel(mesKey), uf: 'BR', filial_key: 'EMPRESA', filial_label: 'Empresa (consolidado)', alerta: '',
     },
     fornecedor_keys: ranking_fornecedores.map((p) => p.cnpj),
@@ -447,8 +454,14 @@ for (const mes of MESES) {
   }
   month.filiais.ASA_SUL = packs[mes];
   month.filiais.MATRIZ = emptyMatriz(mes);
-  month.ordem = ORDEM.slice();
-  month.empresa = buildEmpresa(month.filiais, mes);
+  const ord = (month.ordem && month.ordem.length) ? month.ordem.slice() : ORDEM_DEFAULT.slice();
+  if (!ord.includes('ASA_SUL')) {
+    const i = ord.indexOf('MATRIZ');
+    if (i >= 0) ord.splice(i + 1, 0, 'ASA_SUL');
+    else ord.push('ASA_SUL');
+  }
+  month.ordem = ord;
+  month.empresa = buildEmpresa(month.filiais, mes, ord);
 }
 
 data.meta.fonte = 'Relatórios ICMS Downloads — Filial Asa Sul DF Jan–Jul/2026 (ENTRADA/SAIDA FILIAL DF ASA SUL.xls)';
@@ -481,10 +494,18 @@ for (const mes of MESES) {
     const p = preserve[mes][u];
     if (!near(k.entradas, p.e) || !near(k.saidas, p.s)) { console.error('preserve', mes, u); ok = false; }
   }
-  const expectE = round2(preserve[mes].MG.e + preserve[mes].PR.e + preserve[mes].SP.e + packs[mes].kpis.entradas + preserve[mes].SEDE.e);
-  const expectS = round2(preserve[mes].MG.s + preserve[mes].PR.s + preserve[mes].SP.s + packs[mes].kpis.saidas + preserve[mes].SEDE.s);
+  const ordUnits = m.ordem || ORDEM_DEFAULT;
+  const expectE = round2(ordUnits.reduce((s, u) => s + ((m.filiais[u] && m.filiais[u].kpis.entradas) || 0), 0));
+  const expectS = round2(ordUnits.reduce((s, u) => s + ((m.filiais[u] && m.filiais[u].kpis.saidas) || 0), 0));
   if (!near(m.empresa.kpis.entradas, expectE) || !near(m.empresa.kpis.saidas, expectS)) {
     console.error('consol', mes, m.empresa.kpis.entradas, expectE, m.empresa.kpis.saidas, expectS); ok = false;
+  }
+  if (m.empresa.dre.remessas_transferencias == null) {
+    console.error('empresa dre sem remessas field', mes); ok = false;
+  } else if (m.empresa.dre.remessas_transferencias > 0 && near(m.empresa.dre.receita_externa, m.empresa.dre.receita)) {
+    console.error('empresa dre nao descontou remessas', mes, m.empresa.dre); ok = false;
+  } else {
+    console.log('DRE consol', mes, 'bruta=' + m.empresa.dre.receita, 'rem=' + m.empresa.dre.remessas_transferencias, 'ext=' + m.empresa.dre.receita_externa);
   }
 }
 console.log(ok ? 'DOWNLOADS ASA_SUL PATCH OK' : 'PATCH FAILED');

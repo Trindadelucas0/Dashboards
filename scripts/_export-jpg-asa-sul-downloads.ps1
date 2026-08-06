@@ -125,34 +125,51 @@ function Export-Movimento($excel, $path, $key, $tipo) {
       $data = Get-CellText $ws $r 5
       if (-not $data) { $data = Get-CellText $ws $r 2 }
     } else {
+      # Detect layout by header row 6 (Valor Contábil / UF position)
+      $hdrUf21 = Get-CellText $ws 6 21
+      $hdrVal22 = Get-CellText $ws 6 22
+      $altLayout = ($hdrUf21 -match 'UF' -and $hdrVal22 -match 'Valor')
+
       $nota = Get-CellText $ws $r 5
       $serie = Get-CellText $ws $r 6
       $nome = Get-CellText $ws $r 12
-      $doc = Get-CellText $ws $r 16
-      if (-not $doc) { $doc = Get-CellText $ws $r 15 }
-      $cfopText = Get-CellText $ws $r 18
-      $cfopVal = $ws.Cells.Item($r, 18).Value2
-      if (-not $cfopText) {
+      if ($altLayout) {
+        $doc = Get-CellText $ws $r 15
+        if (-not $doc) { $doc = Get-CellText $ws $r 16 }
         $cfopText = Get-CellText $ws $r 17
         $cfopVal = $ws.Cells.Item($r, 17).Value2
+        $uf = Get-CellText $ws $r 21
+        $valor = Get-CellNum $ws $r 22
+        $tax = Get-CellText $ws $r 25
+        $base = Get-CellNum $ws $r 26
+        $imposto = Get-CellNum $ws $r 28
+      } else {
+        $doc = Get-CellText $ws $r 16
+        if (-not $doc) { $doc = Get-CellText $ws $r 15 }
+        $cfopText = Get-CellText $ws $r 18
+        $cfopVal = $ws.Cells.Item($r, 18).Value2
+        if (-not $cfopText) {
+          $cfopText = Get-CellText $ws $r 17
+          $cfopVal = $ws.Cells.Item($r, 17).Value2
+        }
+        $uf = Get-CellText $ws $r 22
+        if (-not $uf) { $uf = Get-CellText $ws $r 21 }
+        $valor = Get-CellNum $ws $r 23
+        if ($null -eq $valor) { $valor = Get-CellNum $ws $r 22 }
+        if ($null -eq $valor) { $valor = Get-CellNum $ws $r 24 }
+        $tax = Get-CellText $ws $r 26
+        if (-not $tax) { $tax = Get-CellText $ws $r 25 }
+        $base = Get-CellNum $ws $r 27
+        if ($null -eq $base) { $base = Get-CellNum $ws $r 26 }
+        $imposto = Get-CellNum $ws $r 29
+        if ($null -eq $imposto) { $imposto = Get-CellNum $ws $r 28 }
       }
-      $uf = Get-CellText $ws $r 22
-      if (-not $uf) { $uf = Get-CellText $ws $r 21 }
-      $valor = Get-CellNum $ws $r 23
-      if ($null -eq $valor) { $valor = Get-CellNum $ws $r 22 }
-      if ($null -eq $valor) { $valor = Get-CellNum $ws $r 24 }
       if ($null -eq $valor) {
         for ($c = $cols; $c -ge 1; $c--) {
           $cand = Get-CellNum $ws $r $c
           if ($null -ne $cand -and $cand -gt 1) { $valor = $cand; break }
         }
       }
-      $tax = Get-CellText $ws $r 26
-      if (-not $tax) { $tax = Get-CellText $ws $r 25 }
-      $base = Get-CellNum $ws $r 27
-      if ($null -eq $base) { $base = Get-CellNum $ws $r 26 }
-      $imposto = Get-CellNum $ws $r 29
-      if ($null -eq $imposto) { $imposto = Get-CellNum $ws $r 28 }
       $data = Get-CellText $ws $r 4
       if (-not $data) { $data = Get-CellText $ws $r 2 }
     }
