@@ -1,0 +1,34 @@
+[
+  {
+    "key": "sede-janago-entradas",
+    "sum": 2713187.35,
+    "tg": 2713187.35,
+    "fails": [],
+    "ok": true,
+    "lineCount": 566
+  },
+  {
+    "key": "sede-janago-saidas",
+    "sum": 467765.15,
+    "tg": 467765.15,
+    "fails": [],
+    "ok": true,
+    "lineCount": 4
+  },
+  {
+    "key": "matriz-df-jul-entradas",
+    "sum": 145769.55,
+    "tg": 145769.55,
+    "fails": [],
+    "ok": true,
+    "lineCount": 11
+  },
+  {
+    "key": "matriz-df-jul-saidas",
+    "sum": 3180335.83,
+    "tg": 3180335.83,
+    "fails": [],
+    "ok": true,
+    "lineCount": 392
+  }
+]
