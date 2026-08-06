@@ -1,0 +1,126 @@
+{
+  "validations": [
+    {
+      "key": "matriz-janmai-entradas",
+      "sum": 3216577.41,
+      "tg": 3216577.41,
+      "fails": [],
+      "ok": true,
+      "period": "01/01/2026 até 31/05/2026",
+      "cnpj": "21051983000327",
+      "lines": 48
+    },
+    {
+      "key": "matriz-janmai-saidas",
+      "sum": 14193719.34,
+      "tg": 14193719.34,
+      "fails": [],
+      "ok": true,
+      "period": "01/01/2026 até 31/05/2026",
+      "cnpj": "21.051.983/0003-27",
+      "lines": 2740
+    },
+    {
+      "key": "matriz-jun-entradas",
+      "sum": 1703640.89,
+      "tg": 1703640.89,
+      "fails": [],
+      "ok": true,
+      "period": "01/06/2026 até 30/06/2026",
+      "cnpj": "21051983000327",
+      "lines": 12
+    },
+    {
+      "key": "matriz-jun-saidas",
+      "sum": 3649924.21,
+      "tg": 3649924.21,
+      "fails": [],
+      "ok": true,
+      "period": "01/06/2026 até 30/06/2026",
+      "cnpj": "21.051.983/0003-27",
+      "lines": 611
+    },
+    {
+      "key": "matriz-jul-entradas",
+      "sum": 145769.55,
+      "tg": 145769.55,
+      "fails": [],
+      "ok": true,
+      "period": "01/07/2026 até 31/07/2026",
+      "cnpj": "21051983000327",
+      "lines": 11
+    },
+    {
+      "key": "matriz-jul-saidas",
+      "sum": 3180335.83,
+      "tg": 3180335.83,
+      "fails": [],
+      "ok": true,
+      "period": "01/07/2026 até 31/07/2026",
+      "cnpj": "21.051.983/0003-27",
+      "lines": 392
+    }
+  ],
+  "splitReports": [
+    {
+      "key": "matriz-janmai-entradas",
+      "fileTotal": 3216577.41,
+      "splitSum": 3216577.41,
+      "delta": 0,
+      "noDate": 0,
+      "months": {
+        "2026-03": {
+          "n": 16,
+          "total": 1590701.07
+        },
+        "2026-02": {
+          "n": 6,
+          "total": 11447.6
+        },
+        "2026-05": {
+          "n": 9,
+          "total": 77484.5
+        },
+        "2026-04": {
+          "n": 14,
+          "total": 846958.38
+        },
+        "2026-01": {
+          "n": 3,
+          "total": 689985.86
+        }
+      },
+      "ok": true
+    },
+    {
+      "key": "matriz-janmai-saidas",
+      "fileTotal": 14193719.34,
+      "splitSum": 14193719.34,
+      "delta": 0,
+      "noDate": 0,
+      "months": {
+        "2026-04": {
+          "n": 662,
+          "total": 3396918.75
+        },
+        "2026-03": {
+          "n": 775,
+          "total": 3250821.47
+        },
+        "2026-02": {
+          "n": 478,
+          "total": 3099565.44
+        },
+        "2026-05": {
+          "n": 385,
+          "total": 2770103.57
+        },
+        "2026-01": {
+          "n": 440,
+          "total": 1676310.11
+        }
+      },
+      "ok": true
+    }
+  ]
+}
