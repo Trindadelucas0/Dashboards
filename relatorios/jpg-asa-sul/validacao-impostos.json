@@ -1,0 +1,170 @@
+[
+  {
+    "mes": "2026-01",
+    "faturamento_saidas": 1676310.11,
+    "faturamento_entradas": 689985.86,
+    "before": {
+      "icmsC": 25332.04,
+      "icmsD": 181225.39,
+      "ipiE": 82920.71,
+      "ipiS": 0
+    },
+    "after": {
+      "icmsC": 25332.04,
+      "icmsD": 181225.39,
+      "saldo": 155893.35,
+      "ipiE": 82920.71,
+      "ipiS": 266131.62
+    },
+    "vsTax": {
+      "icmsC": true,
+      "icmsD": true,
+      "ipiE": true,
+      "ipiS": true
+    }
+  },
+  {
+    "mes": "2026-02",
+    "faturamento_saidas": 3099565.44,
+    "faturamento_entradas": 11447.6,
+    "before": {
+      "icmsC": 537.07,
+      "icmsD": 290350.09,
+      "ipiE": 0,
+      "ipiS": 0
+    },
+    "after": {
+      "icmsC": 537.07,
+      "icmsD": 292964.25,
+      "saldo": 292427.18,
+      "ipiE": 0,
+      "ipiS": 441895.79
+    },
+    "vsTax": {
+      "icmsC": true,
+      "icmsD": true,
+      "ipiE": true,
+      "ipiS": true
+    }
+  },
+  {
+    "mes": "2026-03",
+    "faturamento_saidas": 3250821.47,
+    "faturamento_entradas": 1590701.07,
+    "before": {
+      "icmsC": 40806.91,
+      "icmsD": 307381.05,
+      "ipiE": 128976,
+      "ipiS": 0
+    },
+    "after": {
+      "icmsC": 40806.91,
+      "icmsD": 307422.2,
+      "saldo": 266615.29,
+      "ipiE": 128976,
+      "ipiS": 489988.96
+    },
+    "vsTax": {
+      "icmsC": true,
+      "icmsD": true,
+      "ipiE": true,
+      "ipiS": true
+    }
+  },
+  {
+    "mes": "2026-04",
+    "faturamento_saidas": 3396918.75,
+    "faturamento_entradas": 846958.38,
+    "before": {
+      "icmsC": 33262.33,
+      "icmsD": 223068.52,
+      "ipiE": 36876.33,
+      "ipiS": 0
+    },
+    "after": {
+      "icmsC": 33262.33,
+      "icmsD": 191257.8,
+      "saldo": 157995.47,
+      "ipiE": 36876.33,
+      "ipiS": 480182.23
+    },
+    "vsTax": {
+      "icmsC": true,
+      "icmsD": true,
+      "ipiE": true,
+      "ipiS": true
+    }
+  },
+  {
+    "mes": "2026-05",
+    "faturamento_saidas": 2770103.57,
+    "faturamento_entradas": 77484.5,
+    "before": {
+      "icmsC": 5390.77,
+      "icmsD": 119033.38,
+      "ipiE": 0,
+      "ipiS": 0
+    },
+    "after": {
+      "icmsC": 5431.92,
+      "icmsD": 119033.38,
+      "saldo": 113601.46,
+      "ipiE": 5872.62,
+      "ipiS": 168042.55
+    },
+    "vsTax": {
+      "icmsC": true,
+      "icmsD": true,
+      "ipiE": true,
+      "ipiS": true
+    }
+  },
+  {
+    "mes": "2026-06",
+    "faturamento_saidas": 3649924.21,
+    "faturamento_entradas": 1703640.89,
+    "before": {
+      "icmsC": 85510.37,
+      "icmsD": 207223.16,
+      "ipiE": 487326.37,
+      "ipiS": 0
+    },
+    "after": {
+      "icmsC": 85910.37,
+      "icmsD": 207223.16,
+      "saldo": 121312.79,
+      "ipiE": 316991.12,
+      "ipiS": 519609.78
+    },
+    "vsTax": {
+      "icmsC": true,
+      "icmsD": true,
+      "ipiE": true,
+      "ipiS": true
+    }
+  },
+  {
+    "mes": "2026-07",
+    "faturamento_saidas": 3180335.83,
+    "faturamento_entradas": 145769.55,
+    "before": {
+      "icmsC": 16418.62,
+      "icmsD": 206032.9,
+      "ipiE": 0,
+      "ipiS": 0
+    },
+    "after": {
+      "icmsC": 16418.6,
+      "icmsD": 226524.83,
+      "saldo": 210106.23,
+      "ipiE": 20816.6,
+      "ipiS": 268603.76
+    },
+    "vsTax": {
+      "icmsC": true,
+      "icmsD": true,
+      "ipiE": true,
+      "ipiS": true
+    }
+  }
+]
