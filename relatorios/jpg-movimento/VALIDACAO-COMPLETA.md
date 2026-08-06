@@ -1,6 +1,6 @@
 # Validação completa JPG
 
-Gerado: 06/08/2026, 15:17:47
+Gerado: 06/08/2026, 15:24:28
 OK: 185 | FAIL: 0
 
 - **OK** `syntax-0`: script 0
@@ -183,8 +183,8 @@ OK: 185 | FAIL: 0
 - **OK** `2026-07-MATRIZ-cfop-e`: 0
 - **OK** `2026-07-MATRIZ-cfop-s`: 0
 - **OK** `2026-07-SEDE-cnpj`: 21051983000165
-- **OK** `2026-07-SEDE-cfop-e`: 0
+- **OK** `2026-07-SEDE-cfop-e`: 221992.04
 - **OK** `2026-07-SEDE-cfop-s`: 0
-- **OK** `2026-07-consol-e`: 210729.53
+- **OK** `2026-07-consol-e`: 432721.57
 - **OK** `2026-07-consol-s`: 1078318.7
 - **OK** `jul-pr-regression`: PR Jul preservado

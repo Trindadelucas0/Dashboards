@@ -1,0 +1,1129 @@
+{
+  "meta": {
+    "codigo": "711",
+    "nome": "JPG PRODUTOS FUNCIONAIS MATRIZ",
+    "cnpj": "21.051.983/0001-65",
+    "ie": "07.695.672/001-34",
+    "periodo": "01/07/2026 até 31/07/2026",
+    "uf": "DF",
+    "filial_key": "SEDE",
+    "filial_label": "Matriz Sede",
+    "alerta": "Jul/2026: apenas entradas (saídas não fornecidas nestas planilhas)."
+  },
+  "fornecedor_keys": [
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "63269595",
+    "—",
+    "—",
+    "—",
+    "52167841",
+    "61758765",
+    "64982851",
+    "63425438",
+    "57052853",
+    "62618675",
+    "28663111",
+    "53685391",
+    "59135382",
+    "63133238",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—",
+    "—"
+  ],
+  "cliente_keys": [],
+  "kpis": {
+    "entradas": 221992.04,
+    "saidas": 0,
+    "icms_credito": 0,
+    "icms_debito": 0,
+    "base_icms_ent": 47976.57,
+    "base_icms_sai": 0,
+    "ipi_ent": 0,
+    "ipi_sai": 0,
+    "saldo_icms": 0,
+    "n_nf_ent": 54,
+    "n_nf_sai": 0,
+    "n_fornecedores": 47,
+    "n_clientes": 0
+  },
+  "cfop_entradas": [
+    {
+      "cfop": "2-933",
+      "descricao": "Prestação de serviço",
+      "finalidade": "Serviços",
+      "qtd": 38,
+      "total": 155734.37,
+      "icms": 0,
+      "base": 44377.56,
+      "ipi": 0,
+      "credito_icms": false,
+      "pct": 70.15,
+      "parties": [
+        {
+          "nome": "ACZRAMOS SOLUCOES EM VENDAS LTDA",
+          "total": 28765.07,
+          "qtd": 2,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "NCFROES ESTRATEGIA amp; NEGOCIOS LTDA",
+          "total": 19031.05,
+          "qtd": 3,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "MSC MED ENGENHARIA E TECNOLOGIA MEDICA LTDA",
+          "total": 12662.5,
+          "qtd": 1,
+          "uf": "SC",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 12662.5,
+          "ipi": 0
+        },
+        {
+          "nome": "INSTITUTO DRA TATHIANY MACEDO LTDA",
+          "total": 10000,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 10000,
+          "ipi": 0
+        },
+        {
+          "nome": "DANIELLE GUIDA JOSE",
+          "total": 8438.32,
+          "qtd": 2,
+          "uf": "SP",
+          "cnpj": "63269595",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "ECCLISSATO, CAVERNI E ALBINO NETO SOCIEDADE DE ADVOGADOS",
+          "total": 8000,
+          "qtd": 1,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "CRISTINA DE GOES MULLER HIGASHI",
+          "total": 7000,
+          "qtd": 2,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 7000,
+          "ipi": 0
+        },
+        {
+          "nome": "MARIETA VASCONCELOS DO O",
+          "total": 6085.68,
+          "qtd": 2,
+          "uf": "RJ",
+          "cnpj": "52167841",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "TAIS DE CAIRES VALENTIM",
+          "total": 5317.17,
+          "qtd": 2,
+          "uf": "SP",
+          "cnpj": "63425438",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "LUCIANA TEREZA GONCALVES",
+          "total": 5287.14,
+          "qtd": 2,
+          "uf": "SP",
+          "cnpj": "57052853",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "GILVANICE MARIA DA SILVA BONFIM",
+          "total": 5040.54,
+          "qtd": 2,
+          "uf": "RJ",
+          "cnpj": "62618675",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "THAIS RIBEIRO DE ALMEIDA BORGES",
+          "total": 5000,
+          "qtd": 1,
+          "uf": "SP",
+          "cnpj": "28663111",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "ALESSANDRA MOURA DE BRITO",
+          "total": 5000,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "59135382",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "MARIANA BONFIM DOS SANTOS RABELLO",
+          "total": 5000,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "63133238",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "SILVESTRE SANTOS SERVICOS LTDA",
+          "total": 5000,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "SOL SOLUCOES MEDICAS E ODONTOLOGICAS LTDA",
+          "total": 5000,
+          "qtd": 1,
+          "uf": "MA",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 5000,
+          "ipi": 0
+        },
+        {
+          "nome": "GOOGLE BRASIL INTERNET LTDA.",
+          "total": 3558.59,
+          "qtd": 1,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 3558.59,
+          "ipi": 0
+        },
+        {
+          "nome": "SYMMETRIA CONSULTORIA LTDA",
+          "total": 1561.85,
+          "qtd": 1,
+          "uf": "GO",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "OMIEXPERIENCE LTDA.",
+          "total": 1522.33,
+          "qtd": 2,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 1522.33,
+          "ipi": 0
+        },
+        {
+          "nome": "VINDI  TECNOLOGIA E MARKETING LTDA",
+          "total": 1427,
+          "qtd": 1,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 1427,
+          "ipi": 0
+        },
+        {
+          "nome": "RENATA MOURA CASSARA SERVICOS DE ESTETICA",
+          "total": 1250,
+          "qtd": 1,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "CORPORATE  CLOUD SISTEMAS LTDA",
+          "total": 1240,
+          "qtd": 1,
+          "uf": "PR",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "MILTON CESAR DE MATTOS",
+          "total": 1010,
+          "qtd": 2,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "ONFLY TECNOLOGIA LTDA",
+          "total": 599.9,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 599.9,
+          "ipi": 0
+        },
+        {
+          "nome": "INICIATIVA FÁBRICA DE APLICATIVOS LTDA",
+          "total": 582.89,
+          "qtd": 1,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 582.89,
+          "ipi": 0
+        },
+        {
+          "nome": "FLASH TECNOLOGIA E  INSTITUICAO DE PAGAMENTO LTDA",
+          "total": 446.2,
+          "qtd": 1,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 446.2,
+          "ipi": 0
+        },
+        {
+          "nome": "IKATEC ENGENHARIA DE SOFTWARE LTDA",
+          "total": 421,
+          "qtd": 1,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 421,
+          "ipi": 0
+        },
+        {
+          "nome": "REGUS DO BRASIL LTDA",
+          "total": 345,
+          "qtd": 1,
+          "uf": "MG",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 345,
+          "ipi": 0
+        },
+        {
+          "nome": "MANYCHAT BRASIL LTDA",
+          "total": 334.15,
+          "qtd": 1,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 334.15,
+          "ipi": 0
+        },
+        {
+          "nome": "TRG OFFICE APOIO ADMINISTRATIVO LTDA",
+          "total": 329.99,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "HQ DO BRASIL ADMINISTRACAO DE BENS E SERVICOS LTDA.",
+          "total": 293,
+          "qtd": 1,
+          "uf": "PR",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 293,
+          "ipi": 0
+        },
+        {
+          "nome": "REGUS DO BRASIL LTDA",
+          "total": 185,
+          "qtd": 1,
+          "uf": "RJ",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 185,
+          "ipi": 0
+        }
+      ]
+    },
+    {
+      "cfop": "1-933",
+      "descricao": "Prestação de serviço",
+      "finalidade": "Serviços",
+      "qtd": 9,
+      "total": 36349.01,
+      "icms": 0,
+      "base": 3599.01,
+      "ipi": 0,
+      "credito_icms": false,
+      "pct": 16.37,
+      "parties": [
+        {
+          "nome": "KAUE ALVES MENEZES 02821142110",
+          "total": 10000,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "DAVI DE OLIVEIRA CAMELI",
+          "total": 6000,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "61758765",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "LARISSA LOPES SANTOS",
+          "total": 6000,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "64982851",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "CRISTINA AZEVEDO MOREIRA FREIRE",
+          "total": 5000,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "53685391",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "JOAN SANTANA DO NASCIMENTO 04334212409",
+          "total": 5000,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "BLUEFISH FILMS LTDA",
+          "total": 3000,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 3000,
+          "ipi": 0
+        },
+        {
+          "nome": "ALISSON FERNANDES DA SILVA",
+          "total": 750,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "PAPELLO SOLUCOES EM EMBALAGENS LTDA",
+          "total": 549.01,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 549.01,
+          "ipi": 0
+        },
+        {
+          "nome": "CHECK UP ASSISTENCIA MEDICA LTDA ME",
+          "total": 50,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 50,
+          "ipi": 0
+        }
+      ]
+    },
+    {
+      "cfop": "1-556",
+      "descricao": "Compra de material de uso/consumo",
+      "finalidade": "Uso e consumo",
+      "qtd": 5,
+      "total": 25699.65,
+      "icms": 0,
+      "base": 0,
+      "ipi": 0,
+      "credito_icms": false,
+      "pct": 11.58,
+      "parties": [
+        {
+          "nome": "LK ADMINISTRADORA HOTELEIRA LTDA",
+          "total": 16872.9,
+          "qtd": 2,
+          "uf": "SC",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "POBRE JUAN RESTAURANTE GRILL LTDA",
+          "total": 8140.22,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "ISA PRODUTOS ALIMENTICIOS LTDA",
+          "total": 600,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "AMB DISTRIBUIDORA DE PRODUTOS HOSPITALARES LTDA",
+          "total": 86.53,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        }
+      ]
+    },
+    {
+      "cfop": "2-102",
+      "descricao": "Compra para comercialização",
+      "finalidade": "Revenda",
+      "qtd": 4,
+      "total": 3660,
+      "icms": 0,
+      "base": 0,
+      "ipi": 0,
+      "credito_icms": true,
+      "pct": 1.65,
+      "parties": [
+        {
+          "nome": "BERLU BRINDES PROMOCIONAIS EIRELI - ME",
+          "total": 2840,
+          "qtd": 1,
+          "uf": "SP",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        },
+        {
+          "nome": "CA PRODUCAO E EVENTOS LTDA",
+          "total": 820,
+          "qtd": 3,
+          "uf": "RJ",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        }
+      ]
+    },
+    {
+      "cfop": "1-949",
+      "descricao": "1-949",
+      "finalidade": "Outras",
+      "qtd": 1,
+      "total": 549.01,
+      "icms": 0,
+      "base": 0,
+      "ipi": 0,
+      "credito_icms": false,
+      "pct": 0.25,
+      "parties": [
+        {
+          "nome": "PAPELLO SOLUCOES EM EMBALAGENS LTDA",
+          "total": 549.01,
+          "qtd": 1,
+          "uf": "DF",
+          "cnpj": "—",
+          "icms": 0,
+          "base": 0,
+          "ipi": 0
+        }
+      ]
+    }
+  ],
+  "cfop_saidas": [],
+  "finalidade": [
+    {
+      "finalidade": "Serviços",
+      "total": 192083.38,
+      "qtd": 47,
+      "pct": 86.53
+    },
+    {
+      "finalidade": "Uso e consumo",
+      "total": 25699.65,
+      "qtd": 5,
+      "pct": 11.58
+    },
+    {
+      "finalidade": "Revenda",
+      "total": 3660,
+      "qtd": 4,
+      "pct": 1.65
+    },
+    {
+      "finalidade": "Outras",
+      "total": 549.01,
+      "qtd": 1,
+      "pct": 0.25
+    }
+  ],
+  "ranking_fornecedores": [
+    {
+      "nome": "ACZRAMOS SOLUCOES EM VENDAS LTDA",
+      "total": 28765.07,
+      "qtd": 2,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 12.96
+    },
+    {
+      "nome": "NCFROES ESTRATEGIA amp; NEGOCIOS LTDA",
+      "total": 19031.05,
+      "qtd": 3,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 8.57
+    },
+    {
+      "nome": "LK ADMINISTRADORA HOTELEIRA LTDA",
+      "total": 16872.9,
+      "qtd": 2,
+      "uf": "SC",
+      "cnpj": "—",
+      "pct": 7.6
+    },
+    {
+      "nome": "MSC MED ENGENHARIA E TECNOLOGIA MEDICA LTDA",
+      "total": 12662.5,
+      "qtd": 1,
+      "uf": "SC",
+      "cnpj": "—",
+      "pct": 5.7
+    },
+    {
+      "nome": "INSTITUTO DRA TATHIANY MACEDO LTDA",
+      "total": 10000,
+      "qtd": 1,
+      "uf": "GO",
+      "cnpj": "—",
+      "pct": 4.5
+    },
+    {
+      "nome": "KAUE ALVES MENEZES 02821142110",
+      "total": 10000,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "—",
+      "pct": 4.5
+    },
+    {
+      "nome": "DANIELLE GUIDA JOSE",
+      "total": 8438.32,
+      "qtd": 2,
+      "uf": "SP",
+      "cnpj": "63269595",
+      "pct": 3.8
+    },
+    {
+      "nome": "POBRE JUAN RESTAURANTE GRILL LTDA",
+      "total": 8140.22,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "—",
+      "pct": 3.67
+    },
+    {
+      "nome": "ECCLISSATO, CAVERNI E ALBINO NETO SOCIEDADE DE ADVOGADOS",
+      "total": 8000,
+      "qtd": 1,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 3.6
+    },
+    {
+      "nome": "CRISTINA DE GOES MULLER HIGASHI",
+      "total": 7000,
+      "qtd": 2,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 3.15
+    },
+    {
+      "nome": "MARIETA VASCONCELOS DO O",
+      "total": 6085.68,
+      "qtd": 2,
+      "uf": "RJ",
+      "cnpj": "52167841",
+      "pct": 2.74
+    },
+    {
+      "nome": "DAVI DE OLIVEIRA CAMELI",
+      "total": 6000,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "61758765",
+      "pct": 2.7
+    },
+    {
+      "nome": "LARISSA LOPES SANTOS",
+      "total": 6000,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "64982851",
+      "pct": 2.7
+    },
+    {
+      "nome": "TAIS DE CAIRES VALENTIM",
+      "total": 5317.17,
+      "qtd": 2,
+      "uf": "SP",
+      "cnpj": "63425438",
+      "pct": 2.4
+    },
+    {
+      "nome": "LUCIANA TEREZA GONCALVES",
+      "total": 5287.14,
+      "qtd": 2,
+      "uf": "SP",
+      "cnpj": "57052853",
+      "pct": 2.38
+    },
+    {
+      "nome": "GILVANICE MARIA DA SILVA BONFIM",
+      "total": 5040.54,
+      "qtd": 2,
+      "uf": "RJ",
+      "cnpj": "62618675",
+      "pct": 2.27
+    },
+    {
+      "nome": "THAIS RIBEIRO DE ALMEIDA BORGES",
+      "total": 5000,
+      "qtd": 1,
+      "uf": "SP",
+      "cnpj": "28663111",
+      "pct": 2.25
+    },
+    {
+      "nome": "CRISTINA AZEVEDO MOREIRA FREIRE",
+      "total": 5000,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "53685391",
+      "pct": 2.25
+    },
+    {
+      "nome": "ALESSANDRA MOURA DE BRITO",
+      "total": 5000,
+      "qtd": 1,
+      "uf": "GO",
+      "cnpj": "59135382",
+      "pct": 2.25
+    },
+    {
+      "nome": "MARIANA BONFIM DOS SANTOS RABELLO",
+      "total": 5000,
+      "qtd": 1,
+      "uf": "RJ",
+      "cnpj": "63133238",
+      "pct": 2.25
+    },
+    {
+      "nome": "JOAN SANTANA DO NASCIMENTO 04334212409",
+      "total": 5000,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "—",
+      "pct": 2.25
+    },
+    {
+      "nome": "SILVESTRE SANTOS SERVICOS LTDA",
+      "total": 5000,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "—",
+      "pct": 2.25
+    },
+    {
+      "nome": "SOL SOLUCOES MEDICAS E ODONTOLOGICAS LTDA",
+      "total": 5000,
+      "qtd": 1,
+      "uf": "MA",
+      "cnpj": "—",
+      "pct": 2.25
+    },
+    {
+      "nome": "GOOGLE BRASIL INTERNET LTDA.",
+      "total": 3558.59,
+      "qtd": 1,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 1.6
+    },
+    {
+      "nome": "BLUEFISH FILMS LTDA",
+      "total": 3000,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "—",
+      "pct": 1.35
+    },
+    {
+      "nome": "BERLU BRINDES PROMOCIONAIS EIRELI - ME",
+      "total": 2840,
+      "qtd": 1,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 1.28
+    },
+    {
+      "nome": "SYMMETRIA CONSULTORIA LTDA",
+      "total": 1561.85,
+      "qtd": 1,
+      "uf": "GO",
+      "cnpj": "—",
+      "pct": 0.7
+    },
+    {
+      "nome": "OMIEXPERIENCE LTDA.",
+      "total": 1522.33,
+      "qtd": 2,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 0.69
+    },
+    {
+      "nome": "VINDI  TECNOLOGIA E MARKETING LTDA",
+      "total": 1427,
+      "qtd": 1,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 0.64
+    },
+    {
+      "nome": "RENATA MOURA CASSARA SERVICOS DE ESTETICA",
+      "total": 1250,
+      "qtd": 1,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 0.56
+    },
+    {
+      "nome": "CORPORATE  CLOUD SISTEMAS LTDA",
+      "total": 1240,
+      "qtd": 1,
+      "uf": "PR",
+      "cnpj": "—",
+      "pct": 0.56
+    },
+    {
+      "nome": "PAPELLO SOLUCOES EM EMBALAGENS LTDA",
+      "total": 1098.02,
+      "qtd": 2,
+      "uf": "DF",
+      "cnpj": "—",
+      "pct": 0.49
+    },
+    {
+      "nome": "MILTON CESAR DE MATTOS",
+      "total": 1010,
+      "qtd": 2,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 0.45
+    },
+    {
+      "nome": "CA PRODUCAO E EVENTOS LTDA",
+      "total": 820,
+      "qtd": 3,
+      "uf": "RJ",
+      "cnpj": "—",
+      "pct": 0.37
+    },
+    {
+      "nome": "ALISSON FERNANDES DA SILVA",
+      "total": 750,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "—",
+      "pct": 0.34
+    },
+    {
+      "nome": "ISA PRODUTOS ALIMENTICIOS LTDA",
+      "total": 600,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "—",
+      "pct": 0.27
+    },
+    {
+      "nome": "ONFLY TECNOLOGIA LTDA",
+      "total": 599.9,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "—",
+      "pct": 0.27
+    },
+    {
+      "nome": "INICIATIVA FÁBRICA DE APLICATIVOS LTDA",
+      "total": 582.89,
+      "qtd": 1,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 0.26
+    },
+    {
+      "nome": "FLASH TECNOLOGIA E  INSTITUICAO DE PAGAMENTO LTDA",
+      "total": 446.2,
+      "qtd": 1,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 0.2
+    },
+    {
+      "nome": "IKATEC ENGENHARIA DE SOFTWARE LTDA",
+      "total": 421,
+      "qtd": 1,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 0.19
+    },
+    {
+      "nome": "REGUS DO BRASIL LTDA",
+      "total": 345,
+      "qtd": 1,
+      "uf": "MG",
+      "cnpj": "—",
+      "pct": 0.16
+    },
+    {
+      "nome": "MANYCHAT BRASIL LTDA",
+      "total": 334.15,
+      "qtd": 1,
+      "uf": "SP",
+      "cnpj": "—",
+      "pct": 0.15
+    },
+    {
+      "nome": "TRG OFFICE APOIO ADMINISTRATIVO LTDA",
+      "total": 329.99,
+      "qtd": 1,
+      "uf": "RJ",
+      "cnpj": "—",
+      "pct": 0.15
+    },
+    {
+      "nome": "HQ DO BRASIL ADMINISTRACAO DE BENS E SERVICOS LTDA.",
+      "total": 293,
+      "qtd": 1,
+      "uf": "PR",
+      "cnpj": "—",
+      "pct": 0.13
+    },
+    {
+      "nome": "REGUS DO BRASIL LTDA",
+      "total": 185,
+      "qtd": 1,
+      "uf": "RJ",
+      "cnpj": "—",
+      "pct": 0.08
+    },
+    {
+      "nome": "AMB DISTRIBUIDORA DE PRODUTOS HOSPITALARES LTDA",
+      "total": 86.53,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "—",
+      "pct": 0.04
+    },
+    {
+      "nome": "CHECK UP ASSISTENCIA MEDICA LTDA ME",
+      "total": 50,
+      "qtd": 1,
+      "uf": "DF",
+      "cnpj": "—",
+      "pct": 0.02
+    }
+  ],
+  "ranking_clientes": [],
+  "notas_entradas": [],
+  "notas_saidas": [],
+  "ufs_entradas": {
+    "SP": 100230.91,
+    "RJ": 17461.21,
+    "DF": 45724.77,
+    "GO": 16561.85,
+    "PR": 1533,
+    "SC": 29535.4,
+    "MG": 5944.9,
+    "MA": 5000
+  },
+  "ufs_saidas": {},
+  "serie_diaria": {
+    "labels": [
+      "01/07/2026",
+      "02/07/2026",
+      "03/07/2026",
+      "04/07/2026",
+      "05/07/2026",
+      "06/07/2026",
+      "07/07/2026",
+      "09/07/2026",
+      "13/07/2026",
+      "15/07/2026",
+      "16/07/2026",
+      "17/07/2026",
+      "19/07/2026",
+      "21/07/2026",
+      "22/07/2026",
+      "23/07/2026",
+      "27/07/2026",
+      "29/07/2026",
+      "30/07/2026",
+      "31/07/2026"
+    ],
+    "entradas": [
+      45004,
+      15000,
+      11632.89,
+      5000,
+      5000,
+      8599.9,
+      1427,
+      820,
+      1098.02,
+      34129.59,
+      1891.84,
+      8000,
+      334.15,
+      3157.17,
+      12662.5,
+      10600,
+      86.53,
+      19403.44,
+      28140.22,
+      10004.79
+    ],
+    "saidas": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "dre": {
+    "receita": 0,
+    "receita_externa": 0,
+    "cmv": 221992.04,
+    "lucro_bruto": -221992.04,
+    "margem_bruta_pct": null,
+    "icms_debito": 0,
+    "icms_credito": 0,
+    "saldo_icms": 0,
+    "resultado": -221992.04,
+    "margem_resultado_pct": null
+  }
+}
