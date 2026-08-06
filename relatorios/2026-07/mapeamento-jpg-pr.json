@@ -1,0 +1,15 @@
+{
+  "competencia": "2026-07",
+  "fonteDir": "d:/Nova pasta/Nova pasta/06-08",
+  "empresas": {
+    "jpg-pr": {
+      "cnpj": "21051983000670",
+      "codigo": "81",
+      "dashboard": "jpg.ejs",
+      "unidade": "PR",
+      "entradas": "Relatorio de entrada por fornecedor JPG filial PR 072026.xls",
+      "saidas": "Relatorio de saida por cliente JPG filial PR 072026.xls",
+      "nota": "Somente Filial PR; MG/SP/Matriz Jul pendentes"
+    }
+  }
+}

@@ -1,0 +1,398 @@
+{
+  "meta": {
+    "empresa": "jpg-pr",
+    "cnpj": "21051983000670",
+    "somaEntradas": 8729.12,
+    "somaSaidas": 71589.79,
+    "totalGeralEntradasExcel": 8729.12,
+    "totalGeralSaidasExcel": 71589.79,
+    "deltaEntradas": 0,
+    "deltaSaidas": 0,
+    "nfsEntradas": 7,
+    "nfsSaidas": 11,
+    "fails": []
+  },
+  "pack": {
+    "meta": {
+      "codigo": "81",
+      "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS",
+      "cnpj": "21.051.983/0006-70",
+      "ie": "9114233592",
+      "periodo": "01/07/2026 até 31/07/2026",
+      "uf": "PR",
+      "filial_key": "PR",
+      "filial_label": "Filial PR",
+      "alerta": ""
+    },
+    "fornecedor_keys": [
+      "21.051.983/0003-27",
+      "726.700.299-49"
+    ],
+    "cliente_keys": [
+      "51.849.308/0001-47",
+      "53.212.660/0001-00",
+      "41.948.967/0001-87",
+      "040.480.389-07",
+      "07.964.397/0001-80",
+      "45.188.118/0002-04",
+      "62.290.670/0001-47",
+      "934.922.869-68",
+      "024.399.459-19",
+      "074.673.479-44"
+    ],
+    "kpis": {
+      "entradas": 8729.12,
+      "saidas": 71589.79,
+      "icms_credito": 278.89,
+      "icms_debito": 0,
+      "base_icms_ent": 6972.12,
+      "base_icms_sai": 0,
+      "ipi_ent": 997,
+      "ipi_sai": 14461.77,
+      "saldo_icms": -278.89,
+      "n_nf_ent": 7,
+      "n_nf_sai": 11,
+      "n_fornecedores": 2,
+      "n_clientes": 10
+    },
+    "cfop_entradas": [
+      {
+        "cfop": "2-152",
+        "descricao": "Transferência recebida da matriz",
+        "finalidade": "Transferência Matriz",
+        "qtd": 6,
+        "total": 7969.12,
+        "icms": 278.89,
+        "base": 6972.12,
+        "ipi": 1901.2,
+        "credito_icms": true,
+        "pct": 91.29,
+        "parties": [
+          {
+            "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+            "total": 7969.12,
+            "qtd": 6,
+            "uf": "DF",
+            "cnpj": "21.051.983/0003-27",
+            "icms": 278.89,
+            "base": 6972.12,
+            "ipi": 1901.2
+          }
+        ]
+      },
+      {
+        "cfop": "1-949",
+        "descricao": "1-949",
+        "finalidade": "Outras",
+        "qtd": 1,
+        "total": 760,
+        "icms": 0,
+        "base": 0,
+        "ipi": 0,
+        "credito_icms": false,
+        "pct": 8.71,
+        "parties": [
+          {
+            "nome": "INGRID BIBERG KOLLER",
+            "total": 760,
+            "qtd": 1,
+            "uf": "PR",
+            "cnpj": "726.700.299-49",
+            "icms": 0,
+            "base": 0,
+            "ipi": 0
+          }
+        ]
+      }
+    ],
+    "cfop_saidas": [
+      {
+        "cfop": "5-405",
+        "descricao": "Venda com ST",
+        "finalidade": "Venda com ST",
+        "qtd": 11,
+        "total": 71589.79,
+        "icms": 0,
+        "base": 0,
+        "ipi": 14461.77,
+        "credito_icms": false,
+        "pct": 100,
+        "parties": [
+          {
+            "nome": "IRIS CENTRO DE SAUDE LTDA",
+            "total": 34930,
+            "qtd": 1,
+            "uf": "PR",
+            "cnpj": "51.849.308/0001-47",
+            "icms": 0,
+            "base": 0,
+            "ipi": 7135.7
+          },
+          {
+            "nome": "JESSICA BOZA BIOMEDICINA ESTETICA LTDA",
+            "total": 11565,
+            "qtd": 2,
+            "uf": "PR",
+            "cnpj": "53.212.660/0001-00",
+            "icms": 0,
+            "base": 0,
+            "ipi": 3502.07
+          },
+          {
+            "nome": "NATOMEDIC PRODUTOS DE SAUDE LTDA",
+            "total": 5548,
+            "qtd": 1,
+            "uf": "PR",
+            "cnpj": "41.948.967/0001-87",
+            "icms": 0,
+            "base": 0,
+            "ipi": 793.36
+          },
+          {
+            "nome": "LARISSA DANIELE GREGORIO",
+            "total": 5174.46,
+            "qtd": 1,
+            "uf": "PR",
+            "cnpj": "040.480.389-07",
+            "icms": 0,
+            "base": 0,
+            "ipi": 822.16
+          },
+          {
+            "nome": "CLINICA MEDICA VIEIRA LTDA",
+            "total": 4455,
+            "qtd": 1,
+            "uf": "PR",
+            "cnpj": "07.964.397/0001-80",
+            "icms": 0,
+            "base": 0,
+            "ipi": 707.85
+          },
+          {
+            "nome": "NAGA MEDICAL LTDA",
+            "total": 3502,
+            "qtd": 1,
+            "uf": "PR",
+            "cnpj": "45.188.118/0002-04",
+            "icms": 0,
+            "base": 0,
+            "ipi": 500.79
+          },
+          {
+            "nome": "EDUARDA MAZUR LTDA",
+            "total": 2215.53,
+            "qtd": 1,
+            "uf": "PR",
+            "cnpj": "62.290.670/0001-47",
+            "icms": 0,
+            "base": 0,
+            "ipi": 343.2
+          },
+          {
+            "nome": "CRISTIANE MOLIANI SOBREIRA MORAES",
+            "total": 1749.5,
+            "qtd": 1,
+            "uf": "PR",
+            "cnpj": "934.922.869-68",
+            "icms": 0,
+            "base": 0,
+            "ipi": 293.51
+          },
+          {
+            "nome": "CLAUDINEIA W. TOZETTO",
+            "total": 1499.4,
+            "qtd": 1,
+            "uf": "PR",
+            "cnpj": "024.399.459-19",
+            "icms": 0,
+            "base": 0,
+            "ipi": 214.41
+          },
+          {
+            "nome": "ISADORA SALVADOR ANTIVERE",
+            "total": 950.9,
+            "qtd": 1,
+            "uf": "PR",
+            "cnpj": "074.673.479-44",
+            "icms": 0,
+            "base": 0,
+            "ipi": 148.72
+          }
+        ]
+      }
+    ],
+    "finalidade": [
+      {
+        "finalidade": "Transferência Matriz",
+        "total": 7969.12,
+        "qtd": 6,
+        "pct": 91.29
+      },
+      {
+        "finalidade": "Outras",
+        "total": 760,
+        "qtd": 1,
+        "pct": 8.71
+      }
+    ],
+    "ranking_fornecedores": [
+      {
+        "nome": "JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS LTDA",
+        "total": 7969.12,
+        "qtd": 6,
+        "uf": "DF",
+        "cnpj": "21.051.983/0003-27",
+        "pct": 91.29
+      },
+      {
+        "nome": "INGRID BIBERG KOLLER",
+        "total": 760,
+        "qtd": 1,
+        "uf": "PR",
+        "cnpj": "726.700.299-49",
+        "pct": 8.71
+      }
+    ],
+    "ranking_clientes": [
+      {
+        "nome": "IRIS CENTRO DE SAUDE LTDA",
+        "total": 34930,
+        "qtd": 1,
+        "uf": "PR",
+        "cnpj": "51.849.308/0001-47",
+        "pct": 48.79
+      },
+      {
+        "nome": "JESSICA BOZA BIOMEDICINA ESTETICA LTDA",
+        "total": 11565,
+        "qtd": 2,
+        "uf": "PR",
+        "cnpj": "53.212.660/0001-00",
+        "pct": 16.15
+      },
+      {
+        "nome": "NATOMEDIC PRODUTOS DE SAUDE LTDA",
+        "total": 5548,
+        "qtd": 1,
+        "uf": "PR",
+        "cnpj": "41.948.967/0001-87",
+        "pct": 7.75
+      },
+      {
+        "nome": "LARISSA DANIELE GREGORIO",
+        "total": 5174.46,
+        "qtd": 1,
+        "uf": "PR",
+        "cnpj": "040.480.389-07",
+        "pct": 7.23
+      },
+      {
+        "nome": "CLINICA MEDICA VIEIRA LTDA",
+        "total": 4455,
+        "qtd": 1,
+        "uf": "PR",
+        "cnpj": "07.964.397/0001-80",
+        "pct": 6.22
+      },
+      {
+        "nome": "NAGA MEDICAL LTDA",
+        "total": 3502,
+        "qtd": 1,
+        "uf": "PR",
+        "cnpj": "45.188.118/0002-04",
+        "pct": 4.89
+      },
+      {
+        "nome": "EDUARDA MAZUR LTDA",
+        "total": 2215.53,
+        "qtd": 1,
+        "uf": "PR",
+        "cnpj": "62.290.670/0001-47",
+        "pct": 3.09
+      },
+      {
+        "nome": "CRISTIANE MOLIANI SOBREIRA MORAES",
+        "total": 1749.5,
+        "qtd": 1,
+        "uf": "PR",
+        "cnpj": "934.922.869-68",
+        "pct": 2.44
+      },
+      {
+        "nome": "CLAUDINEIA W. TOZETTO",
+        "total": 1499.4,
+        "qtd": 1,
+        "uf": "PR",
+        "cnpj": "024.399.459-19",
+        "pct": 2.09
+      },
+      {
+        "nome": "ISADORA SALVADOR ANTIVERE",
+        "total": 950.9,
+        "qtd": 1,
+        "uf": "PR",
+        "cnpj": "074.673.479-44",
+        "pct": 1.33
+      }
+    ],
+    "notas_entradas": [],
+    "notas_saidas": [],
+    "ufs_entradas": {
+      "PR": 760,
+      "DF": 7969.12
+    },
+    "ufs_saidas": {
+      "PR": 71589.79
+    },
+    "serie_diaria": {
+      "labels": [
+        "02/07/2026",
+        "03/07/2026",
+        "06/07/2026",
+        "10/07/2026",
+        "13/07/2026",
+        "14/07/2026",
+        "15/07/2026",
+        "22/07/2026",
+        "27/07/2026",
+        "30/07/2026"
+      ],
+      "entradas": [
+        5739,
+        714.09,
+        0,
+        0,
+        760,
+        258.19,
+        0,
+        430.05,
+        86.01,
+        741.78
+      ],
+      "saidas": [
+        35880.9,
+        0,
+        3502,
+        1499.4,
+        15749.46,
+        1749.5,
+        2215.53,
+        4455,
+        990,
+        5548
+      ]
+    },
+    "dre": {
+      "receita": 71589.79,
+      "receita_externa": 71589.79,
+      "cmv": 8729.12,
+      "lucro_bruto": 62860.67,
+      "margem_bruta_pct": 87.81,
+      "icms_debito": 0,
+      "icms_credito": 278.89,
+      "saldo_icms": -278.89,
+      "resultado": 63139.56,
+      "margem_resultado_pct": 88.2
+    }
+  }
+}
