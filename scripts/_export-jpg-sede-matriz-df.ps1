@@ -197,9 +197,20 @@ function Export-Impostos($excel, $path) {
   $wb = $excel.Workbooks.Open($path)
   $ws = $wb.Worksheets.Item(1)
   $rows = $ws.UsedRange.Rows.Count
-  $mesMap = @{
-    'Janeiro'='2026-01'; 'Fevereiro'='2026-02'; 'Março'='2026-03'; 'Marco'='2026-03';
-    'Abril'='2026-04'; 'Maio'='2026-05'; 'Junho'='2026-06'; 'Julho'='2026-07'
+  function Resolve-MesKey([string]$mesNome) {
+    $n = ($mesNome -replace '\s', '').ToLowerInvariant()
+    $n = $n.Normalize([Text.NormalizationForm]::FormD)
+    $n = [regex]::Replace($n, '\p{M}', '')
+    switch -Regex ($n) {
+      '^janeiro' { return '2026-01' }
+      '^fevereiro' { return '2026-02' }
+      '^marco' { return '2026-03' }
+      '^abril' { return '2026-04' }
+      '^maio' { return '2026-05' }
+      '^junho' { return '2026-06' }
+      '^julho' { return '2026-07' }
+      default { return $null }
+    }
   }
   $filialMap = @{
     'Matriz'='SEDE'; 'Filial DF'='MATRIZ'; 'Filial PR'='PR'; 'Filial SP'='SP'; 'Filial MG'='MG'
@@ -210,7 +221,8 @@ function Export-Impostos($excel, $path) {
     $filial = Get-CellText $ws $r 2
     $mesNome = Get-CellText $ws $r 3
     if (-not $filial -or -not $mesNome) { continue }
-    if (-not $mesMap.ContainsKey($mesNome)) { continue }
+    $mesKey = Resolve-MesKey $mesNome
+    if (-not $mesKey) { Write-Host "  skip mes '$mesNome'"; continue }
     if (-not $filialMap.ContainsKey($filial)) { continue }
     $icmsCred = Parse-MoneyText (Get-CellText $ws $r 4)
     $icmsDeb = Parse-MoneyText (Get-CellText $ws $r 5)
@@ -220,7 +232,7 @@ function Export-Impostos($excel, $path) {
     $ipiRec = Parse-MoneyText (Get-CellText $ws $r 9)
     $rowsOut.Add([ordered]@{
       empresa=$empresa; filial=$filial; unit=$filialMap[$filial]; mesNome=$mesNome;
-      mes=$mesMap[$mesNome];
+      mes=$mesKey;
       icms_credito=$icmsCred; icms_debito=$icmsDeb; icms_a_recolher=$icmsRec;
       ipi_ent=$ipiCred; ipi_sai=$ipiDeb; ipi_a_recolher=$ipiRec;
       saldo_icms=[Math]::Round(($icmsDeb - $icmsCred), 2)

@@ -108,22 +108,22 @@
     {
       "id": "2026-01-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "689985.86"
+      "msg": "0"
     },
     {
       "id": "2026-01-MATRIZ-cfop-s",
       "status": "OK",
-      "msg": "1676310.11"
+      "msg": "0"
     },
     {
       "id": "2026-01-MATRIZ-vs-pack-e",
       "status": "OK",
-      "msg": "689985.86"
+      "msg": "0"
     },
     {
       "id": "2026-01-MATRIZ-vs-pack-s",
       "status": "OK",
-      "msg": "1676310.11"
+      "msg": "0"
     },
     {
       "id": "2026-01-SEDE-cnpj",
@@ -142,23 +142,23 @@
     },
     {
       "id": "2026-01-SEDE-vs-pack-e",
-      "status": "OK",
-      "msg": "308131.35"
+      "status": "FAIL",
+      "msg": "308131.35 vs 0"
     },
     {
       "id": "2026-01-SEDE-vs-pack-s",
-      "status": "OK",
-      "msg": "22.75"
+      "status": "FAIL",
+      "msg": "22.75 vs 0"
     },
     {
       "id": "2026-01-consol-e",
       "status": "OK",
-      "msg": "1057915.06"
+      "msg": "367929.2"
     },
     {
       "id": "2026-01-consol-s",
       "status": "OK",
-      "msg": "2232081.51"
+      "msg": "555771.4"
     },
     {
       "id": "2026-02-MG-cnpj",
@@ -243,22 +243,22 @@
     {
       "id": "2026-02-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "11447.6"
+      "msg": "0"
     },
     {
       "id": "2026-02-MATRIZ-cfop-s",
       "status": "OK",
-      "msg": "3099565.44"
+      "msg": "0"
     },
     {
       "id": "2026-02-MATRIZ-vs-pack-e",
       "status": "OK",
-      "msg": "11447.6"
+      "msg": "0"
     },
     {
       "id": "2026-02-MATRIZ-vs-pack-s",
       "status": "OK",
-      "msg": "3099565.44"
+      "msg": "0"
     },
     {
       "id": "2026-02-SEDE-cnpj",
@@ -277,8 +277,8 @@
     },
     {
       "id": "2026-02-SEDE-vs-pack-e",
-      "status": "OK",
-      "msg": "781661.45"
+      "status": "FAIL",
+      "msg": "781661.45 vs 0"
     },
     {
       "id": "2026-02-SEDE-vs-pack-s",
@@ -288,12 +288,12 @@
     {
       "id": "2026-02-consol-e",
       "status": "OK",
-      "msg": "891970.56"
+      "msg": "880522.96"
     },
     {
       "id": "2026-02-consol-s",
       "status": "OK",
-      "msg": "3887840.69"
+      "msg": "788275.25"
     },
     {
       "id": "2026-03-MG-cnpj",
@@ -378,22 +378,22 @@
     {
       "id": "2026-03-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "1590701.07"
+      "msg": "0"
     },
     {
       "id": "2026-03-MATRIZ-cfop-s",
       "status": "OK",
-      "msg": "3250821.47"
+      "msg": "0"
     },
     {
       "id": "2026-03-MATRIZ-vs-pack-e",
       "status": "OK",
-      "msg": "1590701.07"
+      "msg": "0"
     },
     {
       "id": "2026-03-MATRIZ-vs-pack-s",
       "status": "OK",
-      "msg": "3250821.47"
+      "msg": "0"
     },
     {
       "id": "2026-03-SEDE-cnpj",
@@ -412,23 +412,23 @@
     },
     {
       "id": "2026-03-SEDE-vs-pack-e",
-      "status": "OK",
-      "msg": "511343.27"
+      "status": "FAIL",
+      "msg": "511343.27 vs 0"
     },
     {
       "id": "2026-03-SEDE-vs-pack-s",
-      "status": "OK",
-      "msg": "467742.4"
+      "status": "FAIL",
+      "msg": "467742.4 vs 0"
     },
     {
       "id": "2026-03-consol-e",
       "status": "OK",
-      "msg": "2279226.83"
+      "msg": "688525.76"
     },
     {
       "id": "2026-03-consol-s",
       "status": "OK",
-      "msg": "4740668.67"
+      "msg": "1489847.2"
     },
     {
       "id": "2026-04-MG-cnpj",
@@ -513,22 +513,22 @@
     {
       "id": "2026-04-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "846958.38"
+      "msg": "0"
     },
     {
       "id": "2026-04-MATRIZ-cfop-s",
       "status": "OK",
-      "msg": "3396918.75"
+      "msg": "0"
     },
     {
       "id": "2026-04-MATRIZ-vs-pack-e",
       "status": "OK",
-      "msg": "846958.38"
+      "msg": "0"
     },
     {
       "id": "2026-04-MATRIZ-vs-pack-s",
       "status": "OK",
-      "msg": "3396918.75"
+      "msg": "0"
     },
     {
       "id": "2026-04-SEDE-cnpj",
@@ -547,8 +547,8 @@
     },
     {
       "id": "2026-04-SEDE-vs-pack-e",
-      "status": "OK",
-      "msg": "380672.67"
+      "status": "FAIL",
+      "msg": "380672.67 vs 0"
     },
     {
       "id": "2026-04-SEDE-vs-pack-s",
@@ -558,12 +558,12 @@
     {
       "id": "2026-04-consol-e",
       "status": "OK",
-      "msg": "1296948.17"
+      "msg": "449989.79"
     },
     {
       "id": "2026-04-consol-s",
       "status": "OK",
-      "msg": "4228132.07"
+      "msg": "831213.32"
     },
     {
       "id": "2026-05-MG-cnpj",
@@ -648,22 +648,22 @@
     {
       "id": "2026-05-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "77484.5"
+      "msg": "0"
     },
     {
       "id": "2026-05-MATRIZ-cfop-s",
       "status": "OK",
-      "msg": "2770103.57"
+      "msg": "0"
     },
     {
       "id": "2026-05-MATRIZ-vs-pack-e",
       "status": "OK",
-      "msg": "77484.5"
+      "msg": "0"
     },
     {
       "id": "2026-05-MATRIZ-vs-pack-s",
       "status": "OK",
-      "msg": "2770103.57"
+      "msg": "0"
     },
     {
       "id": "2026-05-SEDE-cnpj",
@@ -682,8 +682,8 @@
     },
     {
       "id": "2026-05-SEDE-vs-pack-e",
-      "status": "OK",
-      "msg": "254121.93"
+      "status": "FAIL",
+      "msg": "254121.93 vs 0"
     },
     {
       "id": "2026-05-SEDE-vs-pack-s",
@@ -693,12 +693,12 @@
     {
       "id": "2026-05-consol-e",
       "status": "OK",
-      "msg": "387214.15"
+      "msg": "309729.65"
     },
     {
       "id": "2026-05-consol-s",
       "status": "OK",
-      "msg": "3566303.8"
+      "msg": "796200.23"
     },
     {
       "id": "2026-06-MG-cnpj",
@@ -783,22 +783,22 @@
     {
       "id": "2026-06-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "1703640.89"
+      "msg": "0"
     },
     {
       "id": "2026-06-MATRIZ-cfop-s",
       "status": "OK",
-      "msg": "3649924.21"
+      "msg": "0"
     },
     {
       "id": "2026-06-MATRIZ-vs-pack-e",
       "status": "OK",
-      "msg": "1703640.89"
+      "msg": "0"
     },
     {
       "id": "2026-06-MATRIZ-vs-pack-s",
       "status": "OK",
-      "msg": "3649924.21"
+      "msg": "0"
     },
     {
       "id": "2026-06-SEDE-cnpj",
@@ -817,8 +817,8 @@
     },
     {
       "id": "2026-06-SEDE-vs-pack-e",
-      "status": "OK",
-      "msg": "255264.64"
+      "status": "FAIL",
+      "msg": "255264.64 vs 0"
     },
     {
       "id": "2026-06-SEDE-vs-pack-s",
@@ -828,12 +828,12 @@
     {
       "id": "2026-06-consol-e",
       "status": "OK",
-      "msg": "2184187.93"
+      "msg": "480547.04"
     },
     {
       "id": "2026-06-consol-s",
       "status": "OK",
-      "msg": "5056847.1"
+      "msg": "1406922.89"
     },
     {
       "id": "2026-07-MG-cnpj",
@@ -888,12 +888,12 @@
     {
       "id": "2026-07-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "0"
+      "msg": "145769.55"
     },
     {
       "id": "2026-07-MATRIZ-cfop-s",
       "status": "OK",
-      "msg": "0"
+      "msg": "3180335.83"
     },
     {
       "id": "2026-07-SEDE-cnpj",
@@ -913,12 +913,12 @@
     {
       "id": "2026-07-consol-e",
       "status": "OK",
-      "msg": "432721.57"
+      "msg": "578491.12"
     },
     {
       "id": "2026-07-consol-s",
       "status": "OK",
-      "msg": "1078318.7"
+      "msg": "4258654.53"
     },
     {
       "id": "jul-pr-regression",
@@ -926,5 +926,5 @@
       "msg": "PR Jul preservado"
     }
   ],
-  "fails": 0
+  "fails": 8
 }
