@@ -949,8 +949,11 @@
 
       <section id="tab-impostos" class="tab-section">
         <div class="sec-header">
-          <div><div class="sec-title">Impostos <small id="imp-sec-competencia">Competência —</small></div><div class="sec-sub" id="impSub">—</div></div>
-          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-impostos','Impostos')"><i class="fas fa-file-pdf"></i> PDF</button></div>
+          <div>
+            <div class="sec-title">Impostos <small id="imp-sec-competencia">Competência —</small></div>
+            <div class="sec-sub" id="impSub">Apuração tributária por unidade — ICMS/IPI (grupo) · DAS (LANNIC Simples)</div>
+          </div>
+          <div class="export-bar"><button class="btn-export pdf" onclick="exportPDF('tab-impostos','Impostos')" title="Exportar PDF"><i class="fas fa-file-pdf"></i> PDF</button></div>
         </div>
         <div class="vd-mes-bar fiscal-mes-bar-head" id="imp-mes-bar" aria-label="Competência impostos"></div>
         <div id="panel-impostos"></div>
