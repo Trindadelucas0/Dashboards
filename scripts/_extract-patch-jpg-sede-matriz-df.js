@@ -281,6 +281,58 @@ function buildFilialPack(unitKey, mesKey, entLines, saiLines) {
   };
 }
 
+function emptyApLine() {
+  return {
+    debitoSaidas: 0, creditoEntradas: 0, outrosDebitos: 0, outrosCreditos: 0,
+    saldoDevedor: 0, saldoCredor: 0, aRecolher: 0, saldoCredorTransportar: 0,
+  };
+}
+
+function buildApuracaoFromTax(tax) {
+  const icmsDeb = round2(tax.icms_debito || 0);
+  const icmsCred = round2(tax.icms_credito || 0);
+  const icmsRec = tax.icms_a_recolher != null ? round2(tax.icms_a_recolher) : round2(icmsDeb - icmsCred);
+  const ipiDeb = round2(tax.ipi_sai || 0);
+  const ipiCred = round2(tax.ipi_ent || 0);
+  const ipiRec = tax.ipi_a_recolher != null ? round2(tax.ipi_a_recolher) : round2(ipiDeb - ipiCred);
+  const icms = {
+    ...emptyApLine(),
+    debitoSaidas: icmsDeb,
+    creditoEntradas: icmsCred,
+    saldoDevedor: icmsRec > 0 ? icmsRec : 0,
+    saldoCredor: icmsRec < 0 ? round2(-icmsRec) : 0,
+    aRecolher: icmsRec,
+  };
+  const ipi = {
+    ...emptyApLine(),
+    debitoSaidas: ipiDeb,
+    creditoEntradas: ipiCred,
+    saldoDevedor: ipiRec > 0 ? ipiRec : 0,
+    saldoCredor: ipiRec < 0 ? round2(-ipiRec) : 0,
+    aRecolher: ipiRec,
+  };
+  return {
+    icms,
+    icmsSt: emptyApLine(),
+    pis: emptyApLine(),
+    cofins: emptyApLine(),
+    ipi,
+    fonte: tax.fonte || 'Planilha IMPOSTOS ICMS E IPI GRUPO JPG',
+  };
+}
+
+function buildImpostosTabela(apuracao, receita) {
+  const rb = Number(receita) || 0;
+  const pct = (v) => (rb > 0 ? round2((Number(v) || 0) / rb * 100) : 0);
+  return [
+    { tributo: 'ICMS', apurado: apuracao.icms.debitoSaidas, recolher: apuracao.icms.aRecolher, pctRb: pct(apuracao.icms.aRecolher) },
+    { tributo: 'ICMS ST', apurado: 0, recolher: 0, pctRb: 0 },
+    { tributo: 'PIS', apurado: 0, recolher: 0, pctRb: 0 },
+    { tributo: 'COFINS', apurado: 0, recolher: 0, pctRb: 0 },
+    { tributo: 'IPI', apurado: apuracao.ipi.debitoSaidas, recolher: apuracao.ipi.aRecolher, pctRb: pct(apuracao.ipi.aRecolher) },
+  ];
+}
+
 function applyTax(pack, tax) {
   if (!tax || !pack) return pack;
   pack.kpis.icms_credito = tax.icms_credito;
@@ -294,7 +346,46 @@ function applyTax(pack, tax) {
   pack.dre.resultado = round2(pack.kpis.saidas - pack.kpis.entradas + pack.kpis.icms_credito - pack.kpis.icms_debito);
   pack.dre.margem_resultado_pct = pack.kpis.saidas
     ? round2((pack.dre.resultado / pack.kpis.saidas) * 100) : null;
+  const ap = buildApuracaoFromTax(tax);
+  pack.apuracao = ap;
+  pack.impostosTabela = buildImpostosTabela(ap, pack.kpis.saidas);
+  pack.composicao = [
+    { label: 'ICMS a recolher', valor: ap.icms.aRecolher },
+    { label: 'IPI a recolher', valor: ap.ipi.aRecolher },
+  ];
+  pack.deducoes = round2(ap.icms.aRecolher + ap.ipi.aRecolher);
+  pack.dedPct = pack.kpis.saidas ? round2((pack.deducoes / pack.kpis.saidas) * 100) : 0;
   return pack;
+}
+
+function mergeApuracao(list) {
+  const keys = ['icms', 'icmsSt', 'pis', 'cofins', 'ipi'];
+  const out = { fonte: 'Consolidado filiais' };
+  for (const key of keys) {
+    const line = emptyApLine();
+    for (const f of list) {
+      let a = f.apuracao && f.apuracao[key];
+      if (!a && key === 'icms' && f.kpis) {
+        a = buildApuracaoFromTax({
+          icms_credito: f.kpis.icms_credito,
+          icms_debito: f.kpis.icms_debito,
+          icms_a_recolher: f.kpis.saldo_icms,
+          ipi_ent: 0, ipi_sai: 0, ipi_a_recolher: 0,
+        }).icms;
+      }
+      if (!a && key === 'ipi' && f.kpis) {
+        a = buildApuracaoFromTax({
+          icms_credito: 0, icms_debito: 0, icms_a_recolher: 0,
+          ipi_ent: f.kpis.ipi_ent, ipi_sai: f.kpis.ipi_sai,
+          ipi_a_recolher: round2((f.kpis.ipi_sai || 0) - (f.kpis.ipi_ent || 0)),
+        }).ipi;
+      }
+      if (!a) a = emptyApLine();
+      for (const fkey of Object.keys(line)) line[fkey] = round2(line[fkey] + (Number(a[fkey]) || 0));
+    }
+    out[key] = line;
+  }
+  return out;
 }
 
 function assertCfop(pack, label) {
@@ -396,6 +487,8 @@ function buildEmpresa(mesKey, filiais) {
     for (const [uf, v] of Object.entries(f.ufs_entradas || {})) ufs_entradas[uf] = round2((ufs_entradas[uf] || 0) + v);
     for (const [uf, v] of Object.entries(f.ufs_saidas || {})) ufs_saidas[uf] = round2((ufs_saidas[uf] || 0) + v);
   }
+  const apuracao = mergeApuracao(list);
+  const impostosTabela = buildImpostosTabela(apuracao, kpis.saidas);
   return {
     meta: {
       codigo: 'TODAS', nome: 'JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS',
@@ -410,6 +503,14 @@ function buildEmpresa(mesKey, filiais) {
     notas_entradas: [], notas_saidas: [],
     ufs_entradas, ufs_saidas,
     serie_diaria: { labels: [], entradas: [], saidas: [] },
+    apuracao,
+    impostosTabela,
+    composicao: [
+      { label: 'ICMS a recolher', valor: apuracao.icms.aRecolher },
+      { label: 'IPI a recolher', valor: apuracao.ipi.aRecolher },
+    ],
+    deducoes: round2(apuracao.icms.aRecolher + apuracao.ipi.aRecolher),
+    dedPct: kpis.saidas ? round2(((apuracao.icms.aRecolher + apuracao.ipi.aRecolher) / kpis.saidas) * 100) : 0,
     dre: {
       receita: kpis.saidas, receita_externa: kpis.saidas, cmv: kpis.entradas,
       lucro_bruto: round2(kpis.saidas - kpis.entradas),
