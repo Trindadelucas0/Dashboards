@@ -14545,15 +14545,16 @@
       },
       "dre": {
         "receita": 3649924.21,
-        "receita_externa": 3649924.21,
+        "receita_externa": 2426227.63,
+        "remessas_transferencias": 1223696.58,
         "cmv": 1703640.89,
-        "lucro_bruto": 1946283.32,
-        "margem_bruta_pct": 53.32,
+        "lucro_bruto": 722586.74,
+        "margem_bruta_pct": 29.78,
         "icms_debito": 207223.16,
         "icms_credito": 85910.37,
         "saldo_icms": 121312.79,
-        "resultado": 1824970.53,
-        "margem_resultado_pct": 50
+        "resultado": 601273.95,
+        "margem_resultado_pct": 24.78
       }
     }
   },
@@ -31062,15 +31063,16 @@
       },
       "dre": {
         "receita": 3250821.47,
-        "receita_externa": 3250821.47,
+        "receita_externa": 2811088.99,
+        "remessas_transferencias": 439732.48,
         "cmv": 1590701.07,
-        "lucro_bruto": 1660120.4,
-        "margem_bruta_pct": 51.07,
+        "lucro_bruto": 1220387.92,
+        "margem_bruta_pct": 43.41,
         "icms_debito": 307381.05,
         "icms_credito": 40806.91,
         "saldo_icms": 266574.14,
-        "resultado": 1393546.26,
-        "margem_resultado_pct": 42.87
+        "resultado": 953813.78,
+        "margem_resultado_pct": 33.93
       }
     }
   },
@@ -43170,15 +43172,16 @@
       },
       "dre": {
         "receita": 1676310.11,
-        "receita_externa": 1676310.11,
+        "receita_externa": 1447567.5,
+        "remessas_transferencias": 228742.61,
         "cmv": 689985.86,
-        "lucro_bruto": 986324.25,
-        "margem_bruta_pct": 58.84,
+        "lucro_bruto": 757581.64,
+        "margem_bruta_pct": 52.33,
         "icms_debito": 181225.39,
         "icms_credito": 25332.04,
         "saldo_icms": 155893.35,
-        "resultado": 830430.9,
-        "margem_resultado_pct": 49.54
+        "resultado": 601688.29,
+        "margem_resultado_pct": 41.57
       }
     }
   },
@@ -55234,15 +55237,16 @@
       },
       "dre": {
         "receita": 3099565.44,
-        "receita_externa": 3099565.44,
+        "receita_externa": 2122723.97,
+        "remessas_transferencias": 976841.47,
         "cmv": 11447.6,
-        "lucro_bruto": 3088117.84,
-        "margem_bruta_pct": 99.63,
+        "lucro_bruto": 2111276.37,
+        "margem_bruta_pct": 99.46,
         "icms_debito": 290350.09,
         "icms_credito": 537.07,
         "saldo_icms": 289813.02,
-        "resultado": 2798304.82,
-        "margem_resultado_pct": 90.28
+        "resultado": 1821463.35,
+        "margem_resultado_pct": 85.81
       }
     }
   },
@@ -69558,15 +69562,16 @@
       },
       "dre": {
         "receita": 3396918.75,
-        "receita_externa": 3396918.75,
+        "receita_externa": 2983253.28,
+        "remessas_transferencias": 413665.47,
         "cmv": 846958.38,
-        "lucro_bruto": 2549960.37,
-        "margem_bruta_pct": 75.07,
+        "lucro_bruto": 2136294.9,
+        "margem_bruta_pct": 71.61,
         "icms_debito": 223068.52,
         "icms_credito": 33262.33,
         "saldo_icms": 189806.19,
-        "resultado": 2360154.18,
-        "margem_resultado_pct": 69.48
+        "resultado": 1946488.71,
+        "margem_resultado_pct": 65.25
       }
     }
   },
@@ -79913,15 +79918,16 @@
       },
       "dre": {
         "receita": 2770103.57,
-        "receita_externa": 2770103.57,
+        "receita_externa": 1015215.53,
+        "remessas_transferencias": 1754888.04,
         "cmv": 77484.5,
-        "lucro_bruto": 2692619.07,
-        "margem_bruta_pct": 97.2,
+        "lucro_bruto": 937731.03,
+        "margem_bruta_pct": 92.37,
         "icms_debito": 119033.38,
         "icms_credito": 5390.77,
         "saldo_icms": 113642.61,
-        "resultado": 2578976.46,
-        "margem_resultado_pct": 93.1
+        "resultado": 824088.42,
+        "margem_resultado_pct": 81.17
       }
     }
   },
@@ -87621,15 +87627,16 @@
       },
       "dre": {
         "receita": 3180335.83,
-        "receita_externa": 3180335.83,
+        "receita_externa": 1747927.38,
+        "remessas_transferencias": 1432408.45,
         "cmv": 145769.55,
-        "lucro_bruto": 3034566.28,
-        "margem_bruta_pct": 95.42,
+        "lucro_bruto": 1602157.83,
+        "margem_bruta_pct": 91.66,
         "icms_debito": 206032.9,
         "icms_credito": 16418.62,
         "saldo_icms": 189614.28,
-        "resultado": 2844952,
-        "margem_resultado_pct": 89.45
+        "resultado": 1412543.55,
+        "margem_resultado_pct": 80.81
       }
     }
   }

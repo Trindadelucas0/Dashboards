@@ -1,0 +1,93 @@
+[
+  {
+    "mes": "2026-01",
+    "before_receita_ext": 1676310.11,
+    "before_lucro": 986324.25,
+    "after_receita": 1676310.11,
+    "after_ext": 1447567.5,
+    "remessas": 228742.61,
+    "cmv": 689985.86,
+    "lucro": 757581.64,
+    "margem": 52.33,
+    "consol_e": 1057915.06,
+    "consol_s": 2232081.51
+  },
+  {
+    "mes": "2026-02",
+    "before_receita_ext": 3099565.44,
+    "before_lucro": 3088117.84,
+    "after_receita": 3099565.44,
+    "after_ext": 2122723.97,
+    "remessas": 976841.47,
+    "cmv": 11447.6,
+    "lucro": 2111276.37,
+    "margem": 99.46,
+    "consol_e": 891970.56,
+    "consol_s": 3887840.69
+  },
+  {
+    "mes": "2026-03",
+    "before_receita_ext": 3250821.47,
+    "before_lucro": 1660120.4,
+    "after_receita": 3250821.47,
+    "after_ext": 2811088.99,
+    "remessas": 439732.48,
+    "cmv": 1590701.07,
+    "lucro": 1220387.92,
+    "margem": 43.41,
+    "consol_e": 2279226.83,
+    "consol_s": 4740668.67
+  },
+  {
+    "mes": "2026-04",
+    "before_receita_ext": 3396918.75,
+    "before_lucro": 2549960.37,
+    "after_receita": 3396918.75,
+    "after_ext": 2983253.28,
+    "remessas": 413665.47,
+    "cmv": 846958.38,
+    "lucro": 2136294.9,
+    "margem": 71.61,
+    "consol_e": 1296948.17,
+    "consol_s": 4228132.07
+  },
+  {
+    "mes": "2026-05",
+    "before_receita_ext": 2770103.57,
+    "before_lucro": 2692619.07,
+    "after_receita": 2770103.57,
+    "after_ext": 1015215.53,
+    "remessas": 1754888.04,
+    "cmv": 77484.5,
+    "lucro": 937731.03,
+    "margem": 92.37,
+    "consol_e": 387214.15,
+    "consol_s": 3566303.8
+  },
+  {
+    "mes": "2026-06",
+    "before_receita_ext": 3649924.21,
+    "before_lucro": 1946283.32,
+    "after_receita": 3649924.21,
+    "after_ext": 2426227.63,
+    "remessas": 1223696.58,
+    "cmv": 1703640.89,
+    "lucro": 722586.74,
+    "margem": 29.78,
+    "consol_e": 2184187.93,
+    "consol_s": 5056847.1
+  },
+  {
+    "mes": "2026-07",
+    "before_receita_ext": 3180335.83,
+    "before_lucro": 3034566.28,
+    "after_receita": 3180335.83,
+    "after_ext": 1747927.38,
+    "remessas": 1432408.45,
+    "cmv": 145769.55,
+    "lucro": 1602157.83,
+    "margem": 91.66,
+    "consol_e": 724260.67,
+    "consol_s": 7438990.36
+  }
+]
