@@ -16,7 +16,7 @@ const META_U = {
   MG: { codigo: '90', cnpj: '21.051.983/0005-99', label: 'Filial MG', uf: 'MG' },
   PR: { codigo: '81', cnpj: '21.051.983/0006-70', label: 'Filial PR', uf: 'PR' },
   SP: { codigo: '82', cnpj: '21.051.983/0007-50', label: 'Filial SP', uf: 'SP' },
-  MATRIZ: { codigo: '712', cnpj: '21.051.983/0003-27', label: 'Matriz DF', uf: 'DF' },
+  MATRIZ: { codigo: '712', cnpj: '21.051.983/0003-27', label: 'Filial DF', uf: 'DF' },
   SEDE: { codigo: '711', cnpj: '21.051.983/0001-65', label: 'Matriz Sede', uf: 'DF' },
 };
 
@@ -271,7 +271,7 @@ data.fiscalPorMes.porMes = newPorMes;
 data.meta.periodoRange = `${monthLabel(meses[0]).split('/')[0]}–${monthLabel(meses[meses.length - 1])}`;
 data.meta.competenciaDefault = meses[meses.length - 1];
 data.meta.gerado_em = new Date().toLocaleString('pt-BR');
-data.meta.fonte = 'Relatórios ICMS (.xls) — Jan–Jun/2026 (MG/PR/SP/Matriz DF/Matriz Sede) + Jul PR';
+data.meta.fonte = 'Relatórios ICMS (.xls) — Jan–Jun/2026 (MG/PR/SP/Filial DF/Matriz Sede) + Jul PR';
 data.meta.unidades = 5;
 data.meta.nCompetencias = meses.length;
 if (data.ordem) data.ordem = ORDEM.slice();
@@ -282,8 +282,8 @@ html = html.slice(0, lit.start) + JSON.stringify(data, null, 2) + html.slice(lit
 // Add SEDE option in select if missing
 if (!html.includes('value="SEDE"')) {
   html = html.replace(
-    /<option value="MATRIZ">Matriz DF<\/option>/,
-    '<option value="MATRIZ">Matriz DF</option>\r\n\r\n          <option value="SEDE">Matriz Sede</option>'
+    /<option value="MATRIZ">Filial DF<\/option>/,
+    '<option value="MATRIZ">Filial DF</option>\r\n\r\n          <option value="SEDE">Matriz Sede</option>'
   );
 }
 

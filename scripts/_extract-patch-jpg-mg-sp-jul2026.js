@@ -295,7 +295,7 @@ function buildEmpresa(filiais) {
       uf: 'BR',
       filial_key: 'EMPRESA',
       filial_label: 'Empresa (consolidado)',
-      alerta: 'Jul/2026: MG, PR e SP com movimento; Matriz DF/SEDE pendentes nestas planilhas.',
+      alerta: 'Jul/2026: MG, PR e SP com movimento; Filial DF/SEDE pendentes nestas planilhas.',
     },
     fornecedor_keys: ranking_fornecedores.map((p) => p.cnpj),
     cliente_keys: ranking_clientes.map((p) => p.cnpj),

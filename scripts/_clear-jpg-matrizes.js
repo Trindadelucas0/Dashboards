@@ -1,6 +1,6 @@
 'use strict';
 /**
- * Zera MATRIZ DF + SEDE em todos os meses do JPG_DATA (jpg.ejs),
+ * Zera Filial DF + SEDE em todos os meses do JPG_DATA (jpg.ejs),
  * recalcula consolidado empresa e limpa packs intermediários das matrizes.
  * Preserva MG/PR/SP.
  */
@@ -21,7 +21,7 @@ const META_U = {
   MG: { codigo: '90', cnpj: '21.051.983/0005-99', label: 'Filial MG', uf: 'MG' },
   PR: { codigo: '81', cnpj: '21.051.983/0006-70', label: 'Filial PR', uf: 'PR' },
   SP: { codigo: '82', cnpj: '21.051.983/0007-50', label: 'Filial SP', uf: 'SP' },
-  MATRIZ: { codigo: '712', cnpj: '21.051.983/0003-27', label: 'Matriz DF', uf: 'DF' },
+  MATRIZ: { codigo: '712', cnpj: '21.051.983/0003-27', label: 'Filial DF', uf: 'DF' },
   SEDE: { codigo: '711', cnpj: '21.051.983/0001-65', label: 'Matriz Sede', uf: 'DF' },
 };
 
@@ -240,7 +240,7 @@ function buildEmpresa(mesKey, filiais) {
       uf: 'BR',
       filial_key: 'EMPRESA',
       filial_label: 'Empresa (consolidado)',
-      alerta: 'MATRIZ DF e Matriz Sede zeradas — aguardando planilhas reorganizadas.',
+      alerta: 'Filial DF e Matriz Sede zeradas — aguardando planilhas reorganizadas.',
     },
     fornecedor_keys: ranking_fornecedores.map((p) => p.cnpj),
     cliente_keys: ranking_clientes.map((p) => p.cnpj),
@@ -361,7 +361,7 @@ for (const mes of meses) {
   pack.empresa = buildEmpresa(mes, pack.filiais);
 }
 
-data.meta.fonte = 'Relatórios ICMS (.xls) — MG/PR/SP; MATRIZ DF e Matriz Sede aguardando planilhas reorganizadas';
+data.meta.fonte = 'Relatórios ICMS (.xls) — MG/PR/SP; Filial DF e Matriz Sede aguardando planilhas reorganizadas';
 data.meta.gerado_em = new Date().toLocaleString('pt-BR');
 if (data.ordem) data.ordem = ORDEM.slice();
 

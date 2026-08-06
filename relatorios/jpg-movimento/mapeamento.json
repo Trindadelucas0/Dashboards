@@ -9,7 +9,7 @@
     "MG": { "cnpj": "21051983000599", "codigo": "90", "label": "Filial MG" },
     "PR": { "cnpj": "21051983000670", "codigo": "81", "label": "Filial PR" },
     "SP": { "cnpj": "21051983000750", "codigo": "82", "label": "Filial SP" },
-    "MATRIZ": { "cnpj": "21051983000327", "codigo": "712", "label": "Matriz DF" }
+    "MATRIZ": { "cnpj": "21051983000327", "codigo": "712", "label": "Filial DF" }
   },
   "gateCnpj": {
     "cnpj": "21051983000165",

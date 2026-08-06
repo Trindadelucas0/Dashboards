@@ -445,7 +445,7 @@ function main() {
       MG: emptyFilial("MG", "Filial MG", "90", "21.051.983/0005-99"),
       PR: pr,
       SP: emptyFilial("SP", "Filial SP", "82", "21.051.983/0007-50"),
-      MATRIZ: emptyFilial("MATRIZ", "Matriz DF", "712", "21.051.983/0003-27"),
+      MATRIZ: emptyFilial("MATRIZ", "Filial DF", "712", "21.051.983/0003-27"),
     },
   };
 

@@ -14,7 +14,7 @@ const UNITS = {
   MG: { cnpj: '21051983000599', codigo: '90', label: 'Filial MG', uf: 'MG' },
   PR: { cnpj: '21051983000670', codigo: '81', label: 'Filial PR', uf: 'PR' },
   SP: { cnpj: '21051983000750', codigo: '82', label: 'Filial SP', uf: 'SP' },
-  MATRIZ: { cnpj: '21051983000327', codigo: '712', label: 'Matriz DF', uf: 'DF' },
+  MATRIZ: { cnpj: '21051983000327', codigo: '712', label: 'Filial DF', uf: 'DF' },
   RAIZ: { cnpj: '21051983000165', codigo: '711', label: 'Matriz CNPJ raiz', uf: 'DF' },
 };
 
