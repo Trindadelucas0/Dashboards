@@ -131738,7 +131738,7 @@ function jpgTributoRecolher(scope, key) {
   if (ap && ap[key] && ap[key].aRecolher != null) return Number(ap[key].aRecolher) || 0;
   const row = (scope.impostosTabela || []).find((t) => {
     const n = String(t.tributo || '').toUpperCase();
-    if (key === 'icms') return n === 'ICMS' || /^ICMS$/.test(n);
+    if (key === 'icms') return /^ICMS(?!\s*ST)/i.test(n);
     if (key === 'icmsSt') return /ICMS\s*ST/.test(n);
     if (key === 'ipi') return /^IPI/.test(n);
     if (key === 'pis') return /^PIS/.test(n);
@@ -131765,9 +131765,10 @@ function initImpostos() {
   const hasAp = !!(ap && ap.icms);
   const dasRow = (tabela || []).find((t) => /DAS|Simples/i.test(String(t.tributo || '')));
   const isDasPack = !!(D.meta && D.meta.regime === 'Simples Nacional') || !!dasRow || !!(ap && ap.das);
-  const competencia = (typeof getPeriodScopeLabel === 'function' ? getJpgCompetenciaLabel?.() : null)
-    || (D.meta && D.meta.periodo)
-    || (typeof fiscalMesLabel === 'function' ? fiscalMesLabel(appMesFiscal) : '—');
+  const competencia = (typeof window.getJpgCompetenciaLabel === 'function')
+    ? window.getJpgCompetenciaLabel()
+    : ((D.meta && D.meta.periodo)
+      || (typeof fiscalMesLabel === 'function' ? fiscalMesLabel(appMesFiscal) : '—'));
   const compShort = (typeof fiscalMesLabel === 'function' && appMesFiscal && appMesFiscal !== 'total')
     ? fiscalMesLabel(appMesFiscal)
     : (competencia || '—');
