@@ -1,34 +1,19 @@
 'use strict';
 /**
- * Zera Filial DF + SEDE em todos os meses do JPG_DATA (jpg.ejs),
- * recalcula consolidado empresa e limpa packs intermediários das matrizes.
- * Preserva MG/PR/SP.
+ * Rebuild JPG empresa consolidado merging CFOP parties (fix Detalhes vazio).
+ * Preserva filiais; só regenera pack.empresa por mês.
  */
 const fs = require('fs');
 const path = require('path');
-const vm = require('vm');
 
 const ROOT = path.join(__dirname, '..');
 const EJS = path.join(ROOT, 'src', 'views', 'jpg.ejs');
-const PACKS_PATH = path.join(ROOT, 'relatorios', 'jpg-movimento', 'packs-por-mes.json');
 const TOL = 0.02;
 const ORDEM = ['MG', 'PR', 'SP', 'MATRIZ', 'SEDE'];
-const CLEAR_KEYS = ['MATRIZ', 'SEDE'];
-const PRESERVE_KEYS = ['MG', 'PR', 'SP'];
-const ALERTA = 'Aguardando novas planilhas reorganizadas.';
-
-const META_U = {
-  MG: { codigo: '90', cnpj: '21.051.983/0005-99', label: 'Filial MG', uf: 'MG' },
-  PR: { codigo: '81', cnpj: '21.051.983/0006-70', label: 'Filial PR', uf: 'PR' },
-  SP: { codigo: '82', cnpj: '21.051.983/0007-50', label: 'Filial SP', uf: 'SP' },
-  MATRIZ: { codigo: '712', cnpj: '21.051.983/0003-27', label: 'Filial DF', uf: 'DF' },
-  SEDE: { codigo: '711', cnpj: '21.051.983/0001-65', label: 'Matriz Sede', uf: 'DF' },
-};
 
 function round2(n) {
   return Math.round((Number(n) || 0) * 100) / 100;
 }
-
 function near(a, b) {
   return Math.abs(Number(a) - Number(b)) <= TOL;
 }
@@ -73,62 +58,6 @@ function periodLabel(mesKey) {
   const [y, m] = mesKey.split('-');
   const last = new Date(+y, +m, 0).getDate();
   return `01/${m}/${y} até ${String(last).padStart(2, '0')}/${m}/${y}`;
-}
-
-function emptyFilial(key, mesKey, alerta) {
-  const u = META_U[key];
-  return {
-    meta: {
-      codigo: u.codigo,
-      nome: 'JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS',
-      cnpj: u.cnpj,
-      ie: '—',
-      periodo: periodLabel(mesKey),
-      uf: u.uf,
-      filial_key: key,
-      filial_label: u.label,
-      alerta: alerta || ALERTA,
-    },
-    fornecedor_keys: [],
-    cliente_keys: [],
-    kpis: {
-      entradas: 0,
-      saidas: 0,
-      icms_credito: 0,
-      icms_debito: 0,
-      base_icms_ent: 0,
-      base_icms_sai: 0,
-      ipi_ent: 0,
-      ipi_sai: 0,
-      saldo_icms: 0,
-      n_nf_ent: 0,
-      n_nf_sai: 0,
-      n_fornecedores: 0,
-      n_clientes: 0,
-    },
-    cfop_entradas: [],
-    cfop_saidas: [],
-    finalidade: [],
-    ranking_fornecedores: [],
-    ranking_clientes: [],
-    notas_entradas: [],
-    notas_saidas: [],
-    ufs_entradas: {},
-    ufs_saidas: {},
-    serie_diaria: { labels: [], entradas: [], saidas: [] },
-    dre: {
-      receita: 0,
-      receita_externa: 0,
-      cmv: 0,
-      lucro_bruto: 0,
-      margem_bruta_pct: null,
-      icms_debito: 0,
-      icms_credito: 0,
-      saldo_icms: 0,
-      resultado: 0,
-      margem_resultado_pct: null,
-    },
-  };
 }
 
 function sumKpis(list) {
@@ -248,8 +177,8 @@ function buildFinalidade(cfops) {
     .sort((a, b) => b.total - a.total);
 }
 
-function buildEmpresa(mesKey, filiais) {
-  const list = ORDEM.map((k) => filiais[k]);
+function buildEmpresa(mesKey, filiais, prevMeta) {
+  const list = ORDEM.map((k) => filiais[k]).filter(Boolean);
   const kpis = sumKpis(list);
   const cfop_entradas = mergeCfops(list.map((f) => f.cfop_entradas));
   const cfop_saidas = mergeCfops(list.map((f) => f.cfop_saidas));
@@ -271,7 +200,7 @@ function buildEmpresa(mesKey, filiais) {
       uf: 'BR',
       filial_key: 'EMPRESA',
       filial_label: 'Empresa (consolidado)',
-      alerta: 'Filial DF e Matriz Sede zeradas — aguardando planilhas reorganizadas.',
+      alerta: (prevMeta && prevMeta.alerta) || '',
     },
     fornecedor_keys: ranking_fornecedores.map((p) => p.cnpj),
     cliente_keys: ranking_clientes.map((p) => p.cnpj),
@@ -303,149 +232,36 @@ function buildEmpresa(mesKey, filiais) {
   };
 }
 
-function snapshotPreserve(porMes) {
-  const out = {};
-  for (const [mes, pack] of Object.entries(porMes)) {
-    out[mes] = {};
-    for (const k of PRESERVE_KEYS) {
-      const f = pack.filiais[k];
-      if (!f) throw new Error(`missing preserve unit ${mes}/${k}`);
-      out[mes][k] = {
-        e: f.kpis.entradas,
-        s: f.kpis.saidas,
-        nfE: f.kpis.n_nf_ent,
-        nfS: f.kpis.n_nf_sai,
-      };
-    }
-  }
-  return out;
-}
-
-function syntaxCheck(html) {
-  const re = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
-  let m;
-  let i = 0;
-  while ((m = re.exec(html))) {
-    const t = m[1];
-    if (!t || !t.trim()) continue;
-    i++;
-    new vm.Script(t, { filename: 'jpg.ejs#' + i });
-  }
-  return i;
-}
-
-function clearPacksJson() {
-  if (!fs.existsSync(PACKS_PATH)) {
-    console.log('packs-por-mes.json ausente — skip');
-    return;
-  }
-  const packs = JSON.parse(fs.readFileSync(PACKS_PATH, 'utf8'));
-  let changed = 0;
-  for (const mes of Object.keys(packs)) {
-    const month = packs[mes];
-    if (!month || typeof month !== 'object') continue;
-    // packs históricos: SEDE vem como RAIZ (ver _patch-jpg-movimento-ejs.js)
-    if (month.MATRIZ) {
-      month.MATRIZ = emptyFilial('MATRIZ', mes, ALERTA);
-      changed++;
-    }
-    if (month.RAIZ) {
-      month.RAIZ = emptyFilial('SEDE', mes, ALERTA);
-      changed++;
-    }
-    if (month.SEDE) {
-      month.SEDE = emptyFilial('SEDE', mes, ALERTA);
-      changed++;
-    }
-    if (month.filiais) {
-      for (const k of CLEAR_KEYS) {
-        if (month.filiais[k]) {
-          month.filiais[k] = emptyFilial(k, mes, ALERTA);
-          changed++;
-        }
-      }
-    }
-  }
-  fs.writeFileSync(PACKS_PATH, JSON.stringify(packs, null, 2));
-  console.log('packs-por-mes.json atualizado, stubs=', changed);
-}
-
-// --- main ---
 let html = fs.readFileSync(EJS, 'utf8');
 const lit = findObjectLiteral(html, 'const JPG_DATA =');
 const data = JSON.parse(lit.text);
 const porMes = data.fiscalPorMes.porMes;
-if (!porMes) throw new Error('fiscalPorMes.porMes missing');
-
-const before = snapshotPreserve(porMes);
-const meses = Object.keys(porMes).sort();
-
-for (const mes of meses) {
-  const pack = porMes[mes];
-  pack.ordem = ORDEM.slice();
-  for (const k of CLEAR_KEYS) {
-    pack.filiais[k] = emptyFilial(k, mes, ALERTA);
-  }
-  for (const k of ORDEM) {
-    if (!pack.filiais[k]) pack.filiais[k] = emptyFilial(k, mes, ALERTA);
-  }
-  pack.empresa = buildEmpresa(mes, pack.filiais);
-}
-
-data.meta.fonte = 'Relatórios ICMS (.xls) — MG/PR/SP; Filial DF e Matriz Sede aguardando planilhas reorganizadas';
-data.meta.gerado_em = new Date().toLocaleString('pt-BR');
-if (data.ordem) data.ordem = ORDEM.slice();
-
-html = html.slice(0, lit.start) + JSON.stringify(data, null, 2) + html.slice(lit.end);
-fs.writeFileSync(EJS, html);
-
-clearPacksJson();
-
-const checkHtml = fs.readFileSync(EJS, 'utf8');
-const check = JSON.parse(findObjectLiteral(checkHtml, 'const JPG_DATA =').text);
 let ok = true;
 
-for (const mes of meses) {
-  const pack = check.fiscalPorMes.porMes[mes];
-  for (const k of CLEAR_KEYS) {
-    const kp = pack.filiais[k].kpis;
-    if (!near(kp.entradas, 0) || !near(kp.saidas, 0)) {
-      console.error('FAIL clear', mes, k, kp.entradas, kp.saidas);
-      ok = false;
-    }
-  }
-  for (const k of PRESERVE_KEYS) {
-    const exp = before[mes][k];
-    const got = pack.filiais[k].kpis;
-    if (!near(got.entradas, exp.e) || !near(got.saidas, exp.s) || got.n_nf_ent !== exp.nfE || got.n_nf_sai !== exp.nfS) {
-      console.error('FAIL preserve', mes, k, {
-        got: { e: got.entradas, s: got.saidas, nfE: got.n_nf_ent, nfS: got.n_nf_sai },
-        exp,
-      });
-      ok = false;
-    }
-  }
-  const expectE = round2(PRESERVE_KEYS.reduce((a, k) => a + pack.filiais[k].kpis.entradas, 0));
-  const expectS = round2(PRESERVE_KEYS.reduce((a, k) => a + pack.filiais[k].kpis.saidas, 0));
-  if (!near(pack.empresa.kpis.entradas, expectE) || !near(pack.empresa.kpis.saidas, expectS)) {
-    console.error('FAIL consol', mes, pack.empresa.kpis.entradas, pack.empresa.kpis.saidas, expectE, expectS);
+for (const mes of Object.keys(porMes).sort()) {
+  const pack = porMes[mes];
+  const beforeE = pack.empresa.kpis.entradas;
+  const beforeS = pack.empresa.kpis.saidas;
+  pack.empresa = buildEmpresa(mes, pack.filiais, pack.empresa.meta);
+  if (!near(pack.empresa.kpis.entradas, beforeE) || !near(pack.empresa.kpis.saidas, beforeS)) {
+    console.error('KPI drift', mes, pack.empresa.kpis.entradas, pack.empresa.kpis.saidas, beforeE, beforeS);
     ok = false;
   }
-  console.log(
-    mes,
-    'MATRIZ',
-    pack.filiais.MATRIZ.kpis.entradas,
-    pack.filiais.MATRIZ.kpis.saidas,
-    'SEDE',
-    pack.filiais.SEDE.kpis.entradas,
-    pack.filiais.SEDE.kpis.saidas,
-    'EMP',
-    pack.empresa.kpis.entradas,
-    pack.empresa.kpis.saidas
-  );
+  const c2152 = (pack.empresa.cfop_entradas || []).find((c) => c.cfop === '2-152');
+  if (c2152) {
+    const partySum = round2((c2152.parties || []).reduce((a, p) => a + (p.total || 0), 0));
+    if (!near(partySum, c2152.total)) {
+      console.error('parties≠cfop', mes, partySum, c2152.total);
+      ok = false;
+    }
+    console.log(mes, '2-152 parties=', (c2152.parties || []).length, 'total=', c2152.total, 'partySum=', partySum);
+  } else {
+    console.log(mes, 'sem CFOP 2-152');
+  }
 }
 
-const nScripts = syntaxCheck(checkHtml);
-console.log('syntax scripts=', nScripts);
-console.log(ok ? 'CLEAR MATRIZ+SEDE OK' : 'CLEAR FAILED');
+data.meta.gerado_em = new Date().toLocaleString('pt-BR');
+html = html.slice(0, lit.start) + JSON.stringify(data, null, 2) + html.slice(lit.end);
+fs.writeFileSync(EJS, html);
+console.log(ok ? 'REBUILD EMPRESA PARTIES OK' : 'REBUILD FAILED');
 if (!ok) process.exit(1);

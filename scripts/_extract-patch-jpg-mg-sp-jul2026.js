@@ -247,19 +247,44 @@ function mergeCfops(lists) {
       if (!map.has(c.cfop)) {
         map.set(c.cfop, {
           cfop: c.cfop, descricao: c.descricao, finalidade: c.finalidade,
-          qtd: 0, total: 0, icms: 0, base: 0, ipi: 0, credito_icms: !!c.credito_icms, parties: [],
+          qtd: 0, total: 0, icms: 0, base: 0, ipi: 0, credito_icms: !!c.credito_icms, _parties: new Map(),
         });
       }
       const t = map.get(c.cfop);
+      if (!t.descricao && c.descricao) t.descricao = c.descricao;
+      if (!t.finalidade && c.finalidade) t.finalidade = c.finalidade;
+      t.credito_icms = t.credito_icms || !!c.credito_icms;
       t.qtd += c.qtd || 0;
       t.total = round2(t.total + (c.total || 0));
       t.icms = round2(t.icms + (c.icms || 0));
       t.base = round2(t.base + (c.base || 0));
       t.ipi = round2(t.ipi + (c.ipi || 0));
+      for (const p of c.parties || []) {
+        const pk = `${String(p.cnpj || '').trim()}|${String(p.nome || '').trim()}`;
+        if (!t._parties.has(pk)) {
+          t._parties.set(pk, {
+            nome: p.nome || '—', cnpj: p.cnpj || '—', uf: p.uf || '—',
+            total: 0, qtd: 0, icms: 0, base: 0, ipi: 0,
+          });
+        }
+        const pp = t._parties.get(pk);
+        pp.total = round2(pp.total + (p.total || 0));
+        pp.qtd += p.qtd || 0;
+        pp.icms = round2(pp.icms + (p.icms || 0));
+        pp.base = round2(pp.base + (p.base || 0));
+        pp.ipi = round2(pp.ipi + (p.ipi || 0));
+        if (p.uf) pp.uf = p.uf;
+        if (p.nome) pp.nome = p.nome;
+        if (p.cnpj) pp.cnpj = p.cnpj;
+      }
     }
   }
   const total = [...map.values()].reduce((a, c) => a + c.total, 0) || 1;
-  return [...map.values()].map((c) => ({ ...c, pct: round2((c.total / total) * 100) })).sort((a, b) => b.total - a.total);
+  return [...map.values()].map((c) => {
+    const parties = [...c._parties.values()].sort((a, b) => b.total - a.total);
+    const { _parties, ...rest } = c;
+    return { ...rest, parties, pct: round2((c.total / total) * 100) };
+  }).sort((a, b) => b.total - a.total);
 }
 
 function mergeRanking(lists, limit = 30) {
