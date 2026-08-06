@@ -13,7 +13,7 @@ const CNPJ_MAP = {
   '21051983000599': { unidade: 'MG', label: 'Filial MG', codigo: '90' },
   '21051983000670': { unidade: 'PR', label: 'Filial PR (Curitiba)', codigo: '81' },
   '21051983000750': { unidade: 'SP', label: 'Filial SP', codigo: '82' },
-  '21051983000327': { unidade: 'MATRIZ', label: 'Matriz DF (cód. 712) — pasta ind; IE DF 07.695.672/002-15', codigo: '712' },
+  '21051983000327': { unidade: 'MATRIZ', label: 'Filial DF (cód. 712) — pasta ind; IE DF 07.695.672/002-15', codigo: '712' },
   '21051983000165': { unidade: 'SEDE', label: 'Matriz Sede (cód. 711) — pasta matriz e filial; IE DF 07.695.672/001-34', codigo: '711' },
 };
 
