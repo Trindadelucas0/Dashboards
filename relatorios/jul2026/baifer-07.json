@@ -1,0 +1,2858 @@
+{
+  "empresa": "baifer",
+  "competencia": "2026-07",
+  "meta": {
+    "companyEntradas": "11 - BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA",
+    "companySaidas": "11 - BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA",
+    "cnpjEntradas": "52005382000140",
+    "cnpjSaidas": "52005382000140",
+    "periodEntradas": "01/07/2026 até 31/07/2026",
+    "periodSaidas": "01/07/2026 até 31/07/2026",
+    "totalGeralEntradasExcel": 603647.3,
+    "totalGeralSaidasExcel": 702014.58,
+    "somaEntradas": 603647.3,
+    "somaSaidas": 702014.58,
+    "nfsEntradas": 225,
+    "nfsSaidas": 497,
+    "deltaEntradas": 0,
+    "deltaSaidas": 0
+  },
+  "pack": {
+    "competencia": "07",
+    "competenciaFull": "2026-07",
+    "competenciaLabel": "Jul / 2026",
+    "trimestre": "3° TRIM",
+    "receitaBruta": 702014.58,
+    "receitaBrutaCfop": 702014.58,
+    "rbFonte": "movimento",
+    "totalCompras": 603647.3,
+    "tcFonte": "movimento",
+    "devolucaoDeducao": 0,
+    "deducoes": 0,
+    "dedPct": 0,
+    "composicao": [
+      {
+        "label": "ICMS",
+        "valor": 0
+      },
+      {
+        "label": "ICMS ST",
+        "valor": 0
+      },
+      {
+        "label": "PIS",
+        "valor": 0
+      },
+      {
+        "label": "COFINS",
+        "valor": 0
+      },
+      {
+        "label": "IPI",
+        "valor": 0
+      }
+    ],
+    "impostosTabela": [
+      {
+        "tributo": "ICMS",
+        "apurado": 0,
+        "recolher": 0,
+        "pctRb": 0
+      },
+      {
+        "tributo": "ICMS ST",
+        "apurado": 0,
+        "recolher": 0,
+        "pctRb": 0
+      },
+      {
+        "tributo": "PIS",
+        "apurado": 0,
+        "recolher": 0,
+        "pctRb": 0
+      },
+      {
+        "tributo": "COFINS",
+        "apurado": 0,
+        "recolher": 0,
+        "pctRb": 0
+      },
+      {
+        "tributo": "IPI",
+        "apurado": 0,
+        "recolher": 0,
+        "pctRb": 0
+      }
+    ],
+    "apuracao": {
+      "icms": {
+        "debitoSaidas": 0,
+        "creditoEntradas": 0,
+        "outrosDebitos": 0,
+        "outrosCreditos": 0,
+        "saldoDevedor": 0,
+        "saldoCredor": 0,
+        "aRecolher": 0,
+        "saldoCredorTransportar": 0
+      },
+      "icmsSt": {
+        "debitoSaidas": 0,
+        "creditoEntradas": 0,
+        "outrosDebitos": 0,
+        "outrosCreditos": 0,
+        "saldoDevedor": 0,
+        "saldoCredor": 0,
+        "aRecolher": 0,
+        "saldoCredorTransportar": 0
+      },
+      "pis": {
+        "debitoSaidas": 0,
+        "creditoEntradas": 0,
+        "outrosDebitos": 0,
+        "outrosCreditos": 0,
+        "saldoDevedor": 0,
+        "saldoCredor": 0,
+        "aRecolher": 0,
+        "saldoCredorTransportar": 0
+      },
+      "cofins": {
+        "debitoSaidas": 0,
+        "creditoEntradas": 0,
+        "outrosDebitos": 0,
+        "outrosCreditos": 0,
+        "saldoDevedor": 0,
+        "saldoCredor": 0,
+        "aRecolher": 0,
+        "saldoCredorTransportar": 0
+      },
+      "ipi": {
+        "debitoSaidas": 0,
+        "creditoEntradas": 0,
+        "outrosDebitos": 0,
+        "outrosCreditos": 0,
+        "saldoDevedor": 0,
+        "saldoCredor": 0,
+        "aRecolher": 0,
+        "saldoCredorTransportar": 0
+      }
+    },
+    "cfopEntradas": [
+      {
+        "cfop": "2-102",
+        "qtd": 136,
+        "total": 371591.83,
+        "contabil": 371591.83,
+        "fiscal": 371591.83,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA",
+            "cnpj": "45.865.920/0001-00",
+            "uf": "SP",
+            "qtd": 9,
+            "total": 115379.37
+          },
+          {
+            "nome": "BLACK & DECKER DO BRASIL LTDA.",
+            "cnpj": "53.296.273/0032-98",
+            "uf": "MG",
+            "qtd": 8,
+            "total": 45965.91
+          },
+          {
+            "nome": "O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA",
+            "cnpj": "76.635.689/0013-26",
+            "uf": "GO",
+            "qtd": 10,
+            "total": 36251.89
+          },
+          {
+            "nome": "MENEGOTTI INDUSTRIAS METALURGICAS LTDA",
+            "cnpj": "84.431.154/0006-32",
+            "uf": "SC",
+            "qtd": 2,
+            "total": 18270.19
+          },
+          {
+            "nome": "HIDRO METALURGICA ZM LTDA",
+            "cnpj": "75.984.930/0001-26",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 16536
+          },
+          {
+            "nome": "SEMAR IMPORT ATACADISTA LTDA",
+            "cnpj": "07.075.388/0001-39",
+            "uf": "SP",
+            "qtd": 2,
+            "total": 16363.09
+          },
+          {
+            "nome": "PNEUBEST COMERCIAL LTDA",
+            "cnpj": "36.996.649/0001-51",
+            "uf": "SC",
+            "qtd": 3,
+            "total": 13782.39
+          },
+          {
+            "nome": "WORKER COMERCIO DE FERRAMENTAS LTDA",
+            "cnpj": "46.037.410/0002-99",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 13638.51
+          },
+          {
+            "nome": "POSITEC IMPORTACAO DE FERRAMENTAS LTDA",
+            "cnpj": "17.835.389/0001-98",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 9079.12
+          },
+          {
+            "nome": "MELFI IMPORTACAO E COMERCIO DE FERRAMENTAS LTDA",
+            "cnpj": "11.894.188/0002-66",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 7308.1
+          },
+          {
+            "nome": "VCH - IMPORTADORA, EXPORTADORA E DISTRIBUICAO DE PRODUTOS LT",
+            "cnpj": "10.702.092/0011-87",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 5820.48
+          },
+          {
+            "nome": "NZB COMERCIO DE EMBALAGENS EIRELI",
+            "cnpj": "37.789.234/0001-70",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 5403.5
+          },
+          {
+            "nome": "FERRAMENTAS GEDORE DO BRASIL LTDA",
+            "cnpj": "96.736.350/0012-42",
+            "uf": "RS",
+            "qtd": 2,
+            "total": 5241.68
+          },
+          {
+            "nome": "INFINITY COM., IMP. E EXP. DE EQUIPAMENTOS SEGURANCA LTDA",
+            "cnpj": "32.462.148/0001-34",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 5217.52
+          },
+          {
+            "nome": "TRAMONTINA GARIBALDI S.A. IND. MET.",
+            "cnpj": "90.049.792/0001-81",
+            "uf": "RS",
+            "qtd": 1,
+            "total": 4508.2
+          },
+          {
+            "nome": "AMATOOLS COML. E IMPORTADORA LTDA",
+            "cnpj": "07.228.424/0001-57",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 4427.1
+          },
+          {
+            "nome": "MARLUVAS EQUIPAMENTOS DE SEGURANCA LTDA",
+            "cnpj": "19.653.054/0036-04",
+            "uf": "MG",
+            "qtd": 1,
+            "total": 3727.52
+          },
+          {
+            "nome": "KAPAZI INDUSTRIA E COMERCIO DE CAPACHOS LTDA",
+            "cnpj": "80.051.824/0009-87",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 3149.81
+          },
+          {
+            "nome": "AUTOFIX DO BRASIL LTDA",
+            "cnpj": "13.359.412/0001-64",
+            "uf": "SC",
+            "qtd": 2,
+            "total": 2537.19
+          },
+          {
+            "nome": "CABO ELETRO COMERCIAL LTDA",
+            "cnpj": "04.678.459/0001-08",
+            "uf": "MG",
+            "qtd": 1,
+            "total": 2500
+          },
+          {
+            "nome": "PNEUGREEN LTDA",
+            "cnpj": "44.299.359/0001-87",
+            "uf": "MG",
+            "qtd": 2,
+            "total": 2448.8
+          },
+          {
+            "nome": "LOTUS COMERCIAL DE FERRAGENS E FERRAMENTAS LTDA",
+            "cnpj": "09.642.566/0001-91",
+            "uf": "ES",
+            "qtd": 1,
+            "total": 2337.16
+          },
+          {
+            "nome": "CICAMPO MAQUINAS E FERRAMENTAS LTD",
+            "cnpj": "80.479.231/0002-40",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 2331.87
+          },
+          {
+            "nome": "TECIDOS E ARMARINHOS MIGUEL BARTOLOMEU S/A",
+            "cnpj": "17.359.233/0001-88",
+            "uf": "MG",
+            "qtd": 1,
+            "total": 1948.57
+          },
+          {
+            "nome": "METAL TECNICA BOVENAU LTDA",
+            "cnpj": "81.616.765/0002-33",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 1798
+          },
+          {
+            "nome": "LTFLEX LTDA",
+            "cnpj": "10.559.336/0002-23",
+            "uf": "GO",
+            "qtd": 4,
+            "total": 1659.47
+          },
+          {
+            "nome": "MOR DISTRIBUIDORA LTDA.",
+            "cnpj": "07.722.274/0001-33",
+            "uf": "RS",
+            "qtd": 1,
+            "total": 1470.92
+          },
+          {
+            "nome": "TENKAI COMERCIO, DISTRIBUICAO, IMPORTACAO EXPORTACAO LTDA",
+            "cnpj": "60.928.566/0001-00",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 1423.99
+          },
+          {
+            "nome": "APEX TOOL GROUP IND.COM.FERRAM.LTDA",
+            "cnpj": "43.408.590/0001-07",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 1338.73
+          },
+          {
+            "nome": "BAZAM E PICHAU INFORMATICA LTDA",
+            "cnpj": "09.376.495/0001-22",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 1325.21
+          },
+          {
+            "nome": "ROBERT BOSCH LIMITADA",
+            "cnpj": "45.990.181/0032-85",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 1322.09
+          },
+          {
+            "nome": "BORMAIS COMERCIAL EIRELI",
+            "cnpj": "15.129.848/0001-92",
+            "uf": "SP",
+            "qtd": 3,
+            "total": 1311.25
+          },
+          {
+            "nome": "ROMHER INDUSTRIA E COMERCIO LTDA",
+            "cnpj": "03.031.948/0001-00",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 1193.2
+          },
+          {
+            "nome": "GLOBAL AMERICA SYSTEM IMPORTACAO E EXPORTACAO DE EQUIPAMENTO",
+            "cnpj": "17.804.883/0002-76",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 1074.75
+          },
+          {
+            "nome": "ENS COMPANY DIGITAL LTDA",
+            "cnpj": "43.304.592/0001-48",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 1029
+          },
+          {
+            "nome": "SAFIRA PRODUTOS DIVERSOS LTDA",
+            "cnpj": "16.455.751/0001-32",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 799
+          },
+          {
+            "nome": "YONARA COSTA CARVALHO",
+            "cnpj": "57.548.592/0001-06",
+            "uf": "TO",
+            "qtd": 1,
+            "total": 659.71
+          },
+          {
+            "nome": "METAIS NOBRES LTDA",
+            "cnpj": "21.170.462/0001-27",
+            "uf": "GO",
+            "qtd": 1,
+            "total": 656
+          },
+          {
+            "nome": "OXI-MAQ - COMERCIAL E INDUSTRIAL DE EQUIPAMENTOS LTDA",
+            "cnpj": "38.875.597/0001-90",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 602.35
+          },
+          {
+            "nome": "SUZANO CARRINHOS & RODAS LTDA",
+            "cnpj": "67.858.520/0001-00",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 585
+          },
+          {
+            "nome": "FRAZAO PACK EMBALAGENS INDUSTRIAIS LTDA",
+            "cnpj": "52.180.698/0001-78",
+            "uf": "SP",
+            "qtd": 2,
+            "total": 584.58
+          },
+          {
+            "nome": "RITEC-COMERCIAL E IMPORTADORA LT",
+            "cnpj": "54.374.525/0003-88",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 581.7
+          },
+          {
+            "nome": "SOROPET SP COMERCIO DE EQUIPAMENTOS PARA BANHO E TOSA LTDA",
+            "cnpj": "19.191.073/0001-36",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 579
+          },
+          {
+            "nome": "DAVI BEKER FERREIRA",
+            "cnpj": "51.639.608/0001-00",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 550
+          },
+          {
+            "nome": "ARTUR MORAIS XAVIER",
+            "cnpj": "64.735.955/0001-70",
+            "uf": "PB",
+            "qtd": 1,
+            "total": 518
+          },
+          {
+            "nome": "G. G. BENEDITO VARIEDADES",
+            "cnpj": "34.793.235/0001-08",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 326.24
+          },
+          {
+            "nome": "JSHOP SEG DISTRIBUIDORA EIRELI",
+            "cnpj": "34.395.790/0001-73",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 309.43
+          },
+          {
+            "nome": "NOBLE COMMERCE",
+            "cnpj": "62.827.203/0001-03",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 304
+          },
+          {
+            "nome": "CENTER SOLDAS GASES E EQUIPAMENTOS LTDA",
+            "cnpj": "04.583.617/0001-38",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 292.69
+          },
+          {
+            "nome": "FRANCISCO WANDENBERG SALES DA MATA",
+            "cnpj": "58.003.379/0001-73",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 280.39
+          },
+          {
+            "nome": "SMF - IMPORTACAO E COMERCIO LTDA",
+            "cnpj": "08.804.184/0001-54",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 268.56
+          },
+          {
+            "nome": "DECK 55 LTDA",
+            "cnpj": "54.036.435/0001-15",
+            "uf": "MG",
+            "qtd": 1,
+            "total": 258.1
+          },
+          {
+            "nome": "PERFORMANCE COMERCIO, IMPORTACAO E EXPORTACAO LTDA",
+            "cnpj": "41.447.139/0001-65",
+            "uf": "SC",
+            "qtd": 2,
+            "total": 252.4
+          },
+          {
+            "nome": "AFERMIX DISTRIBUIDORA LTDA",
+            "cnpj": "35.017.844/0001-20",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 239.5
+          },
+          {
+            "nome": "KLEBER TOLEDO BARBIERI",
+            "cnpj": "56.878.452/0001-25",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 238.6
+          },
+          {
+            "nome": "PEDRO FERREIRA MONTEIRO COMERCIO DE VARIEDADES",
+            "cnpj": "32.205.651/0001-04",
+            "uf": "PR",
+            "qtd": 4,
+            "total": 228
+          },
+          {
+            "nome": "PLASTICOS FALCAO INDUSTRIAL E COMERCIAL LTDA",
+            "cnpj": "17.765.458/0001-34",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 213.12
+          },
+          {
+            "nome": "PALACIO DAS FERRAMENTAS E PARAFUSOS LTDA",
+            "cnpj": "68.422.419/0001-75",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 211.88
+          },
+          {
+            "nome": "JULIO HENRIQUE SOARES SILVA",
+            "cnpj": "58.463.818/0001-20",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 209.86
+          },
+          {
+            "nome": "GATTI QUIMICA LTDA",
+            "cnpj": "03.887.864/0001-65",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 207.67
+          },
+          {
+            "nome": "UBERABA AVENIDA ABILIO BORGES",
+            "cnpj": "42.254.036/0001-41",
+            "uf": "MG",
+            "qtd": 1,
+            "total": 205.11
+          },
+          {
+            "nome": "VOLTS TOOLS COMERCIAL LTDA",
+            "cnpj": "50.490.923/0001-47",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 196
+          },
+          {
+            "nome": "JARDEL RIBEIRO MATOS",
+            "cnpj": "59.756.876/0001-05",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 184.4
+          },
+          {
+            "nome": "SHOPBREXPRESS LTDA",
+            "cnpj": "51.430.345/0001-16",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 183
+          },
+          {
+            "nome": "GIGA ATACADO LTDA",
+            "cnpj": "30.399.473/0001-74",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 179.5
+          },
+          {
+            "nome": "CONEXOES CAVAGNOLI LTDA",
+            "cnpj": "00.563.092/0003-80",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 146.7
+          },
+          {
+            "nome": "K M NECESSIDADES DIARIAS LTDA",
+            "cnpj": "57.115.293/0001-70",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 143.34
+          },
+          {
+            "nome": "TABOAO COMERCIO E DISTRIBUICAO LTDA",
+            "cnpj": "51.473.766/0001-24",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 119.97
+          },
+          {
+            "nome": "SAO PAULO RUA NOSSA SENHORA AP",
+            "cnpj": "28.701.667/0001-30",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 118
+          },
+          {
+            "nome": "DIAMANTE FABRICACAO DE BEBIDAS E EXPLORACAO DE AGUA MINERAL",
+            "cnpj": "43.223.222/0001-86",
+            "uf": "SP",
+            "qtd": 8,
+            "total": 111.92
+          },
+          {
+            "nome": "JCN COMERCIO LTDA",
+            "cnpj": "57.948.809/0001-67",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 108.62
+          },
+          {
+            "nome": "CONSTRUMALL SERVICOS LTDA",
+            "cnpj": "17.002.350/0002-70",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 105.45
+          },
+          {
+            "nome": "STATRON COMERCIAL DE FERRAMENTAS LTDA EPP",
+            "cnpj": "09.259.937/0001-50",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 101.06
+          },
+          {
+            "nome": "SMART TECH LABS LTDA",
+            "cnpj": "53.404.574/0001-91",
+            "uf": "MG",
+            "qtd": 1,
+            "total": 94.53
+          },
+          {
+            "nome": "KADOSH HUB LTDA",
+            "cnpj": "63.320.340/0001-10",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 92.99
+          },
+          {
+            "nome": "V M COMERCIO LTDA",
+            "cnpj": "41.327.168/0001-93",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 65.77
+          },
+          {
+            "nome": "SIRIUS ATACADISTA LTDA",
+            "cnpj": "57.303.095/0001-30",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 59.99
+          },
+          {
+            "nome": "BANDTEX - INDUSTRIA, COMERCIO, IMPORTACAO E EXPORTACAO LTDA",
+            "cnpj": "27.862.656/0001-70",
+            "uf": "RS",
+            "qtd": 1,
+            "total": 58.8
+          },
+          {
+            "nome": "DMO COMERCIO DE VARIEDADES LTDA",
+            "cnpj": "31.566.343/0001-41",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 57.75
+          },
+          {
+            "nome": "DSFRIO COMERCIO DE PECAS LTDA",
+            "cnpj": "33.537.830/0002-92",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 39
+          },
+          {
+            "nome": "ALESSANDRO R. DE FREITAS LTDA",
+            "cnpj": "49.877.891/0001-58",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 33.1
+          },
+          {
+            "nome": "G4 BATERIAS COMERCIAL LTDA.",
+            "cnpj": "58.896.363/0001-37",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 30
+          },
+          {
+            "nome": "TESLA COMERCIO DE MATERIAL ELETRICO E ILUMINACAO LTDA",
+            "cnpj": "37.562.240/0002-70",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 22.99
+          },
+          {
+            "nome": "CLAUDINEI FERNANDES DA SILVA USINAGEM LTDA",
+            "cnpj": "15.612.516/0001-64",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 19.96
+          },
+          {
+            "nome": "EBAZAR.COM.BR. LTDA",
+            "cnpj": "03.007.331/0212-20",
+            "uf": "SP",
+            "qtd": 2,
+            "total": 19.21
+          },
+          {
+            "nome": "DISTRIBUIDORA DE PROD ALIM MARSIL LTDA",
+            "cnpj": "61.182.051/0001-76",
+            "uf": "SP",
+            "qtd": 2,
+            "total": 18.31
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      },
+      {
+        "cfop": "2-101",
+        "qtd": 17,
+        "total": 140522.31,
+        "contabil": 140522.31,
+        "fiscal": 140522.31,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "MENEGOTTI INDUSTRIAS METALURGICAS LTDA",
+            "cnpj": "84.431.154/0001-28",
+            "uf": "SC",
+            "qtd": 3,
+            "total": 76790.06
+          },
+          {
+            "nome": "MARCON INDUSTRIA METALURGICA LTDA",
+            "cnpj": "57.211.997/0001-46",
+            "uf": "SP",
+            "qtd": 2,
+            "total": 21777.21
+          },
+          {
+            "nome": "METALOSA INDUSTRIA METALURGICA SA -FILIAL 08",
+            "cnpj": "27.485.374/0008-77",
+            "uf": "ES",
+            "qtd": 1,
+            "total": 10103.47
+          },
+          {
+            "nome": "ESFERA ESTAMPARIA DE FERRO E AÇO LTDA",
+            "cnpj": "21.260.419/0001-52",
+            "uf": "MG",
+            "qtd": 1,
+            "total": 6468.75
+          },
+          {
+            "nome": "METALURGICA MOR S.A - MATRIZ",
+            "cnpj": "95.422.218/0001-40",
+            "uf": "RS",
+            "qtd": 1,
+            "total": 6061.56
+          },
+          {
+            "nome": "ROMHER INDUSTRIA E COMERCIO LTDA",
+            "cnpj": "03.031.948/0001-00",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 5950
+          },
+          {
+            "nome": "METAL TECNICA BOVENAU LTDA",
+            "cnpj": "81.616.765/0002-33",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 5189
+          },
+          {
+            "nome": "VENTISOL INDUSTRIA E COMERCIO S. A.",
+            "cnpj": "01.763.720/0001-71",
+            "uf": "SC",
+            "qtd": 4,
+            "total": 4825.64
+          },
+          {
+            "nome": "KARCHER INDUSTRIA E COMERCIO LTDA.",
+            "cnpj": "47.110.960/0001-78",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 3232.83
+          },
+          {
+            "nome": "ANDREA YURI INOUE MATSUI 28018520828",
+            "cnpj": "42.456.309/0001-30",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 120
+          },
+          {
+            "nome": "BAZAM E PICHAU INFORMATICA LTDA",
+            "cnpj": "09.376.495/0001-22",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 3.79
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      },
+      {
+        "cfop": "1-102",
+        "qtd": 33,
+        "total": 58064.77,
+        "contabil": 58064.77,
+        "fiscal": 58064.77,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A",
+            "cnpj": "03.261.204/0001-74",
+            "uf": "DF",
+            "qtd": 13,
+            "total": 37489.48
+          },
+          {
+            "nome": "EVERW LTDA",
+            "cnpj": "44.172.758/0001-82",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 9950.08
+          },
+          {
+            "nome": "NOVA CASA DIST MAT CONST S/A DF FL 02",
+            "cnpj": "74.200.403/0002-00",
+            "uf": "DF",
+            "qtd": 6,
+            "total": 5816.01
+          },
+          {
+            "nome": "SILVEIRA - COMERCIO VAREJISTA DE TAMBORES LTDA-ME",
+            "cnpj": "08.185.314/0001-18",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 1512
+          },
+          {
+            "nome": "MUNDIAL CENTER ATACADISTA S/A",
+            "cnpj": "01.713.958/0003-54",
+            "uf": "DF",
+            "qtd": 2,
+            "total": 784.81
+          },
+          {
+            "nome": "MARIA DAS VITORIAS LIMA DOS SANTOS",
+            "cnpj": "25.093.245/0001-31",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 558
+          },
+          {
+            "nome": "LOYALTY COMMERCE LTDA",
+            "cnpj": "52.648.356/0001-30",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 512
+          },
+          {
+            "nome": "LOJA DAS MAQUINAS E FERRAMENTAS LTDA",
+            "cnpj": "13.983.066/0001-90",
+            "uf": "DF",
+            "qtd": 3,
+            "total": 431.91
+          },
+          {
+            "nome": "W L ATACADISTA LTDA",
+            "cnpj": "21.997.241/0001-27",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 398.83
+          },
+          {
+            "nome": "JC LUBRIFICANTES AUTOMOTIVOS LTDA",
+            "cnpj": "04.146.921/0001-18",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 300
+          },
+          {
+            "nome": "PRIMEIRA LINHA COMERCIAL ROLAMENTOS LTDA",
+            "cnpj": "24.907.602/0001-95",
+            "uf": "DF",
+            "qtd": 2,
+            "total": 282.94
+          },
+          {
+            "nome": "GRAVIA IND. DE PERF. DE ACO LTDA",
+            "cnpj": "26.487.744/0009-23",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 28.71
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      },
+      {
+        "cfop": "1-202",
+        "qtd": 18,
+        "total": 12728.79,
+        "contabil": 12728.79,
+        "fiscal": 12728.79,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "SANDRA CAROLINA DE SOUSA ROSA CURVINA 57840520120",
+            "cnpj": "33.449.438/0001-00",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 4903
+          },
+          {
+            "nome": "WALLACE ALVES FIDELIS",
+            "cnpj": "65.739.916/0001-03",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 1450
+          },
+          {
+            "nome": "COBALTO - ENGENHARIA CONSULTORIA E PROJETOS LTDA",
+            "cnpj": "19.025.828/0001-22",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 1201.26
+          },
+          {
+            "nome": "LOJA DAS MAQUINAS E FERRAMENTAS LTDA",
+            "cnpj": "13.983.066/0001-90",
+            "uf": "DF",
+            "qtd": 5,
+            "total": 1158.27
+          },
+          {
+            "nome": "LINEAR SOLUCOESE NEGOCIOS LTDA",
+            "cnpj": "51.120.436/0001-55",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 988.81
+          },
+          {
+            "nome": "J.F. DA SILVA -COMERCIO E LOCACAO DE PALLETS",
+            "cnpj": "26.305.245/0001-10",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 849.9
+          },
+          {
+            "nome": "FV COMERCIO DE FERRAMENTAS LTDA",
+            "cnpj": "36.874.433/0001-13",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 614.61
+          },
+          {
+            "nome": "ARTEMIS SOLUCOES PREVENCAO CONTRA INCENDIO LTDA",
+            "cnpj": "40.298.958/0001-25",
+            "uf": "DF",
+            "qtd": 3,
+            "total": 470.95
+          },
+          {
+            "nome": "EBF INDUSTRIA, COMERCIO E SERVICOS LTDA",
+            "cnpj": "38.013.199/0001-65",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 440
+          },
+          {
+            "nome": "COOPERATIVA DE TRABALHO E DE MATERIAL RECICLADO E DE EDUCACA",
+            "cnpj": "09.551.980/0001-95",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 287
+          },
+          {
+            "nome": "CONDOMINIO VARANDAS RESIDENCIAL GARDEN",
+            "cnpj": "37.017.914/0001-75",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 259.99
+          },
+          {
+            "nome": "TECNICALL ENGENHARIA LTDA",
+            "cnpj": "72.581.283/0001-13",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 105
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      },
+      {
+        "cfop": "1-101",
+        "qtd": 4,
+        "total": 6585,
+        "contabil": 6585,
+        "fiscal": 6585,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "METADESIGN PROJETOS E SOLUCOES METALICAS LTDA",
+            "cnpj": "54.871.377/0001-45",
+            "uf": "DF",
+            "qtd": 2,
+            "total": 6000
+          },
+          {
+            "nome": "AMAZONASLONAS",
+            "cnpj": "36.697.549/0001-24",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 300
+          },
+          {
+            "nome": "CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A",
+            "cnpj": "03.261.204/0001-74",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 285
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      },
+      {
+        "cfop": "2-910",
+        "qtd": 12,
+        "total": 6300.65,
+        "contabil": 6300.65,
+        "fiscal": 6300.65,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "HIDRO METALURGICA ZM LTDA",
+            "cnpj": "75.984.930/0001-26",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 1425
+          },
+          {
+            "nome": "MENEGOTTI INDUSTRIAS METALURGICAS LTDA",
+            "cnpj": "84.431.154/0006-32",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 1213.56
+          },
+          {
+            "nome": "MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA",
+            "cnpj": "45.865.920/0001-00",
+            "uf": "SP",
+            "qtd": 4,
+            "total": 1172.82
+          },
+          {
+            "nome": "METAL TECNICA BOVENAU LTDA",
+            "cnpj": "81.616.765/0002-33",
+            "uf": "SC",
+            "qtd": 1,
+            "total": 1108
+          },
+          {
+            "nome": "POSITEC IMPORTACAO DE FERRAMENTAS LTDA",
+            "cnpj": "17.835.389/0001-98",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 777.83
+          },
+          {
+            "nome": "METALOSA INDUSTRIA METALURGICA SA -FILIAL 08",
+            "cnpj": "27.485.374/0008-77",
+            "uf": "ES",
+            "qtd": 3,
+            "total": 513.18
+          },
+          {
+            "nome": "SEMAR IMPORT ATACADISTA LTDA",
+            "cnpj": "07.075.388/0001-39",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 90.26
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      },
+      {
+        "cfop": "1-910",
+        "qtd": 1,
+        "total": 3211,
+        "contabil": 3211,
+        "fiscal": 3211,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A",
+            "cnpj": "03.261.204/0001-74",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 3211
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      },
+      {
+        "cfop": "1-403",
+        "qtd": 4,
+        "total": 2979.72,
+        "contabil": 2979.72,
+        "fiscal": 2979.72,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A",
+            "cnpj": "03.261.204/0001-74",
+            "uf": "DF",
+            "qtd": 3,
+            "total": 1514.72
+          },
+          {
+            "nome": "SO BATERIAS SETOR H NORTE LTDA",
+            "cnpj": "33.962.298/0001-70",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 1465
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      },
+      {
+        "cfop": "2-403",
+        "qtd": 4,
+        "total": 1244.39,
+        "contabil": 1244.39,
+        "fiscal": 1244.39,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "BR ACESSORIOS PARA BORRACHARIA LTDA",
+            "cnpj": "49.540.674/0001-78",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 713.94
+          },
+          {
+            "nome": "2D FERRAMENTAS E-COMMERCE LTDA",
+            "cnpj": "52.061.653/0001-84",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 359.38
+          },
+          {
+            "nome": "RSM ACESSORIOS MERCADO DIGITAL LTDA",
+            "cnpj": "64.627.747/0001-57",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 89.9
+          },
+          {
+            "nome": "MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA",
+            "cnpj": "45.865.920/0001-00",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 81.17
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      },
+      {
+        "cfop": "2-933",
+        "qtd": 1,
+        "total": 150,
+        "contabil": 150,
+        "fiscal": 150,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "SKYTEF SOLUCOES EM CAPTURA DE TRANSACOES LTDA",
+            "cnpj": "04.988.631/0001-11",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 150
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      },
+      {
+        "cfop": "2-949",
+        "qtd": 1,
+        "total": 96.06,
+        "contabil": 96.06,
+        "fiscal": 96.06,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "SEMAR IMPORT ATACADISTA LTDA",
+            "cnpj": "07.075.388/0001-39",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 96.06
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      },
+      {
+        "cfop": "1-949",
+        "qtd": 1,
+        "total": 93.04,
+        "contabil": 93.04,
+        "fiscal": 93.04,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA",
+            "cnpj": "52.005.382/0001-40",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 93.04
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      },
+      {
+        "cfop": "1-411",
+        "qtd": 1,
+        "total": 45.56,
+        "contabil": 45.56,
+        "fiscal": 45.56,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "ARTEMIS SOLUCOES PREVENCAO CONTRA INCENDIO LTDA",
+            "cnpj": "40.298.958/0001-25",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 45.56
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      },
+      {
+        "cfop": "1-652",
+        "qtd": 1,
+        "total": 34.18,
+        "contabil": 34.18,
+        "fiscal": 34.18,
+        "imposto": 0,
+        "fornecedores": [
+          {
+            "nome": "O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA",
+            "cnpj": "76.635.689/0013-26",
+            "uf": "GO",
+            "qtd": 1,
+            "total": 34.18
+          }
+        ],
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false
+      }
+    ],
+    "cfopSaidas": [
+      {
+        "cfop": "5-102",
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
+        "qtd": 446,
+        "contabil": 603828.64,
+        "fiscal": 603828.64,
+        "imposto": 0,
+        "total": 603828.64
+      },
+      {
+        "cfop": "5-405",
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
+        "qtd": 86,
+        "contabil": 57032.67,
+        "fiscal": 57032.67,
+        "imposto": 0,
+        "total": 57032.67
+      },
+      {
+        "cfop": "6-102",
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
+        "qtd": 11,
+        "contabil": 26750.55,
+        "fiscal": 26750.55,
+        "imposto": 0,
+        "total": 26750.55
+      },
+      {
+        "cfop": "5-202",
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
+        "qtd": 3,
+        "contabil": 7370,
+        "fiscal": 7370,
+        "imposto": 0,
+        "total": 7370
+      },
+      {
+        "cfop": "5-403",
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
+        "qtd": 40,
+        "contabil": 4230.54,
+        "fiscal": 4230.54,
+        "imposto": 0,
+        "total": 4230.54
+      },
+      {
+        "cfop": "6-949",
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
+        "qtd": 2,
+        "contabil": 594.87,
+        "fiscal": 594.87,
+        "imposto": 0,
+        "total": 594.87
+      },
+      {
+        "cfop": "5-949",
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
+        "qtd": 4,
+        "contabil": 537.27,
+        "fiscal": 537.27,
+        "imposto": 0,
+        "total": 537.27
+      },
+      {
+        "cfop": "5-922",
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
+        "qtd": 1,
+        "contabil": 507.9,
+        "fiscal": 507.9,
+        "imposto": 0,
+        "total": 507.9
+      },
+      {
+        "cfop": "5-117",
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
+        "qtd": 1,
+        "contabil": 507.9,
+        "fiscal": 507.9,
+        "imposto": 0,
+        "total": 507.9
+      },
+      {
+        "cfop": "6-201",
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
+        "qtd": 2,
+        "contabil": 426.24,
+        "fiscal": 426.24,
+        "imposto": 0,
+        "total": 426.24
+      },
+      {
+        "cfop": "6-202",
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
+        "qtd": 2,
+        "contabil": 228,
+        "fiscal": 228,
+        "imposto": 0,
+        "total": 228
+      }
+    ],
+    "cfopSaidasTotal": 702014.58,
+    "sped": {
+      "nfSaidas": 497,
+      "totalClientes": 202,
+      "c100Total": 702014.58,
+      "clientes": [
+        {
+          "cod": "1",
+          "nome": "LOJA DAS MAQUINAS E FERRAMENTAS LTDA",
+          "cnpj": "13.983.066/0001-90",
+          "total": 361352.59,
+          "qtd": 164
+        },
+        {
+          "cod": "2",
+          "nome": "BRASAL REFRIGERANTES S/A",
+          "cnpj": "01.612.795/0001-51",
+          "total": 23695.35,
+          "qtd": 9
+        },
+        {
+          "cod": "3",
+          "nome": "EMBAIXADA DOS ESTADOS UNIDOS EM BRASILIA",
+          "cnpj": "03.874.311/0001-78",
+          "total": 19235.7,
+          "qtd": 3
+        },
+        {
+          "cod": "4",
+          "nome": "MULTIPLAN EMPREENDIMENTOS IMOBILIARIOS S/A",
+          "cnpj": "07.816.890/0007-49",
+          "total": 18082.4,
+          "qtd": 3
+        },
+        {
+          "cod": "5",
+          "nome": "CONSTRUTORA FONSECA MERCADANTE LTDA",
+          "cnpj": "74.318.551/0001-34",
+          "total": 15857.9,
+          "qtd": 4
+        },
+        {
+          "cod": "6",
+          "nome": "ARTEMIS SOLUCOES PREVENCAO CONTRA INCENDIO LTDA",
+          "cnpj": "40.298.958/0001-25",
+          "total": 14816.37,
+          "qtd": 10
+        },
+        {
+          "cod": "7",
+          "nome": "DEDETIZADORA FOLHA LTDA",
+          "cnpj": "15.539.906/0001-56",
+          "total": 10686.51,
+          "qtd": 25
+        },
+        {
+          "cod": "8",
+          "nome": "SANDRA CAROLINA DE SOUSA ROSA CURVINA 57840520120",
+          "cnpj": "33.449.438/0001-00",
+          "total": 9876.66,
+          "qtd": 3
+        },
+        {
+          "cod": "9",
+          "nome": "CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A",
+          "cnpj": "03.261.204/0001-74",
+          "total": 7370,
+          "qtd": 3
+        },
+        {
+          "cod": "10",
+          "nome": "INOVA - ENGENHARIA E IMOBILIARIA LTDA",
+          "cnpj": "38.144.412/0001-78",
+          "total": 7160.75,
+          "qtd": 1
+        },
+        {
+          "cod": "11",
+          "nome": "TRANSPORTADORA NOVA UNIAO LTDA",
+          "cnpj": "02.400.001/0001-59",
+          "total": 6271.68,
+          "qtd": 5
+        },
+        {
+          "cod": "12",
+          "nome": "PROCLIMA ENGENHARIA LTDA",
+          "cnpj": "00.578.617/0001-99",
+          "total": 5767.4,
+          "qtd": 4
+        },
+        {
+          "cod": "13",
+          "nome": "CONDOMINIO RESIDENCIAL MANSOES ITAIPU",
+          "cnpj": "05.332.954/0001-15",
+          "total": 5310,
+          "qtd": 1
+        },
+        {
+          "cod": "14",
+          "nome": "DMI MATERIAL MEDICO HOSPITALAR LTDA",
+          "cnpj": "37.109.097/0001-85",
+          "total": 4949.9,
+          "qtd": 1
+        },
+        {
+          "cod": "15",
+          "nome": "W S DE OLIVEIRA MECANICA",
+          "cnpj": "18.010.864/0001-50",
+          "total": 4780,
+          "qtd": 1
+        },
+        {
+          "cod": "16",
+          "nome": "DANIEL MEDEIROS FERNANDES",
+          "cnpj": "22.315.412/0001-53",
+          "total": 4527.01,
+          "qtd": 2
+        },
+        {
+          "cod": "17",
+          "nome": "COMANDO AUTO PECAS LTDA",
+          "cnpj": "01.032.275/0006-84",
+          "total": 4500,
+          "qtd": 1
+        },
+        {
+          "cod": "18",
+          "nome": "R.A. MARTINS CONSTRUCAO E SERVICOS TECNICOS",
+          "cnpj": "12.549.750/0001-04",
+          "total": 4500,
+          "qtd": 1
+        },
+        {
+          "cod": "19",
+          "nome": "PLANEAR AUTOMACAO E MONTAGEM DE ELEVADORES LTDA",
+          "cnpj": "23.102.725/0001-96",
+          "total": 4429.9,
+          "qtd": 1
+        },
+        {
+          "cod": "20",
+          "nome": "CONDOMINIO DO EDIFICIO BELLAGIO DUPLEX RESIDENCIAL",
+          "cnpj": "11.015.412/0001-11",
+          "total": 4320,
+          "qtd": 1
+        },
+        {
+          "cod": "21",
+          "nome": "PROCISA DO BRASIL PROJETOS, CONSTRUCOES E INSTALACOES LTDA",
+          "cnpj": "08.084.898/0049-80",
+          "total": 4264.13,
+          "qtd": 1
+        },
+        {
+          "cod": "22",
+          "nome": "FCB- TRANSPORTES E LOGISTICA E SERVICOS GERAIS LTD",
+          "cnpj": "01.796.430/0001-24",
+          "total": 4259.22,
+          "qtd": 5
+        },
+        {
+          "cod": "23",
+          "nome": "SDB COMERCIO DE ALIMENTOS LTDA",
+          "cnpj": "09.477.652/0003-58",
+          "total": 4237.7,
+          "qtd": 1
+        },
+        {
+          "cod": "24",
+          "nome": "ASS.PRE-COOPERATIVISTA DOS CATADORES E RECICLADORES DE RESID",
+          "cnpj": "02.130.641/0001-96",
+          "total": 4195,
+          "qtd": 3
+        },
+        {
+          "cod": "25",
+          "nome": "ENGDUC ENGENHARIA E CONSTRUCAO LTDA",
+          "cnpj": "50.102.659/0001-27",
+          "total": 4057.49,
+          "qtd": 4
+        },
+        {
+          "cod": "26",
+          "nome": "ASSOCIACAO DOS CATADORES DE PAPEL PAPELAO E MATERIAIS",
+          "cnpj": "07.030.564/0001-16",
+          "total": 3888,
+          "qtd": 1
+        },
+        {
+          "cod": "27",
+          "nome": "CONDOMINIO EDIFICIO MULT BRASIL",
+          "cnpj": "49.232.413/0001-90",
+          "total": 3715.15,
+          "qtd": 2
+        },
+        {
+          "cod": "28",
+          "nome": "CESAR AUGUSTO DA SILVA SOUSA",
+          "cnpj": "43.089.560/0001-77",
+          "total": 3604.8,
+          "qtd": 1
+        },
+        {
+          "cod": "29",
+          "nome": "CONDOMINIO CORPORATE FINANCIAL CENTER",
+          "cnpj": "01.456.106/0001-67",
+          "total": 3441.63,
+          "qtd": 4
+        },
+        {
+          "cod": "30",
+          "nome": "NORTE E SUL COMERCIO DE PECAS E SERVICOS LTDA",
+          "cnpj": "32.881.969/0001-05",
+          "total": 3304.58,
+          "qtd": 1
+        },
+        {
+          "cod": "31",
+          "nome": "PROCISA DO BRASIL PROJETOS, CONSTRUCOES E INSTALACOES LTDA.",
+          "cnpj": "08.084.898/0020-06",
+          "total": 3206.67,
+          "qtd": 1
+        },
+        {
+          "cod": "32",
+          "nome": "PANIFICADORA E CONFEITARIA REBECA LTDA",
+          "cnpj": "58.160.639/0001-14",
+          "total": 3040,
+          "qtd": 1
+        },
+        {
+          "cod": "33",
+          "nome": "FV COMERCIO DE FERRAMENTAS LTDA",
+          "cnpj": "36.874.433/0001-13",
+          "total": 2625.69,
+          "qtd": 7
+        },
+        {
+          "cod": "34",
+          "nome": "NOBORU HORTIFRUTI LTDA",
+          "cnpj": "26.156.822/0001-50",
+          "total": 2516,
+          "qtd": 1
+        },
+        {
+          "cod": "35",
+          "nome": "ARAUJO ABREU ENGENHARIA S/A",
+          "cnpj": "33.373.325/0006-83",
+          "total": 2390,
+          "qtd": 2
+        },
+        {
+          "cod": "36",
+          "nome": "GENE ENERGIA LTDA",
+          "cnpj": "18.512.573/0001-60",
+          "total": 2330.7,
+          "qtd": 3
+        },
+        {
+          "cod": "37",
+          "nome": "LUIS CARLOS FERNANDES RAMOS DE OLIVEIRA 02992294160",
+          "cnpj": "32.161.743/0001-30",
+          "total": 2230.82,
+          "qtd": 1
+        },
+        {
+          "cod": "38",
+          "nome": "METALATEM FERRO E MIUDEZAS LTDA",
+          "cnpj": "18.756.436/0001-70",
+          "total": 2219.3,
+          "qtd": 2
+        },
+        {
+          "cod": "39",
+          "nome": "CONDOMINIO VARANDAS RESIDENCIAL GARDEN",
+          "cnpj": "37.017.914/0001-75",
+          "total": 2180.44,
+          "qtd": 3
+        },
+        {
+          "cod": "40",
+          "nome": "ALIAR ADMINISTRADORA DE AERONAVES LTDA",
+          "cnpj": "37.994.725/0001-52",
+          "total": 2095.02,
+          "qtd": 1
+        },
+        {
+          "cod": "41",
+          "nome": "CASSIUS BRISOLA LANTYER 49329359191",
+          "cnpj": "42.570.751/0001-93",
+          "total": 2052.7,
+          "qtd": 1
+        },
+        {
+          "cod": "42",
+          "nome": "SOCIEDADE CIVIL MEMORIAL JUSCELINO KUBITSCHEK",
+          "cnpj": "00.608.893/0001-52",
+          "total": 2025.4,
+          "qtd": 1
+        },
+        {
+          "cod": "43",
+          "nome": "LINEAR SOLUCOESE NEGOCIOS LTDA",
+          "cnpj": "51.120.436/0001-55",
+          "total": 1963.56,
+          "qtd": 2
+        },
+        {
+          "cod": "44",
+          "nome": "LUSDECOR CORTINAS, PERSIANAS E TOLDOS LTDA",
+          "cnpj": "49.424.326/0001-35",
+          "total": 1962.89,
+          "qtd": 1
+        },
+        {
+          "cod": "45",
+          "nome": "AUTOLIMPE INDUSTRIA E COMERCIO DE SANEANTES LTDA",
+          "cnpj": "10.981.210/0001-61",
+          "total": 1954.79,
+          "qtd": 1
+        },
+        {
+          "cod": "46",
+          "nome": "GRUPO FARTURA DE HORTIFRUT S.A",
+          "cnpj": "04.972.092/0059-49",
+          "total": 1930.11,
+          "qtd": 2
+        },
+        {
+          "cod": "47",
+          "nome": "L. F. DA ROCHA LTDA",
+          "cnpj": "37.625.182/0001-04",
+          "total": 1912.3,
+          "qtd": 2
+        },
+        {
+          "cod": "48",
+          "nome": "CONDOMINIO MULTIBRASIL CORPORATE SCN",
+          "cnpj": "44.660.227/0001-39",
+          "total": 1899.9,
+          "qtd": 1
+        },
+        {
+          "cod": "49",
+          "nome": "MINERACAO BOM JESUS LTDA",
+          "cnpj": "07.245.544/0001-62",
+          "total": 1755.9,
+          "qtd": 1
+        },
+        {
+          "cod": "50",
+          "nome": "R7 COMERCIO DE PRODUTOS DE HIGIENIZACAO EIRELI",
+          "cnpj": "08.335.090/0001-83",
+          "total": 1729.8,
+          "qtd": 1
+        }
+      ],
+      "cfopSaidas": [
+        {
+          "cfop": "5-102",
+          "descricao": "",
+          "finalidade": "",
+          "creditoPisCofins": false,
+          "debitaIcms": false,
+          "qtd": 446,
+          "contabil": 603828.64,
+          "fiscal": 603828.64,
+          "imposto": 0,
+          "total": 603828.64
+        },
+        {
+          "cfop": "5-405",
+          "descricao": "",
+          "finalidade": "",
+          "creditoPisCofins": false,
+          "debitaIcms": false,
+          "qtd": 86,
+          "contabil": 57032.67,
+          "fiscal": 57032.67,
+          "imposto": 0,
+          "total": 57032.67
+        },
+        {
+          "cfop": "6-102",
+          "descricao": "",
+          "finalidade": "",
+          "creditoPisCofins": false,
+          "debitaIcms": false,
+          "qtd": 11,
+          "contabil": 26750.55,
+          "fiscal": 26750.55,
+          "imposto": 0,
+          "total": 26750.55
+        },
+        {
+          "cfop": "5-202",
+          "descricao": "",
+          "finalidade": "",
+          "creditoPisCofins": false,
+          "debitaIcms": false,
+          "qtd": 3,
+          "contabil": 7370,
+          "fiscal": 7370,
+          "imposto": 0,
+          "total": 7370
+        },
+        {
+          "cfop": "5-403",
+          "descricao": "",
+          "finalidade": "",
+          "creditoPisCofins": false,
+          "debitaIcms": false,
+          "qtd": 40,
+          "contabil": 4230.54,
+          "fiscal": 4230.54,
+          "imposto": 0,
+          "total": 4230.54
+        },
+        {
+          "cfop": "6-949",
+          "descricao": "",
+          "finalidade": "",
+          "creditoPisCofins": false,
+          "debitaIcms": false,
+          "qtd": 2,
+          "contabil": 594.87,
+          "fiscal": 594.87,
+          "imposto": 0,
+          "total": 594.87
+        },
+        {
+          "cfop": "5-949",
+          "descricao": "",
+          "finalidade": "",
+          "creditoPisCofins": false,
+          "debitaIcms": false,
+          "qtd": 4,
+          "contabil": 537.27,
+          "fiscal": 537.27,
+          "imposto": 0,
+          "total": 537.27
+        },
+        {
+          "cfop": "5-922",
+          "descricao": "",
+          "finalidade": "",
+          "creditoPisCofins": false,
+          "debitaIcms": false,
+          "qtd": 1,
+          "contabil": 507.9,
+          "fiscal": 507.9,
+          "imposto": 0,
+          "total": 507.9
+        },
+        {
+          "cfop": "5-117",
+          "descricao": "",
+          "finalidade": "",
+          "creditoPisCofins": false,
+          "debitaIcms": false,
+          "qtd": 1,
+          "contabil": 507.9,
+          "fiscal": 507.9,
+          "imposto": 0,
+          "total": 507.9
+        },
+        {
+          "cfop": "6-201",
+          "descricao": "",
+          "finalidade": "",
+          "creditoPisCofins": false,
+          "debitaIcms": false,
+          "qtd": 2,
+          "contabil": 426.24,
+          "fiscal": 426.24,
+          "imposto": 0,
+          "total": 426.24
+        },
+        {
+          "cfop": "6-202",
+          "descricao": "",
+          "finalidade": "",
+          "creditoPisCofins": false,
+          "debitaIcms": false,
+          "qtd": 2,
+          "contabil": 228,
+          "fiscal": 228,
+          "imposto": 0,
+          "total": 228
+        }
+      ]
+    },
+    "porUf": {
+      "SP": 205741.3,
+      "TO": 659.71,
+      "PB": 518,
+      "DF": 83707.88,
+      "SC": 157662.71,
+      "RS": 17341.16,
+      "MG": 63617.29,
+      "PR": 22843.9,
+      "ES": 12953.81,
+      "GO": 38601.54
+    },
+    "fornecedores": [
+      {
+        "nome": "MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA",
+        "cnpj": "45.865.920/0001-00",
+        "uf": "SP",
+        "qtd": 13,
+        "total": 116633.36
+      },
+      {
+        "nome": "MENEGOTTI INDUSTRIAS METALURGICAS LTDA",
+        "cnpj": "84.431.154/0001-28",
+        "uf": "SC",
+        "qtd": 3,
+        "total": 76790.06
+      },
+      {
+        "nome": "BLACK & DECKER DO BRASIL LTDA.",
+        "cnpj": "53.296.273/0032-98",
+        "uf": "MG",
+        "qtd": 8,
+        "total": 45965.91
+      },
+      {
+        "nome": "CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A",
+        "cnpj": "03.261.204/0001-74",
+        "uf": "DF",
+        "qtd": 15,
+        "total": 42500.2
+      },
+      {
+        "nome": "O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA",
+        "cnpj": "76.635.689/0013-26",
+        "uf": "GO",
+        "qtd": 10,
+        "total": 36286.07
+      },
+      {
+        "nome": "MARCON INDUSTRIA METALURGICA LTDA",
+        "cnpj": "57.211.997/0001-46",
+        "uf": "SP",
+        "qtd": 2,
+        "total": 21777.21
+      },
+      {
+        "nome": "MENEGOTTI INDUSTRIAS METALURGICAS LTDA",
+        "cnpj": "84.431.154/0006-32",
+        "uf": "SC",
+        "qtd": 3,
+        "total": 19483.75
+      },
+      {
+        "nome": "HIDRO METALURGICA ZM LTDA",
+        "cnpj": "75.984.930/0001-26",
+        "uf": "PR",
+        "qtd": 2,
+        "total": 17961
+      },
+      {
+        "nome": "SEMAR IMPORT ATACADISTA LTDA",
+        "cnpj": "07.075.388/0001-39",
+        "uf": "SP",
+        "qtd": 4,
+        "total": 16549.41
+      },
+      {
+        "nome": "PNEUBEST COMERCIAL LTDA",
+        "cnpj": "36.996.649/0001-51",
+        "uf": "SC",
+        "qtd": 3,
+        "total": 13782.39
+      },
+      {
+        "nome": "WORKER COMERCIO DE FERRAMENTAS LTDA",
+        "cnpj": "46.037.410/0002-99",
+        "uf": "SC",
+        "qtd": 1,
+        "total": 13638.51
+      },
+      {
+        "nome": "METALOSA INDUSTRIA METALURGICA SA -FILIAL 08",
+        "cnpj": "27.485.374/0008-77",
+        "uf": "ES",
+        "qtd": 4,
+        "total": 10616.65
+      },
+      {
+        "nome": "EVERW LTDA",
+        "cnpj": "44.172.758/0001-82",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 9950.08
+      },
+      {
+        "nome": "POSITEC IMPORTACAO DE FERRAMENTAS LTDA",
+        "cnpj": "17.835.389/0001-98",
+        "uf": "SP",
+        "qtd": 2,
+        "total": 9856.95
+      },
+      {
+        "nome": "METAL TECNICA BOVENAU LTDA",
+        "cnpj": "81.616.765/0002-33",
+        "uf": "SC",
+        "qtd": 2,
+        "total": 8095
+      },
+      {
+        "nome": "MELFI IMPORTACAO E COMERCIO DE FERRAMENTAS LTDA",
+        "cnpj": "11.894.188/0002-66",
+        "uf": "SC",
+        "qtd": 1,
+        "total": 7308.1
+      },
+      {
+        "nome": "ROMHER INDUSTRIA E COMERCIO LTDA",
+        "cnpj": "03.031.948/0001-00",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 7143.2
+      },
+      {
+        "nome": "ESFERA ESTAMPARIA DE FERRO E AÇO LTDA",
+        "cnpj": "21.260.419/0001-52",
+        "uf": "MG",
+        "qtd": 1,
+        "total": 6468.75
+      },
+      {
+        "nome": "METALURGICA MOR S.A - MATRIZ",
+        "cnpj": "95.422.218/0001-40",
+        "uf": "RS",
+        "qtd": 1,
+        "total": 6061.56
+      },
+      {
+        "nome": "METADESIGN PROJETOS E SOLUCOES METALICAS LTDA",
+        "cnpj": "54.871.377/0001-45",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 6000
+      },
+      {
+        "nome": "VCH - IMPORTADORA, EXPORTADORA E DISTRIBUICAO DE PRODUTOS LT",
+        "cnpj": "10.702.092/0011-87",
+        "uf": "SC",
+        "qtd": 1,
+        "total": 5820.48
+      },
+      {
+        "nome": "NOVA CASA DIST MAT CONST S/A DF FL 02",
+        "cnpj": "74.200.403/0002-00",
+        "uf": "DF",
+        "qtd": 6,
+        "total": 5816.01
+      },
+      {
+        "nome": "NZB COMERCIO DE EMBALAGENS EIRELI",
+        "cnpj": "37.789.234/0001-70",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 5403.5
+      },
+      {
+        "nome": "FERRAMENTAS GEDORE DO BRASIL LTDA",
+        "cnpj": "96.736.350/0012-42",
+        "uf": "RS",
+        "qtd": 2,
+        "total": 5241.68
+      },
+      {
+        "nome": "INFINITY COM., IMP. E EXP. DE EQUIPAMENTOS SEGURANCA LTDA",
+        "cnpj": "32.462.148/0001-34",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 5217.52
+      },
+      {
+        "nome": "SANDRA CAROLINA DE SOUSA ROSA CURVINA 57840520120",
+        "cnpj": "33.449.438/0001-00",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 4903
+      },
+      {
+        "nome": "VENTISOL INDUSTRIA E COMERCIO S. A.",
+        "cnpj": "01.763.720/0001-71",
+        "uf": "SC",
+        "qtd": 4,
+        "total": 4825.64
+      },
+      {
+        "nome": "TRAMONTINA GARIBALDI S.A. IND. MET.",
+        "cnpj": "90.049.792/0001-81",
+        "uf": "RS",
+        "qtd": 1,
+        "total": 4508.2
+      },
+      {
+        "nome": "AMATOOLS COML. E IMPORTADORA LTDA",
+        "cnpj": "07.228.424/0001-57",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 4427.1
+      },
+      {
+        "nome": "MARLUVAS EQUIPAMENTOS DE SEGURANCA LTDA",
+        "cnpj": "19.653.054/0036-04",
+        "uf": "MG",
+        "qtd": 1,
+        "total": 3727.52
+      },
+      {
+        "nome": "KARCHER INDUSTRIA E COMERCIO LTDA.",
+        "cnpj": "47.110.960/0001-78",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 3232.83
+      },
+      {
+        "nome": "KAPAZI INDUSTRIA E COMERCIO DE CAPACHOS LTDA",
+        "cnpj": "80.051.824/0009-87",
+        "uf": "PR",
+        "qtd": 1,
+        "total": 3149.81
+      },
+      {
+        "nome": "AUTOFIX DO BRASIL LTDA",
+        "cnpj": "13.359.412/0001-64",
+        "uf": "SC",
+        "qtd": 2,
+        "total": 2537.19
+      },
+      {
+        "nome": "CABO ELETRO COMERCIAL LTDA",
+        "cnpj": "04.678.459/0001-08",
+        "uf": "MG",
+        "qtd": 1,
+        "total": 2500
+      },
+      {
+        "nome": "PNEUGREEN LTDA",
+        "cnpj": "44.299.359/0001-87",
+        "uf": "MG",
+        "qtd": 2,
+        "total": 2448.8
+      },
+      {
+        "nome": "LOTUS COMERCIAL DE FERRAGENS E FERRAMENTAS LTDA",
+        "cnpj": "09.642.566/0001-91",
+        "uf": "ES",
+        "qtd": 1,
+        "total": 2337.16
+      },
+      {
+        "nome": "CICAMPO MAQUINAS E FERRAMENTAS LTD",
+        "cnpj": "80.479.231/0002-40",
+        "uf": "SC",
+        "qtd": 1,
+        "total": 2331.87
+      },
+      {
+        "nome": "TECIDOS E ARMARINHOS MIGUEL BARTOLOMEU S/A",
+        "cnpj": "17.359.233/0001-88",
+        "uf": "MG",
+        "qtd": 1,
+        "total": 1948.57
+      },
+      {
+        "nome": "LTFLEX LTDA",
+        "cnpj": "10.559.336/0002-23",
+        "uf": "GO",
+        "qtd": 4,
+        "total": 1659.47
+      },
+      {
+        "nome": "LOJA DAS MAQUINAS E FERRAMENTAS LTDA",
+        "cnpj": "13.983.066/0001-90",
+        "uf": "DF",
+        "qtd": 8,
+        "total": 1590.18
+      },
+      {
+        "nome": "SILVEIRA - COMERCIO VAREJISTA DE TAMBORES LTDA-ME",
+        "cnpj": "08.185.314/0001-18",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1512
+      },
+      {
+        "nome": "MOR DISTRIBUIDORA LTDA.",
+        "cnpj": "07.722.274/0001-33",
+        "uf": "RS",
+        "qtd": 1,
+        "total": 1470.92
+      },
+      {
+        "nome": "SO BATERIAS SETOR H NORTE LTDA",
+        "cnpj": "33.962.298/0001-70",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1465
+      },
+      {
+        "nome": "WALLACE ALVES FIDELIS",
+        "cnpj": "65.739.916/0001-03",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1450
+      },
+      {
+        "nome": "TENKAI COMERCIO, DISTRIBUICAO, IMPORTACAO EXPORTACAO LTDA",
+        "cnpj": "60.928.566/0001-00",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 1423.99
+      },
+      {
+        "nome": "APEX TOOL GROUP IND.COM.FERRAM.LTDA",
+        "cnpj": "43.408.590/0001-07",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 1338.73
+      },
+      {
+        "nome": "BAZAM E PICHAU INFORMATICA LTDA",
+        "cnpj": "09.376.495/0001-22",
+        "uf": "SC",
+        "qtd": 1,
+        "total": 1329
+      },
+      {
+        "nome": "ROBERT BOSCH LIMITADA",
+        "cnpj": "45.990.181/0032-85",
+        "uf": "PR",
+        "qtd": 1,
+        "total": 1322.09
+      },
+      {
+        "nome": "BORMAIS COMERCIAL EIRELI",
+        "cnpj": "15.129.848/0001-92",
+        "uf": "SP",
+        "qtd": 3,
+        "total": 1311.25
+      },
+      {
+        "nome": "COBALTO - ENGENHARIA CONSULTORIA E PROJETOS LTDA",
+        "cnpj": "19.025.828/0001-22",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1201.26
+      },
+      {
+        "nome": "GLOBAL AMERICA SYSTEM IMPORTACAO E EXPORTACAO DE EQUIPAMENTO",
+        "cnpj": "17.804.883/0002-76",
+        "uf": "SC",
+        "qtd": 1,
+        "total": 1074.75
+      },
+      {
+        "nome": "ENS COMPANY DIGITAL LTDA",
+        "cnpj": "43.304.592/0001-48",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 1029
+      },
+      {
+        "nome": "LINEAR SOLUCOESE NEGOCIOS LTDA",
+        "cnpj": "51.120.436/0001-55",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 988.81
+      },
+      {
+        "nome": "J.F. DA SILVA -COMERCIO E LOCACAO DE PALLETS",
+        "cnpj": "26.305.245/0001-10",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 849.9
+      },
+      {
+        "nome": "SAFIRA PRODUTOS DIVERSOS LTDA",
+        "cnpj": "16.455.751/0001-32",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 799
+      },
+      {
+        "nome": "MUNDIAL CENTER ATACADISTA S/A",
+        "cnpj": "01.713.958/0003-54",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 784.81
+      },
+      {
+        "nome": "BR ACESSORIOS PARA BORRACHARIA LTDA",
+        "cnpj": "49.540.674/0001-78",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 713.94
+      },
+      {
+        "nome": "YONARA COSTA CARVALHO",
+        "cnpj": "57.548.592/0001-06",
+        "uf": "TO",
+        "qtd": 1,
+        "total": 659.71
+      },
+      {
+        "nome": "METAIS NOBRES LTDA",
+        "cnpj": "21.170.462/0001-27",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 656
+      },
+      {
+        "nome": "FV COMERCIO DE FERRAMENTAS LTDA",
+        "cnpj": "36.874.433/0001-13",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 614.61
+      },
+      {
+        "nome": "OXI-MAQ - COMERCIAL E INDUSTRIAL DE EQUIPAMENTOS LTDA",
+        "cnpj": "38.875.597/0001-90",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 602.35
+      },
+      {
+        "nome": "SUZANO CARRINHOS & RODAS LTDA",
+        "cnpj": "67.858.520/0001-00",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 585
+      },
+      {
+        "nome": "FRAZAO PACK EMBALAGENS INDUSTRIAIS LTDA",
+        "cnpj": "52.180.698/0001-78",
+        "uf": "SP",
+        "qtd": 2,
+        "total": 584.58
+      },
+      {
+        "nome": "RITEC-COMERCIAL E IMPORTADORA LT",
+        "cnpj": "54.374.525/0003-88",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 581.7
+      },
+      {
+        "nome": "SOROPET SP COMERCIO DE EQUIPAMENTOS PARA BANHO E TOSA LTDA",
+        "cnpj": "19.191.073/0001-36",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 579
+      },
+      {
+        "nome": "MARIA DAS VITORIAS LIMA DOS SANTOS",
+        "cnpj": "25.093.245/0001-31",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 558
+      },
+      {
+        "nome": "DAVI BEKER FERREIRA",
+        "cnpj": "51.639.608/0001-00",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 550
+      },
+      {
+        "nome": "ARTUR MORAIS XAVIER",
+        "cnpj": "64.735.955/0001-70",
+        "uf": "PB",
+        "qtd": 1,
+        "total": 518
+      },
+      {
+        "nome": "ARTEMIS SOLUCOES PREVENCAO CONTRA INCENDIO LTDA",
+        "cnpj": "40.298.958/0001-25",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 516.51
+      },
+      {
+        "nome": "LOYALTY COMMERCE LTDA",
+        "cnpj": "52.648.356/0001-30",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 512
+      },
+      {
+        "nome": "EBF INDUSTRIA, COMERCIO E SERVICOS LTDA",
+        "cnpj": "38.013.199/0001-65",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 440
+      },
+      {
+        "nome": "W L ATACADISTA LTDA",
+        "cnpj": "21.997.241/0001-27",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 398.83
+      },
+      {
+        "nome": "2D FERRAMENTAS E-COMMERCE LTDA",
+        "cnpj": "52.061.653/0001-84",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 359.38
+      },
+      {
+        "nome": "G. G. BENEDITO VARIEDADES",
+        "cnpj": "34.793.235/0001-08",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 326.24
+      },
+      {
+        "nome": "JSHOP SEG DISTRIBUIDORA EIRELI",
+        "cnpj": "34.395.790/0001-73",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 309.43
+      },
+      {
+        "nome": "NOBLE COMMERCE",
+        "cnpj": "62.827.203/0001-03",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 304
+      },
+      {
+        "nome": "AMAZONASLONAS",
+        "cnpj": "36.697.549/0001-24",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 300
+      },
+      {
+        "nome": "JC LUBRIFICANTES AUTOMOTIVOS LTDA",
+        "cnpj": "04.146.921/0001-18",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 300
+      },
+      {
+        "nome": "CENTER SOLDAS GASES E EQUIPAMENTOS LTDA",
+        "cnpj": "04.583.617/0001-38",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 292.69
+      },
+      {
+        "nome": "COOPERATIVA DE TRABALHO E DE MATERIAL RECICLADO E DE EDUCACA",
+        "cnpj": "09.551.980/0001-95",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 287
+      },
+      {
+        "nome": "PRIMEIRA LINHA COMERCIAL ROLAMENTOS LTDA",
+        "cnpj": "24.907.602/0001-95",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 282.94
+      },
+      {
+        "nome": "FRANCISCO WANDENBERG SALES DA MATA",
+        "cnpj": "58.003.379/0001-73",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 280.39
+      },
+      {
+        "nome": "SMF - IMPORTACAO E COMERCIO LTDA",
+        "cnpj": "08.804.184/0001-54",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 268.56
+      },
+      {
+        "nome": "CONDOMINIO VARANDAS RESIDENCIAL GARDEN",
+        "cnpj": "37.017.914/0001-75",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 259.99
+      },
+      {
+        "nome": "DECK 55 LTDA",
+        "cnpj": "54.036.435/0001-15",
+        "uf": "MG",
+        "qtd": 1,
+        "total": 258.1
+      },
+      {
+        "nome": "PERFORMANCE COMERCIO, IMPORTACAO E EXPORTACAO LTDA",
+        "cnpj": "41.447.139/0001-65",
+        "uf": "SC",
+        "qtd": 2,
+        "total": 252.4
+      },
+      {
+        "nome": "AFERMIX DISTRIBUIDORA LTDA",
+        "cnpj": "35.017.844/0001-20",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 239.5
+      },
+      {
+        "nome": "KLEBER TOLEDO BARBIERI",
+        "cnpj": "56.878.452/0001-25",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 238.6
+      },
+      {
+        "nome": "PEDRO FERREIRA MONTEIRO COMERCIO DE VARIEDADES",
+        "cnpj": "32.205.651/0001-04",
+        "uf": "PR",
+        "qtd": 4,
+        "total": 228
+      },
+      {
+        "nome": "PLASTICOS FALCAO INDUSTRIAL E COMERCIAL LTDA",
+        "cnpj": "17.765.458/0001-34",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 213.12
+      },
+      {
+        "nome": "PALACIO DAS FERRAMENTAS E PARAFUSOS LTDA",
+        "cnpj": "68.422.419/0001-75",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 211.88
+      },
+      {
+        "nome": "JULIO HENRIQUE SOARES SILVA",
+        "cnpj": "58.463.818/0001-20",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 209.86
+      },
+      {
+        "nome": "GATTI QUIMICA LTDA",
+        "cnpj": "03.887.864/0001-65",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 207.67
+      },
+      {
+        "nome": "UBERABA AVENIDA ABILIO BORGES",
+        "cnpj": "42.254.036/0001-41",
+        "uf": "MG",
+        "qtd": 1,
+        "total": 205.11
+      },
+      {
+        "nome": "VOLTS TOOLS COMERCIAL LTDA",
+        "cnpj": "50.490.923/0001-47",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 196
+      },
+      {
+        "nome": "JARDEL RIBEIRO MATOS",
+        "cnpj": "59.756.876/0001-05",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 184.4
+      },
+      {
+        "nome": "SHOPBREXPRESS LTDA",
+        "cnpj": "51.430.345/0001-16",
+        "uf": "PR",
+        "qtd": 1,
+        "total": 183
+      },
+      {
+        "nome": "GIGA ATACADO LTDA",
+        "cnpj": "30.399.473/0001-74",
+        "uf": "SC",
+        "qtd": 1,
+        "total": 179.5
+      },
+      {
+        "nome": "SKYTEF SOLUCOES EM CAPTURA DE TRANSACOES LTDA",
+        "cnpj": "04.988.631/0001-11",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 150
+      },
+      {
+        "nome": "CONEXOES CAVAGNOLI LTDA",
+        "cnpj": "00.563.092/0003-80",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 146.7
+      },
+      {
+        "nome": "K M NECESSIDADES DIARIAS LTDA",
+        "cnpj": "57.115.293/0001-70",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 143.34
+      },
+      {
+        "nome": "ANDREA YURI INOUE MATSUI 28018520828",
+        "cnpj": "42.456.309/0001-30",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 120
+      },
+      {
+        "nome": "TABOAO COMERCIO E DISTRIBUICAO LTDA",
+        "cnpj": "51.473.766/0001-24",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 119.97
+      },
+      {
+        "nome": "SAO PAULO RUA NOSSA SENHORA AP",
+        "cnpj": "28.701.667/0001-30",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 118
+      },
+      {
+        "nome": "DIAMANTE FABRICACAO DE BEBIDAS E EXPLORACAO DE AGUA MINERAL",
+        "cnpj": "43.223.222/0001-86",
+        "uf": "SP",
+        "qtd": 8,
+        "total": 111.92
+      },
+      {
+        "nome": "JCN COMERCIO LTDA",
+        "cnpj": "57.948.809/0001-67",
+        "uf": "SC",
+        "qtd": 1,
+        "total": 108.62
+      },
+      {
+        "nome": "CONSTRUMALL SERVICOS LTDA",
+        "cnpj": "17.002.350/0002-70",
+        "uf": "SC",
+        "qtd": 1,
+        "total": 105.45
+      },
+      {
+        "nome": "TECNICALL ENGENHARIA LTDA",
+        "cnpj": "72.581.283/0001-13",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 105
+      },
+      {
+        "nome": "STATRON COMERCIAL DE FERRAMENTAS LTDA EPP",
+        "cnpj": "09.259.937/0001-50",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 101.06
+      },
+      {
+        "nome": "SMART TECH LABS LTDA",
+        "cnpj": "53.404.574/0001-91",
+        "uf": "MG",
+        "qtd": 1,
+        "total": 94.53
+      },
+      {
+        "nome": "BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA",
+        "cnpj": "52.005.382/0001-40",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 93.04
+      },
+      {
+        "nome": "KADOSH HUB LTDA",
+        "cnpj": "63.320.340/0001-10",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 92.99
+      },
+      {
+        "nome": "RSM ACESSORIOS MERCADO DIGITAL LTDA",
+        "cnpj": "64.627.747/0001-57",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 89.9
+      },
+      {
+        "nome": "V M COMERCIO LTDA",
+        "cnpj": "41.327.168/0001-93",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 65.77
+      },
+      {
+        "nome": "SIRIUS ATACADISTA LTDA",
+        "cnpj": "57.303.095/0001-30",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 59.99
+      },
+      {
+        "nome": "BANDTEX - INDUSTRIA, COMERCIO, IMPORTACAO E EXPORTACAO LTDA",
+        "cnpj": "27.862.656/0001-70",
+        "uf": "RS",
+        "qtd": 1,
+        "total": 58.8
+      },
+      {
+        "nome": "DMO COMERCIO DE VARIEDADES LTDA",
+        "cnpj": "31.566.343/0001-41",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 57.75
+      },
+      {
+        "nome": "DSFRIO COMERCIO DE PECAS LTDA",
+        "cnpj": "33.537.830/0002-92",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 39
+      },
+      {
+        "nome": "ALESSANDRO R. DE FREITAS LTDA",
+        "cnpj": "49.877.891/0001-58",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 33.1
+      },
+      {
+        "nome": "G4 BATERIAS COMERCIAL LTDA.",
+        "cnpj": "58.896.363/0001-37",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 30
+      },
+      {
+        "nome": "GRAVIA IND. DE PERF. DE ACO LTDA",
+        "cnpj": "26.487.744/0009-23",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 28.71
+      },
+      {
+        "nome": "TESLA COMERCIO DE MATERIAL ELETRICO E ILUMINACAO LTDA",
+        "cnpj": "37.562.240/0002-70",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 22.99
+      },
+      {
+        "nome": "CLAUDINEI FERNANDES DA SILVA USINAGEM LTDA",
+        "cnpj": "15.612.516/0001-64",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 19.96
+      },
+      {
+        "nome": "EBAZAR.COM.BR. LTDA",
+        "cnpj": "03.007.331/0212-20",
+        "uf": "SP",
+        "qtd": 2,
+        "total": 19.21
+      },
+      {
+        "nome": "DISTRIBUIDORA DE PROD ALIM MARSIL LTDA",
+        "cnpj": "61.182.051/0001-76",
+        "uf": "SP",
+        "qtd": 2,
+        "total": 18.31
+      }
+    ],
+    "nfsEntradas": 225,
+    "nfsSaidas": 497,
+    "hasMovimentacao": true,
+    "hasDre": false
+  }
+}

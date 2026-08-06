@@ -1,0 +1,32 @@
+﻿{
+  "competencia": "2026-07",
+  "fonteDir": "d:/Nova pasta/Nova pasta/06-08",
+  "empresas": {
+    "unica": {
+      "cnpj": "36517206000130",
+      "dashboard": "UNICATINTAS.ejs",
+      "entradas": "Entradas por fornecedor Unica 072026.xls",
+      "saidas": "Saidas por cliente Unica 072026.xls"
+    },
+    "egaplast": {
+      "cnpj": "03185564000134",
+      "unidade": "matriz",
+      "dashboard": "egaplast.ejs",
+      "entradas": "Entrada por fornecedor 072026 - Egaplast.xls",
+      "saidas": "Saida por Cliente 072026 - Egaplast.xls"
+    },
+    "loja": {
+      "cnpj": "13983066000190",
+      "dashboard": "loja-maquinas.ejs",
+      "entradas": "Entrada por fornecedor loja das maquinas 072026.xls",
+      "saidas": "Saida por cliente loja das maquinas 072026.xls"
+    },
+    "baifer": {
+      "cnpj": "52005382000140",
+      "dashboard": "baifer2trm.ejs",
+      "entradas": "Entradas por fornecedor 072026.xls",
+      "saidas": "Entradas por Cliente 072026.xls",
+      "saidasNota": "Arquivo nomeado Entradas por Cliente, aba real Saidas"
+    }
+  }
+}

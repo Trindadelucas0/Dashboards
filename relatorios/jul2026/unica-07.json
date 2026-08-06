@@ -1,0 +1,3500 @@
+{
+  "empresa": "unica",
+  "competencia": "2026-07",
+  "meta": {
+    "companyEntradas": "46 - UNICA COMERCIO ATACADISTA DE TINTAS",
+    "companySaidas": "46 - UNICA COMERCIO ATACADISTA DE TINTAS",
+    "cnpjEntradas": "36517206000130",
+    "cnpjSaidas": "36517206000130",
+    "periodEntradas": "01/07/2026 até 31/07/2026",
+    "periodSaidas": "01/07/2026 até 31/07/2026",
+    "totalGeralEntradasExcel": 2117167.66,
+    "totalGeralSaidasExcel": 2440744.56,
+    "somaEntradas": 2117167.66,
+    "somaSaidas": 2440744.56,
+    "nfsEntradas": 237,
+    "nfsSaidas": 1043,
+    "deltaEntradas": 0,
+    "deltaSaidas": 0
+  },
+  "pack": {
+    "monthKey": "07",
+    "monthLabel": "Jul",
+    "apuracao": {
+      "icms": {
+        "apurado": 0,
+        "aRecolher": 0,
+        "pctRb": 0
+      },
+      "icmsSt": {
+        "apurado": 0,
+        "aRecolher": 0,
+        "pctRb": 0
+      },
+      "pis": {
+        "apurado": 0,
+        "aRecolher": 0,
+        "pctRb": 0
+      },
+      "cofins": {
+        "apurado": 0,
+        "aRecolher": 0,
+        "pctRb": 0
+      },
+      "subvencao": 0
+    },
+    "receitaBruta": 2440744.56,
+    "deducoes": null,
+    "dedPct": null,
+    "icmsDed": null,
+    "icmsStDed": null,
+    "cofinsDed": null,
+    "pisDed": null,
+    "devDed": null,
+    "cmv": null,
+    "lucBruto": null,
+    "lucLiq": null,
+    "margMb": null,
+    "margMl": null,
+    "subvencao": null,
+    "cmvPendente": false,
+    "hasDre": false,
+    "composicao": [],
+    "totalCompras": 2117167.66,
+    "cfopSaidasTotal": 2440744.56,
+    "nfsEntradas": 237,
+    "nfsSaidas": 1043,
+    "hasMovimentacao": true,
+    "cfopDados": [
+      {
+        "cfop": "2-102",
+        "qtd": 101,
+        "total": 1868182.49,
+        "fornecedores": [
+          {
+            "nome": "AKZO NOBEL LTDA",
+            "cnpj": "60.561.719/0022-58",
+            "uf": "SP",
+            "qtd": 20,
+            "total": 592547.18
+          },
+          {
+            "nome": "BRASILUX TINTAS TECNICAS LTDA",
+            "cnpj": "72.770.878/0001-17",
+            "uf": "SP",
+            "qtd": 2,
+            "total": 308411.76
+          },
+          {
+            "nome": "SHERWIN-WILLIAMS DO BRASIL IND. E COM. LTDA. DIV. AUTOMOTIVA",
+            "cnpj": "60.872.306/0008-36",
+            "uf": "SP",
+            "qtd": 2,
+            "total": 181669.19
+          },
+          {
+            "nome": "SAINT-GOBAIN DO BRASIL PRODUTOS  INDUSTRIAIS E PARA CONSTRUÇ",
+            "cnpj": "61.064.838/0116-82",
+            "uf": "SP",
+            "qtd": 5,
+            "total": 164573.51
+          },
+          {
+            "nome": "3M DO BRASIL LTDA",
+            "cnpj": "45.985.371/0001-08",
+            "uf": "SP",
+            "qtd": 23,
+            "total": 131306.6
+          },
+          {
+            "nome": "ANJO QUIMICA DO BRASIL LTDA",
+            "cnpj": "02.921.346/0001-58",
+            "uf": "SC",
+            "qtd": 3,
+            "total": 112190.69
+          },
+          {
+            "nome": "ROBERLO DO BRASIL IND. COM. DISTR. DE PRODUTOS QUIMICOS LTDA",
+            "cnpj": "09.562.226/0001-50",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 65093.8
+          },
+          {
+            "nome": "AKZO NOBEL LTDA",
+            "cnpj": "60.561.719/0095-03",
+            "uf": "SP",
+            "qtd": 3,
+            "total": 44591.95
+          },
+          {
+            "nome": "MAXI RUBBER INDUSTRIAS QUIMICAS LTDA",
+            "cnpj": "00.283.822/0004-70",
+            "uf": "SP",
+            "qtd": 3,
+            "total": 42908.67
+          },
+          {
+            "nome": "ONKRAFT COMERCIO DE PAPEL E PAPELAO LTDA",
+            "cnpj": "53.172.826/0001-02",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 27877.5
+          },
+          {
+            "nome": "DISSOLTEX IND QUIMICA LTDA",
+            "cnpj": "59.599.555/0001-44",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 22661.04
+          },
+          {
+            "nome": "AUTOAMERICA LTDA",
+            "cnpj": "04.140.399/0001-67",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 21702.61
+          },
+          {
+            "nome": "MAZA PRODUTOS QUIMICOS LTDA",
+            "cnpj": "96.230.719/0001-98",
+            "uf": "SP",
+            "qtd": 4,
+            "total": 21547.3
+          },
+          {
+            "nome": "REDE DA CONSTRUCAO LTDA.",
+            "cnpj": "10.856.491/0001-20",
+            "uf": "GO",
+            "qtd": 9,
+            "total": 16910.61
+          },
+          {
+            "nome": "EVC INDUSTRIAL LTDA",
+            "cnpj": "07.316.197/0001-11",
+            "uf": "CE",
+            "qtd": 1,
+            "total": 16415.27
+          },
+          {
+            "nome": "CHIAPERINI INDUSTRIAL LTDA",
+            "cnpj": "59.064.766/0001-82",
+            "uf": "SP",
+            "qtd": 2,
+            "total": 15510.41
+          },
+          {
+            "nome": "BLACK & DECKER DO BRASIL LTDA.",
+            "cnpj": "53.296.273/0032-98",
+            "uf": "MG",
+            "qtd": 1,
+            "total": 12837.62
+          },
+          {
+            "nome": "NEWPAD PRODUTOS AUTOMOTIVOS LTDA - ME",
+            "cnpj": "12.377.117/0001-78",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 12025
+          },
+          {
+            "nome": "OURENSE DO BRASIL IND ART METAL LTDA",
+            "cnpj": "10.277.146/0001-32",
+            "uf": "RJ",
+            "qtd": 1,
+            "total": 9194.03
+          },
+          {
+            "nome": "ALV - INDUSTRIA E COMERCIO DE TINTAS LTDA",
+            "cnpj": "05.097.254/0001-93",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 8064
+          },
+          {
+            "nome": "RB REFINISH COMERCIAL ACESSORIOS LTDA",
+            "cnpj": "43.959.312/0001-30",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 7010.5
+          },
+          {
+            "nome": "SIMAPPEL - SIMAO PEREIRA INDUSTRIA E COMERCIO DE PAPEIS LTDA",
+            "cnpj": "03.631.764/0001-73",
+            "uf": "MG",
+            "qtd": 1,
+            "total": 6587.35
+          },
+          {
+            "nome": "3M DO BRASIL LTDA",
+            "cnpj": "45.985.371/0062-20",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 6326.06
+          },
+          {
+            "nome": "INDUSTRIA DE LIXADORES PURPER LTDA",
+            "cnpj": "10.789.413/0001-50",
+            "uf": "RS",
+            "qtd": 1,
+            "total": 6137.81
+          },
+          {
+            "nome": "BERLINER DO BRASIL MOTORES LTDA",
+            "cnpj": "22.662.330/0001-85",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 5561.19
+          },
+          {
+            "nome": "A&S TECHNOLOGIES IND E COM SA",
+            "cnpj": "26.658.111/0005-07",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 2079.12
+          },
+          {
+            "nome": "RICARDO BARBOSA CARVALHO",
+            "cnpj": "17.027.791/0001-46",
+            "uf": "GO",
+            "qtd": 1,
+            "total": 1560
+          },
+          {
+            "nome": "PFERD RUGGEBERG DO BRASIL LTDA",
+            "cnpj": "03.428.954/0001-98",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 1507.6
+          },
+          {
+            "nome": "ATLAS S.A.",
+            "cnpj": "89.723.837/0001-72",
+            "uf": "RS",
+            "qtd": 1,
+            "total": 1236.78
+          },
+          {
+            "nome": "KZARAO PIZZARIA E CHOPERIA LTDA",
+            "cnpj": "37.973.142/0001-45",
+            "uf": "GO",
+            "qtd": 1,
+            "total": 630
+          },
+          {
+            "nome": "REDE DA CONSTRUCAO LTDA.",
+            "cnpj": "10.856.491/0002-01",
+            "uf": "GO",
+            "qtd": 3,
+            "total": 550
+          },
+          {
+            "nome": "DIGITO SINALIZACAO E COMUNICACAO VISUAL LTDA",
+            "cnpj": "07.973.523/0001-63",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 473
+          },
+          {
+            "nome": "LUZIANIA PRODUTOS PARA FESTAS LTDA.",
+            "cnpj": "48.991.811/0001-28",
+            "uf": "GO",
+            "qtd": 1,
+            "total": 381.34
+          },
+          {
+            "nome": "OTTO BAUMGART INDUSTRIA E COMERCIO SA",
+            "cnpj": "60.642.774/0012-09",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 103
+          }
+        ]
+      },
+      {
+        "cfop": "1-933",
+        "qtd": 25,
+        "total": 89357.21,
+        "fornecedores": [
+          {
+            "nome": "ACG LOGISTICA LTDA",
+            "cnpj": "62.336.492/0001-48",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 41942.8
+          },
+          {
+            "nome": "TRIPAR BSB ADMINISTRADORA DE CARTOES LTDA",
+            "cnpj": "02.561.118/0001-14",
+            "uf": "DF",
+            "qtd": 4,
+            "total": 27787.89
+          },
+          {
+            "nome": "SAMUEL DA COSTA FREIRE CARVALHO",
+            "cnpj": "49.562.393/0001-16",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 8000
+          },
+          {
+            "nome": "VINICIUS NONATO DA SILVA",
+            "cnpj": "54.603.860/0001-49",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 5700
+          },
+          {
+            "nome": "SI SUPORTE INFORMÁTICA EIRELI ME",
+            "cnpj": "07.832.286/0001-10",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 2500
+          },
+          {
+            "nome": "Neon Vegas Comercio de Placas e Servicos Ltda",
+            "cnpj": "38.014.254/0001-31",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 1600
+          },
+          {
+            "nome": "JR RODRIGUES DA SILVA EMPILHADEIRA - ME",
+            "cnpj": "21.623.898/0001-24",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 1200
+          },
+          {
+            "nome": "MATEUS HENRIQUE MEDEIROS BANDEIRA",
+            "cnpj": "51.064.464/0001-00",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 322
+          },
+          {
+            "nome": "AGE SERVICOS DE INFORMATICA LTDA",
+            "cnpj": "40.085.602/0001-03",
+            "uf": "DF",
+            "qtd": 7,
+            "total": 267.2
+          },
+          {
+            "nome": "AGE TECNOLOGIA DA INFORMACAO LTDA",
+            "cnpj": "40.085.642/0001-55",
+            "uf": "DF",
+            "qtd": 7,
+            "total": 37.32
+          }
+        ]
+      },
+      {
+        "cfop": "1-202",
+        "qtd": 20,
+        "total": 33111.51,
+        "fornecedores": [
+          {
+            "nome": "VELCAR CENTRO AUTOMOTIVO LTDA",
+            "cnpj": "04.363.960/0001-77",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 10673.46
+          },
+          {
+            "nome": "AUTO PINTURA JULIO LTDA",
+            "cnpj": "38.059.184/0001-38",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 9623.46
+          },
+          {
+            "nome": "DT TINTAS COMERCIO VAREJISTA LIMITADA",
+            "cnpj": "40.994.045/0001-43",
+            "uf": "DF",
+            "qtd": 5,
+            "total": 6112.62
+          },
+          {
+            "nome": "CELINA BARROS DE AMORIM 54003601149",
+            "cnpj": "46.631.147/0001-80",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 1416.47
+          },
+          {
+            "nome": "PERFIL FERRAGENS, FERRAMENTAS LTDA",
+            "cnpj": "43.407.532/0001-50",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 1221.8
+          },
+          {
+            "nome": "RVA CONSTRUCOES E EMPREENDIMENTOS LTDA",
+            "cnpj": "20.936.189/0001-36",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 755.1
+          },
+          {
+            "nome": "CONSTRUTORA PORTO S.A.",
+            "cnpj": "37.243.599/0006-09",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 668.25
+          },
+          {
+            "nome": "NOEMIA DE AGUIAR BRANDAO DOS SANTOS",
+            "cnpj": "51.508.532/0001-75",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 578.37
+          },
+          {
+            "nome": "MERCADO DAS TINTAS LTDA-ME",
+            "cnpj": "72.628.407/0001-79",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 493.68
+          },
+          {
+            "nome": "MAIS SOLUCOES COMERCIO ATACADISTA DE TINTAS LTDA",
+            "cnpj": "50.433.993/0001-63",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 389.7
+          },
+          {
+            "nome": "PAINT COM ATACADISTA DE TINTAS",
+            "cnpj": "60.275.431/0001-92",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 303.06
+          },
+          {
+            "nome": "H2O SERVICE MANUTENCAO E LIMPEZA LTDA",
+            "cnpj": "30.639.051/0001-29",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 287.5
+          },
+          {
+            "nome": "FAUSTO HENRIQUE SILVEIRA CARVALHO",
+            "cnpj": "35.949.851/0001-60",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 233.43
+          },
+          {
+            "nome": "ZEMA CENTRO AUTOMOTIVO LTDA",
+            "cnpj": "55.053.905/0001-11",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 186.54
+          },
+          {
+            "nome": "UTB UNIAO TRANSPORTE BRASILIA LTDA",
+            "cnpj": "37.098.480/0001-85",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 110
+          },
+          {
+            "nome": "HERNANE VIDA E SILVA 02986890148",
+            "cnpj": "39.865.617/0001-05",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 58.07
+          }
+        ]
+      },
+      {
+        "cfop": "2-910",
+        "qtd": 8,
+        "total": 30193.96,
+        "fornecedores": [
+          {
+            "nome": "AKZO NOBEL LTDA",
+            "cnpj": "60.561.719/0022-58",
+            "uf": "SP",
+            "qtd": 4,
+            "total": 24329.68
+          },
+          {
+            "nome": "AUTOAMERICA LTDA",
+            "cnpj": "04.140.399/0001-67",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 2675.4
+          },
+          {
+            "nome": "ONKRAFT COMERCIO DE PAPEL E PAPELAO LTDA",
+            "cnpj": "53.172.826/0001-02",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 2179.37
+          },
+          {
+            "nome": "ANJO QUIMICA DO BRASIL LTDA",
+            "cnpj": "02.921.346/0001-58",
+            "uf": "SC",
+            "qtd": 2,
+            "total": 1009.51
+          }
+        ]
+      },
+      {
+        "cfop": "2-353",
+        "qtd": 29,
+        "total": 29666.52,
+        "fornecedores": [
+          {
+            "nome": "RODOSUL EXPRESS LTDA",
+            "cnpj": "13.091.188/0002-53",
+            "uf": "SP",
+            "qtd": 24,
+            "total": 19226.46
+          },
+          {
+            "nome": "PANAMERICANO TRANSPORTE RODOVIARIO DE CARGAS LTDA",
+            "cnpj": "03.301.398/0002-75",
+            "uf": "SP",
+            "qtd": 4,
+            "total": 9536.89
+          },
+          {
+            "nome": "RTL ENCOMENDAS E CARGAS CARGAS",
+            "cnpj": "31.607.598/0003-77",
+            "uf": "CE",
+            "qtd": 1,
+            "total": 903.17
+          }
+        ]
+      },
+      {
+        "cfop": "2-933",
+        "qtd": 7,
+        "total": 22353.24,
+        "fornecedores": [
+          {
+            "nome": "CITEL ANALISE E PROGRAMACAO DE SISTEMAS LTDA",
+            "cnpj": "51.212.892/0001-25",
+            "uf": "SP",
+            "qtd": 2,
+            "total": 15120.51
+          },
+          {
+            "nome": "N. S. INFORMATICA LTDA",
+            "cnpj": "01.919.383/0001-69",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 3699.49
+          },
+          {
+            "nome": "FACEBOOK SERVICOS ONLINE DO BRASIL LTDA.",
+            "cnpj": "13.347.016/0001-17",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 2021.49
+          },
+          {
+            "nome": "ALINDE DECOR COMERCIO E SERVICOS LTDA",
+            "cnpj": "48.192.947/0001-78",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 1500
+          },
+          {
+            "nome": "CLIENT CO SERVICOS DE REDE NORDESTE S.A.",
+            "cnpj": "53.420.564/0018-98",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 10.75
+          },
+          {
+            "nome": "ALELO INSTITUIÇAO DE PAGAMENTO S.A.",
+            "cnpj": "04.740.876/0001-25",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 1
+          }
+        ]
+      },
+      {
+        "cfop": "1-403",
+        "qtd": 12,
+        "total": 11672.42,
+        "fornecedores": [
+          {
+            "nome": "DURACOLOR INDUSTRIA E COMERCIO DE TINTAS LTDA",
+            "cnpj": "14.016.845/0001-80",
+            "uf": "DF",
+            "qtd": 5,
+            "total": 8232.66
+          },
+          {
+            "nome": "VGS COMERCIO VAREJISTA DE MATERIAL DE CONSTRUCAO LTDA",
+            "cnpj": "34.903.950/0001-48",
+            "uf": "DF",
+            "qtd": 3,
+            "total": 2202.33
+          },
+          {
+            "nome": "ARCOM S/A",
+            "cnpj": "25.769.266/0024-10",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 381.95
+          },
+          {
+            "nome": "RORIZ LUZIANIA COMERCIO DE TINTAS LTDA",
+            "cnpj": "41.491.916/0001-79",
+            "uf": "GO",
+            "qtd": 1,
+            "total": 375
+          },
+          {
+            "nome": "PAINT COM ATACADISTA DE TINTAS",
+            "cnpj": "60.275.431/0001-92",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 282.48
+          },
+          {
+            "nome": "ELETRICA DISTRITAL COMERCIO DE MATERIAIS ELETRICOS E ELETRON",
+            "cnpj": "37.076.063/0001-31",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 198
+          }
+        ]
+      },
+      {
+        "cfop": "1-102",
+        "qtd": 8,
+        "total": 10468.22,
+        "fornecedores": [
+          {
+            "nome": "SONIA SERTANEJO NETO EIRELI - ME",
+            "cnpj": "25.026.015/0001-50",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 3978
+          },
+          {
+            "nome": "NOVA CASA DIST MAT CONST S/A DF FL 02",
+            "cnpj": "74.200.403/0002-00",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 3026.09
+          },
+          {
+            "nome": "FABRICIO & RAFAEL TINTAS LTDA-ME",
+            "cnpj": "13.683.088/0001-35",
+            "uf": "DF",
+            "qtd": 2,
+            "total": 2528
+          },
+          {
+            "nome": "PAINT COM ATACADISTA DE TINTAS",
+            "cnpj": "60.275.431/0001-92",
+            "uf": "DF",
+            "qtd": 2,
+            "total": 879.18
+          },
+          {
+            "nome": "LOJA DAS MAQUINAS E FERRAMENTAS LTDA",
+            "cnpj": "13.983.066/0001-90",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 38
+          },
+          {
+            "nome": "TERRA UTIL COMERCIO DE FERRAMENTAS E UTILIDADES LTDA",
+            "cnpj": "07.144.507/0001-68",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 18.95
+          }
+        ]
+      },
+      {
+        "cfop": "1-949",
+        "qtd": 4,
+        "total": 7754.52,
+        "fornecedores": [
+          {
+            "nome": "3M DO BRASIL LTDA",
+            "cnpj": "45.985.371/0001-08",
+            "uf": "SP",
+            "qtd": 2,
+            "total": 6560.08
+          },
+          {
+            "nome": "EP SIA ALUGUEL DE EQUIPAMENTOS E C",
+            "cnpj": "32.769.726/0001-80",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 904
+          },
+          {
+            "nome": "DW SERVICE LTDA",
+            "cnpj": "08.906.780/0001-45",
+            "uf": "GO",
+            "qtd": 1,
+            "total": 290.44
+          }
+        ]
+      },
+      {
+        "cfop": "1-556",
+        "qtd": 10,
+        "total": 5239.44,
+        "fornecedores": [
+          {
+            "nome": "J.M COMERCIO E CONFECCOES DE UNIFORMES LTDA",
+            "cnpj": "55.903.195/0001-71",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 3220
+          },
+          {
+            "nome": "GAMER STAR ATACADO E VEREJO DE INFORMATICA E ELETRONICOS LTD",
+            "cnpj": "05.414.632/0001-15",
+            "uf": "DF",
+            "qtd": 2,
+            "total": 639.32
+          },
+          {
+            "nome": "ARCOM S/A",
+            "cnpj": "25.769.266/0024-10",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 622.89
+          },
+          {
+            "nome": "UNIAO MOTOS",
+            "cnpj": "29.335.562/0001-78",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 250
+          },
+          {
+            "nome": "J. DINIS DE OLIVEIRA DUARTE",
+            "cnpj": "40.257.178/0001-37",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 220
+          },
+          {
+            "nome": "VGS COMERCIO VAREJISTA DE MATERIAL DE CONSTRUCAO LTDA",
+            "cnpj": "34.903.950/0001-48",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 107.29
+          },
+          {
+            "nome": "ARTE CASA PRESENT. UTIL P/LAR EIRELI",
+            "cnpj": "05.951.204/0001-21",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 95
+          },
+          {
+            "nome": "DF ELETROTECNICA COM. MANUT. E LOC. DE EQUIP. ELET. EIRELI",
+            "cnpj": "31.170.338/0001-15",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 69
+          },
+          {
+            "nome": "ELETRICA DISTRITAL COMERCIO DE MATERIAIS ELETRICOS E ELETRON",
+            "cnpj": "37.076.063/0001-31",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 15.94
+          }
+        ]
+      },
+      {
+        "cfop": "1-411",
+        "qtd": 10,
+        "total": 5112.03,
+        "fornecedores": [
+          {
+            "nome": "CONSTRUTORA PORTO S.A.",
+            "cnpj": "37.243.599/0006-09",
+            "uf": "DF",
+            "qtd": 2,
+            "total": 2937.06
+          },
+          {
+            "nome": "M2S CONSTRUCOES E REFORMAS LTDA",
+            "cnpj": "54.104.361/0001-07",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 552.67
+          },
+          {
+            "nome": "DISTRITAL COMERCIO DE TINTAS LTDA",
+            "cnpj": "23.781.742/0001-05",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 494.31
+          },
+          {
+            "nome": "H2O SERVICE MANUTENCAO E LIMPEZA LTDA",
+            "cnpj": "30.639.051/0001-29",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 399.32
+          },
+          {
+            "nome": "MERCADO DAS TINTAS LTDA-ME",
+            "cnpj": "72.628.407/0001-79",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 245.89
+          },
+          {
+            "nome": "ITALIA CARRETAS & TRAILERS LTDA",
+            "cnpj": "35.239.619/0001-38",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 242.92
+          },
+          {
+            "nome": "MS ACESSIBILIDADE E  COMUNICACAO EIRELI",
+            "cnpj": "23.593.765/0001-88",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 169.39
+          },
+          {
+            "nome": "ENGETEC - TECNOLOGIA EM PREVENCAO E CONTROLE DE INCENDIO LTD",
+            "cnpj": "01.721.142/0001-00",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 37.37
+          },
+          {
+            "nome": "FAUSTO HENRIQUE SILVEIRA CARVALHO",
+            "cnpj": "35.949.851/0001-60",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 33.1
+          }
+        ]
+      },
+      {
+        "cfop": "2-403",
+        "qtd": 2,
+        "total": 2004.75,
+        "fornecedores": [
+          {
+            "nome": "REDE DA CONSTRUCAO LTDA.",
+            "cnpj": "10.856.491/0001-20",
+            "uf": "GO",
+            "qtd": 2,
+            "total": 2004.75
+          }
+        ]
+      },
+      {
+        "cfop": "2-202",
+        "qtd": 6,
+        "total": 1301.01,
+        "fornecedores": [
+          {
+            "nome": "MARLENE DE JESUS CARDOSO",
+            "cnpj": "39.597.087/0001-61",
+            "uf": "GO",
+            "qtd": 2,
+            "total": 617.29
+          },
+          {
+            "nome": "ETICA COMERCIO VAREJISTA DE TINTAS LTDA",
+            "cnpj": "04.744.446/0002-62",
+            "uf": "MG",
+            "qtd": 1,
+            "total": 347.3
+          },
+          {
+            "nome": "V&T COMERCIO VAREJISTA DE TINTAS LTDA",
+            "cnpj": "36.113.768/0002-08",
+            "uf": "GO",
+            "qtd": 2,
+            "total": 179.12
+          },
+          {
+            "nome": "RM BOMBAS MOTORES E SERVICOS LTDA",
+            "cnpj": "63.167.113/0001-04",
+            "uf": "GO",
+            "qtd": 1,
+            "total": 157.3
+          }
+        ]
+      },
+      {
+        "cfop": "2-411",
+        "qtd": 3,
+        "total": 400.34,
+        "fornecedores": [
+          {
+            "nome": "ETICA COMERCIO VAREJISTA DE TINTAS LTDA",
+            "cnpj": "04.744.446/0002-62",
+            "uf": "MG",
+            "qtd": 2,
+            "total": 212.49
+          },
+          {
+            "nome": "V&T COMERCIO VAREJISTA DE TINTAS LTDA",
+            "cnpj": "36.113.768/0002-08",
+            "uf": "GO",
+            "qtd": 1,
+            "total": 187.85
+          }
+        ]
+      },
+      {
+        "cfop": "2-407",
+        "qtd": 1,
+        "total": 350,
+        "fornecedores": [
+          {
+            "nome": "JOAO CARLOS BARBOSA DE ARAUJO E CIA LTDA",
+            "cnpj": "68.511.807/0001-22",
+            "uf": "MG",
+            "qtd": 1,
+            "total": 350
+          }
+        ]
+      }
+    ],
+    "cfopSaidas": [
+      {
+        "cfop": "5-102",
+        "qtd": 673,
+        "total": 865599.77
+      },
+      {
+        "cfop": "5-403",
+        "qtd": 515,
+        "total": 780952.26
+      },
+      {
+        "cfop": "6-403",
+        "qtd": 124,
+        "total": 316947.33
+      },
+      {
+        "cfop": "6-102",
+        "qtd": 125,
+        "total": 312991.62
+      },
+      {
+        "cfop": "5-949",
+        "qtd": 1,
+        "total": 130291
+      },
+      {
+        "cfop": "5-405",
+        "qtd": 22,
+        "total": 14549.53
+      },
+      {
+        "cfop": "5-910",
+        "qtd": 5,
+        "total": 8883.07
+      },
+      {
+        "cfop": "6-108",
+        "qtd": 8,
+        "total": 6266.67
+      },
+      {
+        "cfop": "6-202",
+        "qtd": 1,
+        "total": 1382.35
+      },
+      {
+        "cfop": "5-411",
+        "qtd": 2,
+        "total": 1344.67
+      },
+      {
+        "cfop": "6-404",
+        "qtd": 4,
+        "total": 913.4
+      },
+      {
+        "cfop": "5-202",
+        "qtd": 1,
+        "total": 622.89
+      }
+    ],
+    "fornecedores": [
+      {
+        "nome": "AKZO NOBEL LTDA",
+        "cnpj": "60.561.719/0022-58",
+        "uf": "SP",
+        "qtd": 24,
+        "total": 616876.86
+      },
+      {
+        "nome": "BRASILUX TINTAS TECNICAS LTDA",
+        "cnpj": "72.770.878/0001-17",
+        "uf": "SP",
+        "qtd": 2,
+        "total": 308411.76
+      },
+      {
+        "nome": "SHERWIN-WILLIAMS DO BRASIL IND. E COM. LTDA. DIV. AUTOMOTIVA",
+        "cnpj": "60.872.306/0008-36",
+        "uf": "SP",
+        "qtd": 2,
+        "total": 181669.19
+      },
+      {
+        "nome": "SAINT-GOBAIN DO BRASIL PRODUTOS  INDUSTRIAIS E PARA CONSTRUÇ",
+        "cnpj": "61.064.838/0116-82",
+        "uf": "SP",
+        "qtd": 5,
+        "total": 164573.51
+      },
+      {
+        "nome": "3M DO BRASIL LTDA",
+        "cnpj": "45.985.371/0001-08",
+        "uf": "SP",
+        "qtd": 25,
+        "total": 137866.68
+      },
+      {
+        "nome": "ANJO QUIMICA DO BRASIL LTDA",
+        "cnpj": "02.921.346/0001-58",
+        "uf": "SC",
+        "qtd": 5,
+        "total": 113200.2
+      },
+      {
+        "nome": "ROBERLO DO BRASIL IND. COM. DISTR. DE PRODUTOS QUIMICOS LTDA",
+        "cnpj": "09.562.226/0001-50",
+        "uf": "PR",
+        "qtd": 1,
+        "total": 65093.8
+      },
+      {
+        "nome": "AKZO NOBEL LTDA",
+        "cnpj": "60.561.719/0095-03",
+        "uf": "SP",
+        "qtd": 3,
+        "total": 44591.95
+      },
+      {
+        "nome": "MAXI RUBBER INDUSTRIAS QUIMICAS LTDA",
+        "cnpj": "00.283.822/0004-70",
+        "uf": "SP",
+        "qtd": 3,
+        "total": 42908.67
+      },
+      {
+        "nome": "ACG LOGISTICA LTDA",
+        "cnpj": "62.336.492/0001-48",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 41942.8
+      },
+      {
+        "nome": "ONKRAFT COMERCIO DE PAPEL E PAPELAO LTDA",
+        "cnpj": "53.172.826/0001-02",
+        "uf": "PR",
+        "qtd": 2,
+        "total": 30056.87
+      },
+      {
+        "nome": "TRIPAR BSB ADMINISTRADORA DE CARTOES LTDA",
+        "cnpj": "02.561.118/0001-14",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 27787.89
+      },
+      {
+        "nome": "AUTOAMERICA LTDA",
+        "cnpj": "04.140.399/0001-67",
+        "uf": "PR",
+        "qtd": 2,
+        "total": 24378.01
+      },
+      {
+        "nome": "DISSOLTEX IND QUIMICA LTDA",
+        "cnpj": "59.599.555/0001-44",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 22661.04
+      },
+      {
+        "nome": "MAZA PRODUTOS QUIMICOS LTDA",
+        "cnpj": "96.230.719/0001-98",
+        "uf": "SP",
+        "qtd": 4,
+        "total": 21547.3
+      },
+      {
+        "nome": "RODOSUL EXPRESS LTDA",
+        "cnpj": "13.091.188/0002-53",
+        "uf": "SP",
+        "qtd": 24,
+        "total": 19226.46
+      },
+      {
+        "nome": "REDE DA CONSTRUCAO LTDA.",
+        "cnpj": "10.856.491/0001-20",
+        "uf": "GO",
+        "qtd": 10,
+        "total": 18915.36
+      },
+      {
+        "nome": "EVC INDUSTRIAL LTDA",
+        "cnpj": "07.316.197/0001-11",
+        "uf": "CE",
+        "qtd": 1,
+        "total": 16415.27
+      },
+      {
+        "nome": "CHIAPERINI INDUSTRIAL LTDA",
+        "cnpj": "59.064.766/0001-82",
+        "uf": "SP",
+        "qtd": 2,
+        "total": 15510.41
+      },
+      {
+        "nome": "CITEL ANALISE E PROGRAMACAO DE SISTEMAS LTDA",
+        "cnpj": "51.212.892/0001-25",
+        "uf": "SP",
+        "qtd": 2,
+        "total": 15120.51
+      },
+      {
+        "nome": "BLACK & DECKER DO BRASIL LTDA.",
+        "cnpj": "53.296.273/0032-98",
+        "uf": "MG",
+        "qtd": 1,
+        "total": 12837.62
+      },
+      {
+        "nome": "NEWPAD PRODUTOS AUTOMOTIVOS LTDA - ME",
+        "cnpj": "12.377.117/0001-78",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 12025
+      },
+      {
+        "nome": "VELCAR CENTRO AUTOMOTIVO LTDA",
+        "cnpj": "04.363.960/0001-77",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 10673.46
+      },
+      {
+        "nome": "AUTO PINTURA JULIO LTDA",
+        "cnpj": "38.059.184/0001-38",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 9623.46
+      },
+      {
+        "nome": "PANAMERICANO TRANSPORTE RODOVIARIO DE CARGAS LTDA",
+        "cnpj": "03.301.398/0002-75",
+        "uf": "SP",
+        "qtd": 4,
+        "total": 9536.89
+      },
+      {
+        "nome": "OURENSE DO BRASIL IND ART METAL LTDA",
+        "cnpj": "10.277.146/0001-32",
+        "uf": "RJ",
+        "qtd": 1,
+        "total": 9194.03
+      },
+      {
+        "nome": "DURACOLOR INDUSTRIA E COMERCIO DE TINTAS LTDA",
+        "cnpj": "14.016.845/0001-80",
+        "uf": "DF",
+        "qtd": 5,
+        "total": 8232.66
+      },
+      {
+        "nome": "ALV - INDUSTRIA E COMERCIO DE TINTAS LTDA",
+        "cnpj": "05.097.254/0001-93",
+        "uf": "PR",
+        "qtd": 1,
+        "total": 8064
+      },
+      {
+        "nome": "SAMUEL DA COSTA FREIRE CARVALHO",
+        "cnpj": "49.562.393/0001-16",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 8000
+      },
+      {
+        "nome": "RB REFINISH COMERCIAL ACESSORIOS LTDA",
+        "cnpj": "43.959.312/0001-30",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 7010.5
+      },
+      {
+        "nome": "SIMAPPEL - SIMAO PEREIRA INDUSTRIA E COMERCIO DE PAPEIS LTDA",
+        "cnpj": "03.631.764/0001-73",
+        "uf": "MG",
+        "qtd": 1,
+        "total": 6587.35
+      },
+      {
+        "nome": "3M DO BRASIL LTDA",
+        "cnpj": "45.985.371/0062-20",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 6326.06
+      },
+      {
+        "nome": "INDUSTRIA DE LIXADORES PURPER LTDA",
+        "cnpj": "10.789.413/0001-50",
+        "uf": "RS",
+        "qtd": 1,
+        "total": 6137.81
+      },
+      {
+        "nome": "DT TINTAS COMERCIO VAREJISTA LIMITADA",
+        "cnpj": "40.994.045/0001-43",
+        "uf": "DF",
+        "qtd": 5,
+        "total": 6112.62
+      },
+      {
+        "nome": "VINICIUS NONATO DA SILVA",
+        "cnpj": "54.603.860/0001-49",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 5700
+      },
+      {
+        "nome": "BERLINER DO BRASIL MOTORES LTDA",
+        "cnpj": "22.662.330/0001-85",
+        "uf": "PR",
+        "qtd": 1,
+        "total": 5561.19
+      },
+      {
+        "nome": "SONIA SERTANEJO NETO EIRELI - ME",
+        "cnpj": "25.026.015/0001-50",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 3978
+      },
+      {
+        "nome": "N. S. INFORMATICA LTDA",
+        "cnpj": "01.919.383/0001-69",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 3699.49
+      },
+      {
+        "nome": "CONSTRUTORA PORTO S.A.",
+        "cnpj": "37.243.599/0006-09",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 3605.31
+      },
+      {
+        "nome": "J.M COMERCIO E CONFECCOES DE UNIFORMES LTDA",
+        "cnpj": "55.903.195/0001-71",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 3220
+      },
+      {
+        "nome": "NOVA CASA DIST MAT CONST S/A DF FL 02",
+        "cnpj": "74.200.403/0002-00",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 3026.09
+      },
+      {
+        "nome": "FABRICIO & RAFAEL TINTAS LTDA-ME",
+        "cnpj": "13.683.088/0001-35",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 2528
+      },
+      {
+        "nome": "SI SUPORTE INFORMÁTICA EIRELI ME",
+        "cnpj": "07.832.286/0001-10",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 2500
+      },
+      {
+        "nome": "VGS COMERCIO VAREJISTA DE MATERIAL DE CONSTRUCAO LTDA",
+        "cnpj": "34.903.950/0001-48",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 2309.62
+      },
+      {
+        "nome": "A&S TECHNOLOGIES IND E COM SA",
+        "cnpj": "26.658.111/0005-07",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 2079.12
+      },
+      {
+        "nome": "FACEBOOK SERVICOS ONLINE DO BRASIL LTDA.",
+        "cnpj": "13.347.016/0001-17",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 2021.49
+      },
+      {
+        "nome": "Neon Vegas Comercio de Placas e Servicos Ltda",
+        "cnpj": "38.014.254/0001-31",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1600
+      },
+      {
+        "nome": "RICARDO BARBOSA CARVALHO",
+        "cnpj": "17.027.791/0001-46",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 1560
+      },
+      {
+        "nome": "PFERD RUGGEBERG DO BRASIL LTDA",
+        "cnpj": "03.428.954/0001-98",
+        "uf": "PR",
+        "qtd": 1,
+        "total": 1507.6
+      },
+      {
+        "nome": "ALINDE DECOR COMERCIO E SERVICOS LTDA",
+        "cnpj": "48.192.947/0001-78",
+        "uf": "PR",
+        "qtd": 1,
+        "total": 1500
+      },
+      {
+        "nome": "PAINT COM ATACADISTA DE TINTAS",
+        "cnpj": "60.275.431/0001-92",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 1464.72
+      },
+      {
+        "nome": "CELINA BARROS DE AMORIM 54003601149",
+        "cnpj": "46.631.147/0001-80",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1416.47
+      },
+      {
+        "nome": "ATLAS S.A.",
+        "cnpj": "89.723.837/0001-72",
+        "uf": "RS",
+        "qtd": 1,
+        "total": 1236.78
+      },
+      {
+        "nome": "PERFIL FERRAGENS, FERRAMENTAS LTDA",
+        "cnpj": "43.407.532/0001-50",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1221.8
+      },
+      {
+        "nome": "JR RODRIGUES DA SILVA EMPILHADEIRA - ME",
+        "cnpj": "21.623.898/0001-24",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1200
+      },
+      {
+        "nome": "ARCOM S/A",
+        "cnpj": "25.769.266/0024-10",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1004.84
+      },
+      {
+        "nome": "EP SIA ALUGUEL DE EQUIPAMENTOS E C",
+        "cnpj": "32.769.726/0001-80",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 904
+      },
+      {
+        "nome": "RTL ENCOMENDAS E CARGAS CARGAS",
+        "cnpj": "31.607.598/0003-77",
+        "uf": "CE",
+        "qtd": 1,
+        "total": 903.17
+      },
+      {
+        "nome": "RVA CONSTRUCOES E EMPREENDIMENTOS LTDA",
+        "cnpj": "20.936.189/0001-36",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 755.1
+      },
+      {
+        "nome": "MERCADO DAS TINTAS LTDA-ME",
+        "cnpj": "72.628.407/0001-79",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 739.57
+      },
+      {
+        "nome": "H2O SERVICE MANUTENCAO E LIMPEZA LTDA",
+        "cnpj": "30.639.051/0001-29",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 686.82
+      },
+      {
+        "nome": "GAMER STAR ATACADO E VEREJO DE INFORMATICA E ELETRONICOS LTD",
+        "cnpj": "05.414.632/0001-15",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 639.32
+      },
+      {
+        "nome": "KZARAO PIZZARIA E CHOPERIA LTDA",
+        "cnpj": "37.973.142/0001-45",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 630
+      },
+      {
+        "nome": "MARLENE DE JESUS CARDOSO",
+        "cnpj": "39.597.087/0001-61",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 617.29
+      },
+      {
+        "nome": "NOEMIA DE AGUIAR BRANDAO DOS SANTOS",
+        "cnpj": "51.508.532/0001-75",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 578.37
+      },
+      {
+        "nome": "ETICA COMERCIO VAREJISTA DE TINTAS LTDA",
+        "cnpj": "04.744.446/0002-62",
+        "uf": "MG",
+        "qtd": 3,
+        "total": 559.79
+      },
+      {
+        "nome": "M2S CONSTRUCOES E REFORMAS LTDA",
+        "cnpj": "54.104.361/0001-07",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 552.67
+      },
+      {
+        "nome": "REDE DA CONSTRUCAO LTDA.",
+        "cnpj": "10.856.491/0002-01",
+        "uf": "GO",
+        "qtd": 3,
+        "total": 550
+      },
+      {
+        "nome": "DISTRITAL COMERCIO DE TINTAS LTDA",
+        "cnpj": "23.781.742/0001-05",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 494.31
+      },
+      {
+        "nome": "DIGITO SINALIZACAO E COMUNICACAO VISUAL LTDA",
+        "cnpj": "07.973.523/0001-63",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 473
+      },
+      {
+        "nome": "MAIS SOLUCOES COMERCIO ATACADISTA DE TINTAS LTDA",
+        "cnpj": "50.433.993/0001-63",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 389.7
+      },
+      {
+        "nome": "LUZIANIA PRODUTOS PARA FESTAS LTDA.",
+        "cnpj": "48.991.811/0001-28",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 381.34
+      },
+      {
+        "nome": "RORIZ LUZIANIA COMERCIO DE TINTAS LTDA",
+        "cnpj": "41.491.916/0001-79",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 375
+      },
+      {
+        "nome": "V&T COMERCIO VAREJISTA DE TINTAS LTDA",
+        "cnpj": "36.113.768/0002-08",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 366.97
+      },
+      {
+        "nome": "JOAO CARLOS BARBOSA DE ARAUJO E CIA LTDA",
+        "cnpj": "68.511.807/0001-22",
+        "uf": "MG",
+        "qtd": 1,
+        "total": 350
+      },
+      {
+        "nome": "MATEUS HENRIQUE MEDEIROS BANDEIRA",
+        "cnpj": "51.064.464/0001-00",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 322
+      },
+      {
+        "nome": "DW SERVICE LTDA",
+        "cnpj": "08.906.780/0001-45",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 290.44
+      },
+      {
+        "nome": "AGE SERVICOS DE INFORMATICA LTDA",
+        "cnpj": "40.085.602/0001-03",
+        "uf": "DF",
+        "qtd": 7,
+        "total": 267.2
+      },
+      {
+        "nome": "FAUSTO HENRIQUE SILVEIRA CARVALHO",
+        "cnpj": "35.949.851/0001-60",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 266.53
+      },
+      {
+        "nome": "UNIAO MOTOS",
+        "cnpj": "29.335.562/0001-78",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 250
+      },
+      {
+        "nome": "ITALIA CARRETAS & TRAILERS LTDA",
+        "cnpj": "35.239.619/0001-38",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 242.92
+      },
+      {
+        "nome": "J. DINIS DE OLIVEIRA DUARTE",
+        "cnpj": "40.257.178/0001-37",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 220
+      },
+      {
+        "nome": "ELETRICA DISTRITAL COMERCIO DE MATERIAIS ELETRICOS E ELETRON",
+        "cnpj": "37.076.063/0001-31",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 213.94
+      },
+      {
+        "nome": "ZEMA CENTRO AUTOMOTIVO LTDA",
+        "cnpj": "55.053.905/0001-11",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 186.54
+      },
+      {
+        "nome": "MS ACESSIBILIDADE E  COMUNICACAO EIRELI",
+        "cnpj": "23.593.765/0001-88",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 169.39
+      },
+      {
+        "nome": "RM BOMBAS MOTORES E SERVICOS LTDA",
+        "cnpj": "63.167.113/0001-04",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 157.3
+      },
+      {
+        "nome": "UTB UNIAO TRANSPORTE BRASILIA LTDA",
+        "cnpj": "37.098.480/0001-85",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 110
+      },
+      {
+        "nome": "OTTO BAUMGART INDUSTRIA E COMERCIO SA",
+        "cnpj": "60.642.774/0012-09",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 103
+      },
+      {
+        "nome": "ARTE CASA PRESENT. UTIL P/LAR EIRELI",
+        "cnpj": "05.951.204/0001-21",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 95
+      },
+      {
+        "nome": "DF ELETROTECNICA COM. MANUT. E LOC. DE EQUIP. ELET. EIRELI",
+        "cnpj": "31.170.338/0001-15",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 69
+      },
+      {
+        "nome": "HERNANE VIDA E SILVA 02986890148",
+        "cnpj": "39.865.617/0001-05",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 58.07
+      },
+      {
+        "nome": "LOJA DAS MAQUINAS E FERRAMENTAS LTDA",
+        "cnpj": "13.983.066/0001-90",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 38
+      },
+      {
+        "nome": "ENGETEC - TECNOLOGIA EM PREVENCAO E CONTROLE DE INCENDIO LTD",
+        "cnpj": "01.721.142/0001-00",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 37.37
+      },
+      {
+        "nome": "AGE TECNOLOGIA DA INFORMACAO LTDA",
+        "cnpj": "40.085.642/0001-55",
+        "uf": "DF",
+        "qtd": 7,
+        "total": 37.32
+      },
+      {
+        "nome": "TERRA UTIL COMERCIO DE FERRAMENTAS E UTILIDADES LTDA",
+        "cnpj": "07.144.507/0001-68",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 18.95
+      },
+      {
+        "nome": "CLIENT CO SERVICOS DE REDE NORDESTE S.A.",
+        "cnpj": "53.420.564/0018-98",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 10.75
+      },
+      {
+        "nome": "ALELO INSTITUIÇAO DE PAGAMENTO S.A.",
+        "cnpj": "04.740.876/0001-25",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 1
+      }
+    ],
+    "clientes": [
+      {
+        "nome": "DT TINTAS COMERCIO VAREJISTA LIMITADA (LUZIANIA)",
+        "cnpj": "40.994.045/0004-96",
+        "uf": "GO",
+        "qtd": 44,
+        "total": 300363.17
+      },
+      {
+        "nome": "DT TINTAS COMERCIO VAREJISTA LIMITADA (CEILANDIA)",
+        "cnpj": "40.994.045/0001-43",
+        "uf": "DF",
+        "qtd": 111,
+        "total": 187162.35
+      },
+      {
+        "nome": "DT TINTAS COMERCIO VAREJISTA LIMITADA (GUARA)",
+        "cnpj": "40.994.045/0003-05",
+        "uf": "DF",
+        "qtd": 82,
+        "total": 164816.19
+      },
+      {
+        "nome": "DT TINTAS COMERCIO VAREJISTA LIMITADA (SIA)",
+        "cnpj": "40.994.045/0002-24",
+        "uf": "DF",
+        "qtd": 75,
+        "total": 158657.85
+      },
+      {
+        "nome": "MAQCENTER MAQUINAS PARA CONSTRUCOES LTDA",
+        "cnpj": "37.131.364/0003-82",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 130291
+      },
+      {
+        "nome": "ETICA COMERCIO VAREJISTA DE TINTAS LTDA (UNAI)",
+        "cnpj": "04.744.446/0002-62",
+        "uf": "MG",
+        "qtd": 9,
+        "total": 109589.42
+      },
+      {
+        "nome": "MERCADO DAS TINTAS LTDA (GAMA)",
+        "cnpj": "72.628.407/0003-30",
+        "uf": "DF",
+        "qtd": 31,
+        "total": 97405.23
+      },
+      {
+        "nome": "CONTARPP ENGENHARIA S.A.",
+        "cnpj": "26.412.148/0001-27",
+        "uf": "DF",
+        "qtd": 7,
+        "total": 76133.34
+      },
+      {
+        "nome": "DAUTO PINTURA E MECANICA LTDA - TR 03",
+        "cnpj": "24.934.648/0002-84",
+        "uf": "DF",
+        "qtd": 5,
+        "total": 70161.67
+      },
+      {
+        "nome": "DAUTO TINTAS PARACATU LTDA",
+        "cnpj": "33.304.308/0001-80",
+        "uf": "MG",
+        "qtd": 11,
+        "total": 53653.42
+      },
+      {
+        "nome": "DAUTO PINTURA E MECANICA LTDA - TAGUATINGA",
+        "cnpj": "24.934.648/0003-65",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 46381.66
+      },
+      {
+        "nome": "MERCADO DAS TINTAS LTDA ( ADE )",
+        "cnpj": "72.628.407/0001-79",
+        "uf": "DF",
+        "qtd": 22,
+        "total": 40860.83
+      },
+      {
+        "nome": "V&T COMERCIO VAREJISTA DE TINTAS LTDA  (AGUAS LINDAS)",
+        "cnpj": "36.113.768/0002-08",
+        "uf": "GO",
+        "qtd": 12,
+        "total": 40829.17
+      },
+      {
+        "nome": "VELCAR CENTRO AUTOMOTIVO LTDA",
+        "cnpj": "04.363.960/0001-77",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 39956.55
+      },
+      {
+        "nome": "AUTO PINTURA JULIO LTDA",
+        "cnpj": "38.059.184/0001-38",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 38990.53
+      },
+      {
+        "nome": "ETICA COMERCIO VAREJISTA DE TINTAS LTDA (SOFN)",
+        "cnpj": "04.744.446/0001-81",
+        "uf": "DF",
+        "qtd": 24,
+        "total": 38414.95
+      },
+      {
+        "nome": "ZEMA CENTRO AUTOMOTIVO LTDA",
+        "cnpj": "55.053.905/0001-11",
+        "uf": "DF",
+        "qtd": 20,
+        "total": 34717.99
+      },
+      {
+        "nome": "PAINT COMERCIO ATACADISTA DE TINTAS LTDA",
+        "cnpj": "60.275.431/0001-92",
+        "uf": "DF",
+        "qtd": 25,
+        "total": 34679.5
+      },
+      {
+        "nome": "CELINA BARROS DE AMORIM 54003601149",
+        "cnpj": "46.631.147/0001-80",
+        "uf": "DF",
+        "qtd": 22,
+        "total": 28729.18
+      },
+      {
+        "nome": "DAUTO PINTURA E MECANICA LTDA - GUARA",
+        "cnpj": "24.934.648/0001-01",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 28151.81
+      },
+      {
+        "nome": "RBS CONSTRUCAO E CONSERVACAO PREDIAL LTDA",
+        "cnpj": "28.642.042/0001-45",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 26194.26
+      },
+      {
+        "nome": "JOELISON ERICLES BARBOSA BELTRAO",
+        "cnpj": "65.516.785/0001-03",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 24000.01
+      },
+      {
+        "nome": "DCS LANTERNAGEM E PINTURA LTDA ME - SOF SUL",
+        "cnpj": "01.514.533/0001-54",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 19770.56
+      },
+      {
+        "nome": "SAGA DETROIT COMERCIO DE VEICULOS PECAS E SERVICOS LTDA",
+        "cnpj": "19.945.014/0005-30",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 18085.26
+      },
+      {
+        "nome": "DCS CENTRO AUTOMOTIVO LTDA ME - TR 17",
+        "cnpj": "01.514.533/0002-35",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 17526.25
+      },
+      {
+        "nome": "MAIS SOLUCOES COMERCIO ATACADISTA DE TINTAS LTDA",
+        "cnpj": "50.433.993/0001-63",
+        "uf": "DF",
+        "qtd": 6,
+        "total": 17186.54
+      },
+      {
+        "nome": "GURGEL ENGENHARIA LTDA",
+        "cnpj": "23.503.739/0001-11",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 13723.19
+      },
+      {
+        "nome": "MARIA FERNANDA MORAIS DE ARAUJO",
+        "cnpj": "39.353.109/0001-48",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 13412.47
+      },
+      {
+        "nome": "MARLENE DE JESUS CARDOSO",
+        "cnpj": "39.597.087/0001-61",
+        "uf": "GO",
+        "qtd": 5,
+        "total": 12832.22
+      },
+      {
+        "nome": "CONSTRUTORA PORTO S.A.",
+        "cnpj": "37.243.599/0006-09",
+        "uf": "DF",
+        "qtd": 5,
+        "total": 11443.12
+      },
+      {
+        "nome": "VOOMA COMERCIO E IMPORTACAO LTDA",
+        "cnpj": "24.596.749/0001-01",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 10600
+      },
+      {
+        "nome": "JOEL BALDOV NASCIMENTO",
+        "cnpj": "48.532.019/0001-05",
+        "uf": "MG",
+        "qtd": 5,
+        "total": 10358.76
+      },
+      {
+        "nome": "W E W QUEIROZ TINTAS LIMITADA",
+        "cnpj": "42.009.786/0002-39",
+        "uf": "DF",
+        "qtd": 6,
+        "total": 9980.74
+      },
+      {
+        "nome": "M2S CONSTRUCOES E REFORMAS LTDA",
+        "cnpj": "54.104.361/0001-07",
+        "uf": "DF",
+        "qtd": 9,
+        "total": 9979.26
+      },
+      {
+        "nome": "IMPERIO DAS CORES COMERCIO DE TINTAS LTDA",
+        "cnpj": "53.047.542/0001-86",
+        "uf": "DF",
+        "qtd": 5,
+        "total": 9964.49
+      },
+      {
+        "nome": "SMARTGRID ENGENHARIA E CONSTRUCOES LTDA",
+        "cnpj": "26.656.820/0001-20",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 9913.11
+      },
+      {
+        "nome": "BRASIL SUL INDUSTRIA DE EQUIPAMENTOS CONTRA INCENDIO LTDA",
+        "cnpj": "22.870.211/0001-18",
+        "uf": "DF",
+        "qtd": 8,
+        "total": 9432.88
+      },
+      {
+        "nome": "MARI COMERCIO DE TINTAS LTDA",
+        "cnpj": "44.074.511/0001-23",
+        "uf": "DF",
+        "qtd": 10,
+        "total": 9111.14
+      },
+      {
+        "nome": "BRINKPARK",
+        "cnpj": "60.858.882/0001-52",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 8838.13
+      },
+      {
+        "nome": "METRO COMERCIO DE TINTAS E MATERIAIS DE CONSTRUCAO LTDA",
+        "cnpj": "64.621.430/0001-03",
+        "uf": "DF",
+        "qtd": 10,
+        "total": 8824.63
+      },
+      {
+        "nome": "SANTISSIMO COMERCIO DE TINTAS LTDA",
+        "cnpj": "28.029.101/0001-04",
+        "uf": "DF",
+        "qtd": 6,
+        "total": 8706.59
+      },
+      {
+        "nome": "LINDEMBERG & MELO COMERCIO  DE TINTAS AUT E IMOBI LTDA",
+        "cnpj": "38.351.625/0001-70",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 8550.42
+      },
+      {
+        "nome": "SERTAO AUTO PECAS LTDA",
+        "cnpj": "11.232.499/0001-89",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 8495.9
+      },
+      {
+        "nome": "MAJU TINTAS EMPRESA INDIVIDUAL",
+        "cnpj": "27.904.046/0001-91",
+        "uf": "DF",
+        "qtd": 8,
+        "total": 8463.73
+      },
+      {
+        "nome": "CASA DOS ESPELHOS E PINTURA ELETROSTATICA LTDA",
+        "cnpj": "12.694.924/0001-14",
+        "uf": "BA",
+        "qtd": 3,
+        "total": 8320.26
+      },
+      {
+        "nome": "MK TINTAS LTDA ME",
+        "cnpj": "18.493.434/0001-36",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 7297.49
+      },
+      {
+        "nome": "MARCIEL DE JESUS SANTOS",
+        "cnpj": "54.999.103/0001-36",
+        "uf": "GO",
+        "qtd": 7,
+        "total": 7189.51
+      },
+      {
+        "nome": "GLP CONSTRUCOES LTDA",
+        "cnpj": "29.024.468/0001-06",
+        "uf": "DF",
+        "qtd": 10,
+        "total": 7150.31
+      },
+      {
+        "nome": "DISTRITAL COMERCIO DE TINTAS LTDA ME",
+        "cnpj": "23.781.742/0001-05",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 7123.08
+      },
+      {
+        "nome": "ALESSANDRO MENDES DA COSTA",
+        "cnpj": "10.784.693/0001-04",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 7097.3
+      },
+      {
+        "nome": "RVA BRASILIA CONTRUCOES  LTDA",
+        "cnpj": "26.392.234/0001-15",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 6350.14
+      },
+      {
+        "nome": "VELARY PREMIUM AUTO CENTER LTDA",
+        "cnpj": "43.943.625/0001-08",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 6332.13
+      },
+      {
+        "nome": "MACCAN ATACADISTA DE TINTAS AUTOMOTIVAS LTDA",
+        "cnpj": "47.223.020/0001-95",
+        "uf": "DF",
+        "qtd": 6,
+        "total": 6170.77
+      },
+      {
+        "nome": "DISCOVERY COMERCIO VAREJISTA & SERVICOS DE ELETROELETRONICOS",
+        "cnpj": "12.868.775/0002-43",
+        "uf": "DF",
+        "qtd": 6,
+        "total": 6113.32
+      },
+      {
+        "nome": "MANOEL J. BEZERRA ALEXANDRE LTDA",
+        "cnpj": "28.162.034/0001-00",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 5613.49
+      },
+      {
+        "nome": "LR COMERCIO DE TINTAS LTDA",
+        "cnpj": "19.406.819/0001-81",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 5560.27
+      },
+      {
+        "nome": "RS COMERCIO DE TINTAS E FERRAMENTAS LTDA",
+        "cnpj": "35.145.250/0001-02",
+        "uf": "BA",
+        "qtd": 1,
+        "total": 5454.06
+      },
+      {
+        "nome": "COLORADO TINTAS LTDA",
+        "cnpj": "52.803.967/0001-05",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 5260.48
+      },
+      {
+        "nome": "RVA CONSTRUCOES E EMPREENDIMENTOS EIRELI",
+        "cnpj": "20.936.189/0001-36",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 5233.08
+      },
+      {
+        "nome": "ELLOS INDUSTRIA E COMERCIO DE MOVEIS LTDA",
+        "cnpj": "12.680.125/0001-99",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 5196
+      },
+      {
+        "nome": "RM BOMBAS MOTORES E SERVICOS LTDA",
+        "cnpj": "63.167.113/0001-04",
+        "uf": "GO",
+        "qtd": 3,
+        "total": 5145.26
+      },
+      {
+        "nome": "DISTRITO FERRAGENS LTDA",
+        "cnpj": "50.575.932/0001-30",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 5053.43
+      },
+      {
+        "nome": "COMERCIO DE TINTAS D& A LTDA",
+        "cnpj": "04.302.096/0001-01",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 5025.38
+      },
+      {
+        "nome": "RICARDO DE SOUZA O. MACARIO",
+        "cnpj": "30.461.163/0001-32",
+        "uf": "DF",
+        "qtd": 5,
+        "total": 4945.77
+      },
+      {
+        "nome": "SOLAR COMERCIO DE TINTAS CRISTALINA LTDA",
+        "cnpj": "65.849.559/0001-36",
+        "uf": "GO",
+        "qtd": 5,
+        "total": 4943.76
+      },
+      {
+        "nome": "RIACHO TINTAS LTDA",
+        "cnpj": "03.073.454/0005-04",
+        "uf": "DF",
+        "qtd": 5,
+        "total": 4921.74
+      },
+      {
+        "nome": "BOREAL TINTAS AUTOMOTIVAS LTDA",
+        "cnpj": "43.175.781/0001-68",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 4887.48
+      },
+      {
+        "nome": "MS ACESSIBILIDADE E  COMUNICACAO EIRELI",
+        "cnpj": "23.593.765/0001-88",
+        "uf": "DF",
+        "qtd": 7,
+        "total": 4779.94
+      },
+      {
+        "nome": "SOF NORTE PECAS E TINTAS AUTOMOTIVAS LTDA",
+        "cnpj": "07.845.996/0001-85",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 4689.16
+      },
+      {
+        "nome": "UNIMAN CONSTRUCOES EIRELI.",
+        "cnpj": "11.866.924/0001-91",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 4468.38
+      },
+      {
+        "nome": "IMPERIO DAS TINTAS E CONSTRUTORA LTDA",
+        "cnpj": "35.502.010/0001-00",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 4434.38
+      },
+      {
+        "nome": "R.P.A CONSTRUTORA E SERVICOS TERCEIRIZADOS LTDA",
+        "cnpj": "28.313.205/0001-46",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 4377.8
+      },
+      {
+        "nome": "AUTO REFORMADORA JL LTDA",
+        "cnpj": "11.028.380/0001-99",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 4308.44
+      },
+      {
+        "nome": "NB COMERCIAL DE TINTAS LTDA",
+        "cnpj": "03.651.611/0001-98",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 4207.7
+      },
+      {
+        "nome": "ALTERNATINTAS MATERIAIS PARA CONSTRUCAO LTDA ME",
+        "cnpj": "37.108.966/0002-38",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 4142.87
+      },
+      {
+        "nome": "WA SALES BRASILIA LTDA",
+        "cnpj": "20.930.297/0001-00",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 4127.52
+      },
+      {
+        "nome": "DNR TINTAS AUTOMOTIVAS EIRELI",
+        "cnpj": "32.911.866/0001-40",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 4105.1
+      },
+      {
+        "nome": "L. A. LOPES & J. P. DE SOUSA LTDA",
+        "cnpj": "51.324.545/0001-94",
+        "uf": "DF",
+        "qtd": 5,
+        "total": 4100.1
+      },
+      {
+        "nome": "GALPAO COMERCIO E CONSTRUCOES",
+        "cnpj": "35.826.428/0001-72",
+        "uf": "DF",
+        "qtd": 6,
+        "total": 4005.73
+      },
+      {
+        "nome": "MR PRESTADORA DE SERVICO  LTDA",
+        "cnpj": "12.996.510/0001-40",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 3930.65
+      },
+      {
+        "nome": "WALIRES UCHOA LOPES",
+        "cnpj": "55.055.702/0001-64",
+        "uf": "DF",
+        "qtd": 6,
+        "total": 3915.19
+      },
+      {
+        "nome": "GOLD TINTAS LTDA",
+        "cnpj": "42.752.323/0001-81",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 3783.64
+      },
+      {
+        "nome": "FENIX ELETRICA E HIDRAULICA LTDA",
+        "cnpj": "43.256.342/0001-80",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 3673.74
+      },
+      {
+        "nome": "PATRICIA CARLA CARLA MENDES",
+        "cnpj": "29.266.193/0001-09",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 3601.12
+      },
+      {
+        "nome": "SAO JOSE MATERIAL ELETRICO, HIDRAULICO E SERVICOS LTDA",
+        "cnpj": "46.035.311/0001-97",
+        "uf": "DF",
+        "qtd": 5,
+        "total": 3595.61
+      },
+      {
+        "nome": "PERFIL FERRAGENS, FERRAMENTAS LTDA",
+        "cnpj": "43.407.532/0001-50",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 3395.05
+      },
+      {
+        "nome": "REPARUS AUTOMOTIVO MULTIMARCAS LTDA",
+        "cnpj": "12.220.107/0001-24",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 3364.86
+      },
+      {
+        "nome": "ELITE ESTETICA  AUTOMOTIVA LTDA",
+        "cnpj": "50.280.719/0001-00",
+        "uf": "BA",
+        "qtd": 2,
+        "total": 3340.22
+      },
+      {
+        "nome": "CMA PINTURAS LTDA",
+        "cnpj": "54.093.420/0001-99",
+        "uf": "DF",
+        "qtd": 6,
+        "total": 3302.92
+      },
+      {
+        "nome": "LIMA COMERCIO VAREJISTA DE FERRAGENS LTDA",
+        "cnpj": "06.980.870/0001-50",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 3296.01
+      },
+      {
+        "nome": "MAGICOLOR METALURGICA",
+        "cnpj": "38.038.543/0001-70",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 3242.43
+      },
+      {
+        "nome": "J & G OLIVEIRA COMERCIO DE TINTAS LTDA",
+        "cnpj": "50.156.427/0001-51",
+        "uf": "DF",
+        "qtd": 6,
+        "total": 3197.73
+      },
+      {
+        "nome": "SUPORTE EXTINTORES LTDA",
+        "cnpj": "11.200.364/0001-31",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 3177.27
+      },
+      {
+        "nome": "CLEIDE DE LOURDES COSTA RODRIGUES",
+        "cnpj": "61.602.465/0001-07",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 3127.19
+      },
+      {
+        "nome": "VENANCIO OFICIO DA MADEIRA COMERCIO DE PRODUTOS P CASA E JAR",
+        "cnpj": "36.226.893/0001-35",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 3015.53
+      },
+      {
+        "nome": "PAULINA SILVA ALEXANDRE",
+        "cnpj": "41.805.539/0001-03",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 2899.7
+      },
+      {
+        "nome": "FAVORITA COMERCIO DE TINTAS LTDA",
+        "cnpj": "36.752.710/0001-15",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 2811.35
+      },
+      {
+        "nome": "CASTELO DAS CORES COM. TINTAS LTDA",
+        "cnpj": "34.360.009/0001-25",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 2792.6
+      },
+      {
+        "nome": "UNIVERSO DOS EQUIPAMENTOS LTDA",
+        "cnpj": "48.534.765/0001-38",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 2675.22
+      },
+      {
+        "nome": "TELAS E TOLDOS - COMERCIO E INDUSTRIA LTDA",
+        "cnpj": "16.758.395/0001-26",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 2665.48
+      },
+      {
+        "nome": "RR MATERIAIS DE CONSTRUCAO E TINTAS LTDA",
+        "cnpj": "59.818.721/0001-56",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 2619.9
+      },
+      {
+        "nome": "FLASH TINTAS EIRELI",
+        "cnpj": "37.768.902/0001-82",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 2580.14
+      },
+      {
+        "nome": "NYL FERRAGENS LTDA",
+        "cnpj": "14.372.578/0001-83",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 2561.86
+      },
+      {
+        "nome": "A LASER MICHAEL LTDA",
+        "cnpj": "24.512.862/0001-61",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 2535.95
+      },
+      {
+        "nome": "PARANOA TINTAS LTDA",
+        "cnpj": "18.325.711/0001-00",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 2521.55
+      },
+      {
+        "nome": "R.A.J GESTAO DE NEGOCIOS LTDA",
+        "cnpj": "56.109.434/0001-89",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 2460.52
+      },
+      {
+        "nome": "EDMARIO SOUZA CHAGAS LTDA",
+        "cnpj": "36.548.633/0001-86",
+        "uf": "BA",
+        "qtd": 1,
+        "total": 2441.49
+      },
+      {
+        "nome": "SANTA FE COMERCIO DE TINTAS LTDA",
+        "cnpj": "18.091.531/0001-00",
+        "uf": "GO",
+        "qtd": 4,
+        "total": 2440.2
+      },
+      {
+        "nome": "TVA CONSTRUCAO EIRELI",
+        "cnpj": "09.366.582/0001-07",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 2367.91
+      },
+      {
+        "nome": "ABS TINTAS 2 LTDA",
+        "cnpj": "56.942.547/0001-60",
+        "uf": "GO",
+        "qtd": 5,
+        "total": 2253.35
+      },
+      {
+        "nome": "WM COMERCIO DE TINTAS LTDA",
+        "cnpj": "01.683.858/0001-60",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 2251.14
+      },
+      {
+        "nome": "SP LANTERNAGEM E PINTURA LTDA ME",
+        "cnpj": "12.187.458/0001-80",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 2240.58
+      },
+      {
+        "nome": "TRADO ENGENHARIA CONSTRUCOES LTDA",
+        "cnpj": "41.171.967/0001-13",
+        "uf": "DF",
+        "qtd": 6,
+        "total": 2240.5
+      },
+      {
+        "nome": "MELO & SILVA - COPIADORA E PAPELARIA LTDA",
+        "cnpj": "10.496.037/0001-06",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 2211.87
+      },
+      {
+        "nome": "FRANCISCO WILSON DA COSTA CAVALCANTE",
+        "cnpj": "37.926.369/0001-30",
+        "uf": "BA",
+        "qtd": 1,
+        "total": 2164.87
+      },
+      {
+        "nome": "RS AUTO COMERCIO DE TINTAS AUTOMOTIVAS EIRELI",
+        "cnpj": "31.702.304/0001-24",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 2151.79
+      },
+      {
+        "nome": "DAUTO COMERCIO DE PRODUTO",
+        "cnpj": "46.675.949/0001-92",
+        "uf": "GO",
+        "qtd": 3,
+        "total": 2128.71
+      },
+      {
+        "nome": "V A DA COSTA TOLDOS",
+        "cnpj": "32.169.241/0001-55",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 2107.29
+      },
+      {
+        "nome": "MUNDO DAS TINTAS LTDA",
+        "cnpj": "60.761.507/0001-90",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 2087.92
+      },
+      {
+        "nome": "NOVA IMPERIO DF SOM E ACESSORIOS LTDA",
+        "cnpj": "23.615.737/0001-14",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1977.83
+      },
+      {
+        "nome": "JHS COMERCIO DE TINTAS LTDA EPP",
+        "cnpj": "15.314.704/0001-06",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1975.96
+      },
+      {
+        "nome": "BRASIL COMERCIO DE MATERIAIS DE HIDRAULICA E ELETRICA",
+        "cnpj": "49.875.688/0001-42",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1961.41
+      },
+      {
+        "nome": "AGATA GOMES MARTINS",
+        "cnpj": "60.213.875/0001-01",
+        "uf": "MG",
+        "qtd": 1,
+        "total": 1931.39
+      },
+      {
+        "nome": "SD COMERCIO DE TINTAS LTDA",
+        "cnpj": "14.261.243/0001-98",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 1916.54
+      },
+      {
+        "nome": "51.77.196 MONICA ANDRADE DA SILVA MELO",
+        "cnpj": "51.779.196/0001-03",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 1909.72
+      },
+      {
+        "nome": "NOEMIA DE AGUIAR BRANDAO DOS SANTOS",
+        "cnpj": "51.508.532/0001-75",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1909.12
+      },
+      {
+        "nome": "LETICIA MENEZES DE LIMA",
+        "cnpj": "55.957.421/0001-05",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 1900.05
+      },
+      {
+        "nome": "UTB UNIAO TRANSPORTE BRASILIA LTDA",
+        "cnpj": "37.098.480/0001-85",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 1874.42
+      },
+      {
+        "nome": "CLEIDIMAR MENEZES DE SOUZA",
+        "cnpj": "35.450.509/0001-10",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1828.66
+      },
+      {
+        "nome": "ALIPOX PINTURA ELETROSTATICA LTDA",
+        "cnpj": "22.872.165/0001-96",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 1790.88
+      },
+      {
+        "nome": "RAMOS & MARINHO FUNILARIA E PINTURA LTDA",
+        "cnpj": "45.546.064/0001-20",
+        "uf": "BA",
+        "qtd": 1,
+        "total": 1786.7
+      },
+      {
+        "nome": "JVC INDUNSTRIA COM.ATACADO LOG E DIST. DE ALIMENTOS LTDA",
+        "cnpj": "37.145.968/0001-16",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1690.42
+      },
+      {
+        "nome": "A R F DA CUNHA",
+        "cnpj": "18.937.225/0001-34",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1669.86
+      },
+      {
+        "nome": "JULIO CEZAR VIEIRA DE AQUINO 03613327694",
+        "cnpj": "33.058.738/0001-69",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1664.07
+      },
+      {
+        "nome": "NILSON CAETANO ROSA 221.928.911-72",
+        "cnpj": "44.851.622/0001-07",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 1662.8
+      },
+      {
+        "nome": "VANILDO MENDES VIEIRA",
+        "cnpj": "47.028.583/0001-22",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1655.91
+      },
+      {
+        "nome": "NILTON JOSE DOS REIS ME",
+        "cnpj": "03.009.830/0001-78",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1652.09
+      },
+      {
+        "nome": "JAILSON ALVES",
+        "cnpj": "13.162.098/0001-25",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1565.52
+      },
+      {
+        "nome": "TOK COMERCIO DE TINTAS LTDA",
+        "cnpj": "49.774.221/0001-06",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1544.86
+      },
+      {
+        "nome": "TOP SAUDE ACADEMIA LTDA",
+        "cnpj": "11.085.266/0001-09",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1544.32
+      },
+      {
+        "nome": "ATLAS CASA E CONSTRUCAO LTDA",
+        "cnpj": "57.317.239/0001-07",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1515.44
+      },
+      {
+        "nome": "HERNANE VIDA E SILVA 02986890148",
+        "cnpj": "39.865.617/0001-05",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 1514.92
+      },
+      {
+        "nome": "SILVIA M. DAS NEVES & JOAQUIM A. O. GOMES LTDA",
+        "cnpj": "54.426.280/0001-23",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1494.1
+      },
+      {
+        "nome": "PAULO DA SILVA  ALVES",
+        "cnpj": "41.329.150/0001-20",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1475.99
+      },
+      {
+        "nome": "JRS CONSTRUCOES E REFORMAS LTDA",
+        "cnpj": "19.794.359/0001-06",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1462.04
+      },
+      {
+        "nome": "CAVALCANTE E SOUSA COMERCIO DE TINTAS LTDA",
+        "cnpj": "45.341.944/0001-60",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 1419.45
+      },
+      {
+        "nome": "FRANCISCO PEDRO DE ALENCAR LTDA",
+        "cnpj": "55.136.678/0001-98",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1398.2
+      },
+      {
+        "nome": "AKZO NOBEL LTDA",
+        "cnpj": "60.561.719/0022-58",
+        "uf": "SP",
+        "qtd": 1,
+        "total": 1382.35
+      },
+      {
+        "nome": "CDM DISTRIBUIDORA E COMERCIO LTDA",
+        "cnpj": "23.028.564/0001-38",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1360.43
+      },
+      {
+        "nome": "BRUNA DE SOUZA OLIVEIRA",
+        "cnpj": "66.879.356/0001-55",
+        "uf": "GO",
+        "qtd": 3,
+        "total": 1336.99
+      },
+      {
+        "nome": "COMERCIAL G A DE TINTAS LTDA",
+        "cnpj": "35.841.190/0001-54",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1327.24
+      },
+      {
+        "nome": "DF COMERCIO DE UTENSILIOS PARA TRANSPORTE DE ALIMENTOS LTDA",
+        "cnpj": "32.878.818/0001-06",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1305.08
+      },
+      {
+        "nome": "MARIA CRISTINA SANTOS DA SILVA ME",
+        "cnpj": "10.242.528/0001-20",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1284.49
+      },
+      {
+        "nome": "EXTINFOGO PREVENCAO E COMBATE A INCENDIO LTDA",
+        "cnpj": "64.648.773/0001-61",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1281.57
+      },
+      {
+        "nome": "KALILA MELANE SANTOS FARIAS",
+        "cnpj": "57.251.396/0001-67",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 1267.47
+      },
+      {
+        "nome": "SERGIO JOSE ALVES DE SANTANA",
+        "cnpj": "63.997.982/0001-58",
+        "uf": "BA",
+        "qtd": 1,
+        "total": 1255.74
+      },
+      {
+        "nome": "VANESSA PEREIRA MATEUS COMERCIAL LTDA",
+        "cnpj": "33.631.983/0001-13",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 1226.17
+      },
+      {
+        "nome": "FRANCISCO DA CRUZ LIMA",
+        "cnpj": "50.827.812/0001-83",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 1223.61
+      },
+      {
+        "nome": "MLM ELETRICA E HIDRAULICA LTDA",
+        "cnpj": "60.369.619/0001-08",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 1208.11
+      },
+      {
+        "nome": "ATUAL COMERCIO DE PRODUTOS DE LIMPEZA E ALIMENTOS LTDA",
+        "cnpj": "10.946.351/0001-43",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1149
+      },
+      {
+        "nome": "FIBER CLASS EIRELI",
+        "cnpj": "26.952.106/0001-89",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 1119.91
+      },
+      {
+        "nome": "LIGTH METALURGICA LTDA",
+        "cnpj": "57.985.162/0001-43",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1109.26
+      },
+      {
+        "nome": "FC CONSTRUCOES E REFORMAS LTDA",
+        "cnpj": "21.544.021/0001-48",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1071.2
+      },
+      {
+        "nome": "LEO COMERCIO VAREJISTA DE TINTAS E MAT DE CONSTRUCAO",
+        "cnpj": "37.872.502/0001-12",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 1042.24
+      },
+      {
+        "nome": "ADEODATO & CAMARA LTDA EPP",
+        "cnpj": "10.951.777/0001-95",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 1038.87
+      },
+      {
+        "nome": "VANDERLEIDE ECILDA DE CARVALHO PESSOA",
+        "cnpj": "31.289.467/0001-27",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1033.34
+      },
+      {
+        "nome": "AFONSO TINTAS LTDA",
+        "cnpj": "54.291.577/0001-29",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 1032.2
+      },
+      {
+        "nome": "EDMAR ALEXANDRE DA SILVA",
+        "cnpj": "23.946.420/0001-60",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 1027.64
+      },
+      {
+        "nome": "H2O SERVICE MANUTENCAO E LIMPEZA LTDA",
+        "cnpj": "30.639.051/0001-29",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1015.94
+      },
+      {
+        "nome": "ARCOM S/A",
+        "cnpj": "25.769.266/0024-10",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 1004.84
+      },
+      {
+        "nome": "LEONARDO BISPO DE CARVALHO",
+        "cnpj": "36.451.666/0001-03",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 1003.27
+      },
+      {
+        "nome": "CONCRETO TINTAS LTDA - EPP",
+        "cnpj": "37.097.342/0001-81",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 988.72
+      },
+      {
+        "nome": "MULLER MATHEUS MARQUES DE OLIVEIRA",
+        "cnpj": "36.513.289/0001-90",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 983.75
+      },
+      {
+        "nome": "VGS COMERCIO VAREJISTA DE MATERIAL DE CONSTRUCAO LTDA",
+        "cnpj": "34.903.950/0001-48",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 962.72
+      },
+      {
+        "nome": "CONDE INDUSTRIA E COMERCIO DE MATERIAL DE CONSTRUCAO LTDA",
+        "cnpj": "41.710.054/0001-28",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 954.68
+      },
+      {
+        "nome": "BELLO URBAN INDUSTRIA DE MOVEIS LTDA",
+        "cnpj": "67.822.958/0001-39",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 921.24
+      },
+      {
+        "nome": "L FORT INDUSTRIA E METALURGICA LTDA",
+        "cnpj": "05.604.487/0001-35",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 921
+      },
+      {
+        "nome": "FC OBRAS E REFORMAS LTDA",
+        "cnpj": "58.010.912/0001-24",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 909.08
+      },
+      {
+        "nome": "NOVA FAST COMERCIO DE TINTAS LTDA",
+        "cnpj": "43.973.583/0001-40",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 908.22
+      },
+      {
+        "nome": "ELIZANDRA ASSIS DA SILVA LTDA",
+        "cnpj": "46.675.133/0001-69",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 907.8
+      },
+      {
+        "nome": "DUKAR IMPLEMENTOS RODOVIARIOS LTDA",
+        "cnpj": "09.213.546/0001-03",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 905.6
+      },
+      {
+        "nome": "LINKCAR MULTIMARCAS COMERCIO DE VEICULOS LTDA",
+        "cnpj": "34.907.579/0001-92",
+        "uf": "DF",
+        "qtd": 8,
+        "total": 890.34
+      },
+      {
+        "nome": "RUI ROCHA QUEIROZ",
+        "cnpj": "62.049.569/0001-07",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 868.1
+      },
+      {
+        "nome": "ERICO AUGUSTO DE SOUZA",
+        "cnpj": "30.655.167/0001-51",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 857.07
+      },
+      {
+        "nome": "CLEBER PINTURAS",
+        "cnpj": "33.510.757/0001-84",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 854.64
+      },
+      {
+        "nome": "OLIVEIRA COMERCIO DE TINTAS LTDA",
+        "cnpj": "35.493.060/0001-78",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 850.59
+      },
+      {
+        "nome": "SPL COMERCIAL DE ALIMENTOS LTDA",
+        "cnpj": "44.931.229/0001-15",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 831.71
+      },
+      {
+        "nome": "AJ PEREIRA  FARIAS ME",
+        "cnpj": "27.479.180/0001-92",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 829.52
+      },
+      {
+        "nome": "D PRIMEIRA COMERCIO DE FERRAMENTAS E PARAFUSOS LTDA",
+        "cnpj": "28.077.991/0001-20",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 809.25
+      },
+      {
+        "nome": "AGE ARMARIOS PARA GARAGEM LTDA.",
+        "cnpj": "27.115.734/0001-72",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 793.66
+      },
+      {
+        "nome": "CARLOS MARCOS BARBOSA DE OLIVEIRA JUNIOR",
+        "cnpj": "22.749.579/0001-22",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 766.69
+      },
+      {
+        "nome": "JOZIEL DIAS DE MATOS 92672256187",
+        "cnpj": "43.754.333/0001-19",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 748.49
+      },
+      {
+        "nome": "AMERICAN SOLUOCES PORTAS LTDA",
+        "cnpj": "45.710.664/0001-82",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 745.79
+      },
+      {
+        "nome": "ELECTRA MOVEIS LTDA",
+        "cnpj": "45.841.367/0001-76",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 729.96
+      },
+      {
+        "nome": "J V DE OLIVEIRA MAGALHAES LTDA",
+        "cnpj": "58.174.456/0001-58",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 715.65
+      },
+      {
+        "nome": "MARCOS ROBERTO PEREIRA DE FARIA EIRELI",
+        "cnpj": "22.315.412/0001-53",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 677.08
+      },
+      {
+        "nome": "SANTIAGO COMERCIO DE MATERIAL ELETRICO E FERRAGENS LTDA",
+        "cnpj": "07.202.951/0001-92",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 674.01
+      },
+      {
+        "nome": "SM TINTAS LTDA",
+        "cnpj": "29.726.147/0001-45",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 652
+      },
+      {
+        "nome": "FABIANO NASCIMENTO CHMURZYNSKI",
+        "cnpj": "20.938.720/0001-00",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 650.47
+      },
+      {
+        "nome": "W E W QUEIROZ TINTAS LIMITADA",
+        "cnpj": "42.009.786/0001-58",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 620.79
+      },
+      {
+        "nome": "WL CARROCERIAS METALICAS, FABRICACAO, COMERCIO E MANUTENCAO",
+        "cnpj": "31.904.655/0001-18",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 609.48
+      },
+      {
+        "nome": "MICAELLE SOUSA COSTA",
+        "cnpj": "52.653.731/0001-30",
+        "uf": "GO",
+        "qtd": 5,
+        "total": 607.52
+      },
+      {
+        "nome": "FERMATEC FERRAMENTAS E TECNICAS LTDA",
+        "cnpj": "05.413.565/0001-14",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 596
+      },
+      {
+        "nome": "CASA DO ELETRICISTA MATERIAIS ELETRICOS E HIDRAULICOS LTDA",
+        "cnpj": "50.668.830/0001-60",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 586.06
+      },
+      {
+        "nome": "MERCADO MINA GELADA LTDA",
+        "cnpj": "42.389.034/0001-60",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 575.89
+      },
+      {
+        "nome": "POLAR TINTAS LAGO SUL",
+        "cnpj": "02.309.036/0001-87",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 574.7
+      },
+      {
+        "nome": "ITALIA CARRETAS & TRAILERS LTDA",
+        "cnpj": "35.239.619/0001-38",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 562.63
+      },
+      {
+        "nome": "PAULO VICTOR RODRIGUES FERNANDES ME",
+        "cnpj": "08.888.669/0001-73",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 534.36
+      },
+      {
+        "nome": "M. D. DE SOUZA",
+        "cnpj": "42.449.222/0001-36",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 532.43
+      },
+      {
+        "nome": "DF MOVEIS FABRICACAO E COMERCIO LTDA",
+        "cnpj": "63.391.051/0001-01",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 530.51
+      },
+      {
+        "nome": "OCTAVIO A DE SOUZA ELETRICA E HIDRAULICA",
+        "cnpj": "51.957.667/0001-18",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 512.94
+      },
+      {
+        "nome": "PH SERVICOS AUTOMOTIVOS LTDA",
+        "cnpj": "44.302.134/0001-32",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 469.97
+      },
+      {
+        "nome": "AJ CONSTRUCAO LTDA",
+        "cnpj": "44.946.975/0001-82",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 453.51
+      },
+      {
+        "nome": "DOBRACO COMERCIO DE CORTE & DOBRA DE CHAPA LTDA",
+        "cnpj": "19.308.000/0001-81",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 449.48
+      },
+      {
+        "nome": "R&L PUBLICIDADE E COM. DE MOVEIS EIRELI",
+        "cnpj": "10.807.379/0001-08",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 442.48
+      },
+      {
+        "nome": "STATUS PRESTACAO DE SERVICOS ELETRICOS ,REFORMAS LTDA",
+        "cnpj": "51.999.567/0001-54",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 429.94
+      },
+      {
+        "nome": "EDIVANIO CONCEICAO DA SILVA 00291474179",
+        "cnpj": "18.142.666/0001-40",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 395.09
+      },
+      {
+        "nome": "FABRICIO RODRIGUES SANTOS 01192878116",
+        "cnpj": "18.404.299/0001-05",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 389.05
+      },
+      {
+        "nome": "M C FREITAS MATERIAIS DE CONSTRUCOES EIRELI ME",
+        "cnpj": "20.935.049/0001-43",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 373.3
+      },
+      {
+        "nome": "DURVAL DO PRADO MASCARENHAS",
+        "cnpj": "17.058.026/0001-93",
+        "uf": "MG",
+        "qtd": 1,
+        "total": 364.07
+      },
+      {
+        "nome": "LUX COMERCIO DE TINTAS LTDA EPP",
+        "cnpj": "19.595.114/0001-50",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 358.48
+      },
+      {
+        "nome": "ENGETEC - TECNOLOGIA EM PREVENCAO E CONTROLE DE INCENDIO LTD",
+        "cnpj": "01.721.142/0001-00",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 310.66
+      },
+      {
+        "nome": "LILIANE SANTANA ANDRADES BESSA",
+        "cnpj": "24.360.063/0001-17",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 307
+      },
+      {
+        "nome": "RIOCOR COMERCIAL DE TINTAS LTDA",
+        "cnpj": "03.706.713/0001-63",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 297.65
+      },
+      {
+        "nome": "FAUSTO HENRIQUE SILVEIRA CARVALHO",
+        "cnpj": "35.949.851/0001-60",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 266.53
+      },
+      {
+        "nome": "BEAPLAST INDUSTRIA E COMERCIO LTDA",
+        "cnpj": "33.667.336/0001-61",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 256.54
+      },
+      {
+        "nome": "SOLUCAO CONSERTO DE TENIS E CALCADOS EM GERAL LTDA ME",
+        "cnpj": "10.623.094/0001-09",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 251.6
+      },
+      {
+        "nome": "PAULO ROBERTO VIANA BARBOSA FABRICACAO E COMERCIO DE MATERIA",
+        "cnpj": "35.162.420/0001-59",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 225.76
+      },
+      {
+        "nome": "POLAR TINTAS ASA NORTE COMERCIO DE TINTAS LTDA",
+        "cnpj": "66.993.824/0001-18",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 224.53
+      },
+      {
+        "nome": "W. PEREIRA DO AMARAL LTDA",
+        "cnpj": "62.024.172/0001-52",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 222.72
+      },
+      {
+        "nome": "JL ENGENHARIA E CONSULTORIA LTDA",
+        "cnpj": "35.351.104/0001-25",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 220.1
+      },
+      {
+        "nome": "GRAFFITTI & MIRANDA SOLUCOES LTDA",
+        "cnpj": "41.971.462/0001-33",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 205.46
+      },
+      {
+        "nome": "MARTINELLI CONSULTORIA EM NOVAS TECNOLOGIAS LTDA",
+        "cnpj": "26.592.028/0001-59",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 198.54
+      },
+      {
+        "nome": "DIVINA IVONEIDE GUIMAROES SOARES",
+        "cnpj": "151.573.261-49",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 191.1
+      },
+      {
+        "nome": "GABRIEL FERNANDES SILVA",
+        "cnpj": "52.150.859/0001-80",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 186.24
+      },
+      {
+        "nome": "F & M TINTAS AUTOMOTIVAS LTDA",
+        "cnpj": "55.608.869/0001-05",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 151.66
+      },
+      {
+        "nome": "R O DA SILVA ERCO TINTAS E MATERIAIS DE CONSTRUCAO",
+        "cnpj": "19.072.473/0001-22",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 115.13
+      },
+      {
+        "nome": "ALEXANDRE SANTOS DE FARIAS",
+        "cnpj": "36.057.454/0001-46",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 106.48
+      },
+      {
+        "nome": "YURI D AGUIAR SIQUEIRA DE LEMOS",
+        "cnpj": "49.474.721/0001-22",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 102.9
+      },
+      {
+        "nome": "GABRIEL COSTA GONCALVES",
+        "cnpj": "64.127.281/0001-20",
+        "uf": "GO",
+        "qtd": 3,
+        "total": 93.77
+      },
+      {
+        "nome": "VASCONCELOS PRODUTOS AUTOMOTIVOS LTDA",
+        "cnpj": "28.289.442/0001-19",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 43.9
+      },
+      {
+        "nome": "OSNIR DE ANDRADE LIMA",
+        "cnpj": "50.725.103/0001-97",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 35.06
+      },
+      {
+        "nome": "WLL TRANSPORTES LTDA",
+        "cnpj": "27.374.359/0001-85",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 12.94
+      },
+      {
+        "nome": "PRIMAVIA COMERCIO DE VEICULOS E PECAS AUTOMOTIVAS",
+        "cnpj": "35.170.602/0001-71",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 0
+      }
+    ],
+    "clientesTop10": [
+      {
+        "nome": "DT TINTAS COMERCIO VAREJISTA LIMITADA (LUZIANIA)",
+        "cnpj": "40.994.045/0004-96",
+        "uf": "GO",
+        "qtd": 44,
+        "total": 300363.17
+      },
+      {
+        "nome": "DT TINTAS COMERCIO VAREJISTA LIMITADA (CEILANDIA)",
+        "cnpj": "40.994.045/0001-43",
+        "uf": "DF",
+        "qtd": 111,
+        "total": 187162.35
+      },
+      {
+        "nome": "DT TINTAS COMERCIO VAREJISTA LIMITADA (GUARA)",
+        "cnpj": "40.994.045/0003-05",
+        "uf": "DF",
+        "qtd": 82,
+        "total": 164816.19
+      },
+      {
+        "nome": "DT TINTAS COMERCIO VAREJISTA LIMITADA (SIA)",
+        "cnpj": "40.994.045/0002-24",
+        "uf": "DF",
+        "qtd": 75,
+        "total": 158657.85
+      },
+      {
+        "nome": "MAQCENTER MAQUINAS PARA CONSTRUCOES LTDA",
+        "cnpj": "37.131.364/0003-82",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 130291
+      },
+      {
+        "nome": "ETICA COMERCIO VAREJISTA DE TINTAS LTDA (UNAI)",
+        "cnpj": "04.744.446/0002-62",
+        "uf": "MG",
+        "qtd": 9,
+        "total": 109589.42
+      },
+      {
+        "nome": "MERCADO DAS TINTAS LTDA (GAMA)",
+        "cnpj": "72.628.407/0003-30",
+        "uf": "DF",
+        "qtd": 31,
+        "total": 97405.23
+      },
+      {
+        "nome": "CONTARPP ENGENHARIA S.A.",
+        "cnpj": "26.412.148/0001-27",
+        "uf": "DF",
+        "qtd": 7,
+        "total": 76133.34
+      },
+      {
+        "nome": "DAUTO PINTURA E MECANICA LTDA - TR 03",
+        "cnpj": "24.934.648/0002-84",
+        "uf": "DF",
+        "qtd": 5,
+        "total": 70161.67
+      },
+      {
+        "nome": "DAUTO TINTAS PARACATU LTDA",
+        "cnpj": "33.304.308/0001-80",
+        "uf": "MG",
+        "qtd": 11,
+        "total": 53653.42
+      }
+    ],
+    "dtTintasTotal": 810999.56
+  }
+}

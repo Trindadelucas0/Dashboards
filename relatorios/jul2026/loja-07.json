@@ -1,0 +1,1055 @@
+{
+  "empresa": "loja",
+  "competencia": "2026-07",
+  "meta": {
+    "companyEntradas": "96 - LOJA DAS MAQUINAS E FERRAMENTAS LTDA",
+    "companySaidas": "96 - LOJA DAS MAQUINAS E FERRAMENTAS LTDA",
+    "cnpjEntradas": "13983066000190",
+    "cnpjSaidas": "13983066000190",
+    "periodEntradas": "01/07/2026 até 31/07/2026",
+    "periodSaidas": "01/07/2026 até 31/07/2026",
+    "totalGeralEntradasExcel": 461735.82,
+    "totalGeralSaidasExcel": 731914.74,
+    "somaEntradas": 461735.82,
+    "somaSaidas": 731914.74,
+    "nfsEntradas": 1133,
+    "nfsSaidas": 3148,
+    "deltaEntradas": 0,
+    "deltaSaidas": 0
+  },
+  "pack": {
+    "competencia": "2026-07",
+    "competenciaLabel": "Jul / 2026",
+    "monthShort": "Jul",
+    "files": {
+      "entradas": "Entrada por fornecedor loja das maquinas 072026.xls",
+      "saidas": "Saida por cliente loja das maquinas 072026.xls"
+    },
+    "receitaBruta": 731914.74,
+    "totalCompras": 461735.82,
+    "deducoes": null,
+    "dedPct": null,
+    "pisRecolher": null,
+    "cofinsRecolher": null,
+    "icmsDebito": null,
+    "icmsCredito": null,
+    "icmsRecolher": null,
+    "composicao": [],
+    "cfopEntradas": [
+      {
+        "cfop": "1-102",
+        "qtd": 218,
+        "total": 373112.06,
+        "fornecedores": [
+          {
+            "nome": "BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA",
+            "cnpj": "52.005.382/0001-40",
+            "uf": "DF",
+            "qtd": 157,
+            "total": 337560.13
+          },
+          {
+            "nome": "NOVA CASA DIST. MAT. P/ CONST. S/A",
+            "cnpj": "74.200.403/0002-00",
+            "uf": "DF",
+            "qtd": 6,
+            "total": 7212.61
+          },
+          {
+            "nome": "DISTRIBUIDORA DE PECAS KAMPEAO LTDA",
+            "cnpj": "38.060.430/0001-71",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 5682.5
+          },
+          {
+            "nome": "VESTE COMERCIO DE ROUPA E ARTIGOS PROMOCIONAIS EIRELI",
+            "cnpj": "32.233.978/0001-90",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 3137.2
+          },
+          {
+            "nome": "CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A",
+            "cnpj": "03.261.204/0001-74",
+            "uf": "DF",
+            "qtd": 5,
+            "total": 3054.3
+          },
+          {
+            "nome": "ITATIAIA COM DE MATERIAL PARA CONSTRUCAO LTDA",
+            "cnpj": "06.862.927/0001-17",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 2892.12
+          },
+          {
+            "nome": "FERROMIL COMERCIAL DE FERRAGENS LTDA EPP",
+            "cnpj": "13.467.965/0001-30",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 2353
+          },
+          {
+            "nome": "OPCAO ATACADISTA",
+            "cnpj": "17.244.285/0001-09",
+            "uf": "DF",
+            "qtd": 4,
+            "total": 1311.96
+          },
+          {
+            "nome": "JK MADEIRAS ATACADISTA LTDA",
+            "cnpj": "24.079.500/0001-29",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 1199.9
+          },
+          {
+            "nome": "EVOLUTE COMERCIO DE BRINDES LTDA.",
+            "cnpj": "27.398.370/0001-85",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 1040
+          },
+          {
+            "nome": "I. L. P. RIBEIRO FERRAGENS E FERRAMENTAS - ME",
+            "cnpj": "09.100.103/0001-06",
+            "uf": "DF",
+            "qtd": 4,
+            "total": 974.89
+          },
+          {
+            "nome": "CDM DISTRIBUIDORA E CORMERCIO EIRELI - EPP",
+            "cnpj": "23.028.564/0001-38",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 900
+          },
+          {
+            "nome": "JC LUBRIFICANTES AUTOMOTIVOS LTDA",
+            "cnpj": "04.146.921/0001-18",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 874.92
+          },
+          {
+            "nome": "MAGICOLOR MET.ELETRICA E ELETRONICA LTDA",
+            "cnpj": "38.038.543/0001-70",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 703.8
+          },
+          {
+            "nome": "MARIA DA CONCEICAO RIBEIRO SOARES",
+            "cnpj": "39.942.885/0001-83",
+            "uf": "DF",
+            "qtd": 14,
+            "total": 673.27
+          },
+          {
+            "nome": "ROSSI SOLUCOES DISTRIBUIDORA DE PROD DE SEG LTDA",
+            "cnpj": "09.472.954/0003-33",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 621.82
+          },
+          {
+            "nome": "AMAZONAS LONAS",
+            "cnpj": "36.697.549/0001-24",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 450
+          },
+          {
+            "nome": "ETITEC SOLUCOES INTELIGENTES LTDA",
+            "cnpj": "22.861.342/0001-39",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 390
+          },
+          {
+            "nome": "MUNDIAL CENTER ATACADISTA S/A",
+            "cnpj": "01.713.958/0003-54",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 356.45
+          },
+          {
+            "nome": "ARCOM S/A",
+            "cnpj": "25.769.266/0024-10",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 336.27
+          },
+          {
+            "nome": "L A DA SILVA VIDROS E FORRO 10507015428",
+            "cnpj": "35.376.291/0001-00",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 327.8
+          },
+          {
+            "nome": "HORUS S/A DISTRIBUIDORA DE SOLUCOES TECNOLOGICAS",
+            "cnpj": "02.677.045/0001-20",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 247.9
+          },
+          {
+            "nome": "S.A. ATACADISTA DE ALIMENTOS LTDA-02",
+            "cnpj": "07.738.069/0002-47",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 238.8
+          },
+          {
+            "nome": "SUPER FRIOS COM VAR E ATAC DE FRIOS E PROD ALIM LTDA ME",
+            "cnpj": "28.760.886/0001-90",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 110.7
+          },
+          {
+            "nome": "F&R COMERCIO E SERVICOS DE FERRAMENTAS LTDA",
+            "cnpj": "18.811.131/0001-14",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 90
+          },
+          {
+            "nome": "IDEAL SUPERMERCADOS LTDA",
+            "cnpj": "42.718.495/0001-39",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 70.99
+          },
+          {
+            "nome": "MARTINS COM SERV DISTR SA",
+            "cnpj": "43.214.055/0059-23",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 69.86
+          },
+          {
+            "nome": "RESTAURANTE E BAR CAPRICHO GAUCHO LTDA",
+            "cnpj": "34.161.244/0001-78",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 61.76
+          },
+          {
+            "nome": "MASTER PAO ALIMENTOS EIRELI",
+            "cnpj": "14.314.134/0001-91",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 58.97
+          },
+          {
+            "nome": "PAPELARIA SW LTDA ME",
+            "cnpj": "07.619.353/0001-13",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 49.4
+          },
+          {
+            "nome": "MILAZZO VEICULOS PECAS E SERVICOS LTDA",
+            "cnpj": "08.547.329/0013-12",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 29.86
+          },
+          {
+            "nome": "NOVACIA TECNOLOGIA E TELECOMUNICACOES LTDA",
+            "cnpj": "00.912.618/0001-28",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 19.9
+          },
+          {
+            "nome": "AREAL COMERCIO DE ALIMENTOS",
+            "cnpj": "15.914.528/0001-43",
+            "uf": "DF",
+            "qtd": 2,
+            "total": 10.98
+          }
+        ]
+      },
+      {
+        "cfop": "1-403",
+        "qtd": 79,
+        "total": 40650.55,
+        "fornecedores": [
+          {
+            "nome": "BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA",
+            "cnpj": "52.005.382/0001-40",
+            "uf": "DF",
+            "qtd": 55,
+            "total": 23792.46
+          },
+          {
+            "nome": "ASL ESPECIALISTA FILTROS E PECAS LTDA",
+            "cnpj": "10.869.569/0001-41",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 6834
+          },
+          {
+            "nome": "NOVA CASA DIST. MAT. P/ CONST. S/A",
+            "cnpj": "74.200.403/0002-00",
+            "uf": "DF",
+            "qtd": 6,
+            "total": 2537.82
+          },
+          {
+            "nome": "MARTINS COM SERV DISTR SA",
+            "cnpj": "43.214.055/0059-23",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 2336.16
+          },
+          {
+            "nome": "CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A",
+            "cnpj": "03.261.204/0001-74",
+            "uf": "DF",
+            "qtd": 4,
+            "total": 1997.93
+          },
+          {
+            "nome": "OPCAO ATACADISTA",
+            "cnpj": "17.244.285/0001-09",
+            "uf": "DF",
+            "qtd": 4,
+            "total": 1796.76
+          },
+          {
+            "nome": "ARCOM S/A",
+            "cnpj": "25.769.266/0024-10",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 451.59
+          },
+          {
+            "nome": "MILAZZO VEICULOS PECAS E SERVICOS LTDA",
+            "cnpj": "08.547.329/0013-12",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 342.03
+          },
+          {
+            "nome": "ESSENCIA COMERCIO DE PRODITOS NATUR LTDA",
+            "cnpj": "02.613.057/0003-53",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 156.9
+          },
+          {
+            "nome": "AREAL COMERCIO DE ALIMENTOS",
+            "cnpj": "15.914.528/0001-43",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 150.52
+          },
+          {
+            "nome": "SAYONARA PADARIA E RESTAURANTE LTDA",
+            "cnpj": "35.254.956/0001-02",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 145.78
+          },
+          {
+            "nome": "TERRA UTIL COMERCIO DE FERRAMENTAS E UTILIDADES LTDA",
+            "cnpj": "07.144.507/0001-68",
+            "uf": "DF",
+            "qtd": 2,
+            "total": 69.28
+          },
+          {
+            "nome": "MASTER PAO ALIMENTOS EIRELI",
+            "cnpj": "14.314.134/0001-91",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 39.32
+          }
+        ]
+      },
+      {
+        "cfop": "2-353",
+        "qtd": 832,
+        "total": 20571.86,
+        "fornecedores": [
+          {
+            "nome": "EBAZARCOMBR LTDA",
+            "cnpj": "03.007.331/0143-63",
+            "uf": "DF",
+            "qtd": 779,
+            "total": 19915.63
+          },
+          {
+            "nome": "RODONAVES TRANSPS E ENCOMENDAS LTD",
+            "cnpj": "44.914.992/0020-09",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 370.95
+          },
+          {
+            "nome": "SHPS TECNOLOGIA E SERVICOS LTDA",
+            "cnpj": "35.635.824/0017-80",
+            "uf": "DF",
+            "qtd": 48,
+            "total": 263.22
+          },
+          {
+            "nome": "EBAZARCOMBR LTDA",
+            "cnpj": "03.007.331/0080-45",
+            "uf": "SP",
+            "qtd": 2,
+            "total": 22.06
+          },
+          {
+            "nome": "SHPS TECNOLOGIA E SERVICOS LTDA",
+            "cnpj": "35.635.824/0014-37",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 0
+          },
+          {
+            "nome": "SHPS TECNOLOGIA E SERVICOS LTDA",
+            "cnpj": "35.635.824/0005-46",
+            "uf": "GO",
+            "qtd": 1,
+            "total": 0
+          }
+        ]
+      },
+      {
+        "cfop": "1-202",
+        "qtd": 29,
+        "total": 10100.74,
+        "fornecedores": [
+          {
+            "nome": "SDB COMERCIO DE ALIMENTOS LTDA",
+            "cnpj": "09.477.652/0075-22",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 2399
+          },
+          {
+            "nome": "VINICIUS MOTTA SACHES DE OLIVEIRA",
+            "cnpj": "047.469.921-85",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 1899.99
+          },
+          {
+            "nome": "WAGNER JOSE SILVA",
+            "cnpj": "920.800.147-49",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 1489.9
+          },
+          {
+            "nome": "MANOEL D JESUS OLIVEIRA",
+            "cnpj": "724.034.623-49",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 899.99
+          },
+          {
+            "nome": "TROPICAL CONSULTORIA, TREINAMENTOS E LAZER LTDA",
+            "cnpj": "45.922.710/0001-07",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 839.99
+          },
+          {
+            "nome": "CONSORCIO MANUTENCAO BRASILIA",
+            "cnpj": "61.684.277/0001-75",
+            "uf": "RJ",
+            "qtd": 3,
+            "total": 795.2
+          },
+          {
+            "nome": "ANTONIO FRANCISCO PONTE",
+            "cnpj": "372.138.651-53",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 397.97
+          },
+          {
+            "nome": "JOSENITON DA SILVA GOMES",
+            "cnpj": "044.315.325-60",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 289.99
+          },
+          {
+            "nome": "WESLEY DA SILVA FRANCA",
+            "cnpj": "688.460.291-00",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 226.35
+          },
+          {
+            "nome": "ROSSINI GONCALVES GUSMAO",
+            "cnpj": "553.017.381-00",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 105
+          },
+          {
+            "nome": "CLAUDIO VINICIUS BROXADO",
+            "cnpj": "563.624.551-34",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 102.9
+          },
+          {
+            "nome": "ALVIMAR MNEDES DOS SANTOS",
+            "cnpj": "334.121.111-04",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 90.9
+          },
+          {
+            "nome": "ROBERTO CARLOS ALVES DE SOUSA",
+            "cnpj": "091.215.416-04",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 70
+          },
+          {
+            "nome": "USINOX",
+            "cnpj": "636.071.072-20",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 62
+          },
+          {
+            "nome": "SIDNEY ZARA DE PAULA LACKAMAM",
+            "cnpj": "666.121.601-87",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 59.8
+          },
+          {
+            "nome": "FRANCISCO CAMPOS",
+            "cnpj": "002.884.511-04",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 54.42
+          },
+          {
+            "nome": "AMARO BERNADO",
+            "cnpj": "014.237.164-50",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 39.9
+          },
+          {
+            "nome": "ANDERSON GRACIANO DE SOUSA",
+            "cnpj": "052.841.831-93",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 37.6
+          },
+          {
+            "nome": "JHONE SOUSA CARDOSO",
+            "cnpj": "009.069.842-89",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 35
+          },
+          {
+            "nome": "BARRA SERVICOS DE CONSTRUCAO E ENGENHARIA LTDA",
+            "cnpj": "12.662.976/0001-09",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 34.99
+          },
+          {
+            "nome": "GABRIEL MATIAS VALE",
+            "cnpj": "082.748.721-50",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 33.9
+          },
+          {
+            "nome": "ROMA SERVICOS DE HOTELARIA LTDA",
+            "cnpj": "51.268.008/0001-74",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 30
+          },
+          {
+            "nome": "THIAGO OLIVEIRA DE ARAUJO",
+            "cnpj": "022.810.441-65",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 29.9
+          },
+          {
+            "nome": "GABRIEL HENRIQUE",
+            "cnpj": "060.595.561-16",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 27.41
+          },
+          {
+            "nome": "RONEI MARTIS NETO",
+            "cnpj": "000.660.416-19",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 20
+          },
+          {
+            "nome": "RICARDO JORGE",
+            "cnpj": "819.780.303-04",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 14.84
+          },
+          {
+            "nome": "ALCEMIR DA SILVA LIMA",
+            "cnpj": "524.791.961-00",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 13.8
+          }
+        ]
+      },
+      {
+        "cfop": "2-102",
+        "qtd": 3,
+        "total": 6284.33,
+        "fornecedores": [
+          {
+            "nome": "STIHL FERRAMENTAS MOTORIZADAS LTDA.",
+            "cnpj": "87.235.172/0008-07",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 3488.35
+          },
+          {
+            "nome": "STIHL FERRAMENTAS MOTORIZADAS LTDA.",
+            "cnpj": "87.235.172/0001-22",
+            "uf": "RS",
+            "qtd": 2,
+            "total": 2795.98
+          }
+        ]
+      },
+      {
+        "cfop": "1-933",
+        "qtd": 2,
+        "total": 2830,
+        "fornecedores": [
+          {
+            "nome": "WESLEY GONCALVES RODRIGUES CORDEIRO",
+            "cnpj": "60.943.937/0001-22",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 2700
+          },
+          {
+            "nome": "NOVACIA TELECOMUNICACOES LTDA",
+            "cnpj": "00.912.618/0001-28",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 130
+          }
+        ]
+      },
+      {
+        "cfop": "1-652",
+        "qtd": 21,
+        "total": 2772.96,
+        "fornecedores": [
+          {
+            "nome": "ABRITTA POSTOS DE SERVICOS LTDA",
+            "cnpj": "10.668.863/0001-95",
+            "uf": "DF",
+            "qtd": 9,
+            "total": 1366.42
+          },
+          {
+            "nome": "AUTO POSTO STRADA LTDA",
+            "cnpj": "59.823.012/0001-69",
+            "uf": "DF",
+            "qtd": 7,
+            "total": 956.21
+          },
+          {
+            "nome": "AUTO POSTO SOF NORTE LTDA",
+            "cnpj": "03.951.672/0001-70",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 140.33
+          },
+          {
+            "nome": "AUTO POSTO G SUL LTDA",
+            "cnpj": "02.570.563/0001-40",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 140
+          },
+          {
+            "nome": "POSTO DE COMBUSTIVEIS ADE LTDA",
+            "cnpj": "36.297.444/0001-88",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 100
+          },
+          {
+            "nome": "POSTO & MOTEL RODOBELO LTDA",
+            "cnpj": "01.559.338/0001-40",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 50
+          },
+          {
+            "nome": "AUTO POSTO DE COMBUSTIVEL FLAMINGO LTDA",
+            "cnpj": "36.180.754/0001-18",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 20
+          }
+        ]
+      },
+      {
+        "cfop": "2-652",
+        "qtd": 1,
+        "total": 1842.21,
+        "fornecedores": [
+          {
+            "nome": "STIHL FERRAMENTAS MOTORIZADAS LTDA.",
+            "cnpj": "87.235.172/0008-07",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 1842.21
+          }
+        ]
+      },
+      {
+        "cfop": "1-556",
+        "qtd": 4,
+        "total": 1702.85,
+        "fornecedores": [
+          {
+            "nome": "ABRITTA POSTOS DE SERVICOS LTDA",
+            "cnpj": "10.668.863/0001-95",
+            "uf": "DF",
+            "qtd": 2,
+            "total": 1032.31
+          },
+          {
+            "nome": "COM. ALV. LIMPEZA E DESCARTAVEIS LTDA",
+            "cnpj": "07.888.247/0001-35",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 419.2
+          },
+          {
+            "nome": "MILAZZO VEICULOS PECAS E SERVICOS LTDA",
+            "cnpj": "08.547.329/0013-12",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 251.34
+          }
+        ]
+      },
+      {
+        "cfop": "2-202",
+        "qtd": 6,
+        "total": 1116.77,
+        "fornecedores": [
+          {
+            "nome": "EDSON LUIZ",
+            "cnpj": "624.880.409-59",
+            "uf": "PR",
+            "qtd": 1,
+            "total": 456.83
+          },
+          {
+            "nome": "DURVAL MARTINS DA SILVA",
+            "cnpj": "387.580.751-00",
+            "uf": "GO",
+            "qtd": 1,
+            "total": 271.8
+          },
+          {
+            "nome": "FRANCISCO CARLOS IGLESIAS GARRID",
+            "cnpj": "188.968.555-00",
+            "uf": "BA",
+            "qtd": 1,
+            "total": 140.54
+          },
+          {
+            "nome": "BRANSILDES DA SILVA LIMA NETO",
+            "cnpj": "023.801.074-08",
+            "uf": "PE",
+            "qtd": 1,
+            "total": 122.19
+          },
+          {
+            "nome": "TATIANE ORMENEZE RODRIGUES",
+            "cnpj": "059.506.629-11",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 68.41
+          },
+          {
+            "nome": "FELIPE DA SILVA COELHO",
+            "cnpj": "125.551.057-94",
+            "uf": "RJ",
+            "qtd": 1,
+            "total": 57
+          }
+        ]
+      },
+      {
+        "cfop": "1-407",
+        "qtd": 1,
+        "total": 432.85,
+        "fornecedores": [
+          {
+            "nome": "COM. ALV. LIMPEZA E DESCARTAVEIS LTDA",
+            "cnpj": "07.888.247/0001-35",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 432.85
+          }
+        ]
+      },
+      {
+        "cfop": "2-933",
+        "qtd": 1,
+        "total": 257.3,
+        "fornecedores": [
+          {
+            "nome": "WR GESTAO DE PROJETOS LTDA",
+            "cnpj": "35.995.987/0001-06",
+            "uf": "MG",
+            "qtd": 1,
+            "total": 257.3
+          }
+        ]
+      },
+      {
+        "cfop": "1-910",
+        "qtd": 1,
+        "total": 55.2,
+        "fornecedores": [
+          {
+            "nome": "MARTINS COM SERV DISTR SA",
+            "cnpj": "43.214.055/0059-23",
+            "uf": "DF",
+            "qtd": 1,
+            "total": 55.2
+          }
+        ]
+      },
+      {
+        "cfop": "1-353",
+        "qtd": 1,
+        "total": 2.5,
+        "fornecedores": [
+          {
+            "nome": "EBAZARCOMBR LTDA",
+            "cnpj": "03.007.331/0080-45",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 2.5
+          }
+        ]
+      },
+      {
+        "cfop": "2-910",
+        "qtd": 1,
+        "total": 1.94,
+        "fornecedores": [
+          {
+            "nome": "STIHL FERRAMENTAS MOTORIZADAS LTDA.",
+            "cnpj": "87.235.172/0001-22",
+            "uf": "RS",
+            "qtd": 1,
+            "total": 1.94
+          }
+        ]
+      },
+      {
+        "cfop": "2-911",
+        "qtd": 1,
+        "total": 1.7,
+        "fornecedores": [
+          {
+            "nome": "STIHL FERRAMENTAS MOTORIZADAS LTDA.",
+            "cnpj": "87.235.172/0008-07",
+            "uf": "SP",
+            "qtd": 1,
+            "total": 1.7
+          }
+        ]
+      }
+    ],
+    "cfopSaidas": [
+      {
+        "cfop": "5-102",
+        "qtd": 1716,
+        "total": 339215.69
+      },
+      {
+        "cfop": "6-108",
+        "qtd": 957,
+        "total": 245562.8
+      },
+      {
+        "cfop": "5-929",
+        "qtd": 112,
+        "total": 64397.22
+      },
+      {
+        "cfop": "6-102",
+        "qtd": 34,
+        "total": 38899.71
+      },
+      {
+        "cfop": "5-405",
+        "qtd": 601,
+        "total": 38686.38
+      },
+      {
+        "cfop": "5-202",
+        "qtd": 7,
+        "total": 4064.27
+      },
+      {
+        "cfop": "5-910",
+        "qtd": 7,
+        "total": 783.99
+      },
+      {
+        "cfop": "5-949",
+        "qtd": 13,
+        "total": 299.98
+      },
+      {
+        "cfop": "6-910",
+        "qtd": 1,
+        "total": 4.7
+      }
+    ],
+    "cfopSaidasTotal": 731914.74,
+    "receitaBrutaCfop": 731914.74,
+    "clientesTop": [
+      {
+        "nome": "CLIENTES DIVERSOS",
+        "cnpj": "—",
+        "uf": "DF",
+        "qtd": 1255,
+        "total": 70186.12
+      },
+      {
+        "nome": "TAM LINHAS AEREAS S/A.",
+        "cnpj": "02.012.862/0011-31",
+        "uf": "DF",
+        "qtd": 8,
+        "total": 61911.7
+      },
+      {
+        "nome": "AGIL SERVICOS CONDOMINIAIS E CORPORATIVOS ESPECIALIZADOS LTD",
+        "cnpj": "21.094.451/0001-05",
+        "uf": "DF",
+        "qtd": 1,
+        "total": 16800
+      },
+      {
+        "nome": "EBF INDUSTRIA, COMERCIO E SERVICOS LTDA",
+        "cnpj": "38.013.199/0001-65",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 8310.77
+      },
+      {
+        "nome": "ONDACOM SERVICOS DE TELECOMUNICACOES LTDA",
+        "cnpj": "13.166.134/0022-53",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 7194.1
+      },
+      {
+        "nome": "VINICIUS MOTTA SACHES DE OLIVEIRA",
+        "cnpj": "047.469.921-85",
+        "uf": "DF",
+        "qtd": 3,
+        "total": 6531.96
+      },
+      {
+        "nome": "MARIO ALVES DOS SANTOS",
+        "cnpj": "34.514.390/0001-30",
+        "uf": "GO",
+        "qtd": 2,
+        "total": 5907
+      },
+      {
+        "nome": "BP GA 007 CONSTRUTORA E INCORPORADORA SPE LTDA",
+        "cnpj": "41.088.225/0001-29",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 5451.7
+      },
+      {
+        "nome": "NEILSON MOURA DA SILVA",
+        "cnpj": "697.606.751-53",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 5128.8
+      },
+      {
+        "nome": "JOILDEMAR PEREIRA DA SILVA",
+        "cnpj": "046.955.875-05",
+        "uf": "DF",
+        "qtd": 4,
+        "total": 5024
+      },
+      {
+        "nome": "SDB COMERCIO DE ALIMENTOS LTDA",
+        "cnpj": "09.477.652/0075-22",
+        "uf": "DF",
+        "qtd": 2,
+        "total": 4563.6
+      },
+      {
+        "nome": "SCHOTT TECHNOLOGIES BRAZIL LTDA.",
+        "cnpj": "45.768.515/0001-74",
+        "uf": "RJ",
+        "qtd": 1,
+        "total": 4559.61
+      },
+      {
+        "nome": "CONSORCIO MANUTENCAO BRASILIA",
+        "cnpj": "61.684.277/0001-75",
+        "uf": "RJ",
+        "qtd": 5,
+        "total": 4075.33
+      },
+      {
+        "nome": "DANIELA LUCIA MONTEIRO DA SILVA",
+        "cnpj": "792.911.122-91",
+        "uf": "PA",
+        "qtd": 3,
+        "total": 4049.94
+      },
+      {
+        "nome": "ONDACOM SERVICOS DE TELECOMUNICACOES LTDA",
+        "cnpj": "13.166.134/0025-04",
+        "uf": "GO",
+        "qtd": 1,
+        "total": 4046
+      }
+    ],
+    "nfsEntradas": 1133,
+    "nfsSaidas": 3148,
+    "hasMovimentacao": true,
+    "hasDre": false
+  }
+}
