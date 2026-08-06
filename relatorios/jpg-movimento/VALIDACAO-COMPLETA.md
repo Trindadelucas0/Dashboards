@@ -1,7 +1,7 @@
 # Validação completa JPG
 
-Gerado: 06/08/2026, 16:29:34
-OK: 185 | FAIL: 0
+Gerado: 06/08/2026, 16:32:30
+OK: 218 | FAIL: 0
 
 - **OK** `syntax-0`: script 0
 - **OK** `syntax-1`: script 1
@@ -24,10 +24,15 @@ OK: 185 | FAIL: 0
 - **OK** `2026-01-SP-vs-pack-e`: 0
 - **OK** `2026-01-SP-vs-pack-s`: 337216.1
 - **OK** `2026-01-MATRIZ-cnpj`: 21051983000327
-- **OK** `2026-01-MATRIZ-cfop-e`: 689985.86
-- **OK** `2026-01-MATRIZ-cfop-s`: 1676310.11
-- **OK** `2026-01-MATRIZ-vs-pack-e`: 689985.86
-- **OK** `2026-01-MATRIZ-vs-pack-s`: 1676310.11
+- **OK** `2026-01-MATRIZ-cfop-e`: 0
+- **OK** `2026-01-MATRIZ-cfop-s`: 0
+- **OK** `2026-01-MATRIZ-vs-pack-e`: 0
+- **OK** `2026-01-MATRIZ-vs-pack-s`: 0
+- **OK** `2026-01-ASA_SUL-cnpj`: 21051983000327
+- **OK** `2026-01-ASA_SUL-cfop-e`: 689985.86
+- **OK** `2026-01-ASA_SUL-cfop-s`: 1676310.11
+- **OK** `2026-01-ASA_SUL-vs-pack-e`: 689985.86
+- **OK** `2026-01-ASA_SUL-vs-pack-s`: 1676310.11
 - **OK** `2026-01-SEDE-cnpj`: 21051983000165
 - **OK** `2026-01-SEDE-cfop-e`: 308131.35
 - **OK** `2026-01-SEDE-cfop-s`: 22.75
@@ -51,10 +56,15 @@ OK: 185 | FAIL: 0
 - **OK** `2026-02-SP-vs-pack-e`: 0
 - **OK** `2026-02-SP-vs-pack-s`: 538694.5
 - **OK** `2026-02-MATRIZ-cnpj`: 21051983000327
-- **OK** `2026-02-MATRIZ-cfop-e`: 11447.6
-- **OK** `2026-02-MATRIZ-cfop-s`: 3099565.44
-- **OK** `2026-02-MATRIZ-vs-pack-e`: 11447.6
-- **OK** `2026-02-MATRIZ-vs-pack-s`: 3099565.44
+- **OK** `2026-02-MATRIZ-cfop-e`: 0
+- **OK** `2026-02-MATRIZ-cfop-s`: 0
+- **OK** `2026-02-MATRIZ-vs-pack-e`: 0
+- **OK** `2026-02-MATRIZ-vs-pack-s`: 0
+- **OK** `2026-02-ASA_SUL-cnpj`: 21051983000327
+- **OK** `2026-02-ASA_SUL-cfop-e`: 11447.6
+- **OK** `2026-02-ASA_SUL-cfop-s`: 3099565.44
+- **OK** `2026-02-ASA_SUL-vs-pack-e`: 11447.6
+- **OK** `2026-02-ASA_SUL-vs-pack-s`: 3099565.44
 - **OK** `2026-02-SEDE-cnpj`: 21051983000165
 - **OK** `2026-02-SEDE-cfop-e`: 781661.45
 - **OK** `2026-02-SEDE-cfop-s`: 0
@@ -78,10 +88,15 @@ OK: 185 | FAIL: 0
 - **OK** `2026-03-SP-vs-pack-e`: 0
 - **OK** `2026-03-SP-vs-pack-s`: 584827.43
 - **OK** `2026-03-MATRIZ-cnpj`: 21051983000327
-- **OK** `2026-03-MATRIZ-cfop-e`: 1590701.07
-- **OK** `2026-03-MATRIZ-cfop-s`: 3250821.47
-- **OK** `2026-03-MATRIZ-vs-pack-e`: 1590701.07
-- **OK** `2026-03-MATRIZ-vs-pack-s`: 3250821.47
+- **OK** `2026-03-MATRIZ-cfop-e`: 0
+- **OK** `2026-03-MATRIZ-cfop-s`: 0
+- **OK** `2026-03-MATRIZ-vs-pack-e`: 0
+- **OK** `2026-03-MATRIZ-vs-pack-s`: 0
+- **OK** `2026-03-ASA_SUL-cnpj`: 21051983000327
+- **OK** `2026-03-ASA_SUL-cfop-e`: 1590701.07
+- **OK** `2026-03-ASA_SUL-cfop-s`: 3250821.47
+- **OK** `2026-03-ASA_SUL-vs-pack-e`: 1590701.07
+- **OK** `2026-03-ASA_SUL-vs-pack-s`: 3250821.47
 - **OK** `2026-03-SEDE-cnpj`: 21051983000165
 - **OK** `2026-03-SEDE-cfop-e`: 511343.27
 - **OK** `2026-03-SEDE-cfop-s`: 467742.4
@@ -105,10 +120,15 @@ OK: 185 | FAIL: 0
 - **OK** `2026-04-SP-vs-pack-e`: 0
 - **OK** `2026-04-SP-vs-pack-s`: 595601.23
 - **OK** `2026-04-MATRIZ-cnpj`: 21051983000327
-- **OK** `2026-04-MATRIZ-cfop-e`: 846958.38
-- **OK** `2026-04-MATRIZ-cfop-s`: 3396918.75
-- **OK** `2026-04-MATRIZ-vs-pack-e`: 846958.38
-- **OK** `2026-04-MATRIZ-vs-pack-s`: 3396918.75
+- **OK** `2026-04-MATRIZ-cfop-e`: 0
+- **OK** `2026-04-MATRIZ-cfop-s`: 0
+- **OK** `2026-04-MATRIZ-vs-pack-e`: 0
+- **OK** `2026-04-MATRIZ-vs-pack-s`: 0
+- **OK** `2026-04-ASA_SUL-cnpj`: 21051983000327
+- **OK** `2026-04-ASA_SUL-cfop-e`: 846958.38
+- **OK** `2026-04-ASA_SUL-cfop-s`: 3396918.75
+- **OK** `2026-04-ASA_SUL-vs-pack-e`: 846958.38
+- **OK** `2026-04-ASA_SUL-vs-pack-s`: 3396918.75
 - **OK** `2026-04-SEDE-cnpj`: 21051983000165
 - **OK** `2026-04-SEDE-cfop-e`: 380672.67
 - **OK** `2026-04-SEDE-cfop-s`: 0
@@ -132,10 +152,15 @@ OK: 185 | FAIL: 0
 - **OK** `2026-05-SP-vs-pack-e`: 0
 - **OK** `2026-05-SP-vs-pack-s`: 430879.84
 - **OK** `2026-05-MATRIZ-cnpj`: 21051983000327
-- **OK** `2026-05-MATRIZ-cfop-e`: 77484.5
-- **OK** `2026-05-MATRIZ-cfop-s`: 2770103.57
-- **OK** `2026-05-MATRIZ-vs-pack-e`: 77484.5
-- **OK** `2026-05-MATRIZ-vs-pack-s`: 2770103.57
+- **OK** `2026-05-MATRIZ-cfop-e`: 0
+- **OK** `2026-05-MATRIZ-cfop-s`: 0
+- **OK** `2026-05-MATRIZ-vs-pack-e`: 0
+- **OK** `2026-05-MATRIZ-vs-pack-s`: 0
+- **OK** `2026-05-ASA_SUL-cnpj`: 21051983000327
+- **OK** `2026-05-ASA_SUL-cfop-e`: 77484.5
+- **OK** `2026-05-ASA_SUL-cfop-s`: 2770103.57
+- **OK** `2026-05-ASA_SUL-vs-pack-e`: 77484.5
+- **OK** `2026-05-ASA_SUL-vs-pack-s`: 2770103.57
 - **OK** `2026-05-SEDE-cnpj`: 21051983000165
 - **OK** `2026-05-SEDE-cfop-e`: 254121.93
 - **OK** `2026-05-SEDE-cfop-s`: 0
@@ -159,10 +184,15 @@ OK: 185 | FAIL: 0
 - **OK** `2026-06-SP-vs-pack-e`: 112749.13
 - **OK** `2026-06-SP-vs-pack-s`: 810686.49
 - **OK** `2026-06-MATRIZ-cnpj`: 21051983000327
-- **OK** `2026-06-MATRIZ-cfop-e`: 1703640.89
-- **OK** `2026-06-MATRIZ-cfop-s`: 3649924.21
-- **OK** `2026-06-MATRIZ-vs-pack-e`: 1703640.89
-- **OK** `2026-06-MATRIZ-vs-pack-s`: 3649924.21
+- **OK** `2026-06-MATRIZ-cfop-e`: 0
+- **OK** `2026-06-MATRIZ-cfop-s`: 0
+- **OK** `2026-06-MATRIZ-vs-pack-e`: 0
+- **OK** `2026-06-MATRIZ-vs-pack-s`: 0
+- **OK** `2026-06-ASA_SUL-cnpj`: 21051983000327
+- **OK** `2026-06-ASA_SUL-cfop-e`: 1703640.89
+- **OK** `2026-06-ASA_SUL-cfop-s`: 3649924.21
+- **OK** `2026-06-ASA_SUL-vs-pack-e`: 1703640.89
+- **OK** `2026-06-ASA_SUL-vs-pack-s`: 3649924.21
 - **OK** `2026-06-SEDE-cnpj`: 21051983000165
 - **OK** `2026-06-SEDE-cfop-e`: 255264.64
 - **OK** `2026-06-SEDE-cfop-s`: 0
@@ -180,8 +210,11 @@ OK: 185 | FAIL: 0
 - **OK** `2026-07-SP-cfop-e`: 117586.2
 - **OK** `2026-07-SP-cfop-s`: 664552.78
 - **OK** `2026-07-MATRIZ-cnpj`: 21051983000327
-- **OK** `2026-07-MATRIZ-cfop-e`: 145769.55
-- **OK** `2026-07-MATRIZ-cfop-s`: 3180335.83
+- **OK** `2026-07-MATRIZ-cfop-e`: 0
+- **OK** `2026-07-MATRIZ-cfop-s`: 0
+- **OK** `2026-07-ASA_SUL-cnpj`: 21051983000327
+- **OK** `2026-07-ASA_SUL-cfop-e`: 145769.55
+- **OK** `2026-07-ASA_SUL-cfop-s`: 3180335.83
 - **OK** `2026-07-SEDE-cnpj`: 21051983000165
 - **OK** `2026-07-SEDE-cfop-e`: 221992.04
 - **OK** `2026-07-SEDE-cfop-s`: 0

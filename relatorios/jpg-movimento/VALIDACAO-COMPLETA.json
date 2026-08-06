@@ -108,20 +108,45 @@
     {
       "id": "2026-01-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "689985.86"
+      "msg": "0"
     },
     {
       "id": "2026-01-MATRIZ-cfop-s",
       "status": "OK",
-      "msg": "1676310.11"
+      "msg": "0"
     },
     {
       "id": "2026-01-MATRIZ-vs-pack-e",
       "status": "OK",
-      "msg": "689985.86"
+      "msg": "0"
     },
     {
       "id": "2026-01-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-01-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-01-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "689985.86"
+    },
+    {
+      "id": "2026-01-ASA_SUL-cfop-s",
+      "status": "OK",
+      "msg": "1676310.11"
+    },
+    {
+      "id": "2026-01-ASA_SUL-vs-pack-e",
+      "status": "OK",
+      "msg": "689985.86"
+    },
+    {
+      "id": "2026-01-ASA_SUL-vs-pack-s",
       "status": "OK",
       "msg": "1676310.11"
     },
@@ -243,20 +268,45 @@
     {
       "id": "2026-02-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "11447.6"
+      "msg": "0"
     },
     {
       "id": "2026-02-MATRIZ-cfop-s",
       "status": "OK",
-      "msg": "3099565.44"
+      "msg": "0"
     },
     {
       "id": "2026-02-MATRIZ-vs-pack-e",
       "status": "OK",
-      "msg": "11447.6"
+      "msg": "0"
     },
     {
       "id": "2026-02-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-02-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-02-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "11447.6"
+    },
+    {
+      "id": "2026-02-ASA_SUL-cfop-s",
+      "status": "OK",
+      "msg": "3099565.44"
+    },
+    {
+      "id": "2026-02-ASA_SUL-vs-pack-e",
+      "status": "OK",
+      "msg": "11447.6"
+    },
+    {
+      "id": "2026-02-ASA_SUL-vs-pack-s",
       "status": "OK",
       "msg": "3099565.44"
     },
@@ -378,20 +428,45 @@
     {
       "id": "2026-03-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "1590701.07"
+      "msg": "0"
     },
     {
       "id": "2026-03-MATRIZ-cfop-s",
       "status": "OK",
-      "msg": "3250821.47"
+      "msg": "0"
     },
     {
       "id": "2026-03-MATRIZ-vs-pack-e",
       "status": "OK",
-      "msg": "1590701.07"
+      "msg": "0"
     },
     {
       "id": "2026-03-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-03-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-03-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "1590701.07"
+    },
+    {
+      "id": "2026-03-ASA_SUL-cfop-s",
+      "status": "OK",
+      "msg": "3250821.47"
+    },
+    {
+      "id": "2026-03-ASA_SUL-vs-pack-e",
+      "status": "OK",
+      "msg": "1590701.07"
+    },
+    {
+      "id": "2026-03-ASA_SUL-vs-pack-s",
       "status": "OK",
       "msg": "3250821.47"
     },
@@ -513,20 +588,45 @@
     {
       "id": "2026-04-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "846958.38"
+      "msg": "0"
     },
     {
       "id": "2026-04-MATRIZ-cfop-s",
       "status": "OK",
-      "msg": "3396918.75"
+      "msg": "0"
     },
     {
       "id": "2026-04-MATRIZ-vs-pack-e",
       "status": "OK",
-      "msg": "846958.38"
+      "msg": "0"
     },
     {
       "id": "2026-04-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-04-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-04-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "846958.38"
+    },
+    {
+      "id": "2026-04-ASA_SUL-cfop-s",
+      "status": "OK",
+      "msg": "3396918.75"
+    },
+    {
+      "id": "2026-04-ASA_SUL-vs-pack-e",
+      "status": "OK",
+      "msg": "846958.38"
+    },
+    {
+      "id": "2026-04-ASA_SUL-vs-pack-s",
       "status": "OK",
       "msg": "3396918.75"
     },
@@ -648,20 +748,45 @@
     {
       "id": "2026-05-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "77484.5"
+      "msg": "0"
     },
     {
       "id": "2026-05-MATRIZ-cfop-s",
       "status": "OK",
-      "msg": "2770103.57"
+      "msg": "0"
     },
     {
       "id": "2026-05-MATRIZ-vs-pack-e",
       "status": "OK",
-      "msg": "77484.5"
+      "msg": "0"
     },
     {
       "id": "2026-05-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-05-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-05-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "77484.5"
+    },
+    {
+      "id": "2026-05-ASA_SUL-cfop-s",
+      "status": "OK",
+      "msg": "2770103.57"
+    },
+    {
+      "id": "2026-05-ASA_SUL-vs-pack-e",
+      "status": "OK",
+      "msg": "77484.5"
+    },
+    {
+      "id": "2026-05-ASA_SUL-vs-pack-s",
       "status": "OK",
       "msg": "2770103.57"
     },
@@ -783,20 +908,45 @@
     {
       "id": "2026-06-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "1703640.89"
+      "msg": "0"
     },
     {
       "id": "2026-06-MATRIZ-cfop-s",
       "status": "OK",
-      "msg": "3649924.21"
+      "msg": "0"
     },
     {
       "id": "2026-06-MATRIZ-vs-pack-e",
       "status": "OK",
-      "msg": "1703640.89"
+      "msg": "0"
     },
     {
       "id": "2026-06-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-06-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-06-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "1703640.89"
+    },
+    {
+      "id": "2026-06-ASA_SUL-cfop-s",
+      "status": "OK",
+      "msg": "3649924.21"
+    },
+    {
+      "id": "2026-06-ASA_SUL-vs-pack-e",
+      "status": "OK",
+      "msg": "1703640.89"
+    },
+    {
+      "id": "2026-06-ASA_SUL-vs-pack-s",
       "status": "OK",
       "msg": "3649924.21"
     },
@@ -888,10 +1038,25 @@
     {
       "id": "2026-07-MATRIZ-cfop-e",
       "status": "OK",
-      "msg": "145769.55"
+      "msg": "0"
     },
     {
       "id": "2026-07-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "id": "2026-07-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "id": "2026-07-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "145769.55"
+    },
+    {
+      "id": "2026-07-ASA_SUL-cfop-s",
       "status": "OK",
       "msg": "3180335.83"
     },
