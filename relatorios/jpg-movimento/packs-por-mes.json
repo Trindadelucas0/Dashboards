@@ -4812,6 +4812,7 @@
       "dre": {
         "receita": 0,
         "receita_externa": 0,
+        "remessas_transferencias": 0,
         "cmv": 0,
         "lucro_bruto": 0,
         "margem_bruta_pct": null,
@@ -18711,6 +18712,7 @@
       "dre": {
         "receita": 0,
         "receita_externa": 0,
+        "remessas_transferencias": 0,
         "cmv": 0,
         "lucro_bruto": 0,
         "margem_bruta_pct": null,
@@ -34309,6 +34311,7 @@
       "dre": {
         "receita": 0,
         "receita_externa": 0,
+        "remessas_transferencias": 0,
         "cmv": 0,
         "lucro_bruto": 0,
         "margem_bruta_pct": null,
@@ -46490,6 +46493,7 @@
       "dre": {
         "receita": 0,
         "receita_externa": 0,
+        "remessas_transferencias": 0,
         "cmv": 0,
         "lucro_bruto": 0,
         "margem_bruta_pct": null,
@@ -57619,6 +57623,7 @@
       "dre": {
         "receita": 0,
         "receita_externa": 0,
+        "remessas_transferencias": 0,
         "cmv": 0,
         "lucro_bruto": 0,
         "margem_bruta_pct": null,
@@ -72311,6 +72316,7 @@
       "dre": {
         "receita": 0,
         "receita_externa": 0,
+        "remessas_transferencias": 0,
         "cmv": 0,
         "lucro_bruto": 0,
         "margem_bruta_pct": null,
@@ -82236,6 +82242,7 @@
       "dre": {
         "receita": 0,
         "receita_externa": 0,
+        "remessas_transferencias": 0,
         "cmv": 0,
         "lucro_bruto": 0,
         "margem_bruta_pct": null,
