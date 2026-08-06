@@ -1229,7 +1229,104 @@
           "saldo_icms": 0,
           "resultado": -308108.6,
           "margem_resultado_pct": -1354323.52
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 0
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 0
+          }
+        ],
+        "deducoes": 0,
+        "dedPct": 0
       },
       "MATRIZ": {
         "meta": {
@@ -1285,7 +1382,104 @@
           "saldo_icms": 155893.35,
           "resultado": -155893.35,
           "margem_resultado_pct": null
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 181225.39,
+            "creditoEntradas": 25332.04,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 155893.35,
+            "saldoCredor": 0,
+            "aRecolher": 155893.35,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 266131.62,
+            "creditoEntradas": 82920.71,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 183210.91,
+            "saldoCredor": 0,
+            "aRecolher": 183210.91,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 181225.39,
+            "recolher": 155893.35,
+            "pctRb": 0
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 266131.62,
+            "recolher": 183210.91,
+            "pctRb": 0
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 155893.35
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 183210.91
+          }
+        ],
+        "deducoes": 339104.26,
+        "dedPct": 0
       }
     },
     "2026-02": {
@@ -2667,7 +2861,104 @@
           "saldo_icms": 0,
           "resultado": -781661.45,
           "margem_resultado_pct": null
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 0
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 0
+          }
+        ],
+        "deducoes": 0,
+        "dedPct": 0
       },
       "MATRIZ": {
         "meta": {
@@ -2723,7 +3014,104 @@
           "saldo_icms": 292427.18,
           "resultado": -292427.18,
           "margem_resultado_pct": null
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 292964.25,
+            "creditoEntradas": 537.07,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 292427.18,
+            "saldoCredor": 0,
+            "aRecolher": 292427.18,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 441895.79,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 441895.79,
+            "saldoCredor": 0,
+            "aRecolher": 441895.79,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 292964.25,
+            "recolher": 292427.18,
+            "pctRb": 0
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 441895.79,
+            "recolher": 441895.79,
+            "pctRb": 0
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 292427.18
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 441895.79
+          }
+        ],
+        "deducoes": 734322.97,
+        "dedPct": 0
       }
     },
     "2026-03": {
@@ -4354,7 +4742,104 @@
           "saldo_icms": 0,
           "resultado": -43600.87,
           "margem_resultado_pct": -9.32
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 0
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 0
+          }
+        ],
+        "deducoes": 0,
+        "dedPct": 0
       },
       "MATRIZ": {
         "meta": {
@@ -4410,7 +4895,104 @@
           "saldo_icms": 266615.29,
           "resultado": -266615.29,
           "margem_resultado_pct": null
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 307422.2,
+            "creditoEntradas": 40806.91,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 266615.29,
+            "saldoCredor": 0,
+            "aRecolher": 266615.29,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 489988.96,
+            "creditoEntradas": 128976,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 361012.96,
+            "saldoCredor": 0,
+            "aRecolher": 361012.96,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 307422.2,
+            "recolher": 266615.29,
+            "pctRb": 0
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 489988.96,
+            "recolher": 361012.96,
+            "pctRb": 0
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 266615.29
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 361012.96
+          }
+        ],
+        "deducoes": 627628.25,
+        "dedPct": 0
       }
     },
     "2026-04": {
@@ -5753,7 +6335,104 @@
           "saldo_icms": 0,
           "resultado": -380672.67,
           "margem_resultado_pct": null
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 0
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 0
+          }
+        ],
+        "deducoes": 0,
+        "dedPct": 0
       },
       "MATRIZ": {
         "meta": {
@@ -5809,7 +6488,104 @@
           "saldo_icms": 157995.47,
           "resultado": -157995.47,
           "margem_resultado_pct": null
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 191257.8,
+            "creditoEntradas": 33262.33,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 157995.47,
+            "saldoCredor": 0,
+            "aRecolher": 157995.47,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 480182.23,
+            "creditoEntradas": 36876.33,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 443305.9,
+            "saldoCredor": 0,
+            "aRecolher": 443305.9,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 191257.8,
+            "recolher": 157995.47,
+            "pctRb": 0
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 480182.23,
+            "recolher": 443305.9,
+            "pctRb": 0
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 157995.47
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 443305.9
+          }
+        ],
+        "deducoes": 601301.37,
+        "dedPct": 0
       }
     },
     "2026-05": {
@@ -6895,7 +7671,104 @@
           "saldo_icms": 0,
           "resultado": -254121.93,
           "margem_resultado_pct": null
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 0
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 0
+          }
+        ],
+        "deducoes": 0,
+        "dedPct": 0
       },
       "MATRIZ": {
         "meta": {
@@ -6951,7 +7824,104 @@
           "saldo_icms": 113601.46,
           "resultado": -113601.46,
           "margem_resultado_pct": null
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 119033.38,
+            "creditoEntradas": 5431.92,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 113601.46,
+            "saldoCredor": 0,
+            "aRecolher": 113601.46,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 168042.55,
+            "creditoEntradas": 5872.62,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 162169.93,
+            "saldoCredor": 0,
+            "aRecolher": 162169.93,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 119033.38,
+            "recolher": 113601.46,
+            "pctRb": 0
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 168042.55,
+            "recolher": 162169.93,
+            "pctRb": 0
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 113601.46
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 162169.93
+          }
+        ],
+        "deducoes": 275771.39,
+        "dedPct": 0
       }
     },
     "2026-06": {
@@ -8143,7 +9113,104 @@
           "saldo_icms": 0,
           "resultado": -255264.64,
           "margem_resultado_pct": null
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 0
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 0
+          }
+        ],
+        "deducoes": 0,
+        "dedPct": 0
       },
       "MATRIZ": {
         "meta": {
@@ -8199,7 +9266,104 @@
           "saldo_icms": 121312.79,
           "resultado": -121312.79,
           "margem_resultado_pct": null
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 207223.16,
+            "creditoEntradas": 85910.37,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 121312.79,
+            "saldoCredor": 0,
+            "aRecolher": 121312.79,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 519609.78,
+            "creditoEntradas": 316991.12,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 202618.66,
+            "saldoCredor": 0,
+            "aRecolher": 202618.66,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 207223.16,
+            "recolher": 121312.79,
+            "pctRb": 0
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 519609.78,
+            "recolher": 202618.66,
+            "pctRb": 0
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 121312.79
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 202618.66
+          }
+        ],
+        "deducoes": 323931.45,
+        "dedPct": 0
       }
     },
     "2026-07": {
@@ -9330,7 +10494,104 @@
           "saldo_icms": 0,
           "resultado": -221992.04,
           "margem_resultado_pct": null
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 0
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 0
+          }
+        ],
+        "deducoes": 0,
+        "dedPct": 0
       },
       "MATRIZ": {
         "meta": {
@@ -14722,7 +15983,104 @@
           "saldo_icms": 210106.23,
           "resultado": 2824460.05,
           "margem_resultado_pct": 88.81
-        }
+        },
+        "apuracao": {
+          "icms": {
+            "debitoSaidas": 226524.83,
+            "creditoEntradas": 16418.6,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 210106.23,
+            "saldoCredor": 0,
+            "aRecolher": 210106.23,
+            "saldoCredorTransportar": 0
+          },
+          "icmsSt": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "pis": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "cofins": {
+            "debitoSaidas": 0,
+            "creditoEntradas": 0,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 0,
+            "saldoCredor": 0,
+            "aRecolher": 0,
+            "saldoCredorTransportar": 0
+          },
+          "ipi": {
+            "debitoSaidas": 268603.76,
+            "creditoEntradas": 20816.6,
+            "outrosDebitos": 0,
+            "outrosCreditos": 0,
+            "saldoDevedor": 247787.16,
+            "saldoCredor": 0,
+            "aRecolher": 247787.16,
+            "saldoCredorTransportar": 0
+          },
+          "fonte": "Planilha IMPOSTOS ICMS E IPI GRUPO JPG"
+        },
+        "impostosTabela": [
+          {
+            "tributo": "ICMS",
+            "apurado": 226524.83,
+            "recolher": 210106.23,
+            "pctRb": 6.61
+          },
+          {
+            "tributo": "ICMS ST",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "PIS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "COFINS",
+            "apurado": 0,
+            "recolher": 0,
+            "pctRb": 0
+          },
+          {
+            "tributo": "IPI",
+            "apurado": 268603.76,
+            "recolher": 247787.16,
+            "pctRb": 7.79
+          }
+        ],
+        "composicao": [
+          {
+            "label": "ICMS a recolher",
+            "valor": 210106.23
+          },
+          {
+            "label": "IPI a recolher",
+            "valor": 247787.16
+          }
+        ],
+        "deducoes": 457893.39,
+        "dedPct": 14.4
       }
     }
   },

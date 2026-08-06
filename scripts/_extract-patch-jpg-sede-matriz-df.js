@@ -677,7 +677,7 @@ for (const mes of Object.keys(preserve).sort()) {
   }
 }
 
-// Expected SEDE / MATRIZ
+  // Expected SEDE / MATRIZ
 const expectSedeE = {};
 for (const [mes, info] of Object.entries(splitReport.sedeEntradas)) expectSedeE[mes] = info.total;
 const expectSedeS = {};
@@ -694,15 +694,21 @@ for (const mes of Object.keys(packs).sort()) {
     } else console.log('SEDE OK', mes, k.entradas, k.saidas);
     if (taxBy[mes] && taxBy[mes].SEDE) {
       const t = taxBy[mes].SEDE;
+      const f = check.fiscalPorMes.porMes[mes].filiais.SEDE;
       if (!near(k.icms_credito, t.icms_credito) || !near(k.icms_debito, t.icms_debito)
         || !near(k.ipi_ent, t.ipi_ent) || !near(k.ipi_sai, t.ipi_sai)) {
         console.error('SEDE TAX FAIL', mes, k, t);
         ok = false;
-      } else console.log('SEDE TAX OK', mes);
+      } else if (!f.apuracao || !near(f.apuracao.icms.aRecolher, t.icms_a_recolher)
+        || !near(f.apuracao.ipi.aRecolher, t.ipi_a_recolher)) {
+        console.error('SEDE APURACAO FAIL', mes, f.apuracao && f.apuracao.icms, t);
+        ok = false;
+      } else console.log('SEDE TAX+MEMORIA OK', mes);
     }
   }
   if (packs[mes].MATRIZ) {
-    const k = check.fiscalPorMes.porMes[mes].filiais.MATRIZ.kpis;
+    const f = check.fiscalPorMes.porMes[mes].filiais.MATRIZ;
+    const k = f.kpis;
     if (mes === '2026-07') {
       if (!near(k.entradas, 145769.55) || !near(k.saidas, 3180335.83)) {
         console.error('MATRIZ JUL FAIL', k.entradas, k.saidas);
@@ -715,7 +721,12 @@ for (const mes of Object.keys(packs).sort()) {
         || !near(k.ipi_ent, t.ipi_ent) || !near(k.ipi_sai, t.ipi_sai)) {
         console.error('MATRIZ TAX FAIL', mes, k.icms_credito, k.icms_debito, t);
         ok = false;
-      } else console.log('MATRIZ TAX OK', mes, 'icmsRec≈', t.icms_a_recolher);
+      } else if (!f.apuracao || !near(f.apuracao.icms.aRecolher, t.icms_a_recolher)
+        || !near(f.apuracao.ipi.aRecolher, t.ipi_a_recolher)
+        || !(f.impostosTabela || []).length) {
+        console.error('MATRIZ APURACAO FAIL', mes, f.apuracao && f.apuracao.icms, t);
+        ok = false;
+      } else console.log('MATRIZ TAX+MEMORIA OK', mes, 'icmsRec≈', t.icms_a_recolher);
     }
   }
 }
