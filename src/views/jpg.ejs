@@ -131700,48 +131700,356 @@ function fillPanelShell(panelId, html) {
   return panel;
 }
 
+function taxCardHTML(opts) {
+  const nameStyle = opts.nameColor ? ' style="color:' + opts.nameColor + '"' : '';
+  const curStyle = opts.valueColor
+    ? ' style="color:' + opts.valueColor + (opts.valueSize ? ';font-size:' + opts.valueSize : '') + '"'
+    : (opts.valueSize ? ' style="font-size:' + opts.valueSize + '"' : '');
+  const chip = opts.chip
+    ? '<span class="chip ' + (opts.chipClass || 'gy') + '">' + opts.chip + '</span>'
+    : '';
+  const footRight = opts.footBadge
+    ? '<span class="' + (opts.footBadgeClass || 'var-neu') + '">' + opts.footBadge + '</span>'
+    : '';
+  return (
+    '<div class="tax-card">' +
+      '<div class="tax-card-head"><div class="tax-name' + (opts.nameAccent ? ' t-accent' : '') + '"' + nameStyle.replace(/^ style/, '') + '>' +
+        // fix: apply nameStyle on tax-name properly
+        '' +
+      '</div></div>' +
+    '</div>'
+  );
+}
+
+function buildTaxCard(cfg) {
+  const nameColor = cfg.nameColor || '';
+  const valueColor = cfg.valueColor || nameColor;
+  const nameAttr = nameColor ? ' style="color:' + nameColor + '"' : '';
+  const valueAttr = (valueColor || cfg.valueSize)
+    ? ' style="' + (valueColor ? 'color:' + valueColor + ';' : '') + (cfg.valueSize ? 'font-size:' + cfg.valueSize : '') + '"'
+    : '';
+  return (
+    '<div class="tax-card">' +
+      '<div class="tax-card-head">' +
+        '<div class="tax-name"' + nameAttr + '>' + cfg.name + '</div>' +
+        (cfg.chip ? '<span class="chip ' + (cfg.chipClass || 'gy') + '">' + cfg.chip + '</span>' : '') +
+      '</div>' +
+      '<div class="tax-cur"' + valueAttr + '>' + cfg.value + '</div>' +
+      '<div class="tax-prev">' + (cfg.prev || '') + '</div>' +
+      '<div class="tax-foot">' +
+        '<span>' + (cfg.footLeft || '') + '</span>' +
+        (cfg.footBadge
+          ? '<span class="' + (cfg.footBadgeClass || 'var-neu') + '">' + cfg.footBadge + '</span>'
+          : '<span></span>') +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function getJpgScopeForMes(mesKey) {
+  const pack = typeof getFiscalPack === 'function' ? getFiscalPack(mesKey) : null;
+  if (!pack) return null;
+  if (unidadeAtiva === 'TODAS') return pack.empresa;
+  return pack.filiais && pack.filiais[unidadeAtiva] ? pack.filiais[unidadeAtiva] : null;
+}
+
+function jpgTributoRecolher(scope, key) {
+  if (!scope) return 0;
+  const ap = scope.apuracao;
+  if (ap && ap[key] && ap[key].aRecolher != null) return Number(ap[key].aRecolher) || 0;
+  const row = (scope.impostosTabela || []).find((t) => {
+    const n = String(t.tributo || '').toUpperCase();
+    if (key === 'icms') return n === 'ICMS' || /^ICMS$/.test(n);
+    if (key === 'icmsSt') return /ICMS\s*ST/.test(n);
+    if (key === 'ipi') return /^IPI/.test(n);
+    if (key === 'pis') return /^PIS/.test(n);
+    if (key === 'cofins') return /^COFINS/.test(n);
+    if (key === 'das') return /DAS|SIMPLES/.test(n);
+    return false;
+  });
+  if (row) return Number(row.recolher) || 0;
+  const k = scope.kpis || {};
+  if (key === 'icms') return Number(k.saldo_icms) || 0;
+  if (key === 'ipi') return (Number(k.ipi_sai) || 0) - (Number(k.ipi_ent) || 0);
+  return 0;
+}
+
 function initImpostos() {
   const D = getScopeData();
   if (!D) return;
+  const panel = document.getElementById('panel-impostos');
+  if (!panel) return;
+
   const k = D.kpis || {};
-  const ap = D.apuracao;
+  const ap = D.apuracao || {};
   const tabela = D.impostosTabela || [];
   const hasAp = !!(ap && ap.icms);
-  const icmsRec = hasAp ? (ap.icms.aRecolher || 0) : (k.saldo_icms || 0);
-  const ipiRec = hasAp ? (ap.ipi && ap.ipi.aRecolher || 0) : ((k.ipi_sai || 0) - (k.ipi_ent || 0));
   const dasRow = (tabela || []).find((t) => /DAS|Simples/i.test(String(t.tributo || '')));
-  const isDasPack = !!(D.meta && D.meta.regime === 'Simples Nacional') || !!dasRow;
+  const isDasPack = !!(D.meta && D.meta.regime === 'Simples Nacional') || !!dasRow || !!(ap && ap.das);
+  const competencia = (typeof getPeriodScopeLabel === 'function' ? getJpgCompetenciaLabel?.() : null)
+    || (D.meta && D.meta.periodo)
+    || (typeof fiscalMesLabel === 'function' ? fiscalMesLabel(appMesFiscal) : '—');
+  const compShort = (typeof fiscalMesLabel === 'function' && appMesFiscal && appMesFiscal !== 'total')
+    ? fiscalMesLabel(appMesFiscal)
+    : (competencia || '—');
+
   const fonte = isDasPack
-    ? ((ap && ap.fonte) || 'Simples Nacional — DAS')
-    : (hasAp ? (ap.fonte || 'Planilha IMPOSTOS ICMS E IPI GRUPO JPG') : 'Estimativa a partir dos KPIs de movimento (NF-e)');
-  fillPanelShell('panel-impostos',
-    '<div class="alert-box" style="border-color:rgba(59,130,246,0.35);color:var(--accent);background:rgba(59,130,246,0.07);margin-bottom:16px">' +
-    '<i class="fas fa-info-circle" style="margin-right:8px;"></i>' +
-    '<strong>Fonte:</strong> ' + fonte + '. Não substitui EFD / 5005 oficial.' +
-    '</div>' +
-    '<div class="kpi-grid kpi-grid-4" id="kpiImpostos"></div>' +
-    (tabela.length
-      ? '<div class="table-card" style="margin-top:16px"><div class="table-head"><div><div class="ttl">Impostos a recolher</div><div class="sub">' + (isDasPack ? 'DAS · Simples Nacional' : 'ICMS · IPI') + '</div></div></div>' +
-        '<div class="tbl-scroll"><table><thead><tr><th>Tributo</th><th class="r">Apurado</th><th class="r">A recolher</th><th class="r">% s/ vendas</th></tr></thead><tbody id="tblImpostos"></tbody></table></div></div>'
-      : '')
-  );
-  const el = document.getElementById('kpiImpostos');
-  if (el) {
-    if (isDasPack) {
-      const das = dasRow ? (dasRow.recolher || 0) : (D.deducoes || 0);
-      el.innerHTML =
-        kpiCard('green', 'fas fa-chart-line', 'Faturamento', brl(k.saidas || 0), 'Receita Simples', 'Competência') +
-        kpiCard('yellow', 'fas fa-file-invoice-dollar', 'DAS a recolher', brl(das), 'Simples Nacional', dasRow && dasRow.pctRb != null ? dasRow.pctRb + '% s/ fat.' : '—') +
-        kpiCard('purple', 'fas fa-percent', 'Alíquota efetiva', (dasRow && dasRow.pctRb != null ? dasRow.pctRb + '%' : '—'), '% DAS / faturamento', 'Planilha LANNIC') +
-        kpiCard('blue', 'fas fa-coins', 'Após DAS', brl((k.saidas || 0) - das), 'Fat. − DAS', 'Proxy');
-    } else {
-      el.innerHTML =
-        kpiCard('green', 'fas fa-arrow-down', 'Crédito ICMS', brl(k.icms_credito || 0), 'ICMS Crédito', 'Entradas') +
-        kpiCard('red', 'fas fa-arrow-up', 'Débito ICMS', brl(k.icms_debito || 0), 'ICMS Débito', 'Saídas') +
-        kpiCard('yellow', 'fas fa-file-invoice-dollar', 'ICMS a recolher', brl(icmsRec), 'Saldo ICMS', 'Débito − Crédito') +
-        kpiCard('purple', 'fas fa-receipt', 'IPI a recolher', brl(ipiRec), 'IPI líquido', 'Débito ' + brl(k.ipi_sai || 0) + ' − Crédito ' + brl(k.ipi_ent || 0));
-    }
+    ? ((ap && ap.fonte) || 'Simples Nacional — DAS (LANNIC.xlsx)')
+    : (hasAp
+      ? (ap.fonte || 'Planilha IMPOSTOS ICMS E IPI GRUPO JPG')
+      : 'Estimativa pelos lançamentos de NF-e (sem livro de apuração ICMS oficial)');
+
+  const subEl = document.getElementById('impSub');
+  if (subEl) {
+    subEl.textContent = isDasPack
+      ? 'Simples Nacional — DAS · ' + ((D.meta && D.meta.filial_label) || 'LANNIC')
+      : 'Apuração ICMS / IPI · ' + ((D.meta && D.meta.filial_label) || getPeriodScopeLabel() || 'JPG');
   }
+
+  // rebuild always (cards + charts mudam com mês/unidade)
+  delete panel.dataset.built;
+  panel.innerHTML =
+    '<div class="alert-box"><i class="fas fa-info-circle" style="margin-right:8px;"></i>' +
+      '<strong>Fonte:</strong> ' + fonte +
+      (isDasPack
+        ? '. Regime Simples Nacional — sem ICMS livro / EFD não-cumulativo nesta unidade.'
+        : '. ICMS estimado / informado por planilha de impostos do grupo (não substitui EFD / 5005 oficial).') +
+    '</div>' +
+    '<div class="tax-grid" id="taxGridImpostos"></div>' +
+    '<div class="charts-row cr-2col">' +
+      '<div class="chart-card">' +
+        '<div class="chart-ttl">Evolução Mensal — Deduções por Tributo</div>' +
+        '<div class="chart-sub" id="impChartEvSub">Valores a recolher por competência (R$)</div>' +
+        '<div class="chart-wrap h280"><canvas id="chartImpostosEv"></canvas></div>' +
+      '</div>' +
+      '<div class="chart-card">' +
+        '<div class="chart-ttl">Participação sobre Receita Bruta — <span id="impPartMes">' + (compShort || '—') + '</span></div>' +
+        '<div class="chart-sub" id="impChartPartSub">% de cada tributo sobre RB</div>' +
+        '<div class="chart-wrap h280"><canvas id="chartImpostosPart"></canvas></div>' +
+      '</div>' +
+    '</div>' +
+    (tabela.length
+      ? '<div class="table-card"><div class="table-head"><div><div class="ttl">Impostos a recolher</div><div class="sub">' +
+        (isDasPack ? 'DAS · Simples Nacional' : 'Detalhe por tributo') +
+        '</div></div></div>' +
+        '<div class="tbl-scroll"><table><thead><tr><th>Tributo</th><th class="r">Apurado</th><th class="r">A recolher</th><th class="r">% s/ vendas</th></tr></thead><tbody id="tblImpostos"></tbody></table></div></div>'
+      : '');
+  panel.dataset.built = '1';
+
+  const grid = document.getElementById('taxGridImpostos');
+  const cards = [];
+  const rb = Number(k.saidas) || 0;
+  const pctSobreRb = (v) => (rb > 0 ? ((Number(v) || 0) / rb * 100) : 0);
+
+  if (isDasPack) {
+    const das = dasRow ? (dasRow.recolher || 0) : (ap.das && ap.das.aRecolher != null ? ap.das.aRecolher : (D.deducoes || 0));
+    const pctDas = dasRow && dasRow.pctRb != null ? Number(dasRow.pctRb) : Number(pctSobreRb(das).toFixed(2));
+    cards.push(buildTaxCard({
+      name: 'DAS',
+      nameColor: 'var(--success)',
+      valueColor: 'var(--success)',
+      chip: 'Simples Nacional',
+      chipClass: 'gr',
+      value: brl(das),
+      prev: 'Base (faturamento): ' + brl(dasRow && dasRow.apurado != null ? dasRow.apurado : rb),
+      footLeft: pctDas.toFixed(2).replace('.', ',') + '% s/ Faturamento',
+      footBadge: '<i class="fas fa-check"></i> Apurado',
+      footBadgeClass: 'var-up',
+    }));
+    cards.push(buildTaxCard({
+      name: 'Faturamento',
+      nameColor: 'var(--accent)',
+      valueColor: 'var(--accent)',
+      chip: 'Receita',
+      chipClass: 'bl',
+      value: brl(rb),
+      prev: 'Saídas / receita bruta da competência (Simples)',
+      footLeft: compShort || 'Competência',
+      footBadge: 'LANNIC',
+      footBadgeClass: 'var-neu',
+    }));
+    cards.push(buildTaxCard({
+      name: 'Após DAS',
+      nameColor: 'var(--cyan)',
+      valueColor: 'var(--cyan)',
+      chip: 'Proxy',
+      chipClass: 'cy',
+      value: brl(rb - das),
+      prev: 'Faturamento − DAS (não é lucro contábil)',
+      footLeft: 'Indicador gerencial',
+      footBadge: pctDas ? ('alíq. ' + pctDas + '%') : '—',
+      footBadgeClass: 'var-neu',
+    }));
+    cards.push(buildTaxCard({
+      name: 'ICMS',
+      nameColor: 'var(--text-muted)',
+      valueColor: 'var(--text-muted)',
+      valueSize: '18px',
+      chip: 'Não aplica',
+      chipClass: 'gy',
+      value: '—',
+      prev: 'Unidade no Simples Nacional — sem apuração ICMS própria neste pack',
+      footLeft: 'Regime diferenciado',
+      footBadge: 'Simples',
+      footBadgeClass: 'var-neu',
+    }));
+    cards.push(buildTaxCard({
+      name: 'PIS / COFINS',
+      nameColor: 'var(--text-muted)',
+      valueColor: 'var(--text-muted)',
+      valueSize: '18px',
+      chip: 'No DAS',
+      chipClass: 'gy',
+      value: 'Embutidos',
+      prev: 'Tributos federais recolhidos via DAS (guia unificada)',
+      footLeft: 'Sem EFD não-cumulativo',
+      footBadge: '—',
+      footBadgeClass: 'var-neu',
+    }));
+    cards.push(buildTaxCard({
+      name: 'IRPJ / CSLL',
+      nameColor: 'var(--orange)',
+      valueColor: 'var(--text-muted)',
+      valueSize: '18px',
+      chip: 'No DAS',
+      chipClass: 'or',
+      value: 'Embutidos',
+      prev: 'IRPJ/CSLL do Simples incluídos na guia DAS',
+      footLeft: 'Sem LALUR separado',
+      footBadge: '—',
+      footBadgeClass: 'var-neu',
+    }));
+  } else {
+    const icmsDeb = hasAp ? (ap.icms.debitoSaidas || 0) : (k.icms_debito || 0);
+    const icmsCred = hasAp
+      ? ((ap.icms.creditoEntradas || 0) + (ap.icms.outrosCreditos || 0))
+      : (k.icms_credito || 0);
+    const icmsRec = hasAp ? (ap.icms.aRecolher || 0) : (k.saldo_icms || 0);
+    const reducao = icmsDeb > 0 ? ((icmsDeb - Math.max(icmsRec, 0)) / icmsDeb * 100) : null;
+    const ipiRec = hasAp ? (ap.ipi && ap.ipi.aRecolher || 0) : ((k.ipi_sai || 0) - (k.ipi_ent || 0));
+    const ipiDeb = hasAp ? (ap.ipi && ap.ipi.debitoSaidas || 0) : (k.ipi_sai || 0);
+    const ipiCred = hasAp ? (ap.ipi && ap.ipi.creditoEntradas || 0) : (k.ipi_ent || 0);
+    const stRec = jpgTributoRecolher(D, 'icmsSt');
+    const pisRec = jpgTributoRecolher(D, 'pis');
+    const cofRec = jpgTributoRecolher(D, 'cofins');
+
+    const fp = typeof getFiscal === 'function' ? getFiscal() : { meses: [] };
+    const meses = fp.meses || [];
+    const curIdx = meses.indexOf(appMesFiscal);
+    const prevKey = curIdx > 0 ? meses[curIdx - 1] : null;
+    const prevScope = prevKey ? getJpgScopeForMes(prevKey) : null;
+    const prevSt = prevScope ? jpgTributoRecolher(prevScope, 'icmsSt') : 0;
+    const prevLbl = prevKey && typeof fiscalMesLabel === 'function'
+      ? (fiscalMesLabel(prevKey) || prevKey).split('/')[0]
+      : 'mês ant.';
+
+    cards.push(buildTaxCard({
+      name: 'ICMS',
+      nameColor: 'var(--success)',
+      valueColor: 'var(--success)',
+      chip: hasAp ? 'apuração' : 'lançamentos NF',
+      chipClass: hasAp ? 'gr' : 'bl',
+      value: brl(icmsRec),
+      prev: 'Débito bruto: ' + brl(icmsDeb) + ' — Créditos: ' + brl(icmsCred),
+      footLeft: 'Apuração ' + (compShort || ''),
+      footBadge: reducao != null && reducao > 0
+        ? '<i class="fas fa-arrow-down"></i> Redução ' + reducao.toFixed(1).replace('.', ',') + '%'
+        : (icmsRec > 0 ? '<i class="fas fa-arrow-up"></i> A recolher' : '<i class="fas fa-check"></i> Zerado/credor'),
+      footBadgeClass: reducao != null && reducao > 0 ? 'var-up' : (icmsRec > 0 ? 'var-down' : 'var-up'),
+    }));
+
+    cards.push(buildTaxCard({
+      name: 'ICMS ST',
+      nameColor: 'var(--purple)',
+      valueColor: 'var(--purple)',
+      chip: 'Substituição',
+      chipClass: 'pu',
+      value: brl(stRec),
+      prev: stRec
+        ? 'Apurado na competência ' + (compShort || '')
+        : 'Sem ICMS ST informado nesta unidade/mês',
+      footLeft: pctSobreRb(stRec).toFixed(2).replace('.', ',') + '% s/ Receita Bruta',
+      footBadge: stRec > prevSt
+        ? '<i class="fas fa-arrow-up"></i> vs. ' + prevLbl + ' ' + brl(prevSt)
+        : (stRec < prevSt
+          ? '<i class="fas fa-arrow-down"></i> vs. ' + prevLbl + ' ' + brl(prevSt)
+          : 'vs. ' + prevLbl + ' ' + brl(prevSt)),
+      footBadgeClass: stRec > prevSt ? 'var-down' : (stRec < prevSt ? 'var-up' : 'var-neu'),
+    }));
+
+    cards.push(buildTaxCard({
+      name: 'IPI',
+      nameColor: 'var(--accent)',
+      valueColor: 'var(--accent)',
+      chip: 'Industrialização',
+      chipClass: 'bl',
+      value: brl(ipiRec),
+      prev: 'Débito: ' + brl(ipiDeb) + ' | Crédito: ' + brl(ipiCred),
+      footLeft: pctSobreRb(ipiRec).toFixed(2).replace('.', ',') + '% s/ Receita Bruta',
+      footBadge: ipiRec > 0 ? '<i class="fas fa-arrow-up"></i> A recolher' : '<i class="fas fa-check"></i> Zerado',
+      footBadgeClass: ipiRec > 0 ? 'var-down' : 'var-up',
+    }));
+
+    const hasPis = !!(ap.pis && ((ap.pis.aRecolher || 0) !== 0 || (ap.pis.debitoSaidas || 0) !== 0))
+      || tabela.some((t) => /^PIS/i.test(t.tributo || ''));
+    cards.push(buildTaxCard({
+      name: 'PIS',
+      nameColor: 'var(--success)',
+      valueColor: hasPis ? 'var(--success)' : 'var(--text-muted)',
+      valueSize: hasPis ? undefined : '18px',
+      chip: hasPis ? 'Informado' : 'Sem EFD',
+      chipClass: hasPis ? 'gr' : 'gy',
+      value: hasPis ? brl(pisRec) : 'Sem dados',
+      prev: hasPis
+        ? 'A recolher na competência'
+        : 'Aguardando EFD PIS/COFINS — não disponível no pack JPG atual',
+      footLeft: hasPis ? (pctSobreRb(pisRec).toFixed(2).replace('.', ',') + '% s/ RB') : 'Não-Cumulativo',
+      footBadge: hasPis
+        ? (pisRec === 0 ? '<i class="fas fa-check"></i> Zerado' : '<i class="fas fa-arrow-up"></i> A recolher')
+        : 'Pendente',
+      footBadgeClass: hasPis && pisRec === 0 ? 'var-up' : 'var-neu',
+    }));
+
+    const hasCof = !!(ap.cofins && ((ap.cofins.aRecolher || 0) !== 0 || (ap.cofins.debitoSaidas || 0) !== 0))
+      || tabela.some((t) => /^COFINS/i.test(t.tributo || ''));
+    cards.push(buildTaxCard({
+      name: 'COFINS',
+      nameColor: 'var(--warning)',
+      valueColor: hasCof ? 'var(--warning)' : 'var(--text-muted)',
+      valueSize: hasCof ? undefined : '18px',
+      chip: hasCof ? 'Informado' : 'Sem EFD',
+      chipClass: hasCof ? 'ye' : 'gy',
+      value: hasCof ? brl(cofRec) : 'Sem dados',
+      prev: hasCof
+        ? 'A recolher na competência'
+        : 'Aguardando EFD PIS/COFINS — não disponível no pack JPG atual',
+      footLeft: hasCof ? (pctSobreRb(cofRec).toFixed(2).replace('.', ',') + '% s/ RB') : 'Não-Cumulativo',
+      footBadge: hasCof
+        ? (cofRec === 0 ? '<i class="fas fa-check"></i> Zerado' : '<i class="fas fa-arrow-up"></i> A recolher')
+        : 'Pendente',
+      footBadgeClass: hasCof && cofRec === 0 ? 'var-up' : 'var-neu',
+    }));
+
+    const qLabel = (typeof trimestreForMonthKey === 'function' && appMesFiscal && appMesFiscal !== 'total')
+      ? (trimestreForMonthKey(appMesFiscal) || 'Trimestre')
+      : 'Trimestre';
+    cards.push(buildTaxCard({
+      name: 'IRPJ / CSLL',
+      nameColor: 'var(--cyan)',
+      valueColor: 'var(--text-muted)',
+      valueSize: '18px',
+      chip: 'Trimestral',
+      chipClass: 'cy',
+      value: 'Em apuração',
+      prev: 'Lucro Real / LALUR — não carregado neste dashboard JPG',
+      footLeft: 'Alíquotas: IRPJ 15%+10% · CSLL 9%',
+      footBadge: qLabel,
+      footBadgeClass: 'var-neu',
+    }));
+  }
+
+  if (grid) grid.innerHTML = cards.join('');
+
   const tb = document.getElementById('tblImpostos');
   if (tb && tabela.length) {
     tb.innerHTML = tabela.map((t) =>
@@ -131751,6 +132059,123 @@ function initImpostos() {
       '<td class="r">' + (t.pctRb != null ? t.pctRb + '%' : '—') + '</td></tr>'
     ).join('');
   }
+
+  // --- Charts ---
+  const fp = typeof getFiscal === 'function' ? getFiscal() : { meses: [], monthShort: [], mesLabels: [] };
+  const meses = fp.meses || [];
+  const shortLabels = (fp.monthShort && fp.monthShort.length === meses.length)
+    ? fp.monthShort
+    : meses.map((m, i) => (fp.mesLabels && fp.mesLabels[i] ? String(fp.mesLabels[i]).split('/')[0] : m));
+
+  const seriesIcms = [];
+  const seriesSt = [];
+  const seriesIpi = [];
+  const seriesDas = [];
+  meses.forEach((m) => {
+    const sc = getJpgScopeForMes(m);
+    seriesIcms.push(sc ? jpgTributoRecolher(sc, 'icms') : 0);
+    seriesSt.push(sc ? jpgTributoRecolher(sc, 'icmsSt') : 0);
+    seriesIpi.push(sc ? jpgTributoRecolher(sc, 'ipi') : 0);
+    seriesDas.push(sc ? jpgTributoRecolher(sc, 'das') : 0);
+  });
+
+  const dsEv = [];
+  if (isDasPack || seriesDas.some((v) => v > 0)) {
+    dsEv.push({
+      label: 'DAS (Simples)',
+      data: seriesDas,
+      borderColor: '#10b981',
+      backgroundColor: 'rgba(16,185,129,0.12)',
+      borderWidth: 2,
+      pointRadius: 4,
+      tension: 0.3,
+      fill: false,
+    });
+  }
+  if (!isDasPack) {
+    dsEv.push(
+      { label: 'ICMS', data: seriesIcms, borderColor: '#22c55e', borderWidth: 2, pointRadius: 4, tension: 0.3, fill: false },
+      { label: 'ICMS ST', data: seriesSt, borderColor: '#8b5cf6', borderWidth: 2, pointRadius: 4, tension: 0.3, fill: false },
+      { label: 'IPI', data: seriesIpi, borderColor: '#3b82f6', borderWidth: 2, pointRadius: 4, tension: 0.3, fill: false }
+    );
+  }
+
+  const evSub = document.getElementById('impChartEvSub');
+  if (evSub) {
+    evSub.textContent = isDasPack
+      ? 'DAS a recolher por mês — unidade atual (R$)'
+      : 'ICMS · ICMS ST · IPI a recolher — unidade atual (R$)';
+  }
+
+  safeChart('chartImpostosEv', {
+    type: 'line',
+    data: { labels: shortLabels, datasets: dsEv },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      spanGaps: false,
+      plugins: {
+        legend: leg(),
+        tooltip: { ...tip(), callbacks: { label: (c) => (c.dataset.label || '') + ': ' + brl(c.parsed.y) } },
+      },
+      scales: {
+        y: { ticks: { callback: (v) => (Math.abs(v) >= 1000 ? brlK(v) : brl(v)) } },
+      },
+    },
+  });
+
+  const partLabels = [];
+  const partData = [];
+  const partColors = [];
+  if (isDasPack) {
+    const das = jpgTributoRecolher(D, 'das') || (dasRow && dasRow.recolher) || 0;
+    partLabels.push('DAS');
+    partData.push(Number(pctSobreRb(das).toFixed(2)));
+    partColors.push('#10b981');
+  } else {
+    const items = [
+      { lab: 'ICMS', v: jpgTributoRecolher(D, 'icms'), c: '#22c55e' },
+      { lab: 'ICMS ST', v: jpgTributoRecolher(D, 'icmsSt'), c: '#8b5cf6' },
+      { lab: 'IPI', v: jpgTributoRecolher(D, 'ipi'), c: '#3b82f6' },
+    ];
+    items.forEach((it) => {
+      partLabels.push(it.lab);
+      partData.push(Number(pctSobreRb(it.v).toFixed(2)));
+      partColors.push(it.c);
+    });
+  }
+
+  const partSub = document.getElementById('impChartPartSub');
+  if (partSub) {
+    partSub.textContent = '% de cada tributo a recolher sobre RB de ' + brl(rb);
+  }
+
+  const maxPct = Math.max(5, Math.ceil((Math.max.apply(null, partData.concat([0])) + 1)));
+  safeChart('chartImpostosPart', {
+    type: 'bar',
+    data: {
+      labels: partLabels,
+      datasets: [{
+        label: '% s/ RB',
+        data: partData,
+        backgroundColor: partColors,
+        borderRadius: 5,
+      }],
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { ...tip(), callbacks: { label: (c) => (c.parsed.x != null ? c.parsed.x : c.parsed.y) + '%' } },
+      },
+      scales: {
+        x: { ticks: { callback: (v) => v + '%' }, suggestedMax: maxPct },
+      },
+    },
+  });
+
   updatePeriodLabels();
 }
 
