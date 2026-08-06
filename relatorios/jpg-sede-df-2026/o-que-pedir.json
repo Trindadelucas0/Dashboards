@@ -1,0 +1,257 @@
+{
+  "pedir_agora_movimento": [
+    {
+      "unidade": "Filial DF (0003-27)",
+      "mes": "2026-01",
+      "oQue": "Entradas + Saídas EXITO (.xls) da Filial DF",
+      "motivo": "Hoje só tem impostos; compras/vendas estão zeradas"
+    },
+    {
+      "unidade": "Filial DF (0003-27)",
+      "mes": "2026-02",
+      "oQue": "Entradas + Saídas EXITO (.xls) da Filial DF",
+      "motivo": "Hoje só tem impostos; compras/vendas estão zeradas"
+    },
+    {
+      "unidade": "Filial DF (0003-27)",
+      "mes": "2026-03",
+      "oQue": "Entradas + Saídas EXITO (.xls) da Filial DF",
+      "motivo": "Hoje só tem impostos; compras/vendas estão zeradas"
+    },
+    {
+      "unidade": "Filial DF (0003-27)",
+      "mes": "2026-04",
+      "oQue": "Entradas + Saídas EXITO (.xls) da Filial DF",
+      "motivo": "Hoje só tem impostos; compras/vendas estão zeradas"
+    },
+    {
+      "unidade": "Filial DF (0003-27)",
+      "mes": "2026-05",
+      "oQue": "Entradas + Saídas EXITO (.xls) da Filial DF",
+      "motivo": "Hoje só tem impostos; compras/vendas estão zeradas"
+    },
+    {
+      "unidade": "Filial DF (0003-27)",
+      "mes": "2026-06",
+      "oQue": "Entradas + Saídas EXITO (.xls) da Filial DF",
+      "motivo": "Hoje só tem impostos; compras/vendas estão zeradas"
+    }
+  ],
+  "pedir_ou_autorizar_overlay_impostos": [
+    {
+      "unidade": "Filial MG (0005-99)",
+      "mes": "2026-01",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=1773.88 plan=0; IPI créd kpi=6341.81 plan=6341.81)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial PR (0006-70)",
+      "mes": "2026-01",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=318.73 plan=0; IPI créd kpi=1139.49 plan=1139.49)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial SP (0007-50)",
+      "mes": "2026-01",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=0 plan=28445.49; IPI créd kpi=0 plan=7952.47)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial DF (0003-27)",
+      "mes": "2026-01",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=0 plan=25332.04; IPI créd kpi=0 plan=82920.71)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial MG (0005-99)",
+      "mes": "2026-02",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=2798.94 plan=0; IPI créd kpi=10006.21 plan=10006.21)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial PR (0006-70)",
+      "mes": "2026-02",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=660.74 plan=0; IPI créd kpi=2362.32 plan=2362.32)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial SP (0007-50)",
+      "mes": "2026-02",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=0 plan=5229.2; IPI créd kpi=0 plan=18694.71)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial DF (0003-27)",
+      "mes": "2026-02",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=0 plan=537.07; IPI créd kpi=0 plan=0)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial MG (0005-99)",
+      "mes": "2026-03",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=4215.16 plan=0; IPI créd kpi=15069.29 plan=15069.29)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial PR (0006-70)",
+      "mes": "2026-03",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=1617.77 plan=0; IPI créd kpi=5783.56 plan=5783.56)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial SP (0007-50)",
+      "mes": "2026-03",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=0 plan=4428.14; IPI créd kpi=0 plan=15830.58)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial DF (0003-27)",
+      "mes": "2026-03",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=0 plan=40806.91; IPI créd kpi=0 plan=128976)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial MG (0005-99)",
+      "mes": "2026-04",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=1404.59 plan=0; IPI créd kpi=5021.6 plan=5021.6)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial PR (0006-70)",
+      "mes": "2026-04",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=687.31 plan=0; IPI créd kpi=2457.18 plan=2457.18)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial SP (0007-50)",
+      "mes": "2026-04",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=0 plan=2283.11; IPI créd kpi=0 plan=0)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial DF (0003-27)",
+      "mes": "2026-04",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=0 plan=33262.33; IPI créd kpi=0 plan=36876.33)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial MG (0005-99)",
+      "mes": "2026-05",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=1377.51 plan=0; IPI créd kpi=46247.23 plan=4924.49)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial PR (0006-70)",
+      "mes": "2026-05",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=568.57 plan=0; IPI créd kpi=15382.92 plan=2032.54)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial SP (0007-50)",
+      "mes": "2026-05",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=0 plan=905.02; IPI créd kpi=0 plan=18544.51)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial DF (0003-27)",
+      "mes": "2026-05",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=0 plan=5431.92; IPI créd kpi=0 plan=5872.62)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial MG (0005-99)",
+      "mes": "2026-06",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=3009.53 plan=0; IPI créd kpi=10758.94 plan=10758.94)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial PR (0006-70)",
+      "mes": "2026-06",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=508.81 plan=0; IPI créd kpi=1818.97 plan=1818.97)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial SP (0007-50)",
+      "mes": "2026-06",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=3803.57 plan=3803.57; IPI créd kpi=13597.96 plan=13597.96)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial DF (0003-27)",
+      "mes": "2026-06",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=0 plan=85910.37; IPI créd kpi=0 plan=316991.12)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial MG (0005-99)",
+      "mes": "2026-07",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=2934.91 plan=0; IPI créd kpi=10492.21 plan=10492.21)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial PR (0006-70)",
+      "mes": "2026-07",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=278.89 plan=0; IPI créd kpi=997 plan=997)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial SP (0007-50)",
+      "mes": "2026-07",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=4115.04 plan=4115.04; IPI créd kpi=14711.18 plan=14711.18)",
+      "planilhaTem": true
+    },
+    {
+      "unidade": "Filial DF (0003-27)",
+      "mes": "2026-07",
+      "oQue": "Já existe na planilha grupo — falta overlay oficial na memória/KPIs",
+      "motivo": "KPI difere da planilha (ICMS créd kpi=0 plan=16418.6; IPI créd kpi=0 plan=20816.6)",
+      "planilhaTem": true
+    }
+  ],
+  "pedir_se_quiser_completar_sistema": [
+    {
+      "oQue": "Apuração 5005 / EFD (PIS, COFINS, ICMS ST detalhado) por unidade/mês",
+      "motivo": "Memória hoje só tem ICMS + IPI da planilha grupo; PIS/COFINS/ST zerados"
+    },
+    {
+      "oQue": "Balancete contábil JPG (se quiser aba Balancete)",
+      "motivo": "Aba Balancete ainda pendente"
+    },
+    {
+      "oQue": "DRE contábil JPG (se quiser DRE oficial)",
+      "motivo": "DRE atual é só estimativa de movimento"
+    }
+  ],
+  "sede_saidas_na_planilha_por_mes": {
+    "2026-01": 2,
+    "2026-03": 2
+  },
+  "nota_sede_saidas": "SEDE só tem saídas em Jan e Mar na planilha enviada — demais meses 0 é correto, não pedir de novo salvo se houver outro arquivo."
+}
