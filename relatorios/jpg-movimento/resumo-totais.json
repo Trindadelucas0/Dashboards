@@ -1,0 +1,272 @@
+[
+  {
+    "mes": "2026-01",
+    "unit": "MATRIZ",
+    "entradas": 689985.86,
+    "saidas": 1676310.11,
+    "n_nf_ent": 3,
+    "n_nf_sai": 440,
+    "saldo_icms": 155893.35
+  },
+  {
+    "mes": "2026-01",
+    "unit": "MG",
+    "entradas": 50689.93,
+    "saidas": 218532.55,
+    "n_nf_ent": 26,
+    "n_nf_sai": 81,
+    "saldo_icms": -1773.88
+  },
+  {
+    "mes": "2026-01",
+    "unit": "PR",
+    "entradas": 9107.92,
+    "saidas": 0,
+    "n_nf_ent": 11,
+    "n_nf_sai": 0,
+    "saldo_icms": -318.73
+  },
+  {
+    "mes": "2026-01",
+    "unit": "RAIZ",
+    "entradas": 308131.35,
+    "saidas": 22.75,
+    "n_nf_ent": 47,
+    "n_nf_sai": 2,
+    "saldo_icms": 0.8
+  },
+  {
+    "mes": "2026-01",
+    "unit": "SP",
+    "entradas": 0,
+    "saidas": 337216.1,
+    "n_nf_ent": 0,
+    "n_nf_sai": 94,
+    "saldo_icms": 0
+  },
+  {
+    "mes": "2026-02",
+    "unit": "MATRIZ",
+    "entradas": 11447.6,
+    "saidas": 3099565.44,
+    "n_nf_ent": 6,
+    "n_nf_sai": 478,
+    "saldo_icms": 289813.02
+  },
+  {
+    "mes": "2026-02",
+    "unit": "MG",
+    "entradas": 79979.77,
+    "saidas": 249580.75,
+    "n_nf_ent": 47,
+    "n_nf_sai": 56,
+    "saldo_icms": -2798.94
+  },
+  {
+    "mes": "2026-02",
+    "unit": "PR",
+    "entradas": 18881.74,
+    "saidas": 0,
+    "n_nf_ent": 27,
+    "n_nf_sai": 0,
+    "saldo_icms": -660.74
+  },
+  {
+    "mes": "2026-02",
+    "unit": "RAIZ",
+    "entradas": 781661.45,
+    "saidas": 0,
+    "n_nf_ent": 61,
+    "n_nf_sai": 0,
+    "saldo_icms": 0
+  },
+  {
+    "mes": "2026-02",
+    "unit": "SP",
+    "entradas": 0,
+    "saidas": 538694.5,
+    "n_nf_ent": 0,
+    "n_nf_sai": 113,
+    "saldo_icms": 0
+  },
+  {
+    "mes": "2026-03",
+    "unit": "MATRIZ",
+    "entradas": 1590701.07,
+    "saidas": 3250821.47,
+    "n_nf_ent": 16,
+    "n_nf_sai": 775,
+    "saldo_icms": 266574.14
+  },
+  {
+    "mes": "2026-03",
+    "unit": "MG",
+    "entradas": 130954.45,
+    "saidas": 437277.37,
+    "n_nf_ent": 74,
+    "n_nf_sai": 78,
+    "saldo_icms": -3433.48
+  },
+  {
+    "mes": "2026-03",
+    "unit": "PR",
+    "entradas": 46228.04,
+    "saidas": 0,
+    "n_nf_ent": 43,
+    "n_nf_sai": 0,
+    "saldo_icms": -1617.77
+  },
+  {
+    "mes": "2026-03",
+    "unit": "RAIZ",
+    "entradas": 511343.27,
+    "saidas": 467742.4,
+    "n_nf_ent": 66,
+    "n_nf_sai": 2,
+    "saldo_icms": 0
+  },
+  {
+    "mes": "2026-03",
+    "unit": "SP",
+    "entradas": 0,
+    "saidas": 584827.43,
+    "n_nf_ent": 0,
+    "n_nf_sai": 138,
+    "saldo_icms": 0
+  },
+  {
+    "mes": "2026-04",
+    "unit": "MATRIZ",
+    "entradas": 846958.38,
+    "saidas": 3396918.75,
+    "n_nf_ent": 14,
+    "n_nf_sai": 662,
+    "saldo_icms": 189806.19
+  },
+  {
+    "mes": "2026-04",
+    "unit": "MG",
+    "entradas": 47337.72,
+    "saidas": 235612.09,
+    "n_nf_ent": 47,
+    "n_nf_sai": 54,
+    "saldo_icms": -1336.61
+  },
+  {
+    "mes": "2026-04",
+    "unit": "PR",
+    "entradas": 21979.4,
+    "saidas": 0,
+    "n_nf_ent": 25,
+    "n_nf_sai": 0,
+    "saldo_icms": -687.31
+  },
+  {
+    "mes": "2026-04",
+    "unit": "RAIZ",
+    "entradas": 380672.67,
+    "saidas": 0,
+    "n_nf_ent": 74,
+    "n_nf_sai": 0,
+    "saldo_icms": 0
+  },
+  {
+    "mes": "2026-04",
+    "unit": "SP",
+    "entradas": 0,
+    "saidas": 595601.23,
+    "n_nf_ent": 0,
+    "n_nf_sai": 64,
+    "saldo_icms": 0
+  },
+  {
+    "mes": "2026-05",
+    "unit": "MATRIZ",
+    "entradas": 77484.5,
+    "saidas": 2770103.57,
+    "n_nf_ent": 9,
+    "n_nf_sai": 385,
+    "saldo_icms": 113642.61
+  },
+  {
+    "mes": "2026-05",
+    "unit": "MG",
+    "entradas": 39361.58,
+    "saidas": 260565.75,
+    "n_nf_ent": 53,
+    "n_nf_sai": 62,
+    "saldo_icms": -1213.86
+  },
+  {
+    "mes": "2026-05",
+    "unit": "PR",
+    "entradas": 16246.14,
+    "saidas": 104754.64,
+    "n_nf_ent": 18,
+    "n_nf_sai": 25,
+    "saldo_icms": -568.57
+  },
+  {
+    "mes": "2026-05",
+    "unit": "RAIZ",
+    "entradas": 254121.93,
+    "saidas": 0,
+    "n_nf_ent": 55,
+    "n_nf_sai": 0,
+    "saldo_icms": 0
+  },
+  {
+    "mes": "2026-05",
+    "unit": "SP",
+    "entradas": 0,
+    "saidas": 430879.84,
+    "n_nf_ent": 0,
+    "n_nf_sai": 70,
+    "saldo_icms": 20811.75
+  },
+  {
+    "mes": "2026-06",
+    "unit": "MATRIZ",
+    "entradas": 1703640.89,
+    "saidas": 3649924.21,
+    "n_nf_ent": 12,
+    "n_nf_sai": 611,
+    "saldo_icms": 121312.79
+  },
+  {
+    "mes": "2026-06",
+    "unit": "MG",
+    "entradas": 97994.17,
+    "saidas": 496831.66,
+    "n_nf_ent": 61,
+    "n_nf_sai": 82,
+    "saldo_icms": -3009.53
+  },
+  {
+    "mes": "2026-06",
+    "unit": "PR",
+    "entradas": 14539.1,
+    "saidas": 99404.74,
+    "n_nf_ent": 17,
+    "n_nf_sai": 26,
+    "saldo_icms": -508.81
+  },
+  {
+    "mes": "2026-06",
+    "unit": "RAIZ",
+    "entradas": 255264.64,
+    "saidas": 0,
+    "n_nf_ent": 58,
+    "n_nf_sai": 0,
+    "saldo_icms": 0
+  },
+  {
+    "mes": "2026-06",
+    "unit": "SP",
+    "entradas": 112749.13,
+    "saidas": 810686.49,
+    "n_nf_ent": 128,
+    "n_nf_sai": 188,
+    "saldo_icms": 75906.68
+  }
+]

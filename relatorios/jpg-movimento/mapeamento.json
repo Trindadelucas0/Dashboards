@@ -1,0 +1,51 @@
+{
+  "fonte": [
+    "c:/Users/trind/Desktop/mg",
+    "c:/Users/trind/Desktop/ind",
+    "c:/Users/trind/Desktop/curitiba",
+    "c:/Users/trind/Desktop/matriz e filial"
+  ],
+  "unidadesDashboard": {
+    "MG": { "cnpj": "21051983000599", "codigo": "90", "label": "Filial MG" },
+    "PR": { "cnpj": "21051983000670", "codigo": "81", "label": "Filial PR" },
+    "SP": { "cnpj": "21051983000750", "codigo": "82", "label": "Filial SP" },
+    "MATRIZ": { "cnpj": "21051983000327", "codigo": "712", "label": "Matriz DF" }
+  },
+  "gateCnpj": {
+    "cnpj": "21051983000165",
+    "codigo": "711",
+    "label": "JPG PRODUTOS FUNCIONAIS MATRIZ (raiz)",
+    "acao": "extrair-e-aguardar"
+  },
+  "arquivos": [
+    { "path": "c:/Users/trind/Desktop/mg/Entradas (1).xls", "key": "mg-jun-entradas", "unidade": "MG", "tipo": "entradas", "modo": "mensal", "competencia": "2026-06" },
+    { "path": "c:/Users/trind/Desktop/mg/Saídas (2).xls", "key": "mg-jun-saidas", "unidade": "MG", "tipo": "saidas", "modo": "mensal", "competencia": "2026-06" },
+    { "path": "c:/Users/trind/Desktop/mg/entradas a jan a jun.xls", "key": "mg-janmai-entradas", "unidade": "MG", "tipo": "entradas", "modo": "acumulado", "periodoCabecalho": "01/01/2026 até 31/05/2026", "splitMeses": ["2026-01","2026-02","2026-03","2026-04","2026-05"] },
+    { "path": "c:/Users/trind/Desktop/mg/Saídas.xls jan a junho (2).xls", "key": "mg-janmai-saidas", "unidade": "MG", "tipo": "saidas", "modo": "acumulado", "periodoCabecalho": "01/01/2026 até 31/05/2026", "splitMeses": ["2026-01","2026-02","2026-03","2026-04","2026-05"] },
+
+    { "path": "c:/Users/trind/Desktop/mg/Entradas.xls", "key": "sp-jun-entradas", "unidade": "SP", "tipo": "entradas", "modo": "mensal", "competencia": "2026-06" },
+    { "path": "c:/Users/trind/Desktop/mg/Saídas (1).xls", "key": "sp-jun-saidas", "unidade": "SP", "tipo": "saidas", "modo": "mensal", "competencia": "2026-06" },
+    { "path": "c:/Users/trind/Desktop/mg/Saídas.xls jan a junho (1).xls", "key": "sp-janmai-saidas", "unidade": "SP", "tipo": "saidas", "modo": "acumulado", "periodoCabecalho": "01/01/2026 até 31/05/2026", "splitMeses": ["2026-01","2026-02","2026-03","2026-04","2026-05"] },
+    { "path": "c:/Users/trind/Desktop/mg/Saídas.xls jan a junho.xls", "key": "sp-janmai-saidas-dup", "unidade": "SP", "tipo": "saidas", "modo": "duplicata", "nota": "mesmo tamanho que (1) — pular se hash/tamanho igual" },
+
+    { "path": "c:/Users/trind/Desktop/ind/Entradas.xls", "key": "matriz-jun-entradas", "unidade": "MATRIZ", "tipo": "entradas", "modo": "mensal", "competencia": "2026-06" },
+    { "path": "c:/Users/trind/Desktop/ind/Saídas (1).xls", "key": "matriz-jun-saidas", "unidade": "MATRIZ", "tipo": "saidas", "modo": "mensal", "competencia": "2026-06" },
+    { "path": "c:/Users/trind/Desktop/ind/Entradas.xls jan a junho.xls", "key": "matriz-janmai-entradas", "unidade": "MATRIZ", "tipo": "entradas", "modo": "acumulado", "periodoCabecalho": "01/01/2026 até 31/05/2026", "splitMeses": ["2026-01","2026-02","2026-03","2026-04","2026-05"] },
+    { "path": "c:/Users/trind/Desktop/ind/Saídas.xls jan a maio.xls", "key": "matriz-janmai-saidas", "unidade": "MATRIZ", "tipo": "saidas", "modo": "acumulado", "periodoCabecalho": "01/01/2026 até 31/05/2026", "splitMeses": ["2026-01","2026-02","2026-03","2026-04","2026-05"] },
+
+    { "path": "c:/Users/trind/Desktop/curitiba/Entradas.xls", "key": "pr-jun-entradas", "unidade": "PR", "tipo": "entradas", "modo": "mensal", "competencia": "2026-06" },
+    { "path": "c:/Users/trind/Desktop/curitiba/Saídas (1).xls", "key": "pr-jun-saidas", "unidade": "PR", "tipo": "saidas", "modo": "mensal", "competencia": "2026-06" },
+    { "path": "c:/Users/trind/Desktop/curitiba/Entradas.xls jan  maio.xls", "key": "pr-janmai-entradas", "unidade": "PR", "tipo": "entradas", "modo": "acumulado", "periodoCabecalho": "01/01/2026 até 31/05/2026", "splitMeses": ["2026-01","2026-02","2026-03","2026-04","2026-05"] },
+    { "path": "c:/Users/trind/Desktop/curitiba/Saídas.xls jan a maio.xls", "key": "pr-mai-saidas", "unidade": "PR", "tipo": "saidas", "modo": "mensal", "competencia": "2026-05", "nota": "nome diz jan-maio; cabeçalho = só maio" },
+
+    { "path": "c:/Users/trind/Desktop/matriz e filial/Entradas.xls", "key": "raiz-jun-entradas", "unidade": "RAIZ", "tipo": "entradas", "modo": "mensal", "competencia": "2026-06", "gate": true },
+    { "path": "c:/Users/trind/Desktop/matriz e filial/Entradas.xls jan a maio.xls", "key": "raiz-janmai-entradas", "unidade": "RAIZ", "tipo": "entradas", "modo": "acumulado", "periodoCabecalho": "01/01/2026 até 31/05/2026", "splitMeses": ["2026-01","2026-02","2026-03","2026-04","2026-05"], "gate": true },
+    { "path": "c:/Users/trind/Desktop/matriz e filial/Saídas.xls jan amaio.xls", "key": "raiz-janmai-saidas", "unidade": "RAIZ", "tipo": "saidas", "modo": "acumulado", "periodoCabecalho": "01/01/2026 até 31/05/2026", "splitMeses": ["2026-01","2026-02","2026-03","2026-04","2026-05"], "gate": true }
+  ],
+  "pendencias": [
+    "SP entradas Jan–Mai ausentes nestas pastas",
+    "PR saídas Jan–Abr ausentes (só Mai + Jun)",
+    "CNPJ 0001-65 saídas Jun ausentes",
+    "Jul/2026 não está nestas pastas — preservar Jul PR no EJS"
+  ]
+}

@@ -1,0 +1,502 @@
+{
+  "validations": [
+    {
+      "key": "mg-jun-entradas",
+      "unit": "MG",
+      "tipo": "entradas",
+      "modo": "mensal",
+      "file": "Entradas (1).xls",
+      "period": "01/06/2026 até 30/06/2026",
+      "cnpj": "21051983000599",
+      "lineCount": 61,
+      "sum": 97994.17,
+      "tg": 97994.17,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "mg-jun-saidas",
+      "unit": "MG",
+      "tipo": "saidas",
+      "modo": "mensal",
+      "file": "Saídas (2).xls",
+      "period": "01/06/2026 até 30/06/2026",
+      "cnpj": "21.051.983/0005-99",
+      "lineCount": 82,
+      "sum": 496831.66,
+      "tg": 496831.66,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "mg-janmai-entradas",
+      "unit": "MG",
+      "tipo": "entradas",
+      "modo": "acumulado",
+      "file": "entradas a jan a jun.xls",
+      "period": "01/01/2026 até 31/05/2026",
+      "cnpj": "21051983000599",
+      "lineCount": 247,
+      "sum": 348323.45,
+      "tg": 348323.45,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "mg-janmai-saidas",
+      "unit": "MG",
+      "tipo": "saidas",
+      "modo": "acumulado",
+      "file": "Saídas.xls jan a junho (2).xls",
+      "period": "01/01/2026 até 31/05/2026",
+      "cnpj": "21.051.983/0005-99",
+      "lineCount": 333,
+      "sum": 1401568.51,
+      "tg": 1401568.51,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "sp-jun-entradas",
+      "unit": "SP",
+      "tipo": "entradas",
+      "modo": "mensal",
+      "file": "Entradas.xls",
+      "period": "01/06/2026 até 30/06/2026",
+      "cnpj": "21051983000750",
+      "lineCount": 128,
+      "sum": 112749.13,
+      "tg": 112749.13,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "sp-jun-saidas",
+      "unit": "SP",
+      "tipo": "saidas",
+      "modo": "mensal",
+      "file": "Saídas (1).xls",
+      "period": "01/06/2026 até 30/06/2026",
+      "cnpj": "21.051.983/0007-50",
+      "lineCount": 188,
+      "sum": 810686.49,
+      "tg": 810686.49,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "sp-janmai-saidas",
+      "unit": "SP",
+      "tipo": "saidas",
+      "modo": "acumulado",
+      "file": "Saídas.xls jan a junho (1).xls",
+      "period": "01/01/2026 até 31/05/2026",
+      "cnpj": "21.051.983/0007-50",
+      "lineCount": 479,
+      "sum": 2487219.1,
+      "tg": 2487219.1,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "matriz-jun-entradas",
+      "unit": "MATRIZ",
+      "tipo": "entradas",
+      "modo": "mensal",
+      "file": "Entradas.xls",
+      "period": "01/06/2026 até 30/06/2026",
+      "cnpj": "21051983000327",
+      "lineCount": 12,
+      "sum": 1703640.89,
+      "tg": 1703640.89,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "matriz-jun-saidas",
+      "unit": "MATRIZ",
+      "tipo": "saidas",
+      "modo": "mensal",
+      "file": "Saídas (1).xls",
+      "period": "01/06/2026 até 30/06/2026",
+      "cnpj": "21.051.983/0003-27",
+      "lineCount": 611,
+      "sum": 3649924.21,
+      "tg": 3649924.21,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "matriz-janmai-entradas",
+      "unit": "MATRIZ",
+      "tipo": "entradas",
+      "modo": "acumulado",
+      "file": "Entradas.xls jan a junho.xls",
+      "period": "01/01/2026 até 31/05/2026",
+      "cnpj": "21051983000327",
+      "lineCount": 48,
+      "sum": 3216577.41,
+      "tg": 3216577.41,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "matriz-janmai-saidas",
+      "unit": "MATRIZ",
+      "tipo": "saidas",
+      "modo": "acumulado",
+      "file": "Saídas.xls jan a maio.xls",
+      "period": "01/01/2026 até 31/05/2026",
+      "cnpj": "21.051.983/0003-27",
+      "lineCount": 2740,
+      "sum": 14193719.34,
+      "tg": 14193719.34,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "pr-jun-entradas",
+      "unit": "PR",
+      "tipo": "entradas",
+      "modo": "mensal",
+      "file": "Entradas.xls",
+      "period": "01/06/2026 até 30/06/2026",
+      "cnpj": "21051983000670",
+      "lineCount": 17,
+      "sum": 14539.1,
+      "tg": 14539.1,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "pr-jun-saidas",
+      "unit": "PR",
+      "tipo": "saidas",
+      "modo": "mensal",
+      "file": "Saídas (1).xls",
+      "period": "01/06/2026 até 30/06/2026",
+      "cnpj": "21.051.983/0006-70",
+      "lineCount": 26,
+      "sum": 99404.74,
+      "tg": 99404.74,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "pr-janmai-entradas",
+      "unit": "PR",
+      "tipo": "entradas",
+      "modo": "acumulado",
+      "file": "Entradas.xls jan  maio.xls",
+      "period": "01/01/2026 até 31/05/2026",
+      "cnpj": "21051983000670",
+      "lineCount": 124,
+      "sum": 112443.24,
+      "tg": 112443.24,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "pr-mai-saidas",
+      "unit": "PR",
+      "tipo": "saidas",
+      "modo": "mensal",
+      "file": "Saídas.xls jan a maio.xls",
+      "period": "01/05/2026 até 31/05/2026",
+      "cnpj": "21.051.983/0006-70",
+      "lineCount": 25,
+      "sum": 104754.64,
+      "tg": 104754.64,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "raiz-jun-entradas",
+      "unit": "RAIZ",
+      "tipo": "entradas",
+      "modo": "mensal",
+      "file": "Entradas.xls",
+      "period": "01/06/2026 até 30/06/2026",
+      "cnpj": "21051983000165",
+      "lineCount": 73,
+      "sum": 255264.64,
+      "tg": 255264.64,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "raiz-janmai-entradas",
+      "unit": "RAIZ",
+      "tipo": "entradas",
+      "modo": "acumulado",
+      "file": "Entradas.xls jan a maio.xls",
+      "period": "01/01/2026 até 31/05/2026",
+      "cnpj": "21051983000165",
+      "lineCount": 431,
+      "sum": 2235930.67,
+      "tg": 2235930.67,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "raiz-janmai-saidas",
+      "unit": "RAIZ",
+      "tipo": "saidas",
+      "modo": "acumulado",
+      "file": "Saídas.xls jan amaio.xls",
+      "period": "01/01/2026 até 31/05/2026",
+      "cnpj": "21.051.983/0001-65",
+      "lineCount": 4,
+      "sum": 467765.15,
+      "tg": 467765.15,
+      "delta": 0,
+      "ok": true
+    }
+  ],
+  "splitReports": [
+    {
+      "key": "mg-janmai-entradas",
+      "unit": "MG",
+      "tipo": "entradas",
+      "fileTotal": 348323.45,
+      "splitSum": 348323.45,
+      "deltaSplit": 0,
+      "noDate": 0,
+      "months": {
+        "2026-03": {
+          "lines": 74,
+          "total": 130954.45
+        },
+        "2026-01": {
+          "lines": 26,
+          "total": 50689.93
+        },
+        "2026-02": {
+          "lines": 47,
+          "total": 79979.77
+        },
+        "2026-04": {
+          "lines": 47,
+          "total": 47337.72
+        },
+        "2026-05": {
+          "lines": 53,
+          "total": 39361.58
+        }
+      },
+      "ok": true
+    },
+    {
+      "key": "mg-janmai-saidas",
+      "unit": "MG",
+      "tipo": "saidas",
+      "fileTotal": 1401568.51,
+      "splitSum": 1401568.51,
+      "deltaSplit": 0,
+      "noDate": 0,
+      "months": {
+        "2026-03": {
+          "lines": 80,
+          "total": 437277.37
+        },
+        "2026-01": {
+          "lines": 81,
+          "total": 218532.55
+        },
+        "2026-02": {
+          "lines": 56,
+          "total": 249580.75
+        },
+        "2026-05": {
+          "lines": 62,
+          "total": 260565.75
+        },
+        "2026-04": {
+          "lines": 54,
+          "total": 235612.09
+        }
+      },
+      "ok": true
+    },
+    {
+      "key": "sp-janmai-saidas",
+      "unit": "SP",
+      "tipo": "saidas",
+      "fileTotal": 2487219.1,
+      "splitSum": 2487219.1,
+      "deltaSplit": 0,
+      "noDate": 0,
+      "months": {
+        "2026-02": {
+          "lines": 113,
+          "total": 538694.5
+        },
+        "2026-03": {
+          "lines": 138,
+          "total": 584827.43
+        },
+        "2026-04": {
+          "lines": 64,
+          "total": 595601.23
+        },
+        "2026-01": {
+          "lines": 94,
+          "total": 337216.1
+        },
+        "2026-05": {
+          "lines": 70,
+          "total": 430879.84
+        }
+      },
+      "ok": true
+    },
+    {
+      "key": "matriz-janmai-entradas",
+      "unit": "MATRIZ",
+      "tipo": "entradas",
+      "fileTotal": 3216577.41,
+      "splitSum": 3216577.41,
+      "deltaSplit": 0,
+      "noDate": 0,
+      "months": {
+        "2026-03": {
+          "lines": 16,
+          "total": 1590701.07
+        },
+        "2026-02": {
+          "lines": 6,
+          "total": 11447.6
+        },
+        "2026-05": {
+          "lines": 9,
+          "total": 77484.5
+        },
+        "2026-04": {
+          "lines": 14,
+          "total": 846958.38
+        },
+        "2026-01": {
+          "lines": 3,
+          "total": 689985.86
+        }
+      },
+      "ok": true
+    },
+    {
+      "key": "matriz-janmai-saidas",
+      "unit": "MATRIZ",
+      "tipo": "saidas",
+      "fileTotal": 14193719.34,
+      "splitSum": 14193719.34,
+      "deltaSplit": 0,
+      "noDate": 0,
+      "months": {
+        "2026-04": {
+          "lines": 662,
+          "total": 3396918.75
+        },
+        "2026-03": {
+          "lines": 775,
+          "total": 3250821.47
+        },
+        "2026-02": {
+          "lines": 478,
+          "total": 3099565.44
+        },
+        "2026-05": {
+          "lines": 385,
+          "total": 2770103.57
+        },
+        "2026-01": {
+          "lines": 440,
+          "total": 1676310.11
+        }
+      },
+      "ok": true
+    },
+    {
+      "key": "pr-janmai-entradas",
+      "unit": "PR",
+      "tipo": "entradas",
+      "fileTotal": 112443.24,
+      "splitSum": 112443.24,
+      "deltaSplit": 0,
+      "noDate": 0,
+      "months": {
+        "2026-01": {
+          "lines": 11,
+          "total": 9107.92
+        },
+        "2026-02": {
+          "lines": 27,
+          "total": 18881.74
+        },
+        "2026-03": {
+          "lines": 43,
+          "total": 46228.04
+        },
+        "2026-04": {
+          "lines": 25,
+          "total": 21979.4
+        },
+        "2026-05": {
+          "lines": 18,
+          "total": 16246.14
+        }
+      },
+      "ok": true
+    },
+    {
+      "key": "raiz-janmai-entradas",
+      "unit": "RAIZ",
+      "tipo": "entradas",
+      "fileTotal": 2235930.67,
+      "splitSum": 2235930.67,
+      "deltaSplit": 0,
+      "noDate": 0,
+      "months": {
+        "2026-05": {
+          "lines": 69,
+          "total": 254121.93
+        },
+        "2026-01": {
+          "lines": 73,
+          "total": 308131.35
+        },
+        "2026-02": {
+          "lines": 88,
+          "total": 781661.45
+        },
+        "2026-03": {
+          "lines": 101,
+          "total": 511343.27
+        },
+        "2026-04": {
+          "lines": 100,
+          "total": 380672.67
+        }
+      },
+      "ok": true
+    },
+    {
+      "key": "raiz-janmai-saidas",
+      "unit": "RAIZ",
+      "tipo": "saidas",
+      "fileTotal": 467765.15,
+      "splitSum": 467765.15,
+      "deltaSplit": 0,
+      "noDate": 0,
+      "months": {
+        "2026-01": {
+          "lines": 2,
+          "total": 22.75
+        },
+        "2026-03": {
+          "lines": 2,
+          "total": 467742.4
+        }
+      },
+      "ok": true
+    }
+  ]
+}
