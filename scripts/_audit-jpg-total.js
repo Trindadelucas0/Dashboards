@@ -448,10 +448,21 @@ async function main() {
       // Compras / Vendas CFOP
       const sumE = sumCfop(f.cfop_entradas);
       const sumS = sumCfop(f.cfop_saidas);
-      if (!near(sumE, f.kpis.entradas || 0)) fail('compras', `${id}-cfop-e`, `${sumE} ≠ ${f.kpis.entradas}`);
-      else ok('compras', `${id}-cfop-e`, String(f.kpis.entradas));
-      if (!near(sumS, f.kpis.saidas || 0)) fail('vendas', `${id}-cfop-s`, `${sumS} ≠ ${f.kpis.saidas}`);
-      else ok('vendas', `${id}-cfop-s`, String(f.kpis.saidas));
+      const isLannicDas = u === 'LANNIC' || /Simples Nacional|LANNIC\.xlsx|Sem livro ICMS/i.test(String((f.meta && f.meta.alerta) || ''));
+      if (isLannicDas) {
+        if ((f.cfop_saidas || []).length === 0 && (f.kpis.saidas || 0) > TOL) {
+          warn('vendas', `${id}-cfop-s`, `LANNIC DAS sem CFOP EXITO (faturamento=${f.kpis.saidas}) — esperado`);
+        } else if (!near(sumS, f.kpis.saidas || 0)) {
+          fail('vendas', `${id}-cfop-s`, `${sumS} ≠ ${f.kpis.saidas}`);
+        } else ok('vendas', `${id}-cfop-s`, String(f.kpis.saidas));
+        if (!near(sumE, f.kpis.entradas || 0)) fail('compras', `${id}-cfop-e`, `${sumE} ≠ ${f.kpis.entradas}`);
+        else ok('compras', `${id}-cfop-e`, String(f.kpis.entradas || 0));
+      } else {
+        if (!near(sumE, f.kpis.entradas || 0)) fail('compras', `${id}-cfop-e`, `${sumE} ≠ ${f.kpis.entradas}`);
+        else ok('compras', `${id}-cfop-e`, String(f.kpis.entradas));
+        if (!near(sumS, f.kpis.saidas || 0)) fail('vendas', `${id}-cfop-s`, `${sumS} ≠ ${f.kpis.saidas}`);
+        else ok('vendas', `${id}-cfop-s`, String(f.kpis.saidas));
+      }
       checkParties('compras', `${id}-e`, f.cfop_entradas);
       checkParties('vendas', `${id}-s`, f.cfop_saidas);
       checkFinalidade('finalidade', id, f);

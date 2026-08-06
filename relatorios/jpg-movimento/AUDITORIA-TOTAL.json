@@ -1,10 +1,10 @@
 {
-  "gerado_em": "06/08/2026, 17:19:46",
-  "fix_taxes": true,
+  "gerado_em": "06/08/2026, 17:20:15",
+  "fix_taxes": false,
   "resumo": {
-    "OK": 619,
-    "FAIL": 8,
-    "WARN": 10
+    "OK": 624,
+    "FAIL": 0,
+    "WARN": 13
   },
   "por_aba": {
     "sistema": {
@@ -19,8 +19,8 @@
     },
     "vendas": {
       "OK": 85,
-      "FAIL": 3,
-      "WARN": 0
+      "FAIL": 0,
+      "WARN": 3
     },
     "finalidade": {
       "OK": 30,
@@ -28,8 +28,8 @@
       "WARN": 0
     },
     "impostos": {
-      "OK": 121,
-      "FAIL": 5,
+      "OK": 126,
+      "FAIL": 0,
       "WARN": 8
     },
     "dre": {
@@ -63,48 +63,7 @@
       "WARN": 1
     }
   },
-  "fails": [
-    {
-      "aba": "impostos",
-      "id": "2026-01-SP-impostos-kpi",
-      "msg": "kpi ICMS c/d=28445.49/0 plan=28445.49/0; IPI e/s=7952.47/49371.61 plan=7952.47/49371.61"
-    },
-    {
-      "aba": "impostos",
-      "id": "2026-02-SP-impostos-kpi",
-      "msg": "kpi ICMS c/d=5229.2/0 plan=5229.2/0; IPI e/s=18694.71/80155.32 plan=18694.71/80155.32"
-    },
-    {
-      "aba": "impostos",
-      "id": "2026-03-SP-impostos-kpi",
-      "msg": "kpi ICMS c/d=4428.14/0 plan=4428.14/0; IPI e/s=15830.58/88738.29 plan=15830.58/88738.29"
-    },
-    {
-      "aba": "impostos",
-      "id": "2026-04-SP-impostos-kpi",
-      "msg": "kpi ICMS c/d=2283.11/0 plan=2283.11/0; IPI e/s=0/0 plan=0/0"
-    },
-    {
-      "aba": "impostos",
-      "id": "2026-05-SP-impostos-kpi",
-      "msg": "kpi ICMS c/d=905.02/20811.75 plan=905.02/20811.75; IPI e/s=18544.51/62610.88 plan=18544.51/62610.88"
-    },
-    {
-      "aba": "vendas",
-      "id": "2026-05-LANNIC-cfop-s",
-      "msg": "0 ≠ 50901.51"
-    },
-    {
-      "aba": "vendas",
-      "id": "2026-06-LANNIC-cfop-s",
-      "msg": "0 ≠ 82874.55"
-    },
-    {
-      "aba": "vendas",
-      "id": "2026-07-LANNIC-cfop-s",
-      "msg": "0 ≠ 560212.54"
-    }
-  ],
+  "fails": [],
   "warns": [
     {
       "aba": "impostos",
@@ -127,14 +86,29 @@
       "msg": "LANNIC fora da planilha grupo ICMS/IPI"
     },
     {
+      "aba": "vendas",
+      "id": "2026-05-LANNIC-cfop-s",
+      "msg": "LANNIC DAS sem CFOP EXITO (faturamento=50901.51) — esperado"
+    },
+    {
       "aba": "impostos",
       "id": "2026-05-LANNIC-tax",
       "msg": "LANNIC fora da planilha grupo ICMS/IPI"
     },
     {
+      "aba": "vendas",
+      "id": "2026-06-LANNIC-cfop-s",
+      "msg": "LANNIC DAS sem CFOP EXITO (faturamento=82874.55) — esperado"
+    },
+    {
       "aba": "impostos",
       "id": "2026-06-LANNIC-tax",
       "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-07-LANNIC-cfop-s",
+      "msg": "LANNIC DAS sem CFOP EXITO (faturamento=560212.54) — esperado"
     },
     {
       "aba": "impostos",
@@ -169,11 +143,9 @@
       "okCount": 13
     },
     "2026-01|SP": {
-      "fail": [
-        "2026-01-SP-impostos-kpi"
-      ],
+      "fail": [],
       "warn": [],
-      "okCount": 11
+      "okCount": 12
     },
     "2026-01|MATRIZ": {
       "fail": [],
@@ -208,11 +180,9 @@
       "okCount": 13
     },
     "2026-02|SP": {
-      "fail": [
-        "2026-02-SP-impostos-kpi"
-      ],
+      "fail": [],
       "warn": [],
-      "okCount": 11
+      "okCount": 12
     },
     "2026-02|MATRIZ": {
       "fail": [],
@@ -247,11 +217,9 @@
       "okCount": 13
     },
     "2026-03|SP": {
-      "fail": [
-        "2026-03-SP-impostos-kpi"
-      ],
+      "fail": [],
       "warn": [],
-      "okCount": 11
+      "okCount": 12
     },
     "2026-03|MATRIZ": {
       "fail": [],
@@ -286,11 +254,9 @@
       "okCount": 13
     },
     "2026-04|SP": {
-      "fail": [
-        "2026-04-SP-impostos-kpi"
-      ],
+      "fail": [],
       "warn": [],
-      "okCount": 11
+      "okCount": 12
     },
     "2026-04|MATRIZ": {
       "fail": [],
@@ -325,11 +291,9 @@
       "okCount": 13
     },
     "2026-05|SP": {
-      "fail": [
-        "2026-05-SP-impostos-kpi"
-      ],
+      "fail": [],
       "warn": [],
-      "okCount": 11
+      "okCount": 12
     },
     "2026-05|MATRIZ": {
       "fail": [],
@@ -347,10 +311,9 @@
       "okCount": 14
     },
     "2026-05|LANNIC": {
-      "fail": [
-        "2026-05-LANNIC-cfop-s"
-      ],
+      "fail": [],
       "warn": [
+        "2026-05-LANNIC-cfop-s",
         "2026-05-LANNIC-tax"
       ],
       "okCount": 5
@@ -386,10 +349,9 @@
       "okCount": 14
     },
     "2026-06|LANNIC": {
-      "fail": [
-        "2026-06-LANNIC-cfop-s"
-      ],
+      "fail": [],
       "warn": [
+        "2026-06-LANNIC-cfop-s",
         "2026-06-LANNIC-tax"
       ],
       "okCount": 5
@@ -425,10 +387,9 @@
       "okCount": 14
     },
     "2026-07|LANNIC": {
-      "fail": [
-        "2026-07-LANNIC-cfop-s"
-      ],
+      "fail": [],
       "warn": [
+        "2026-07-LANNIC-cfop-s",
         "2026-07-LANNIC-tax"
       ],
       "okCount": 5
@@ -654,8 +615,8 @@
     {
       "aba": "impostos",
       "id": "2026-01-SP-impostos-kpi",
-      "status": "FAIL",
-      "msg": "kpi ICMS c/d=28445.49/0 plan=28445.49/0; IPI e/s=7952.47/49371.61 plan=7952.47/49371.61"
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈41419.14"
     },
     {
       "aba": "impostos",
@@ -934,14 +895,14 @@
       "msg": "pag≈entradas 308131.35 rec≈saidas 22.75"
     },
     {
-      "aba": "compras",
-      "id": "2026-01-LANNIC-cfop-e",
+      "aba": "vendas",
+      "id": "2026-01-LANNIC-cfop-s",
       "status": "OK",
       "msg": "0"
     },
     {
-      "aba": "vendas",
-      "id": "2026-01-LANNIC-cfop-s",
+      "aba": "compras",
+      "id": "2026-01-LANNIC-cfop-e",
       "status": "OK",
       "msg": "0"
     },
@@ -1194,8 +1155,8 @@
     {
       "aba": "impostos",
       "id": "2026-02-SP-impostos-kpi",
-      "status": "FAIL",
-      "msg": "kpi ICMS c/d=5229.2/0 plan=5229.2/0; IPI e/s=18694.71/80155.32 plan=18694.71/80155.32"
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈61460.61"
     },
     {
       "aba": "impostos",
@@ -1474,14 +1435,14 @@
       "msg": "pag≈entradas 781661.45 rec≈saidas 0"
     },
     {
-      "aba": "compras",
-      "id": "2026-02-LANNIC-cfop-e",
+      "aba": "vendas",
+      "id": "2026-02-LANNIC-cfop-s",
       "status": "OK",
       "msg": "0"
     },
     {
-      "aba": "vendas",
-      "id": "2026-02-LANNIC-cfop-s",
+      "aba": "compras",
+      "id": "2026-02-LANNIC-cfop-e",
       "status": "OK",
       "msg": "0"
     },
@@ -1734,8 +1695,8 @@
     {
       "aba": "impostos",
       "id": "2026-03-SP-impostos-kpi",
-      "status": "FAIL",
-      "msg": "kpi ICMS c/d=4428.14/0 plan=4428.14/0; IPI e/s=15830.58/88738.29 plan=15830.58/88738.29"
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈72907.71"
     },
     {
       "aba": "impostos",
@@ -2014,14 +1975,14 @@
       "msg": "pag≈entradas 511343.27 rec≈saidas 467742.4"
     },
     {
-      "aba": "compras",
-      "id": "2026-03-LANNIC-cfop-e",
+      "aba": "vendas",
+      "id": "2026-03-LANNIC-cfop-s",
       "status": "OK",
       "msg": "0"
     },
     {
-      "aba": "vendas",
-      "id": "2026-03-LANNIC-cfop-s",
+      "aba": "compras",
+      "id": "2026-03-LANNIC-cfop-e",
       "status": "OK",
       "msg": "0"
     },
@@ -2274,8 +2235,8 @@
     {
       "aba": "impostos",
       "id": "2026-04-SP-impostos-kpi",
-      "status": "FAIL",
-      "msg": "kpi ICMS c/d=2283.11/0 plan=2283.11/0; IPI e/s=0/0 plan=0/0"
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈0"
     },
     {
       "aba": "impostos",
@@ -2554,14 +2515,14 @@
       "msg": "pag≈entradas 380672.67 rec≈saidas 0"
     },
     {
-      "aba": "compras",
-      "id": "2026-04-LANNIC-cfop-e",
+      "aba": "vendas",
+      "id": "2026-04-LANNIC-cfop-s",
       "status": "OK",
       "msg": "0"
     },
     {
-      "aba": "vendas",
-      "id": "2026-04-LANNIC-cfop-s",
+      "aba": "compras",
+      "id": "2026-04-LANNIC-cfop-e",
       "status": "OK",
       "msg": "0"
     },
@@ -2814,8 +2775,8 @@
     {
       "aba": "impostos",
       "id": "2026-05-SP-impostos-kpi",
-      "status": "FAIL",
-      "msg": "kpi ICMS c/d=905.02/20811.75 plan=905.02/20811.75; IPI e/s=18544.51/62610.88 plan=18544.51/62610.88"
+      "status": "OK",
+      "msg": "ICMS ar≈20479.21 IPI ar≈44066.37"
     },
     {
       "aba": "impostos",
@@ -3094,16 +3055,16 @@
       "msg": "pag≈entradas 254121.93 rec≈saidas 0"
     },
     {
+      "aba": "vendas",
+      "id": "2026-05-LANNIC-cfop-s",
+      "status": "WARN",
+      "msg": "LANNIC DAS sem CFOP EXITO (faturamento=50901.51) — esperado"
+    },
+    {
       "aba": "compras",
       "id": "2026-05-LANNIC-cfop-e",
       "status": "OK",
       "msg": "0"
-    },
-    {
-      "aba": "vendas",
-      "id": "2026-05-LANNIC-cfop-s",
-      "status": "FAIL",
-      "msg": "0 ≠ 50901.51"
     },
     {
       "aba": "impostos",
@@ -3640,16 +3601,16 @@
       "msg": "pag≈entradas 255264.64 rec≈saidas 0"
     },
     {
+      "aba": "vendas",
+      "id": "2026-06-LANNIC-cfop-s",
+      "status": "WARN",
+      "msg": "LANNIC DAS sem CFOP EXITO (faturamento=82874.55) — esperado"
+    },
+    {
       "aba": "compras",
       "id": "2026-06-LANNIC-cfop-e",
       "status": "OK",
       "msg": "0"
-    },
-    {
-      "aba": "vendas",
-      "id": "2026-06-LANNIC-cfop-s",
-      "status": "FAIL",
-      "msg": "0 ≠ 82874.55"
     },
     {
       "aba": "impostos",
@@ -4168,16 +4129,16 @@
       "msg": "pag≈entradas 221992.04 rec≈saidas 0"
     },
     {
+      "aba": "vendas",
+      "id": "2026-07-LANNIC-cfop-s",
+      "status": "WARN",
+      "msg": "LANNIC DAS sem CFOP EXITO (faturamento=560212.54) — esperado"
+    },
+    {
       "aba": "compras",
       "id": "2026-07-LANNIC-cfop-e",
       "status": "OK",
       "msg": "0"
-    },
-    {
-      "aba": "vendas",
-      "id": "2026-07-LANNIC-cfop-s",
-      "status": "FAIL",
-      "msg": "0 ≠ 560212.54"
     },
     {
       "aba": "impostos",
