@@ -1,0 +1,268 @@
+{
+  "unit": "MG",
+  "apply": false,
+  "before": [
+    {
+      "mes": "2026-01",
+      "entradas": 50689.93,
+      "saidas": 218532.55,
+      "dash": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "saldo": 0,
+        "ipi_e": 6341.81,
+        "ipi_s": 32332.19,
+        "ap_icms": 0,
+        "ap_ipi": 25990.38
+      },
+      "planilha": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "icms_ar": 0,
+        "ipi_e": 6341.81,
+        "ipi_s": 32332.19,
+        "ipi_ar": 25990.38
+      },
+      "ok_icms": true,
+      "ok_ipi": true,
+      "ok_memoria": true
+    },
+    {
+      "mes": "2026-02",
+      "entradas": 79979.77,
+      "saidas": 249580.75,
+      "dash": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "saldo": 0,
+        "ipi_e": 10006.21,
+        "ipi_s": 36923.67,
+        "ap_icms": 0,
+        "ap_ipi": 26917.46
+      },
+      "planilha": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "icms_ar": 0,
+        "ipi_e": 10006.21,
+        "ipi_s": 36923.67,
+        "ipi_ar": 26917.46
+      },
+      "ok_icms": true,
+      "ok_ipi": true,
+      "ok_memoria": true
+    },
+    {
+      "mes": "2026-03",
+      "entradas": 130954.45,
+      "saidas": 437277.37,
+      "dash": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "saldo": 0,
+        "ipi_e": 15069.29,
+        "ipi_s": 65600.29,
+        "ap_icms": 0,
+        "ap_ipi": 50531
+      },
+      "planilha": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "icms_ar": 0,
+        "ipi_e": 15069.29,
+        "ipi_s": 65600.29,
+        "ipi_ar": 50531
+      },
+      "ok_icms": true,
+      "ok_ipi": true,
+      "ok_memoria": true
+    },
+    {
+      "mes": "2026-04",
+      "entradas": 47337.72,
+      "saidas": 235612.09,
+      "dash": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "saldo": 0,
+        "ipi_e": 5021.6,
+        "ipi_s": 35950.21,
+        "ap_icms": 0,
+        "ap_ipi": 30928.61
+      },
+      "planilha": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "icms_ar": 0,
+        "ipi_e": 5021.6,
+        "ipi_s": 35950.21,
+        "ipi_ar": 30928.61
+      },
+      "ok_icms": true,
+      "ok_ipi": true,
+      "ok_memoria": true
+    },
+    {
+      "mes": "2026-05",
+      "entradas": 39361.58,
+      "saidas": 260565.75,
+      "dash": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "saldo": 0,
+        "ipi_e": 4924.49,
+        "ipi_s": 30213.33,
+        "ap_icms": 0,
+        "ap_ipi": 25288.84
+      },
+      "planilha": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "icms_ar": 0,
+        "ipi_e": 4924.49,
+        "ipi_s": 30213.33,
+        "ipi_ar": 25288.84
+      },
+      "ok_icms": true,
+      "ok_ipi": true,
+      "ok_memoria": true
+    },
+    {
+      "mes": "2026-06",
+      "entradas": 97994.17,
+      "saidas": 496831.66,
+      "dash": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "saldo": 0,
+        "ipi_e": 10758.94,
+        "ipi_s": 75928.37,
+        "ap_icms": 0,
+        "ap_ipi": 65169.43
+      },
+      "planilha": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "icms_ar": 0,
+        "ipi_e": 10758.94,
+        "ipi_s": 75928.37,
+        "ipi_ar": 65169.43
+      },
+      "ok_icms": true,
+      "ok_ipi": true,
+      "ok_memoria": true
+    },
+    {
+      "mes": "2026-07",
+      "entradas": 84414.21,
+      "saidas": 342176.13,
+      "dash": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "saldo": 0,
+        "ipi_e": 10492.21,
+        "ipi_s": 51957.74,
+        "ap_icms": 0,
+        "ap_ipi": 41465.53
+      },
+      "planilha": {
+        "icms_c": 0,
+        "icms_d": 0,
+        "icms_ar": 0,
+        "ipi_e": 10492.21,
+        "ipi_s": 51957.74,
+        "ipi_ar": 41465.53
+      },
+      "ok_icms": true,
+      "ok_ipi": true,
+      "ok_memoria": true
+    }
+  ],
+  "after": [
+    {
+      "mes": "2026-01",
+      "okIcms": true,
+      "okIpi": true,
+      "okMem": true,
+      "okTab": true,
+      "icms_ar": 0,
+      "ipi_ar": 25990.38,
+      "plan_ipi_ar": 25990.38,
+      "entradas": 50689.93,
+      "saidas": 218532.55
+    },
+    {
+      "mes": "2026-02",
+      "okIcms": true,
+      "okIpi": true,
+      "okMem": true,
+      "okTab": true,
+      "icms_ar": 0,
+      "ipi_ar": 26917.46,
+      "plan_ipi_ar": 26917.46,
+      "entradas": 79979.77,
+      "saidas": 249580.75
+    },
+    {
+      "mes": "2026-03",
+      "okIcms": true,
+      "okIpi": true,
+      "okMem": true,
+      "okTab": true,
+      "icms_ar": 0,
+      "ipi_ar": 50531,
+      "plan_ipi_ar": 50531,
+      "entradas": 130954.45,
+      "saidas": 437277.37
+    },
+    {
+      "mes": "2026-04",
+      "okIcms": true,
+      "okIpi": true,
+      "okMem": true,
+      "okTab": true,
+      "icms_ar": 0,
+      "ipi_ar": 30928.61,
+      "plan_ipi_ar": 30928.61,
+      "entradas": 47337.72,
+      "saidas": 235612.09
+    },
+    {
+      "mes": "2026-05",
+      "okIcms": true,
+      "okIpi": true,
+      "okMem": true,
+      "okTab": true,
+      "icms_ar": 0,
+      "ipi_ar": 25288.84,
+      "plan_ipi_ar": 25288.84,
+      "entradas": 39361.58,
+      "saidas": 260565.75
+    },
+    {
+      "mes": "2026-06",
+      "okIcms": true,
+      "okIpi": true,
+      "okMem": true,
+      "okTab": true,
+      "icms_ar": 0,
+      "ipi_ar": 65169.43,
+      "plan_ipi_ar": 65169.43,
+      "entradas": 97994.17,
+      "saidas": 496831.66
+    },
+    {
+      "mes": "2026-07",
+      "okIcms": true,
+      "okIpi": true,
+      "okMem": true,
+      "okTab": true,
+      "icms_ar": 0,
+      "ipi_ar": 41465.53,
+      "plan_ipi_ar": 41465.53,
+      "entradas": 84414.21,
+      "saidas": 342176.13
+    }
+  ],
+  "fails": []
+}

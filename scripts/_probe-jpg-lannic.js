@@ -21,13 +21,14 @@ function findObjectLiteral(html, marker) {
     }
   }
 }
-const data = JSON.parse(findObjectLiteral(fs.readFileSync(path.join(__dirname, '../src/views/jpg.ejs'), 'utf8'), 'const JPG_DATA ='));
-const j = data.fiscalPorMes.porMes['2026-07'];
-console.log('ordem', j.ordem);
-console.log('LANNIC', j.filiais.LANNIC.kpis.saidas, j.filiais.LANNIC.deducoes, !!j.filiais.LANNIC.apuracao.das);
-console.log('MATRIZ', j.filiais.MATRIZ.kpis.saidas, j.filiais.MATRIZ.kpis.entradas);
-console.log('SEDE', j.filiais.SEDE.kpis.saidas, j.filiais.SEDE.kpis.entradas);
-console.log('ASA', j.filiais.ASA_SUL && j.filiais.ASA_SUL.kpis.saidas);
-console.log('emp', j.empresa.kpis.saidas, j.empresa.meta.cnpj);
-console.log('mai LANNIC', data.fiscalPorMes.porMes['2026-05'].filiais.LANNIC.kpis.saidas);
-console.log('jan LANNIC alerta', data.fiscalPorMes.porMes['2026-01'].filiais.LANNIC.meta.alerta);
+const data = JSON.parse(findObjectLiteral(fs.readFileSync(path.join(__dirname, '..', 'src/views/jpg.ejs'), 'utf8'), 'const JPG_DATA ='));
+for (const mes of ['2026-05', '2026-06', '2026-07']) {
+  const f = data.fiscalPorMes.porMes[mes].filiais.LANNIC;
+  console.log(mes, {
+    kpis: f && f.kpis,
+    cfopE: (f.cfop_entradas || []).length,
+    cfopS: (f.cfop_saidas || []).length,
+    rankingC: (f.ranking_clientes || []).length,
+    fonte: f && f.meta && (f.meta.alerta || f.meta.fonte || f.meta.filial_label),
+  });
+}

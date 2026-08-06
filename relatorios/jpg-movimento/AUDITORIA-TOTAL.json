@@ -1,0 +1,4261 @@
+{
+  "gerado_em": "06/08/2026, 17:19:46",
+  "fix_taxes": true,
+  "resumo": {
+    "OK": 619,
+    "FAIL": 8,
+    "WARN": 10
+  },
+  "por_aba": {
+    "sistema": {
+      "OK": 47,
+      "FAIL": 0,
+      "WARN": 0
+    },
+    "compras": {
+      "OK": 105,
+      "FAIL": 0,
+      "WARN": 0
+    },
+    "vendas": {
+      "OK": 85,
+      "FAIL": 3,
+      "WARN": 0
+    },
+    "finalidade": {
+      "OK": 30,
+      "FAIL": 0,
+      "WARN": 0
+    },
+    "impostos": {
+      "OK": 121,
+      "FAIL": 5,
+      "WARN": 8
+    },
+    "dre": {
+      "OK": 168,
+      "FAIL": 0,
+      "WARN": 0
+    },
+    "recebimentos": {
+      "OK": 49,
+      "FAIL": 0,
+      "WARN": 0
+    },
+    "visao-geral": {
+      "OK": 7,
+      "FAIL": 0,
+      "WARN": 0
+    },
+    "memoria": {
+      "OK": 7,
+      "FAIL": 0,
+      "WARN": 0
+    },
+    "balancete": {
+      "OK": 0,
+      "FAIL": 0,
+      "WARN": 1
+    },
+    "indicadores": {
+      "OK": 0,
+      "FAIL": 0,
+      "WARN": 1
+    }
+  },
+  "fails": [
+    {
+      "aba": "impostos",
+      "id": "2026-01-SP-impostos-kpi",
+      "msg": "kpi ICMS c/d=28445.49/0 plan=28445.49/0; IPI e/s=7952.47/49371.61 plan=7952.47/49371.61"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-SP-impostos-kpi",
+      "msg": "kpi ICMS c/d=5229.2/0 plan=5229.2/0; IPI e/s=18694.71/80155.32 plan=18694.71/80155.32"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-SP-impostos-kpi",
+      "msg": "kpi ICMS c/d=4428.14/0 plan=4428.14/0; IPI e/s=15830.58/88738.29 plan=15830.58/88738.29"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-SP-impostos-kpi",
+      "msg": "kpi ICMS c/d=2283.11/0 plan=2283.11/0; IPI e/s=0/0 plan=0/0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-SP-impostos-kpi",
+      "msg": "kpi ICMS c/d=905.02/20811.75 plan=905.02/20811.75; IPI e/s=18544.51/62610.88 plan=18544.51/62610.88"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-LANNIC-cfop-s",
+      "msg": "0 ≠ 50901.51"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-LANNIC-cfop-s",
+      "msg": "0 ≠ 82874.55"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-07-LANNIC-cfop-s",
+      "msg": "0 ≠ 560212.54"
+    }
+  ],
+  "warns": [
+    {
+      "aba": "impostos",
+      "id": "2026-01-LANNIC-tax",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-LANNIC-tax",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-LANNIC-tax",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-LANNIC-tax",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-LANNIC-tax",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-LANNIC-tax",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-LANNIC-tax",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "balancete",
+      "id": "fonte",
+      "msg": "Balancete contábil não enviado — aba pendente/estimada"
+    },
+    {
+      "aba": "indicadores",
+      "id": "fonte",
+      "msg": "Indicadores derivados do movimento/DRE estimada"
+    },
+    {
+      "aba": "impostos",
+      "id": "pis-cofins-st",
+      "msg": "PIS/COFINS/ICMS ST zerados (não vêm na planilha grupo)"
+    }
+  ],
+  "matrix": {
+    "2026-01|MG": {
+      "fail": [],
+      "warn": [],
+      "okCount": 13
+    },
+    "2026-01|PR": {
+      "fail": [],
+      "warn": [],
+      "okCount": 13
+    },
+    "2026-01|SP": {
+      "fail": [
+        "2026-01-SP-impostos-kpi"
+      ],
+      "warn": [],
+      "okCount": 11
+    },
+    "2026-01|MATRIZ": {
+      "fail": [],
+      "warn": [],
+      "okCount": 12
+    },
+    "2026-01|ASA_SUL": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-01|SEDE": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-01|LANNIC": {
+      "fail": [],
+      "warn": [
+        "2026-01-LANNIC-tax"
+      ],
+      "okCount": 6
+    },
+    "2026-02|MG": {
+      "fail": [],
+      "warn": [],
+      "okCount": 13
+    },
+    "2026-02|PR": {
+      "fail": [],
+      "warn": [],
+      "okCount": 13
+    },
+    "2026-02|SP": {
+      "fail": [
+        "2026-02-SP-impostos-kpi"
+      ],
+      "warn": [],
+      "okCount": 11
+    },
+    "2026-02|MATRIZ": {
+      "fail": [],
+      "warn": [],
+      "okCount": 12
+    },
+    "2026-02|ASA_SUL": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-02|SEDE": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-02|LANNIC": {
+      "fail": [],
+      "warn": [
+        "2026-02-LANNIC-tax"
+      ],
+      "okCount": 6
+    },
+    "2026-03|MG": {
+      "fail": [],
+      "warn": [],
+      "okCount": 13
+    },
+    "2026-03|PR": {
+      "fail": [],
+      "warn": [],
+      "okCount": 13
+    },
+    "2026-03|SP": {
+      "fail": [
+        "2026-03-SP-impostos-kpi"
+      ],
+      "warn": [],
+      "okCount": 11
+    },
+    "2026-03|MATRIZ": {
+      "fail": [],
+      "warn": [],
+      "okCount": 12
+    },
+    "2026-03|ASA_SUL": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-03|SEDE": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-03|LANNIC": {
+      "fail": [],
+      "warn": [
+        "2026-03-LANNIC-tax"
+      ],
+      "okCount": 6
+    },
+    "2026-04|MG": {
+      "fail": [],
+      "warn": [],
+      "okCount": 13
+    },
+    "2026-04|PR": {
+      "fail": [],
+      "warn": [],
+      "okCount": 13
+    },
+    "2026-04|SP": {
+      "fail": [
+        "2026-04-SP-impostos-kpi"
+      ],
+      "warn": [],
+      "okCount": 11
+    },
+    "2026-04|MATRIZ": {
+      "fail": [],
+      "warn": [],
+      "okCount": 12
+    },
+    "2026-04|ASA_SUL": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-04|SEDE": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-04|LANNIC": {
+      "fail": [],
+      "warn": [
+        "2026-04-LANNIC-tax"
+      ],
+      "okCount": 6
+    },
+    "2026-05|MG": {
+      "fail": [],
+      "warn": [],
+      "okCount": 13
+    },
+    "2026-05|PR": {
+      "fail": [],
+      "warn": [],
+      "okCount": 13
+    },
+    "2026-05|SP": {
+      "fail": [
+        "2026-05-SP-impostos-kpi"
+      ],
+      "warn": [],
+      "okCount": 11
+    },
+    "2026-05|MATRIZ": {
+      "fail": [],
+      "warn": [],
+      "okCount": 12
+    },
+    "2026-05|ASA_SUL": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-05|SEDE": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-05|LANNIC": {
+      "fail": [
+        "2026-05-LANNIC-cfop-s"
+      ],
+      "warn": [
+        "2026-05-LANNIC-tax"
+      ],
+      "okCount": 5
+    },
+    "2026-06|MG": {
+      "fail": [],
+      "warn": [],
+      "okCount": 13
+    },
+    "2026-06|PR": {
+      "fail": [],
+      "warn": [],
+      "okCount": 13
+    },
+    "2026-06|SP": {
+      "fail": [],
+      "warn": [],
+      "okCount": 13
+    },
+    "2026-06|MATRIZ": {
+      "fail": [],
+      "warn": [],
+      "okCount": 12
+    },
+    "2026-06|ASA_SUL": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-06|SEDE": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-06|LANNIC": {
+      "fail": [
+        "2026-06-LANNIC-cfop-s"
+      ],
+      "warn": [
+        "2026-06-LANNIC-tax"
+      ],
+      "okCount": 5
+    },
+    "2026-07|MG": {
+      "fail": [],
+      "warn": [],
+      "okCount": 12
+    },
+    "2026-07|PR": {
+      "fail": [],
+      "warn": [],
+      "okCount": 12
+    },
+    "2026-07|SP": {
+      "fail": [],
+      "warn": [],
+      "okCount": 12
+    },
+    "2026-07|MATRIZ": {
+      "fail": [],
+      "warn": [],
+      "okCount": 12
+    },
+    "2026-07|ASA_SUL": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-07|SEDE": {
+      "fail": [],
+      "warn": [],
+      "okCount": 14
+    },
+    "2026-07|LANNIC": {
+      "fail": [
+        "2026-07-LANNIC-cfop-s"
+      ],
+      "warn": [
+        "2026-07-LANNIC-tax"
+      ],
+      "okCount": 5
+    }
+  },
+  "results": [
+    {
+      "aba": "sistema",
+      "id": "syntax-0",
+      "status": "OK",
+      "msg": "script 0"
+    },
+    {
+      "aba": "sistema",
+      "id": "syntax-1",
+      "status": "OK",
+      "msg": "script 1"
+    },
+    {
+      "aba": "sistema",
+      "id": "syntax-2",
+      "status": "OK",
+      "msg": "script 2"
+    },
+    {
+      "aba": "sistema",
+      "id": "syntax-3",
+      "status": "OK",
+      "msg": "script 3"
+    },
+    {
+      "aba": "sistema",
+      "id": "meses",
+      "status": "OK",
+      "msg": "2026-01, 2026-02, 2026-03, 2026-04, 2026-05, 2026-06, 2026-07"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-01-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-MG-cfop-e",
+      "status": "OK",
+      "msg": "50689.93"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-01-MG-cfop-s",
+      "status": "OK",
+      "msg": "218532.55"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-01-MG-finalidade",
+      "status": "OK",
+      "msg": "50689.93"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-MG-vs-pack-e",
+      "status": "OK",
+      "msg": "50689.93"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-01-MG-vs-pack-s",
+      "status": "OK",
+      "msg": "218532.55"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-MG-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈25990.38"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-MG-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=25990.38"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-MG-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-MG-dre-receita",
+      "status": "OK",
+      "msg": "218532.55"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-MG-dre-cmv",
+      "status": "OK",
+      "msg": "50689.93"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-MG-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-01-MG-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 50689.93 rec≈saidas 218532.55"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-01-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-PR-cfop-e",
+      "status": "OK",
+      "msg": "9107.92"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-01-PR-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-01-PR-finalidade",
+      "status": "OK",
+      "msg": "9107.92"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-PR-vs-pack-e",
+      "status": "OK",
+      "msg": "9107.92"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-01-PR-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-PR-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈7086.2"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-PR-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=7086.2"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-PR-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-PR-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-PR-dre-cmv",
+      "status": "OK",
+      "msg": "9107.92"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-PR-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-01-PR-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 9107.92 rec≈saidas 0"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-01-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-SP-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-01-SP-cfop-s",
+      "status": "OK",
+      "msg": "337216.1"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-SP-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-01-SP-vs-pack-s",
+      "status": "OK",
+      "msg": "337216.1"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-SP-impostos-kpi",
+      "status": "FAIL",
+      "msg": "kpi ICMS c/d=28445.49/0 plan=28445.49/0; IPI e/s=7952.47/49371.61 plan=7952.47/49371.61"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-SP-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=41419.14"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-SP-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-SP-dre-receita",
+      "status": "OK",
+      "msg": "337216.1"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-SP-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-SP-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-01-SP-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 337216.1"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-01-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-01-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-MATRIZ-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-01-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-MATRIZ-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈155893.35 IPI ar≈183210.91"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-MATRIZ-memoria",
+      "status": "OK",
+      "msg": "ICMS=155893.35 IPI=183210.91"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-MATRIZ-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-MATRIZ-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-MATRIZ-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-MATRIZ-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-01-MATRIZ-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 0"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-01-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "689985.86"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-01-ASA_SUL-cfop-s",
+      "status": "OK",
+      "msg": "1676310.11"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-01-ASA_SUL-finalidade",
+      "status": "OK",
+      "msg": "689985.86"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-ASA_SUL-vs-pack-e",
+      "status": "OK",
+      "msg": "689985.86"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-01-ASA_SUL-vs-pack-s",
+      "status": "OK",
+      "msg": "1676310.11"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-ASA_SUL-vs-asa-pack",
+      "status": "OK",
+      "msg": "689985.86/1676310.11"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-ASA_SUL-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈155893.35 IPI ar≈183210.91"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-ASA_SUL-memoria",
+      "status": "OK",
+      "msg": "ICMS=155893.35 IPI=183210.91"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-ASA_SUL-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-ASA_SUL-dre-receita",
+      "status": "OK",
+      "msg": "1676310.11"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-ASA_SUL-dre-cmv",
+      "status": "OK",
+      "msg": "689985.86"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-ASA_SUL-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-01-ASA_SUL-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 689985.86 rec≈saidas 1676310.11"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-01-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "308131.35"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-01-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "22.75"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-01-SEDE-finalidade",
+      "status": "OK",
+      "msg": "308131.35"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-SEDE-vs-pack-e",
+      "status": "OK",
+      "msg": "308131.35"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-01-SEDE-vs-pack-s",
+      "status": "OK",
+      "msg": "22.75"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-SEDE-vs-sede-pack",
+      "status": "OK",
+      "msg": "308131.35/22.75"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-SEDE-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-SEDE-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-SEDE-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-SEDE-dre-receita",
+      "status": "OK",
+      "msg": "22.75"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-SEDE-dre-cmv",
+      "status": "OK",
+      "msg": "308131.35"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-SEDE-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-01-SEDE-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 308131.35 rec≈saidas 22.75"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-01-LANNIC-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-01-LANNIC-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-01-LANNIC-tax",
+      "status": "WARN",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-LANNIC-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-LANNIC-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-LANNIC-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-01-LANNIC-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 0"
+    },
+    {
+      "aba": "visao-geral",
+      "id": "2026-01-consol",
+      "status": "OK",
+      "msg": "1057915.06/2232081.51"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-EMPRESA-dre-receita",
+      "status": "OK",
+      "msg": "2232081.51"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-EMPRESA-dre-cmv",
+      "status": "OK",
+      "msg": "1057915.06"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-01-EMPRESA-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "memoria",
+      "id": "2026-01-EMPRESA-ap",
+      "status": "OK",
+      "msg": "ok"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-02-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-MG-cfop-e",
+      "status": "OK",
+      "msg": "79979.77"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-02-MG-cfop-s",
+      "status": "OK",
+      "msg": "249580.75"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-02-MG-finalidade",
+      "status": "OK",
+      "msg": "79979.77"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-MG-vs-pack-e",
+      "status": "OK",
+      "msg": "79979.77"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-02-MG-vs-pack-s",
+      "status": "OK",
+      "msg": "249580.75"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-MG-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈26917.46"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-MG-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=26917.46"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-MG-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-MG-dre-receita",
+      "status": "OK",
+      "msg": "249580.75"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-MG-dre-cmv",
+      "status": "OK",
+      "msg": "79979.77"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-MG-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-02-MG-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 79979.77 rec≈saidas 249580.75"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-02-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-PR-cfop-e",
+      "status": "OK",
+      "msg": "18881.74"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-02-PR-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-02-PR-finalidade",
+      "status": "OK",
+      "msg": "18881.74"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-PR-vs-pack-e",
+      "status": "OK",
+      "msg": "18881.74"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-02-PR-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-PR-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈7982.48"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-PR-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=7982.48"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-PR-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-PR-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-PR-dre-cmv",
+      "status": "OK",
+      "msg": "18881.74"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-PR-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-02-PR-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 18881.74 rec≈saidas 0"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-02-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-SP-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-02-SP-cfop-s",
+      "status": "OK",
+      "msg": "538694.5"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-SP-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-02-SP-vs-pack-s",
+      "status": "OK",
+      "msg": "538694.5"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-SP-impostos-kpi",
+      "status": "FAIL",
+      "msg": "kpi ICMS c/d=5229.2/0 plan=5229.2/0; IPI e/s=18694.71/80155.32 plan=18694.71/80155.32"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-SP-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=61460.61"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-SP-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-SP-dre-receita",
+      "status": "OK",
+      "msg": "538694.5"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-SP-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-SP-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-02-SP-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 538694.5"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-02-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-02-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-MATRIZ-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-02-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-MATRIZ-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈292427.18 IPI ar≈441895.79"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-MATRIZ-memoria",
+      "status": "OK",
+      "msg": "ICMS=292427.18 IPI=441895.79"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-MATRIZ-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-MATRIZ-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-MATRIZ-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-MATRIZ-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-02-MATRIZ-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 0"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-02-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "11447.6"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-02-ASA_SUL-cfop-s",
+      "status": "OK",
+      "msg": "3099565.44"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-02-ASA_SUL-finalidade",
+      "status": "OK",
+      "msg": "11447.6"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-ASA_SUL-vs-pack-e",
+      "status": "OK",
+      "msg": "11447.6"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-02-ASA_SUL-vs-pack-s",
+      "status": "OK",
+      "msg": "3099565.44"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-ASA_SUL-vs-asa-pack",
+      "status": "OK",
+      "msg": "11447.6/3099565.44"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-ASA_SUL-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈292427.18 IPI ar≈441895.79"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-ASA_SUL-memoria",
+      "status": "OK",
+      "msg": "ICMS=292427.18 IPI=441895.79"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-ASA_SUL-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-ASA_SUL-dre-receita",
+      "status": "OK",
+      "msg": "3099565.44"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-ASA_SUL-dre-cmv",
+      "status": "OK",
+      "msg": "11447.6"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-ASA_SUL-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-02-ASA_SUL-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 11447.6 rec≈saidas 3099565.44"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-02-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "781661.45"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-02-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-02-SEDE-finalidade",
+      "status": "OK",
+      "msg": "781661.45"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-SEDE-vs-pack-e",
+      "status": "OK",
+      "msg": "781661.45"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-02-SEDE-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-SEDE-vs-sede-pack",
+      "status": "OK",
+      "msg": "781661.45/0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-SEDE-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-SEDE-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-SEDE-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-SEDE-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-SEDE-dre-cmv",
+      "status": "OK",
+      "msg": "781661.45"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-SEDE-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-02-SEDE-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 781661.45 rec≈saidas 0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-02-LANNIC-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-02-LANNIC-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-02-LANNIC-tax",
+      "status": "WARN",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-LANNIC-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-LANNIC-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-LANNIC-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-02-LANNIC-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 0"
+    },
+    {
+      "aba": "visao-geral",
+      "id": "2026-02-consol",
+      "status": "OK",
+      "msg": "891970.56/3887840.69"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-EMPRESA-dre-receita",
+      "status": "OK",
+      "msg": "3887840.69"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-EMPRESA-dre-cmv",
+      "status": "OK",
+      "msg": "891970.56"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-02-EMPRESA-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "memoria",
+      "id": "2026-02-EMPRESA-ap",
+      "status": "OK",
+      "msg": "ok"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-03-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-MG-cfop-e",
+      "status": "OK",
+      "msg": "130954.45"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-03-MG-cfop-s",
+      "status": "OK",
+      "msg": "437277.37"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-03-MG-finalidade",
+      "status": "OK",
+      "msg": "130954.45"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-MG-vs-pack-e",
+      "status": "OK",
+      "msg": "130954.45"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-03-MG-vs-pack-s",
+      "status": "OK",
+      "msg": "437277.37"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-MG-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈50531"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-MG-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=50531"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-MG-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-MG-dre-receita",
+      "status": "OK",
+      "msg": "437277.37"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-MG-dre-cmv",
+      "status": "OK",
+      "msg": "130954.45"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-MG-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-03-MG-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 130954.45 rec≈saidas 437277.37"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-03-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-PR-cfop-e",
+      "status": "OK",
+      "msg": "46228.04"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-03-PR-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-03-PR-finalidade",
+      "status": "OK",
+      "msg": "46228.04"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-PR-vs-pack-e",
+      "status": "OK",
+      "msg": "46228.04"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-03-PR-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-PR-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈10793.7"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-PR-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=10793.7"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-PR-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-PR-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-PR-dre-cmv",
+      "status": "OK",
+      "msg": "46228.04"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-PR-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-03-PR-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 46228.04 rec≈saidas 0"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-03-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-SP-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-03-SP-cfop-s",
+      "status": "OK",
+      "msg": "584827.43"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-SP-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-03-SP-vs-pack-s",
+      "status": "OK",
+      "msg": "584827.43"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-SP-impostos-kpi",
+      "status": "FAIL",
+      "msg": "kpi ICMS c/d=4428.14/0 plan=4428.14/0; IPI e/s=15830.58/88738.29 plan=15830.58/88738.29"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-SP-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=72907.71"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-SP-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-SP-dre-receita",
+      "status": "OK",
+      "msg": "584827.43"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-SP-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-SP-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-03-SP-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 584827.43"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-03-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-03-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-MATRIZ-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-03-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-MATRIZ-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈266615.29 IPI ar≈361012.96"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-MATRIZ-memoria",
+      "status": "OK",
+      "msg": "ICMS=266615.29 IPI=361012.96"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-MATRIZ-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-MATRIZ-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-MATRIZ-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-MATRIZ-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-03-MATRIZ-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 0"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-03-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "1590701.07"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-03-ASA_SUL-cfop-s",
+      "status": "OK",
+      "msg": "3250821.47"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-03-ASA_SUL-finalidade",
+      "status": "OK",
+      "msg": "1590701.07"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-ASA_SUL-vs-pack-e",
+      "status": "OK",
+      "msg": "1590701.07"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-03-ASA_SUL-vs-pack-s",
+      "status": "OK",
+      "msg": "3250821.47"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-ASA_SUL-vs-asa-pack",
+      "status": "OK",
+      "msg": "1590701.07/3250821.47"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-ASA_SUL-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈266615.29 IPI ar≈361012.96"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-ASA_SUL-memoria",
+      "status": "OK",
+      "msg": "ICMS=266615.29 IPI=361012.96"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-ASA_SUL-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-ASA_SUL-dre-receita",
+      "status": "OK",
+      "msg": "3250821.47"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-ASA_SUL-dre-cmv",
+      "status": "OK",
+      "msg": "1590701.07"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-ASA_SUL-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-03-ASA_SUL-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 1590701.07 rec≈saidas 3250821.47"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-03-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "511343.27"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-03-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "467742.4"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-03-SEDE-finalidade",
+      "status": "OK",
+      "msg": "511343.27"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-SEDE-vs-pack-e",
+      "status": "OK",
+      "msg": "511343.27"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-03-SEDE-vs-pack-s",
+      "status": "OK",
+      "msg": "467742.4"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-SEDE-vs-sede-pack",
+      "status": "OK",
+      "msg": "511343.27/467742.4"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-SEDE-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-SEDE-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-SEDE-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-SEDE-dre-receita",
+      "status": "OK",
+      "msg": "467742.4"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-SEDE-dre-cmv",
+      "status": "OK",
+      "msg": "511343.27"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-SEDE-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-03-SEDE-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 511343.27 rec≈saidas 467742.4"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-03-LANNIC-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-03-LANNIC-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-03-LANNIC-tax",
+      "status": "WARN",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-LANNIC-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-LANNIC-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-LANNIC-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-03-LANNIC-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 0"
+    },
+    {
+      "aba": "visao-geral",
+      "id": "2026-03-consol",
+      "status": "OK",
+      "msg": "2279226.83/4740668.67"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-EMPRESA-dre-receita",
+      "status": "OK",
+      "msg": "4740668.67"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-EMPRESA-dre-cmv",
+      "status": "OK",
+      "msg": "2279226.83"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-03-EMPRESA-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "memoria",
+      "id": "2026-03-EMPRESA-ap",
+      "status": "OK",
+      "msg": "ok"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-04-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-MG-cfop-e",
+      "status": "OK",
+      "msg": "47337.72"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-04-MG-cfop-s",
+      "status": "OK",
+      "msg": "235612.09"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-04-MG-finalidade",
+      "status": "OK",
+      "msg": "47337.72"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-MG-vs-pack-e",
+      "status": "OK",
+      "msg": "47337.72"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-04-MG-vs-pack-s",
+      "status": "OK",
+      "msg": "235612.09"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-MG-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈30928.61"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-MG-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=30928.61"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-MG-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-MG-dre-receita",
+      "status": "OK",
+      "msg": "235612.09"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-MG-dre-cmv",
+      "status": "OK",
+      "msg": "47337.72"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-MG-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-04-MG-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 47337.72 rec≈saidas 235612.09"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-04-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-PR-cfop-e",
+      "status": "OK",
+      "msg": "21979.4"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-04-PR-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-04-PR-finalidade",
+      "status": "OK",
+      "msg": "21979.4"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-PR-vs-pack-e",
+      "status": "OK",
+      "msg": "21979.4"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-04-PR-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-PR-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈11342.72"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-PR-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=11342.72"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-PR-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-PR-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-PR-dre-cmv",
+      "status": "OK",
+      "msg": "21979.4"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-PR-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-04-PR-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 21979.4 rec≈saidas 0"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-04-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-SP-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-04-SP-cfop-s",
+      "status": "OK",
+      "msg": "595601.23"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-SP-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-04-SP-vs-pack-s",
+      "status": "OK",
+      "msg": "595601.23"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-SP-impostos-kpi",
+      "status": "FAIL",
+      "msg": "kpi ICMS c/d=2283.11/0 plan=2283.11/0; IPI e/s=0/0 plan=0/0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-SP-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-SP-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-SP-dre-receita",
+      "status": "OK",
+      "msg": "595601.23"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-SP-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-SP-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-04-SP-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 595601.23"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-04-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-04-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-MATRIZ-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-04-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-MATRIZ-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈157995.47 IPI ar≈443305.9"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-MATRIZ-memoria",
+      "status": "OK",
+      "msg": "ICMS=157995.47 IPI=443305.9"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-MATRIZ-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-MATRIZ-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-MATRIZ-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-MATRIZ-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-04-MATRIZ-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 0"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-04-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "846958.38"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-04-ASA_SUL-cfop-s",
+      "status": "OK",
+      "msg": "3396918.75"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-04-ASA_SUL-finalidade",
+      "status": "OK",
+      "msg": "846958.38"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-ASA_SUL-vs-pack-e",
+      "status": "OK",
+      "msg": "846958.38"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-04-ASA_SUL-vs-pack-s",
+      "status": "OK",
+      "msg": "3396918.75"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-ASA_SUL-vs-asa-pack",
+      "status": "OK",
+      "msg": "846958.38/3396918.75"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-ASA_SUL-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈157995.47 IPI ar≈443305.9"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-ASA_SUL-memoria",
+      "status": "OK",
+      "msg": "ICMS=157995.47 IPI=443305.9"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-ASA_SUL-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-ASA_SUL-dre-receita",
+      "status": "OK",
+      "msg": "3396918.75"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-ASA_SUL-dre-cmv",
+      "status": "OK",
+      "msg": "846958.38"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-ASA_SUL-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-04-ASA_SUL-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 846958.38 rec≈saidas 3396918.75"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-04-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "380672.67"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-04-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-04-SEDE-finalidade",
+      "status": "OK",
+      "msg": "380672.67"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-SEDE-vs-pack-e",
+      "status": "OK",
+      "msg": "380672.67"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-04-SEDE-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-SEDE-vs-sede-pack",
+      "status": "OK",
+      "msg": "380672.67/0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-SEDE-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-SEDE-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-SEDE-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-SEDE-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-SEDE-dre-cmv",
+      "status": "OK",
+      "msg": "380672.67"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-SEDE-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-04-SEDE-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 380672.67 rec≈saidas 0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-04-LANNIC-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-04-LANNIC-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-04-LANNIC-tax",
+      "status": "WARN",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-LANNIC-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-LANNIC-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-LANNIC-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-04-LANNIC-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 0"
+    },
+    {
+      "aba": "visao-geral",
+      "id": "2026-04-consol",
+      "status": "OK",
+      "msg": "1296948.17/4228132.07"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-EMPRESA-dre-receita",
+      "status": "OK",
+      "msg": "4228132.07"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-EMPRESA-dre-cmv",
+      "status": "OK",
+      "msg": "1296948.17"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-04-EMPRESA-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "memoria",
+      "id": "2026-04-EMPRESA-ap",
+      "status": "OK",
+      "msg": "ok"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-05-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-MG-cfop-e",
+      "status": "OK",
+      "msg": "39361.58"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-MG-cfop-s",
+      "status": "OK",
+      "msg": "260565.75"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-05-MG-finalidade",
+      "status": "OK",
+      "msg": "39361.58"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-MG-vs-pack-e",
+      "status": "OK",
+      "msg": "39361.58"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-MG-vs-pack-s",
+      "status": "OK",
+      "msg": "260565.75"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-MG-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈25288.84"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-MG-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=25288.84"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-MG-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-MG-dre-receita",
+      "status": "OK",
+      "msg": "260565.75"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-MG-dre-cmv",
+      "status": "OK",
+      "msg": "39361.58"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-MG-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-05-MG-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 39361.58 rec≈saidas 260565.75"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-05-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-PR-cfop-e",
+      "status": "OK",
+      "msg": "16246.14"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-PR-cfop-s",
+      "status": "OK",
+      "msg": "104754.64"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-05-PR-finalidade",
+      "status": "OK",
+      "msg": "16246.14"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-PR-vs-pack-e",
+      "status": "OK",
+      "msg": "16246.14"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-PR-vs-pack-s",
+      "status": "OK",
+      "msg": "104754.64"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-PR-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈13156.81"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-PR-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=13156.81"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-PR-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-PR-dre-receita",
+      "status": "OK",
+      "msg": "104754.64"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-PR-dre-cmv",
+      "status": "OK",
+      "msg": "16246.14"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-PR-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-05-PR-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 16246.14 rec≈saidas 104754.64"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-05-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-SP-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-SP-cfop-s",
+      "status": "OK",
+      "msg": "430879.84"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-SP-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-SP-vs-pack-s",
+      "status": "OK",
+      "msg": "430879.84"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-SP-impostos-kpi",
+      "status": "FAIL",
+      "msg": "kpi ICMS c/d=905.02/20811.75 plan=905.02/20811.75; IPI e/s=18544.51/62610.88 plan=18544.51/62610.88"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-SP-memoria",
+      "status": "OK",
+      "msg": "ICMS=20479.21 IPI=44066.37"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-SP-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-SP-dre-receita",
+      "status": "OK",
+      "msg": "430879.84"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-SP-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-SP-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-05-SP-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 430879.84"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-05-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-MATRIZ-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-MATRIZ-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈113601.46 IPI ar≈162169.93"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-MATRIZ-memoria",
+      "status": "OK",
+      "msg": "ICMS=113601.46 IPI=162169.93"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-MATRIZ-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-MATRIZ-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-MATRIZ-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-MATRIZ-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-05-MATRIZ-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 0"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-05-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "77484.5"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-ASA_SUL-cfop-s",
+      "status": "OK",
+      "msg": "2770103.57"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-05-ASA_SUL-finalidade",
+      "status": "OK",
+      "msg": "77484.5"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-ASA_SUL-vs-pack-e",
+      "status": "OK",
+      "msg": "77484.5"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-ASA_SUL-vs-pack-s",
+      "status": "OK",
+      "msg": "2770103.57"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-ASA_SUL-vs-asa-pack",
+      "status": "OK",
+      "msg": "77484.5/2770103.57"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-ASA_SUL-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈113601.46 IPI ar≈162169.93"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-ASA_SUL-memoria",
+      "status": "OK",
+      "msg": "ICMS=113601.46 IPI=162169.93"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-ASA_SUL-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-ASA_SUL-dre-receita",
+      "status": "OK",
+      "msg": "2770103.57"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-ASA_SUL-dre-cmv",
+      "status": "OK",
+      "msg": "77484.5"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-ASA_SUL-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-05-ASA_SUL-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 77484.5 rec≈saidas 2770103.57"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-05-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "254121.93"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-05-SEDE-finalidade",
+      "status": "OK",
+      "msg": "254121.93"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-SEDE-vs-pack-e",
+      "status": "OK",
+      "msg": "254121.93"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-SEDE-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-SEDE-vs-sede-pack",
+      "status": "OK",
+      "msg": "254121.93/0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-SEDE-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-SEDE-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-SEDE-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-SEDE-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-SEDE-dre-cmv",
+      "status": "OK",
+      "msg": "254121.93"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-SEDE-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-05-SEDE-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 254121.93 rec≈saidas 0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-05-LANNIC-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-05-LANNIC-cfop-s",
+      "status": "FAIL",
+      "msg": "0 ≠ 50901.51"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-05-LANNIC-tax",
+      "status": "WARN",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-LANNIC-dre-receita",
+      "status": "OK",
+      "msg": "50901.51"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-LANNIC-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-LANNIC-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-05-LANNIC-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 50901.51"
+    },
+    {
+      "aba": "visao-geral",
+      "id": "2026-05-consol",
+      "status": "OK",
+      "msg": "387214.15/3617205.31"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-EMPRESA-dre-receita",
+      "status": "OK",
+      "msg": "3617205.31"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-EMPRESA-dre-cmv",
+      "status": "OK",
+      "msg": "387214.15"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-05-EMPRESA-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "memoria",
+      "id": "2026-05-EMPRESA-ap",
+      "status": "OK",
+      "msg": "ok"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-06-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-MG-cfop-e",
+      "status": "OK",
+      "msg": "97994.17"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-MG-cfop-s",
+      "status": "OK",
+      "msg": "496831.66"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-06-MG-finalidade",
+      "status": "OK",
+      "msg": "97994.17"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-MG-vs-pack-e",
+      "status": "OK",
+      "msg": "97994.17"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-MG-vs-pack-s",
+      "status": "OK",
+      "msg": "496831.66"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-MG-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈65169.43"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-MG-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=65169.43"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-MG-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-MG-dre-receita",
+      "status": "OK",
+      "msg": "496831.66"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-MG-dre-cmv",
+      "status": "OK",
+      "msg": "97994.17"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-MG-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-06-MG-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 97994.17 rec≈saidas 496831.66"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-06-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-PR-cfop-e",
+      "status": "OK",
+      "msg": "14539.1"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-PR-cfop-s",
+      "status": "OK",
+      "msg": "99404.74"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-06-PR-finalidade",
+      "status": "OK",
+      "msg": "14539.1"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-PR-vs-pack-e",
+      "status": "OK",
+      "msg": "14539.1"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-PR-vs-pack-s",
+      "status": "OK",
+      "msg": "99404.74"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-PR-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈14906.6"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-PR-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=14906.6"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-PR-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-PR-dre-receita",
+      "status": "OK",
+      "msg": "99404.74"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-PR-dre-cmv",
+      "status": "OK",
+      "msg": "14539.1"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-PR-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-06-PR-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 14539.1 rec≈saidas 99404.74"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-06-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-SP-cfop-e",
+      "status": "OK",
+      "msg": "112749.13"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-SP-cfop-s",
+      "status": "OK",
+      "msg": "810686.49"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-06-SP-finalidade",
+      "status": "OK",
+      "msg": "112749.13"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-SP-vs-pack-e",
+      "status": "OK",
+      "msg": "112749.13"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-SP-vs-pack-s",
+      "status": "OK",
+      "msg": "810686.49"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-SP-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈75906.68 IPI ar≈108245.41"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-SP-memoria",
+      "status": "OK",
+      "msg": "ICMS=75906.68 IPI=108245.41"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-SP-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-SP-dre-receita",
+      "status": "OK",
+      "msg": "810686.49"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-SP-dre-cmv",
+      "status": "OK",
+      "msg": "112749.13"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-SP-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-06-SP-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 112749.13 rec≈saidas 810686.49"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-06-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-MATRIZ-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-MATRIZ-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈121312.79 IPI ar≈202618.66"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-MATRIZ-memoria",
+      "status": "OK",
+      "msg": "ICMS=121312.79 IPI=202618.66"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-MATRIZ-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-MATRIZ-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-MATRIZ-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-MATRIZ-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-06-MATRIZ-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 0"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-06-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "1703640.89"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-ASA_SUL-cfop-s",
+      "status": "OK",
+      "msg": "3649924.21"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-06-ASA_SUL-finalidade",
+      "status": "OK",
+      "msg": "1703640.89"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-ASA_SUL-vs-pack-e",
+      "status": "OK",
+      "msg": "1703640.89"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-ASA_SUL-vs-pack-s",
+      "status": "OK",
+      "msg": "3649924.21"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-ASA_SUL-vs-asa-pack",
+      "status": "OK",
+      "msg": "1703640.89/3649924.21"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-ASA_SUL-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈121312.79 IPI ar≈202618.66"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-ASA_SUL-memoria",
+      "status": "OK",
+      "msg": "ICMS=121312.79 IPI=202618.66"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-ASA_SUL-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-ASA_SUL-dre-receita",
+      "status": "OK",
+      "msg": "3649924.21"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-ASA_SUL-dre-cmv",
+      "status": "OK",
+      "msg": "1703640.89"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-ASA_SUL-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-06-ASA_SUL-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 1703640.89 rec≈saidas 3649924.21"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-06-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "255264.64"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-06-SEDE-finalidade",
+      "status": "OK",
+      "msg": "255264.64"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-SEDE-vs-pack-e",
+      "status": "OK",
+      "msg": "255264.64"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-SEDE-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-SEDE-vs-sede-pack",
+      "status": "OK",
+      "msg": "255264.64/0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-SEDE-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-SEDE-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-SEDE-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-SEDE-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-SEDE-dre-cmv",
+      "status": "OK",
+      "msg": "255264.64"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-SEDE-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-06-SEDE-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 255264.64 rec≈saidas 0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-06-LANNIC-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-06-LANNIC-cfop-s",
+      "status": "FAIL",
+      "msg": "0 ≠ 82874.55"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-06-LANNIC-tax",
+      "status": "WARN",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-LANNIC-dre-receita",
+      "status": "OK",
+      "msg": "82874.55"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-LANNIC-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-LANNIC-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-06-LANNIC-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 82874.55"
+    },
+    {
+      "aba": "visao-geral",
+      "id": "2026-06-consol",
+      "status": "OK",
+      "msg": "2184187.93/5139721.65"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-EMPRESA-dre-receita",
+      "status": "OK",
+      "msg": "5139721.65"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-EMPRESA-dre-cmv",
+      "status": "OK",
+      "msg": "2184187.93"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-06-EMPRESA-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "memoria",
+      "id": "2026-06-EMPRESA-ap",
+      "status": "OK",
+      "msg": "ok"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-07-MG-cnpj",
+      "status": "OK",
+      "msg": "21051983000599"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-MG-cfop-e",
+      "status": "OK",
+      "msg": "84414.21"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-07-MG-cfop-s",
+      "status": "OK",
+      "msg": "342176.13"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-07-MG-finalidade",
+      "status": "OK",
+      "msg": "84414.21"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-MG-vs-jul-extract",
+      "status": "OK",
+      "msg": "84414.21/342176.13"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-MG-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈41465.53"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-MG-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=41465.53"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-MG-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-MG-dre-receita",
+      "status": "OK",
+      "msg": "342176.13"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-MG-dre-cmv",
+      "status": "OK",
+      "msg": "84414.21"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-MG-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-07-MG-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 84414.21 rec≈saidas 342176.13"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-07-PR-cnpj",
+      "status": "OK",
+      "msg": "21051983000670"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-PR-cfop-e",
+      "status": "OK",
+      "msg": "8729.12"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-07-PR-cfop-s",
+      "status": "OK",
+      "msg": "71589.79"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-07-PR-finalidade",
+      "status": "OK",
+      "msg": "8729.12"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-PR-vs-jul-extract",
+      "status": "OK",
+      "msg": "8729.12/71589.79"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-PR-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈11784.52"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-PR-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=11784.52"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-PR-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-PR-dre-receita",
+      "status": "OK",
+      "msg": "71589.79"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-PR-dre-cmv",
+      "status": "OK",
+      "msg": "8729.12"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-PR-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-07-PR-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 8729.12 rec≈saidas 71589.79"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-07-SP-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-SP-cfop-e",
+      "status": "OK",
+      "msg": "117586.2"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-07-SP-cfop-s",
+      "status": "OK",
+      "msg": "664552.78"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-07-SP-finalidade",
+      "status": "OK",
+      "msg": "117586.2"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-SP-vs-jul-extract",
+      "status": "OK",
+      "msg": "117586.2/664552.78"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-SP-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈37189.69 IPI ar≈84285.64"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-SP-memoria",
+      "status": "OK",
+      "msg": "ICMS=37189.69 IPI=84285.64"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-SP-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-SP-dre-receita",
+      "status": "OK",
+      "msg": "664552.78"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-SP-dre-cmv",
+      "status": "OK",
+      "msg": "117586.2"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-SP-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-07-SP-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 117586.2 rec≈saidas 664552.78"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-07-MATRIZ-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-MATRIZ-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-07-MATRIZ-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-MATRIZ-vs-pack-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-07-MATRIZ-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-MATRIZ-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈210106.23 IPI ar≈247787.16"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-MATRIZ-memoria",
+      "status": "OK",
+      "msg": "ICMS=210106.23 IPI=247787.16"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-MATRIZ-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-MATRIZ-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-MATRIZ-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-MATRIZ-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-07-MATRIZ-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 0"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-07-ASA_SUL-cnpj",
+      "status": "OK",
+      "msg": "21051983000327"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-ASA_SUL-cfop-e",
+      "status": "OK",
+      "msg": "145769.55"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-07-ASA_SUL-cfop-s",
+      "status": "OK",
+      "msg": "3180335.83"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-07-ASA_SUL-finalidade",
+      "status": "OK",
+      "msg": "145769.55"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-ASA_SUL-vs-pack-e",
+      "status": "OK",
+      "msg": "145769.55"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-07-ASA_SUL-vs-pack-s",
+      "status": "OK",
+      "msg": "3180335.83"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-ASA_SUL-vs-asa-pack",
+      "status": "OK",
+      "msg": "145769.55/3180335.83"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-ASA_SUL-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈210106.23 IPI ar≈247787.16"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-ASA_SUL-memoria",
+      "status": "OK",
+      "msg": "ICMS=210106.23 IPI=247787.16"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-ASA_SUL-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-ASA_SUL-dre-receita",
+      "status": "OK",
+      "msg": "3180335.83"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-ASA_SUL-dre-cmv",
+      "status": "OK",
+      "msg": "145769.55"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-ASA_SUL-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-07-ASA_SUL-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 145769.55 rec≈saidas 3180335.83"
+    },
+    {
+      "aba": "sistema",
+      "id": "2026-07-SEDE-cnpj",
+      "status": "OK",
+      "msg": "21051983000165"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-SEDE-cfop-e",
+      "status": "OK",
+      "msg": "221992.04"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-07-SEDE-cfop-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "finalidade",
+      "id": "2026-07-SEDE-finalidade",
+      "status": "OK",
+      "msg": "221992.04"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-SEDE-vs-pack-e",
+      "status": "OK",
+      "msg": "221992.04"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-07-SEDE-vs-pack-s",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-SEDE-vs-sede-pack",
+      "status": "OK",
+      "msg": "221992.04/0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-SEDE-impostos-kpi",
+      "status": "OK",
+      "msg": "ICMS ar≈0 IPI ar≈0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-SEDE-memoria",
+      "status": "OK",
+      "msg": "ICMS=0 IPI=0"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-SEDE-impostos-tab",
+      "status": "OK",
+      "msg": "5 linhas"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-SEDE-dre-receita",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-SEDE-dre-cmv",
+      "status": "OK",
+      "msg": "221992.04"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-SEDE-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-07-SEDE-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 221992.04 rec≈saidas 0"
+    },
+    {
+      "aba": "compras",
+      "id": "2026-07-LANNIC-cfop-e",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "vendas",
+      "id": "2026-07-LANNIC-cfop-s",
+      "status": "FAIL",
+      "msg": "0 ≠ 560212.54"
+    },
+    {
+      "aba": "impostos",
+      "id": "2026-07-LANNIC-tax",
+      "status": "WARN",
+      "msg": "LANNIC fora da planilha grupo ICMS/IPI"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-LANNIC-dre-receita",
+      "status": "OK",
+      "msg": "560212.54"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-LANNIC-dre-cmv",
+      "status": "OK",
+      "msg": "0"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-LANNIC-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "recebimentos",
+      "id": "2026-07-LANNIC-derivado",
+      "status": "OK",
+      "msg": "pag≈entradas 0 rec≈saidas 560212.54"
+    },
+    {
+      "aba": "visao-geral",
+      "id": "2026-07-consol",
+      "status": "OK",
+      "msg": "578491.12/4818867.07"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-EMPRESA-dre-receita",
+      "status": "OK",
+      "msg": "4818867.07"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-EMPRESA-dre-cmv",
+      "status": "OK",
+      "msg": "578491.12"
+    },
+    {
+      "aba": "dre",
+      "id": "2026-07-EMPRESA-dre-icms",
+      "status": "OK",
+      "msg": "alinhado kpis"
+    },
+    {
+      "aba": "memoria",
+      "id": "2026-07-EMPRESA-ap",
+      "status": "OK",
+      "msg": "ok"
+    },
+    {
+      "aba": "balancete",
+      "id": "fonte",
+      "status": "WARN",
+      "msg": "Balancete contábil não enviado — aba pendente/estimada"
+    },
+    {
+      "aba": "indicadores",
+      "id": "fonte",
+      "status": "WARN",
+      "msg": "Indicadores derivados do movimento/DRE estimada"
+    },
+    {
+      "aba": "impostos",
+      "id": "pis-cofins-st",
+      "status": "WARN",
+      "msg": "PIS/COFINS/ICMS ST zerados (não vêm na planilha grupo)"
+    }
+  ]
+}
