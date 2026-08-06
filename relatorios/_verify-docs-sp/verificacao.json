@@ -1,0 +1,266 @@
+{
+  "results": [
+    {
+      "id": "docs-sp-jun-entradas-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "id": "docs-sp-jun-entradas-sheet",
+      "status": "OK",
+      "msg": "Entradas"
+    },
+    {
+      "id": "docs-sp-jun-entradas-delta",
+      "status": "OK",
+      "msg": "Δ=0"
+    },
+    {
+      "id": "docs-sp-jun-entradas-vs-prod-raw",
+      "status": "OK",
+      "msg": "sp-jun-entradas tg=112749.13 lines=128"
+    },
+    {
+      "id": "docs-sp-jun-entradas-ejs-2026-06",
+      "status": "OK",
+      "msg": "112749.13 == 112749.13"
+    },
+    {
+      "id": "docs-sp-jun-saidas-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "id": "docs-sp-jun-saidas-sheet",
+      "status": "OK",
+      "msg": "Saídas"
+    },
+    {
+      "id": "docs-sp-jun-saidas-delta",
+      "status": "OK",
+      "msg": "Δ=0"
+    },
+    {
+      "id": "docs-sp-jun-saidas-vs-prod-raw",
+      "status": "OK",
+      "msg": "sp-jun-saidas tg=810686.49 lines=188"
+    },
+    {
+      "id": "docs-sp-jun-saidas-ejs-2026-06",
+      "status": "OK",
+      "msg": "810686.49 == 810686.49"
+    },
+    {
+      "id": "docs-sp-janmai-saidas-cnpj",
+      "status": "OK",
+      "msg": "21051983000750"
+    },
+    {
+      "id": "docs-sp-janmai-saidas-sheet",
+      "status": "OK",
+      "msg": "Saídas"
+    },
+    {
+      "id": "docs-sp-janmai-saidas-delta",
+      "status": "OK",
+      "msg": "Δ=0"
+    },
+    {
+      "id": "docs-sp-janmai-saidas-vs-prod-raw",
+      "status": "OK",
+      "msg": "sp-janmai-saidas tg=2487219.1 lines=479"
+    },
+    {
+      "id": "docs-sp-janmai-saidas-ejs-2026-01",
+      "status": "OK",
+      "msg": "337216.1 == 337216.1"
+    },
+    {
+      "id": "docs-sp-janmai-saidas-ejs-2026-02",
+      "status": "OK",
+      "msg": "538694.5 == 538694.5"
+    },
+    {
+      "id": "docs-sp-janmai-saidas-ejs-2026-03",
+      "status": "OK",
+      "msg": "584827.43 == 584827.43"
+    },
+    {
+      "id": "docs-sp-janmai-saidas-ejs-2026-04",
+      "status": "OK",
+      "msg": "595601.23 == 595601.23"
+    },
+    {
+      "id": "docs-sp-janmai-saidas-ejs-2026-05",
+      "status": "OK",
+      "msg": "430879.84 == 430879.84"
+    }
+  ],
+  "relatorio": {
+    "geradoEm": "2026-08-06T18:46:29.058Z",
+    "cnpjEsperado": "21051983000750",
+    "destinoDashboard": "src/views/jpg.ejs → JPG_DATA.fiscalPorMes.porMes[YYYY-MM].filiais.SP",
+    "arquivos": [
+      {
+        "arquivoDocuments": "Entradas.xls",
+        "path": "C:\\Users\\trind\\Documents\\Entradas.xls",
+        "key": "docs-sp-jun-entradas",
+        "prodKey": "sp-jun-entradas",
+        "tipo": "entradas",
+        "sheet": "Entradas",
+        "company": "82 - JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS",
+        "cnpj": "21051983000750",
+        "period": "01/06/2026 até 30/06/2026",
+        "lineCount": 128,
+        "nfs": 128,
+        "sum": 112749.13,
+        "totalGeral": 112749.13,
+        "delta": 0,
+        "byMonth": {
+          "2026-06": 112749.13
+        },
+        "jaNoSistema": true,
+        "onde": [
+          "relatorios/jpg-movimento/raw/sp-jun-entradas.json",
+          "src/views/jpg.ejs → filiais.SP (meses 2026-06)"
+        ],
+        "comparacoes": {
+          "prodRaw": {
+            "path": "c:\\Users\\trind\\Desktop\\Dashboards\\relatorios\\jpg-movimento\\raw\\sp-jun-entradas.json",
+            "totalGeral": 112749.13,
+            "lineCount": 128,
+            "sum": 112749.13,
+            "matchTg": true,
+            "matchLines": true,
+            "matchSum": true
+          },
+          "ejs": {
+            "2026-06": {
+              "ejs": 112749.13,
+              "arquivo": 112749.13,
+              "match": true
+            }
+          }
+        },
+        "status": "JA_NO_SISTEMA"
+      },
+      {
+        "arquivoDocuments": "Saídas (2).xls",
+        "path": "C:\\Users\\trind\\Documents\\Saídas (2).xls",
+        "key": "docs-sp-jun-saidas",
+        "prodKey": "sp-jun-saidas",
+        "tipo": "saidas",
+        "sheet": "Saídas",
+        "company": "82 - JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS",
+        "cnpj": "21051983000750",
+        "period": "01/06/2026 até 30/06/2026",
+        "lineCount": 188,
+        "nfs": 188,
+        "sum": 810686.49,
+        "totalGeral": 810686.49,
+        "delta": 0,
+        "byMonth": {
+          "2026-06": 810686.49
+        },
+        "jaNoSistema": true,
+        "onde": [
+          "relatorios/jpg-movimento/raw/sp-jun-saidas.json",
+          "src/views/jpg.ejs → filiais.SP (meses 2026-06)"
+        ],
+        "comparacoes": {
+          "prodRaw": {
+            "path": "c:\\Users\\trind\\Desktop\\Dashboards\\relatorios\\jpg-movimento\\raw\\sp-jun-saidas.json",
+            "totalGeral": 810686.49,
+            "lineCount": 188,
+            "sum": 810686.49,
+            "matchTg": true,
+            "matchLines": true,
+            "matchSum": true
+          },
+          "ejs": {
+            "2026-06": {
+              "ejs": 810686.49,
+              "arquivo": 810686.49,
+              "match": true
+            }
+          }
+        },
+        "status": "JA_NO_SISTEMA"
+      },
+      {
+        "arquivoDocuments": "Saídas.xls jan a junho.xls",
+        "path": "C:\\Users\\trind\\Documents\\Saídas.xls jan a junho.xls",
+        "key": "docs-sp-janmai-saidas",
+        "prodKey": "sp-janmai-saidas",
+        "tipo": "saidas",
+        "sheet": "Saídas",
+        "company": "82 - JPG - PRODUTOS FUNCIONAIS E NUTRICIONAIS",
+        "cnpj": "21051983000750",
+        "period": "01/01/2026 até 31/05/2026",
+        "lineCount": 479,
+        "nfs": 479,
+        "sum": 2487219.1,
+        "totalGeral": 2487219.1,
+        "delta": 0,
+        "byMonth": {
+          "2026-02": 538694.5,
+          "2026-03": 584827.43,
+          "2026-04": 595601.23,
+          "2026-01": 337216.1,
+          "2026-05": 430879.84
+        },
+        "jaNoSistema": true,
+        "onde": [
+          "relatorios/jpg-movimento/raw/sp-janmai-saidas.json",
+          "src/views/jpg.ejs → filiais.SP (meses 2026-01,2026-02,2026-03,2026-04,2026-05)"
+        ],
+        "comparacoes": {
+          "prodRaw": {
+            "path": "c:\\Users\\trind\\Desktop\\Dashboards\\relatorios\\jpg-movimento\\raw\\sp-janmai-saidas.json",
+            "totalGeral": 2487219.1,
+            "lineCount": 479,
+            "sum": 2487219.1,
+            "matchTg": true,
+            "matchLines": true,
+            "matchSum": true
+          },
+          "ejs": {
+            "2026-01": {
+              "ejs": 337216.1,
+              "arquivo": 337216.1,
+              "match": true
+            },
+            "2026-02": {
+              "ejs": 538694.5,
+              "arquivo": 538694.5,
+              "match": true
+            },
+            "2026-03": {
+              "ejs": 584827.43,
+              "arquivo": 584827.43,
+              "match": true
+            },
+            "2026-04": {
+              "ejs": 595601.23,
+              "arquivo": 595601.23,
+              "match": true
+            },
+            "2026-05": {
+              "ejs": 430879.84,
+              "arquivo": 430879.84,
+              "match": true
+            }
+          }
+        },
+        "status": "JA_NO_SISTEMA"
+      }
+    ],
+    "conclusao": {
+      "todosJaNoSistema": true,
+      "todosAssertsOk": true,
+      "patchAplicado": false,
+      "pendenciaConhecida": "Entradas SP Jan–Mai não estão nestes 3 arquivos (sistema continua com compras=0 nesses meses).",
+      "jul2026": "Jul SP no EJS veio de outra entrega; estes XLS não cobrem jul."
+    }
+  }
+}
