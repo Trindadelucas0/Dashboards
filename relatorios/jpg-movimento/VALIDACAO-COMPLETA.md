@@ -1,7 +1,7 @@
 # Validação completa JPG
 
-Gerado: 06/08/2026, 16:21:11
-OK: 177 | FAIL: 8
+Gerado: 06/08/2026, 16:22:03
+OK: 185 | FAIL: 0
 
 - **OK** `syntax-0`: script 0
 - **OK** `syntax-1`: script 1
@@ -31,8 +31,8 @@ OK: 177 | FAIL: 8
 - **OK** `2026-01-SEDE-cnpj`: 21051983000165
 - **OK** `2026-01-SEDE-cfop-e`: 308131.35
 - **OK** `2026-01-SEDE-cfop-s`: 22.75
-- **FAIL** `2026-01-SEDE-vs-pack-e`: 308131.35 vs 0
-- **FAIL** `2026-01-SEDE-vs-pack-s`: 22.75 vs 0
+- **OK** `2026-01-SEDE-vs-pack-e`: 308131.35
+- **OK** `2026-01-SEDE-vs-pack-s`: 22.75
 - **OK** `2026-01-consol-e`: 367929.2
 - **OK** `2026-01-consol-s`: 555771.4
 - **OK** `2026-02-MG-cnpj`: 21051983000599
@@ -58,7 +58,7 @@ OK: 177 | FAIL: 8
 - **OK** `2026-02-SEDE-cnpj`: 21051983000165
 - **OK** `2026-02-SEDE-cfop-e`: 781661.45
 - **OK** `2026-02-SEDE-cfop-s`: 0
-- **FAIL** `2026-02-SEDE-vs-pack-e`: 781661.45 vs 0
+- **OK** `2026-02-SEDE-vs-pack-e`: 781661.45
 - **OK** `2026-02-SEDE-vs-pack-s`: 0
 - **OK** `2026-02-consol-e`: 880522.96
 - **OK** `2026-02-consol-s`: 788275.25
@@ -85,8 +85,8 @@ OK: 177 | FAIL: 8
 - **OK** `2026-03-SEDE-cnpj`: 21051983000165
 - **OK** `2026-03-SEDE-cfop-e`: 511343.27
 - **OK** `2026-03-SEDE-cfop-s`: 467742.4
-- **FAIL** `2026-03-SEDE-vs-pack-e`: 511343.27 vs 0
-- **FAIL** `2026-03-SEDE-vs-pack-s`: 467742.4 vs 0
+- **OK** `2026-03-SEDE-vs-pack-e`: 511343.27
+- **OK** `2026-03-SEDE-vs-pack-s`: 467742.4
 - **OK** `2026-03-consol-e`: 688525.76
 - **OK** `2026-03-consol-s`: 1489847.2
 - **OK** `2026-04-MG-cnpj`: 21051983000599
@@ -112,7 +112,7 @@ OK: 177 | FAIL: 8
 - **OK** `2026-04-SEDE-cnpj`: 21051983000165
 - **OK** `2026-04-SEDE-cfop-e`: 380672.67
 - **OK** `2026-04-SEDE-cfop-s`: 0
-- **FAIL** `2026-04-SEDE-vs-pack-e`: 380672.67 vs 0
+- **OK** `2026-04-SEDE-vs-pack-e`: 380672.67
 - **OK** `2026-04-SEDE-vs-pack-s`: 0
 - **OK** `2026-04-consol-e`: 449989.79
 - **OK** `2026-04-consol-s`: 831213.32
@@ -139,7 +139,7 @@ OK: 177 | FAIL: 8
 - **OK** `2026-05-SEDE-cnpj`: 21051983000165
 - **OK** `2026-05-SEDE-cfop-e`: 254121.93
 - **OK** `2026-05-SEDE-cfop-s`: 0
-- **FAIL** `2026-05-SEDE-vs-pack-e`: 254121.93 vs 0
+- **OK** `2026-05-SEDE-vs-pack-e`: 254121.93
 - **OK** `2026-05-SEDE-vs-pack-s`: 0
 - **OK** `2026-05-consol-e`: 309729.65
 - **OK** `2026-05-consol-s`: 796200.23
@@ -166,7 +166,7 @@ OK: 177 | FAIL: 8
 - **OK** `2026-06-SEDE-cnpj`: 21051983000165
 - **OK** `2026-06-SEDE-cfop-e`: 255264.64
 - **OK** `2026-06-SEDE-cfop-s`: 0
-- **FAIL** `2026-06-SEDE-vs-pack-e`: 255264.64 vs 0
+- **OK** `2026-06-SEDE-vs-pack-e`: 255264.64
 - **OK** `2026-06-SEDE-vs-pack-s`: 0
 - **OK** `2026-06-consol-e`: 480547.04
 - **OK** `2026-06-consol-s`: 1406922.89

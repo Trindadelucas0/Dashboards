@@ -142,13 +142,13 @@
     },
     {
       "id": "2026-01-SEDE-vs-pack-e",
-      "status": "FAIL",
-      "msg": "308131.35 vs 0"
+      "status": "OK",
+      "msg": "308131.35"
     },
     {
       "id": "2026-01-SEDE-vs-pack-s",
-      "status": "FAIL",
-      "msg": "22.75 vs 0"
+      "status": "OK",
+      "msg": "22.75"
     },
     {
       "id": "2026-01-consol-e",
@@ -277,8 +277,8 @@
     },
     {
       "id": "2026-02-SEDE-vs-pack-e",
-      "status": "FAIL",
-      "msg": "781661.45 vs 0"
+      "status": "OK",
+      "msg": "781661.45"
     },
     {
       "id": "2026-02-SEDE-vs-pack-s",
@@ -412,13 +412,13 @@
     },
     {
       "id": "2026-03-SEDE-vs-pack-e",
-      "status": "FAIL",
-      "msg": "511343.27 vs 0"
+      "status": "OK",
+      "msg": "511343.27"
     },
     {
       "id": "2026-03-SEDE-vs-pack-s",
-      "status": "FAIL",
-      "msg": "467742.4 vs 0"
+      "status": "OK",
+      "msg": "467742.4"
     },
     {
       "id": "2026-03-consol-e",
@@ -547,8 +547,8 @@
     },
     {
       "id": "2026-04-SEDE-vs-pack-e",
-      "status": "FAIL",
-      "msg": "380672.67 vs 0"
+      "status": "OK",
+      "msg": "380672.67"
     },
     {
       "id": "2026-04-SEDE-vs-pack-s",
@@ -682,8 +682,8 @@
     },
     {
       "id": "2026-05-SEDE-vs-pack-e",
-      "status": "FAIL",
-      "msg": "254121.93 vs 0"
+      "status": "OK",
+      "msg": "254121.93"
     },
     {
       "id": "2026-05-SEDE-vs-pack-s",
@@ -817,8 +817,8 @@
     },
     {
       "id": "2026-06-SEDE-vs-pack-e",
-      "status": "FAIL",
-      "msg": "255264.64 vs 0"
+      "status": "OK",
+      "msg": "255264.64"
     },
     {
       "id": "2026-06-SEDE-vs-pack-s",
@@ -926,5 +926,5 @@
       "msg": "PR Jul preservado"
     }
   ],
-  "fails": 8
+  "fails": 0
 }
