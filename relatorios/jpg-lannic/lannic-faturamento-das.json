@@ -1,0 +1,12 @@
+﻿{
+  "cnpj": "48.285.395/0001-42",
+  "cnpjDigits": "48285395000142",
+  "empresa": "LANNIC DERMOCOMESTIC",
+  "fonte": "c:\\\\Users\\\\trind\\\\Downloads\\\\LANNIC.xlsx",
+  "regime": "Simples Nacional",
+  "rows": [
+    { "mes": "2026-05", "mesLabel": "mai/26", "faturamento": 50901.51, "das": 1720.47 },
+    { "mes": "2026-06", "mesLabel": "jun/26", "faturamento": 82874.55, "das": 2801.15 },
+    { "mes": "2026-07", "mesLabel": "jul/26", "faturamento": 560212.54, "das": 18304.75 }
+  ]
+}

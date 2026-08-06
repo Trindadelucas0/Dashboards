@@ -129,14 +129,30 @@ function Export-Movimento($excel, $path, $key, $tipo) {
       $serie = Get-CellText $ws $r 6
       $nome = Get-CellText $ws $r 12
       $doc = Get-CellText $ws $r 16
+      if (-not $doc) { $doc = Get-CellText $ws $r 15 }
       $cfopText = Get-CellText $ws $r 18
       $cfopVal = $ws.Cells.Item($r, 18).Value2
+      if (-not $cfopText) {
+        $cfopText = Get-CellText $ws $r 17
+        $cfopVal = $ws.Cells.Item($r, 17).Value2
+      }
       $uf = Get-CellText $ws $r 22
+      if (-not $uf) { $uf = Get-CellText $ws $r 21 }
       $valor = Get-CellNum $ws $r 23
+      if ($null -eq $valor) { $valor = Get-CellNum $ws $r 22 }
       if ($null -eq $valor) { $valor = Get-CellNum $ws $r 24 }
+      if ($null -eq $valor) {
+        for ($c = $cols; $c -ge 1; $c--) {
+          $cand = Get-CellNum $ws $r $c
+          if ($null -ne $cand -and $cand -gt 1) { $valor = $cand; break }
+        }
+      }
       $tax = Get-CellText $ws $r 26
+      if (-not $tax) { $tax = Get-CellText $ws $r 25 }
       $base = Get-CellNum $ws $r 27
+      if ($null -eq $base) { $base = Get-CellNum $ws $r 26 }
       $imposto = Get-CellNum $ws $r 29
+      if ($null -eq $imposto) { $imposto = Get-CellNum $ws $r 28 }
       $data = Get-CellText $ws $r 4
       if (-not $data) { $data = Get-CellText $ws $r 2 }
     }
