@@ -298,6 +298,12 @@
       background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.4);
       border-radius:10px;
     }
+    #tab-finalidade .sec-header .fin-supplier-bar {
+      flex:1 1 100%;
+      margin:4px 0 0;
+      order:3;
+    }
+    #tab-finalidade .sec-header .export-bar { order:2; }
     .fin-supplier-bar .btn-export.print {
       font-weight:700; font-size:13px; padding:10px 16px;
     }
@@ -830,8 +836,14 @@
       <section id="tab-finalidade" class="tab-section">
         <div class="sec-header">
           <div>
-            <div class="sec-title">Finalidade de Compras <small>Maio 2026 — por CFOP</small></div>
-            <div class="sec-sub">Classificação fiscal das entradas — COMPRAS.xls coluna CFOP — 206 notas fiscais únicas (Mai/2026)</div>
+            <div class="sec-title">Finalidade de Compras <small id="fn-sec-competencia">— por CFOP</small></div>
+            <div class="sec-sub" id="fn-sec-sub">Classificação fiscal das entradas por CFOP — clique em Por Fornecedor para imprimir/PDF/Excel</div>
+          </div>
+          <div class="fin-supplier-bar" id="fin-supplier-bar">
+            <button type="button" class="btn-export print" id="btn-por-fornecedor" onclick="openSupplierModal()" title="Imprimir por Fornecedor">
+              <i class="fas fa-truck"></i> Por Fornecedor
+            </button>
+            <span class="fin-supplier-hint">Selecione fornecedores e emita o relatório (Imprimir, PDF ou Excel) da competência escolhida.</span>
           </div>
           <div class="export-bar">
             <button class="btn-export print" onclick="openSupplierModal()" title="Imprimir por Fornecedor"><i class="fas fa-truck"></i> Por Fornecedor</button>
@@ -840,14 +852,7 @@
           </div>
         </div>
 
-        
-        <div class="fin-supplier-bar" id="fin-supplier-bar">
-          <button type="button" class="btn-export print" id="btn-por-fornecedor" onclick="openSupplierModal()" title="Imprimir por Fornecedor">
-            <i class="fas fa-truck"></i> Por Fornecedor
-          </button>
-          <span class="fin-supplier-hint">Selecione fornecedores e emita o relatório (Imprimir, PDF ou Excel) da competência ativa.</span>
-        </div>
-<div class="alert-box" style="border-color:rgba(34,163,41,0.35);color:var(--accent);background:rgba(34,163,41,0.07)">
+        <div class="alert-box" style="border-color:rgba(34,163,41,0.35);color:var(--accent);background:rgba(34,163,41,0.07)">
           <i class="fas fa-info-circle" style="margin-right:8px;"></i>
           <strong>Fonte única de dados:</strong> Cada entrada é classificada automaticamente pelo CFOP da NF-e. Nenhuma classificação manual.
           Devoluções (1.202, 1.411) reduzem o estoque e o custo mas aparecem aqui como entradas contábeis.
@@ -1373,6 +1378,12 @@
       <button onclick="closeSupplierModal()" class="modal-close">&times;</button>
     </div>
     <div class="modal-body">
+      <div class="search-box">
+        <label for="supplierReportPeriod" style="display:block;font-size:12px;font-weight:600;margin-bottom:6px;">
+          Competência do relatório
+        </label>
+        <select id="supplierReportPeriod" class="period-sel" style="width:100%;" onchange="onSupplierReportPeriodChange()"></select>
+      </div>
       <div class="search-box">
         <input type="text" id="supplierSearch" placeholder="Buscar fornecedor..." oninput="filterSuppliers(this.value)">
       </div>
@@ -9036,6 +9047,12 @@
     document.querySelectorAll('[data-month-label]').forEach(el => { el.textContent = ml; });
     document.querySelectorAll('[data-comp-label]').forEach(el => { el.textContent = p.competenciaLabel; });
     document.querySelectorAll('.sec-title small').forEach(el => { el.textContent = p.competenciaLabel; });
+    const fnSub = document.getElementById('fn-sec-sub');
+    if (fnSub) {
+      const nfs = p.nfsEntradas || 0;
+      fnSub.textContent = 'Classificação fiscal das entradas por CFOP — ' +
+        nfs + ' notas fiscais únicas (' + p.competenciaLabel + ') — use Por Fornecedor para imprimir/PDF/Excel';
+    }
     document.querySelectorAll('.kpi-badge.neutral[data-month-label], .kpi-badge.neutral').forEach(el => {
       if (el.closest('.kpi-card') && el.classList.contains('neutral')) el.textContent = ml;
     });
@@ -9937,80 +9954,120 @@
     XLSX.writeFile(wb, filename + '_' + getExportDate() + '.xlsx');
   }
 
+  function escHtml(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function supplierKey(f) {
+    return (f.cnpj && String(f.cnpj).trim()) || f.nome;
+  }
+
+  function resolveDefaultSupplierReportPeriod() {
+    if (periodMode === 'total') return 'total';
+    if (periodMode === 'trim1') return 'trim1';
+    if (periodMode === 'trim2') return 'trim2';
+    if (periodMode === 'trim3') return 'trim3';
+    return MONTH_KEYS[selectedMonthIdx] || MONTH_KEYS[MONTH_KEYS.length - 1];
+  }
+
+  function getSupplierReportPeriodKey() {
+    const sel = document.getElementById('supplierReportPeriod');
+    return (sel && sel.value) || resolveDefaultSupplierReportPeriod();
+  }
+
+  function getPackForSupplierReport(periodKey) {
+    if (periodKey === 'total') return buildFiscalTotalPack();
+    if (periodKey === 'trim1') return buildFiscalTrimPack(1);
+    if (periodKey === 'trim2') return buildFiscalTrimPack(2);
+    if (periodKey === 'trim3') return buildFiscalTrimPack(3);
+    return FISCAL_POR_MES[periodKey] || null;
+  }
+
+  function periodLabelForReport(periodKey) {
+    if (periodKey === 'total') return 'Jan – ' + MONTHS[MONTHS.length - 1] + ' / 2026';
+    if (periodKey === 'trim1') return '1º Trimestre 2026';
+    if (periodKey === 'trim2') return '2º Trimestre 2026';
+    if (periodKey === 'trim3') return '3º Trimestre 2026';
+    const idx = MONTH_KEYS.indexOf(periodKey);
+    if (idx >= 0) return (MONTH_LABELS_LONG[idx] || periodKey);
+    return periodKey;
+  }
+
+  function hydrateSupplierReportPeriodSelect() {
+    const sel = document.getElementById('supplierReportPeriod');
+    if (!sel) return;
+    let html =
+      '<optgroup label="Período">' +
+        '<option value="total">Total — Jan a ' + MONTHS[MONTHS.length - 1] + '/2026</option>' +
+        '<option value="trim1">1º Trimestre 2026</option>' +
+        '<option value="trim2">2º Trimestre 2026</option>' +
+        (MONTH_KEYS.length > 6 ? '<option value="trim3">3º Trimestre 2026</option>' : '') +
+      '</optgroup>';
+    html += '<optgroup label="1º Trimestre — meses">' +
+      MONTH_KEYS.slice(0, 3).map((k, i) => '<option value="' + k + '">' + (MONTH_LABELS_LONG[i] || k) + '</option>').join('') +
+      '</optgroup>';
+    html += '<optgroup label="2º Trimestre — meses">' +
+      MONTH_KEYS.slice(3, 6).map((k, i) => '<option value="' + k + '">' + (MONTH_LABELS_LONG[i + 3] || k) + '</option>').join('') +
+      '</optgroup>';
+    if (MONTH_KEYS.length > 6) {
+      html += '<optgroup label="3º Trimestre — meses">' +
+        MONTH_KEYS.slice(6).map((k, i) => '<option value="' + k + '">' + (MONTH_LABELS_LONG[i + 6] || k) + '</option>').join('') +
+        '</optgroup>';
+    }
+    sel.innerHTML = html;
+    sel.value = resolveDefaultSupplierReportPeriod();
+  }
+
+  function getCfopDadosForPrint() {
+    const pack = getPackForSupplierReport(getSupplierReportPeriodKey());
+    return (pack && pack.cfopEntradas) || [];
+  }
+
   function collectUniqueSuppliers() {
     const map = new Map();
-    (CFOP_DADOS || []).forEach(cfop => {
-      (cfop.fornecedores || []).forEach(f => {
-        const key = f.cnpj || f.nome;
-        if (!map.has(key)) map.set(key, { nome: f.nome, cnpj: f.cnpj, uf: f.uf });
+    getCfopDadosForPrint().forEach((cfop) => {
+      (cfop.fornecedores || []).forEach((f) => {
+        const key = supplierKey(f);
+        if (!key || map.has(key)) return;
+        map.set(key, { nome: f.nome, cnpj: f.cnpj || '—', uf: f.uf || '—', key });
       });
     });
     return Array.from(map.values()).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
   }
 
-  function openSupplierModal() {
-    const modal = document.getElementById('supplierModal');
-    const list = document.getElementById('supplierList');
-    if (!modal || !list) {
-      alert('Modal de fornecedores nao encontrado nesta pagina.');
-      return;
-    }
-    try {
-      const suppliers = collectUniqueSuppliers();
-      const esc = (v) => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-      if (!suppliers.length) {
-        list.innerHTML = '<p class="td-mute" style="padding:16px;">Nenhum fornecedor nesta competencia. Troque o periodo no seletor do topo.</p>';
-      } else {
-        list.innerHTML = suppliers.map(s => {
-          const search = ((s.nome || '') + ' ' + (s.cnpj || '') + ' ' + (s.uf || '')).toLowerCase();
-          return '<label class="supplier-item" data-search="' + esc(search) + '">' +
-            '<input type="checkbox" value="' + esc(s.cnpj || s.nome || '') + '" data-nome="' + esc(s.nome) + '" data-key="' + esc((s.cnpj && String(s.cnpj).trim()) || s.nome || '') + '" data-uf="' + esc(s.uf || '—') + '">' +
-            '<span class="supplier-info"><strong>' + esc(s.nome) + '</strong>' +
-            '<small>' + esc(s.cnpj || '—') + ' · ' + esc(s.uf || '—') + '</small></span></label>';
-        }).join('');
-      }
-    } catch (err) {
-      console.error('openSupplierModal', err);
-      list.innerHTML = '<p class="td-mute" style="padding:16px;">Erro ao carregar fornecedores.</p>';
-    }
-    const search = document.getElementById('supplierSearch');
-    if (search) search.value = '';
-    const demais = document.getElementById('includeDemaisFornecedores');
-    if (demais) demais.checked = true;
-    modal.style.display = 'flex';
-    modal.setAttribute('aria-hidden', 'false');
+  function findFornecedorInCfop(cfop, key, nome) {
+    return (cfop.fornecedores || []).find((f) => supplierKey(f) === key || (nome && f.nome === nome));
   }
 
-  function closeSupplierModal() {
-    document.getElementById('supplierModal').style.display = 'none';
-    const search = document.getElementById('supplierSearch');
-    if (search) search.value = '';
-  }
-
-  function filterSuppliers(query) {
-    const q = (query || '').toLowerCase();
-    document.querySelectorAll('#supplierList .supplier-item').forEach(el => {
-      const search = el.dataset.search || '';
-      el.style.display = search.includes(q) ? '' : 'none';
+  function rowsForSupplier(cfopDados, key, nome) {
+    const rows = [];
+    cfopDados.forEach((cfop) => {
+      const f = findFornecedorInCfop(cfop, key, nome);
+      if (!f) return;
+      const info = CFOP_FINALIDADE[cfop.cfop] || {};
+      rows.push({
+        cfop: cfop.cfop,
+        desc: info.descricao || '—',
+        fin: info.finalidade || '—',
+        qtd: f.qtd || 0,
+        total: f.total || 0,
+      });
     });
+    return rows;
   }
 
-  function toggleAllSuppliers(state) {
-    document.querySelectorAll('#supplierList .supplier-item').forEach(el => {
-      if (el.style.display === 'none') return;
-      const cb = el.querySelector('input');
-      if (cb) cb.checked = state;
-    });
-  }
-
-  function aggregateDemaisLoja(selectedKeys) {
+  function aggregateDemaisByCfop(cfopDados, selectedKeys) {
     const map = {};
-    (CFOP_DADOS || []).forEach((cfop) => {
+    cfopDados.forEach((cfop) => {
       (cfop.fornecedores || []).forEach((f) => {
-        const key = (f.cnpj && String(f.cnpj).trim()) || f.nome;
+        const key = supplierKey(f);
         if (!key || selectedKeys.has(key)) return;
         if (!map[cfop.cfop]) {
-          const info = (CFOP_FINALIDADE[cfop.cfop] || {});
+          const info = CFOP_FINALIDADE[cfop.cfop] || {};
           map[cfop.cfop] = {
             cfop: cfop.cfop,
             desc: info.descricao || '—',
@@ -10023,91 +10080,159 @@
         map[cfop.cfop].total += f.total || 0;
       });
     });
-    return Object.values(map).filter((r) => r.total > 0).sort((a, b) => b.total - a.total);
+    return Object.values(map)
+      .filter((r) => r.total > 0)
+      .map((r) => ({ ...r, total: Math.round(r.total * 100) / 100 }))
+      .sort((a, b) => b.total - a.total);
+  }
+
+  function renderSupplierTableRows(rows) {
+    return rows.map((r) =>
+      '<tr><td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + escHtml(r.cfop) + '</td>' +
+      '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + escHtml(r.desc) + '</td>' +
+      '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + escHtml(r.fin) + '</td>' +
+      '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;text-align:right;">' + r.qtd + '</td>' +
+      '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;text-align:right;font-weight:600;">' +
+      r.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr>'
+    ).join('');
+  }
+
+  function renderSupplierSection(nome, cnpj, uf, rows) {
+    const subtotal = rows.reduce((s, r) => s + r.total, 0);
+    if (!rows.length) return { html: '', subtotal: 0 };
+    let html = '<div class="supplier-print-block" style="margin-bottom:12px;page-break-inside:auto;width:100%;max-width:100%;box-sizing:border-box;">';
+    html += '<h2 style="font-size:14px;border-bottom:2px solid #22a329;padding-bottom:6px;">' + escHtml(nome) + '</h2>';
+    html += '<p style="font-size:11px;color:#555;">CNPJ: ' + escHtml(cnpj) + ' · UF: ' + escHtml(uf) + '</p>';
+    html += '<table style="width:100%;max-width:100%;border-collapse:collapse;margin-top:8px;font-size:10px;table-layout:fixed;"><colgroup><col class="cfop"><col class="desc"><col class="fin"><col class="qtd"><col class="val"></colgroup>';
+    html += '<thead><tr style="background:#f0f0f0;"><th style="padding:4px 5px;text-align:left;">CFOP</th>';
+    html += '<th style="padding:4px 5px;text-align:left;">Descrição</th><th style="padding:4px 5px;text-align:left;">Finalidade</th>';
+    html += '<th style="padding:4px 5px;text-align:right;">Qtd NFs</th><th style="padding:4px 5px;text-align:right;">Valor (R$)</th></tr></thead><tbody>';
+    html += renderSupplierTableRows(rows);
+    html += '</tbody><tfoot><tr><td colspan="4" style="padding:6px 5px;text-align:right;font-weight:700;">Subtotal:</td>';
+    html += '<td style="padding:6px 5px;text-align:right;font-weight:700;">R$ ' +
+      subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr></tfoot></table></div>';
+    return { html, subtotal };
+  }
+
+  function renderSupplierList() {
+    const list = document.getElementById('supplierList');
+    if (!list) return;
+    const suppliers = collectUniqueSuppliers();
+    if (!suppliers.length) {
+      list.innerHTML = '<p class="td-mute" style="padding:16px;">Nenhum fornecedor nesta competência. Troque o período no seletor acima.</p>';
+      return;
+    }
+    list.innerHTML = suppliers.map((s) => {
+      const search = (s.nome + ' ' + s.cnpj + ' ' + s.uf).toLowerCase();
+      return '<label class="supplier-item" data-search="' + escHtml(search) + '">' +
+        '<input type="checkbox" value="' + escHtml(s.cnpj) + '" data-key="' + escHtml(s.key) + '" data-nome="' + escHtml(s.nome) + '" data-uf="' + escHtml(s.uf) + '">' +
+        '<span class="supplier-info"><strong>' + escHtml(s.nome) + '</strong>' +
+        '<small>' + escHtml(s.cnpj) + ' · ' + escHtml(s.uf) + '</small></span></label>';
+    }).join('');
+  }
+
+  function openSupplierModal() {
+    const modal = document.getElementById('supplierModal');
+    const list = document.getElementById('supplierList');
+    if (!modal || !list) {
+      alert('Modal de fornecedores nao encontrado nesta pagina.');
+      return;
+    }
+    try {
+      hydrateSupplierReportPeriodSelect();
+      renderSupplierList();
+    } catch (err) {
+      console.error('openSupplierModal', err);
+      list.innerHTML = '<p class="td-mute" style="padding:16px;">Erro ao carregar fornecedores.</p>';
+    }
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+    const demais = document.getElementById('includeDemaisFornecedores');
+    if (demais) demais.checked = true;
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  function onSupplierReportPeriodChange() {
+    renderSupplierList();
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+    document.querySelectorAll('#supplierList .supplier-item input[type="checkbox"]').forEach((cb) => {
+      cb.checked = false;
+    });
+  }
+
+  function closeSupplierModal() {
+    document.getElementById('supplierModal').style.display = 'none';
+    const search = document.getElementById('supplierSearch');
+    if (search) search.value = '';
+  }
+
+  function filterSuppliers(query) {
+    const q = (query || '').toLowerCase();
+    document.querySelectorAll('#supplierList .supplier-item').forEach((el) => {
+      const search = el.dataset.search || '';
+      el.style.display = search.includes(q) ? '' : 'none';
+    });
+  }
+
+  function toggleAllSuppliers(state) {
+    document.querySelectorAll('#supplierList .supplier-item').forEach((el) => {
+      if (el.style.display === 'none') return;
+      const cb = el.querySelector('input');
+      if (cb) cb.checked = state;
+    });
   }
 
   function printBySupplier() {
-    const selected = Array.from(document.querySelectorAll('#supplierList input:checked'));
+    const selected = Array.from(document.querySelectorAll('#supplierList input[type="checkbox"]:checked'));
     const includeDemais = document.getElementById('includeDemaisFornecedores')?.checked;
     if (!selected.length && !includeDemais) {
       alert('Selecione ao menos um fornecedor ou marque "Demais fornecedores".');
       return;
     }
 
-    closeSupplierModal();
+    const periodKey = getSupplierReportPeriodKey();
+    const cfopDados = getCfopDadosForPrint();
+    if (!cfopDados.length) {
+      alert('Sem entradas para a competência selecionada.');
+      return;
+    }
+    const selectedKeys = new Set(selected.map((cb) => cb.dataset.key || cb.dataset.nome || cb.value));
     let totalGeral = 0;
     let html = '<div class="supplier-print-root" style="font-family:Inter,sans-serif;padding:0;margin:0;color:#1a1a2e;background:#fff;width:100%;max-width:100%;box-sizing:border-box;">';
     html += '<h1 style="font-size:18px;margin-bottom:4px;">Relatório por Fornecedor</h1>';
-    html += '<p style="font-size:12px;color:#555;margin-bottom:24px;">' + getCompanyName() + ' — ' + new Date().toLocaleDateString('pt-BR') + '</p>';
+    html += '<p style="font-size:12px;color:#555;margin-bottom:24px;">' +
+      escHtml(getCompanyName()) + ' — Competência ' + escHtml(periodLabelForReport(periodKey)) + ' — ' +
+      new Date().toLocaleDateString('pt-BR') + '</p>';
 
-    selected.forEach(cb => {
-      const cnpj = cb.value;
-      const nome = cb.dataset.nome;
-      const rows = [];
-      let subtotal = 0;
-      let uf = '—';
-
-      (CFOP_DADOS || []).forEach(cfop => {
-        const f = (cfop.fornecedores || []).find(x => x.cnpj === cnpj);
-        if (f) {
-          const info = (CFOP_FINALIDADE[cfop.cfop] || {});
-          rows.push({ cfop: cfop.cfop, desc: info.descricao || '—', fin: info.finalidade || '—', qtd: f.qtd, total: f.total });
-          subtotal += f.total;
-          uf = f.uf;
-        }
-      });
-
-      totalGeral += subtotal;
-      html += '<div class="supplier-print-block" style="margin-bottom:12px;page-break-inside:auto;width:100%;max-width:100%;box-sizing:border-box;">';
-      html += '<h2 style="font-size:14px;border-bottom:2px solid #22a329;padding-bottom:6px;">' + nome + '</h2>';
-      html += '<p style="font-size:11px;color:#555;">CNPJ: ' + cnpj + ' · UF: ' + uf + '</p>';
-      html += '<table style="width:100%;max-width:100%;border-collapse:collapse;margin-top:8px;font-size:10px;table-layout:fixed;"><colgroup><col class="cfop"><col class="desc"><col class="fin"><col class="qtd"><col class="val"></colgroup>';
-      html += '<thead><tr style="background:#f0f0f0;"><th style="padding:4px 5px;text-align:left;">CFOP</th>';
-      html += '<th style="padding:4px 5px;text-align:left;">Descrição</th><th style="padding:4px 5px;text-align:left;">Finalidade</th>';
-      html += '<th style="padding:4px 5px;text-align:right;">Qtd NFs</th><th style="padding:4px 5px;text-align:right;">Valor (R$)</th></tr></thead><tbody>';
-      rows.forEach(r => {
-        html += '<tr><td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + r.cfop + '</td>';
-        html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + r.desc + '</td>';
-        html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + r.fin + '</td>';
-        html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;text-align:right;">' + r.qtd + '</td>';
-        html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;text-align:right;font-weight:600;">' +
-          r.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr>';
-      });
-      html += '</tbody><tfoot><tr><td colspan="4" style="padding:6px 5px;text-align:right;font-weight:700;">Subtotal:</td>';
-      html += '<td style="padding:6px 5px;text-align:right;font-weight:700;">R$ ' +
-        subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr></tfoot></table></div>';
+    selected.forEach((cb) => {
+      const key = cb.dataset.key || cb.dataset.nome || cb.value;
+      const nome = cb.dataset.nome || '';
+      const cnpj = cb.value || '—';
+      const uf = cb.dataset.uf || '—';
+      const rows = rowsForSupplier(cfopDados, key, nome);
+      const section = renderSupplierSection(nome, cnpj, uf, rows);
+      html += section.html;
+      totalGeral += section.subtotal;
     });
 
-    const selectedKeys = new Set(selected.map((cb) => cb.value || cb.dataset.nome));
     if (includeDemais) {
-      const demaisRows = aggregateDemaisLoja(selectedKeys);
-      if (demaisRows.length) {
-        const subtotal = demaisRows.reduce((s, r) => s + r.total, 0);
-        totalGeral += subtotal;
-        html += '<div class="supplier-print-block" style="margin-bottom:12px;page-break-inside:auto;width:100%;max-width:100%;box-sizing:border-box;">';
-        html += '<h2 style="font-size:14px;border-bottom:2px solid #22a329;padding-bottom:6px;">Demais fornecedores</h2>';
-        html += '<p style="font-size:11px;color:#555;">CNPJ: — · UF: —</p>';
-        html += '<table style="width:100%;max-width:100%;border-collapse:collapse;margin-top:8px;font-size:10px;table-layout:fixed;"><colgroup><col class="cfop"><col class="desc"><col class="fin"><col class="qtd"><col class="val"></colgroup>';
-        html += '<thead><tr style="background:#f0f0f0;"><th style="padding:4px 5px;text-align:left;">CFOP</th>';
-        html += '<th style="padding:4px 5px;text-align:left;">Descrição</th><th style="padding:4px 5px;text-align:left;">Finalidade</th>';
-        html += '<th style="padding:4px 5px;text-align:right;">Qtd NFs</th><th style="padding:4px 5px;text-align:right;">Valor (R$)</th></tr></thead><tbody>';
-        demaisRows.forEach((r) => {
-          html += '<tr><td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + r.cfop + '</td>';
-          html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + r.desc + '</td>';
-          html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;">' + r.fin + '</td>';
-          html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;text-align:right;">' + r.qtd + '</td>';
-          html += '<td style="padding:4px 5px;border-bottom:1px solid #ddd;word-wrap:break-word;text-align:right;font-weight:600;">' +
-            r.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr>';
-        });
-        html += '</tbody><tfoot><tr><td colspan="4" style="padding:6px 5px;text-align:right;font-weight:700;">Subtotal:</td>';
-        html += '<td style="padding:6px 5px;text-align:right;font-weight:700;">R$ ' +
-          subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</td></tr></tfoot></table></div>';
-      }
+      const demaisRows = aggregateDemaisByCfop(cfopDados, selectedKeys);
+      const section = renderSupplierSection('Demais fornecedores', '—', '—', demaisRows);
+      html += section.html;
+      totalGeral += section.subtotal;
+    }
+
+    if (totalGeral <= 0) {
+      alert('Nenhum dado encontrado para os fornecedores selecionados neste período.');
+      return;
     }
 
     html += '<div style="border-top:2px solid #1a1a2e;padding-top:12px;margin-top:16px;text-align:right;font-size:14px;font-weight:700;">';
     html += 'Total Geral: R$ ' + totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + '</div></div>';
 
+    closeSupplierModal();
     const old = document.getElementById('print-supplier-report');
     if (old) old.remove();
     const div = document.createElement('div');
@@ -10125,68 +10250,58 @@
     window.print();
   }
 
-  function buildLojaSupplierReportData(selected, includeDemais) {
+  function buildLojaSupplierReportData() {
+    const selected = Array.from(document.querySelectorAll('#supplierList input[type="checkbox"]:checked'));
+    const includeDemais = document.getElementById('includeDemaisFornecedores')?.checked;
+    if (!selected.length && !includeDemais) {
+      return { error: 'Selecione ao menos um fornecedor ou marque "Demais fornecedores".' };
+    }
+    const periodKey = getSupplierReportPeriodKey();
+    const cfopDados = getCfopDadosForPrint();
+    if (!cfopDados.length) return { error: 'Sem entradas para a competência selecionada.' };
+    const selectedKeys = new Set(selected.map((cb) => cb.dataset.key || cb.dataset.nome || cb.value));
     const suppliers = [];
     let totalGeral = 0;
     selected.forEach((cb) => {
-      const cnpj = cb.value;
-      const nome = cb.dataset.nome;
-      const rows = [];
-      let subtotal = 0;
-      let uf = '—';
-      (CFOP_DADOS || []).forEach((cfop) => {
-        const f = (cfop.fornecedores || []).find((x) => x.cnpj === cnpj);
-        if (!f) return;
-        const info = (CFOP_FINALIDADE[cfop.cfop] || {});
-        rows.push({
-          cfop: cfop.cfop,
-          desc: info.descricao || '—',
-          fin: info.finalidade || '—',
-          qtd: f.qtd,
-          total: f.total,
-        });
-        subtotal += f.total;
-        uf = f.uf || uf;
-      });
+      const key = cb.dataset.key || cb.dataset.nome || cb.value;
+      const nome = cb.dataset.nome || '';
+      const cnpj = cb.value || '—';
+      const uf = cb.dataset.uf || '—';
+      const rows = rowsForSupplier(cfopDados, key, nome);
+      const subtotal = rows.reduce((s, r) => s + r.total, 0);
+      if (!rows.length) return;
       totalGeral += subtotal;
-      suppliers.push({ nome: nome, cnpj: cnpj, uf: uf, rows: rows, subtotal: subtotal });
+      suppliers.push({ nome, cnpj, uf, rows, subtotal });
     });
     if (includeDemais) {
-      const selectedKeys = new Set(selected.map((cb) => cb.dataset.key || cb.dataset.nome || cb.value));
-      const demaisRows = aggregateDemaisLoja(selectedKeys);
+      const demaisRows = aggregateDemaisByCfop(cfopDados, selectedKeys);
       const subtotal = demaisRows.reduce((s, r) => s + r.total, 0);
       if (demaisRows.length) {
         totalGeral += subtotal;
-        suppliers.push({ nome: 'Demais fornecedores', cnpj: '—', uf: '—', rows: demaisRows, subtotal: subtotal });
+        suppliers.push({ nome: 'Demais fornecedores', cnpj: '—', uf: '—', rows: demaisRows, subtotal });
       }
     }
+    if (totalGeral <= 0) {
+      return { error: 'Nenhum dado encontrado para os fornecedores selecionados neste período.' };
+    }
     return {
-      suppliers: suppliers,
-      totalGeral: totalGeral,
+      suppliers,
+      totalGeral,
       companyName: getCompanyName(),
-      competencia: (EMPRESA && EMPRESA.periodo) || '—',
+      competencia: periodLabelForReport(periodKey),
       col3Label: 'Finalidade',
     };
   }
 
   function exportSupplierPdf() {
-    const selected = Array.from(document.querySelectorAll('#supplierList .supplier-item input:checked'));
-    const includeDemais = document.getElementById('includeDemaisFornecedores')?.checked;
-    if (!selected.length && !includeDemais) {
-      alert('Selecione ao menos um fornecedor ou marque "Demais fornecedores".');
-      return;
-    }
+    const data = buildLojaSupplierReportData();
+    if (data.error) { alert(data.error); return; }
     if (!window.jspdf || !window.jspdf.jsPDF) {
       alert('Biblioteca jsPDF nao carregada.');
       return;
     }
     if (typeof window.jspdf.jsPDF.prototype.autoTable !== 'function') {
       alert('Biblioteca jspdf-autotable nao carregada.');
-      return;
-    }
-    const data = buildLojaSupplierReportData(selected, includeDemais);
-    if (data.totalGeral <= 0) {
-      alert('Nenhum dado encontrado para os fornecedores selecionados neste período.');
       return;
     }
     closeSupplierModal();
@@ -10317,19 +10432,10 @@
 
 
   function exportSupplierExcel() {
-    const selected = Array.from(document.querySelectorAll('#supplierList .supplier-item input:checked'));
-    const includeDemais = document.getElementById('includeDemaisFornecedores')?.checked;
-    if (!selected.length && !includeDemais) {
-      alert('Selecione ao menos um fornecedor ou marque "Demais fornecedores".');
-      return;
-    }
+    const data = buildLojaSupplierReportData();
+    if (data.error) { alert(data.error); return; }
     if (!window.XLSX) {
       alert('Biblioteca XLSX nao carregada.');
-      return;
-    }
-    const data = buildLojaSupplierReportData(selected, includeDemais);
-    if (data.totalGeral <= 0) {
-      alert('Nenhum dado encontrado para os fornecedores selecionados neste período.');
       return;
     }
     closeSupplierModal();
@@ -10345,6 +10451,7 @@
   window.closeSupplierModal = closeSupplierModal;
   window.filterSuppliers = filterSuppliers;
   window.toggleAllSuppliers = toggleAllSuppliers;
+  window.onSupplierReportPeriodChange = onSupplierReportPeriodChange;
   window.printBySupplier = printBySupplier;
   window.exportSupplierPdf = exportSupplierPdf;
   window.exportSupplierExcel = exportSupplierExcel;
