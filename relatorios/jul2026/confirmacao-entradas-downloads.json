@@ -1,0 +1,37 @@
+{
+  "competencia": "2026-07",
+  "escopo": "entradas apenas (Loja + Baifer) a partir de Downloads",
+  "resultado": "EJS sem alteração — dados já idênticos aos packs validados",
+  "arquivos": {
+    "loja": {
+      "arquivo": "Entrada por fornecedor loja das maquinas 072026 (1).xls",
+      "cnpj": "13983066000190",
+      "dashboard": "loja-maquinas.ejs",
+      "chaveMes": "FISCAL_POR_MES[\"2026-07\"]",
+      "totalGeral": 461735.82,
+      "nfs": 1133,
+      "delta": 0,
+      "patchEjs": false
+    },
+    "baifer": {
+      "arquivo": "Entradas por fornecedor 072026.xls",
+      "cnpj": "52005382000140",
+      "dashboard": "baifer2trm.ejs",
+      "chaveMes": "unidades.consolidado.fiscalPorMes.porMes[\"07\"]",
+      "totalGeral": 603647.3,
+      "nfs": 225,
+      "delta": 0,
+      "patchEjs": false
+    }
+  },
+  "validacoes": {
+    "extract": "OK",
+    "diffEjs": "IDENTICO",
+    "dashboards": "OK (inclui regressão mês 06)",
+    "smokeAuthHttp": "OK"
+  },
+  "pendencias": [
+    "Saídas não reenviadas nesta leva (preservadas)",
+    "Impostos/DRE/Apuração/EFD não inventados"
+  ]
+}

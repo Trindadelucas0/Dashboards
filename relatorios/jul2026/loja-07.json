@@ -15,14 +15,15 @@
     "nfsEntradas": 1133,
     "nfsSaidas": 3148,
     "deltaEntradas": 0,
-    "deltaSaidas": 0
+    "deltaSaidas": 0,
+    "entradasSource": "c:\\Users\\trind\\Downloads\\Entrada por fornecedor loja das maquinas 072026 (1).xls"
   },
   "pack": {
     "competencia": "2026-07",
     "competenciaLabel": "Jul / 2026",
     "monthShort": "Jul",
     "files": {
-      "entradas": "Entrada por fornecedor loja das maquinas 072026.xls",
+      "entradas": "Entrada por fornecedor loja das maquinas 072026 (1).xls",
       "saidas": "Saida por cliente loja das maquinas 072026.xls"
     },
     "receitaBruta": 731914.74,

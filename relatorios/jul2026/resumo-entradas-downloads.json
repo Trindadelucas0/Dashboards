@@ -1,0 +1,40 @@
+{
+  "loja": {
+    "company": "96 - LOJA DAS MAQUINAS E FERRAMENTAS LTDA",
+    "cnpj": "13983066000190",
+    "period": "01/07/2026 até 31/07/2026",
+    "file": "Entrada por fornecedor loja das maquinas 072026 (1).xls",
+    "sourcePath": "c:\\Users\\trind\\Downloads\\Entrada por fornecedor loja das maquinas 072026 (1).xls",
+    "totalGeral": 461735.82,
+    "soma": 461735.82,
+    "delta": 0,
+    "nfs": 1133,
+    "cfopCount": 16,
+    "topFornecedor": {
+      "nome": "BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA",
+      "cnpj": "52.005.382/0001-40",
+      "uf": "DF",
+      "qtd": 164,
+      "total": 361352.59
+    }
+  },
+  "baifer": {
+    "company": "11 - BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA",
+    "cnpj": "52005382000140",
+    "period": "01/07/2026 até 31/07/2026",
+    "file": "Entradas por fornecedor 072026.xls",
+    "sourcePath": "c:\\Users\\trind\\Downloads\\Entradas por fornecedor 072026.xls",
+    "totalGeral": 603647.3,
+    "soma": 603647.3,
+    "delta": 0,
+    "nfs": 225,
+    "cfopCount": 14,
+    "topFornecedor": {
+      "nome": "MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA",
+      "cnpj": "45.865.920/0001-00",
+      "uf": "SP",
+      "qtd": 13,
+      "total": 116633.36
+    }
+  }
+}

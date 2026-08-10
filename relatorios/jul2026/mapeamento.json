@@ -1,6 +1,7 @@
 ﻿{
   "competencia": "2026-07",
   "fonteDir": "d:/Nova pasta/Nova pasta/06-08",
+  "fonteEntradasDownloads": "c:/Users/trind/Downloads",
   "empresas": {
     "unica": {
       "cnpj": "36517206000130",
@@ -18,13 +19,15 @@
     "loja": {
       "cnpj": "13983066000190",
       "dashboard": "loja-maquinas.ejs",
-      "entradas": "Entrada por fornecedor loja das maquinas 072026.xls",
+      "entradas": "Entrada por fornecedor loja das maquinas 072026 (1).xls",
+      "entradasSource": "c:/Users/trind/Downloads/Entrada por fornecedor loja das maquinas 072026 (1).xls",
       "saidas": "Saida por cliente loja das maquinas 072026.xls"
     },
     "baifer": {
       "cnpj": "52005382000140",
       "dashboard": "baifer2trm.ejs",
       "entradas": "Entradas por fornecedor 072026.xls",
+      "entradasSource": "c:/Users/trind/Downloads/Entradas por fornecedor 072026.xls",
       "saidas": "Entradas por Cliente 072026.xls",
       "saidasNota": "Arquivo nomeado Entradas por Cliente, aba real Saidas"
     }

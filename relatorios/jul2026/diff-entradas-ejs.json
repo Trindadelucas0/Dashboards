@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "loja": {
+    "packTotal": 461735.82,
+    "ejsTotal": 461735.82,
+    "packNfs": 1133,
+    "ejsNfs": 1133,
+    "deltaTotal": 0,
+    "cfopDiffs": 0,
+    "identical": true
+  },
+  "baifer": {
+    "packTotal": 603647.3,
+    "ejsTotal": 603647.3,
+    "packNfs": 225,
+    "ejsNfs": 225,
+    "deltaTotal": 0,
+    "cfopDiffs": 0,
+    "identical": true
+  },
+  "diffs": []
+}

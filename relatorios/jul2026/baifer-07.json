@@ -15,7 +15,8 @@
     "nfsEntradas": 225,
     "nfsSaidas": 497,
     "deltaEntradas": 0,
-    "deltaSaidas": 0
+    "deltaSaidas": 0,
+    "entradasSource": "c:\\Users\\trind\\Downloads\\Entradas por fornecedor 072026.xls"
   },
   "pack": {
     "competencia": "07",
@@ -144,6 +145,10 @@
         "contabil": 371591.83,
         "fiscal": 371591.83,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "MAKITA DO BRASIL FERRAMENTAS ELETRICAS LTDA",
@@ -747,11 +752,7 @@
             "qtd": 2,
             "total": 18.31
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       },
       {
         "cfop": "2-101",
@@ -760,6 +761,10 @@
         "contabil": 140522.31,
         "fiscal": 140522.31,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "MENEGOTTI INDUSTRIAS METALURGICAS LTDA",
@@ -838,11 +843,7 @@
             "qtd": 1,
             "total": 3.79
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       },
       {
         "cfop": "1-102",
@@ -851,6 +852,10 @@
         "contabil": 58064.77,
         "fiscal": 58064.77,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A",
@@ -936,11 +941,7 @@
             "qtd": 1,
             "total": 28.71
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       },
       {
         "cfop": "1-202",
@@ -949,6 +950,10 @@
         "contabil": 12728.79,
         "fiscal": 12728.79,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "SANDRA CAROLINA DE SOUSA ROSA CURVINA 57840520120",
@@ -1034,11 +1039,7 @@
             "qtd": 1,
             "total": 105
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       },
       {
         "cfop": "1-101",
@@ -1047,6 +1048,10 @@
         "contabil": 6585,
         "fiscal": 6585,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "METADESIGN PROJETOS E SOLUCOES METALICAS LTDA",
@@ -1069,11 +1074,7 @@
             "qtd": 1,
             "total": 285
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       },
       {
         "cfop": "2-910",
@@ -1082,6 +1083,10 @@
         "contabil": 6300.65,
         "fiscal": 6300.65,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "HIDRO METALURGICA ZM LTDA",
@@ -1132,11 +1137,7 @@
             "qtd": 1,
             "total": 90.26
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       },
       {
         "cfop": "1-910",
@@ -1145,6 +1146,10 @@
         "contabil": 3211,
         "fiscal": 3211,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A",
@@ -1153,11 +1158,7 @@
             "qtd": 1,
             "total": 3211
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       },
       {
         "cfop": "1-403",
@@ -1166,6 +1167,10 @@
         "contabil": 2979.72,
         "fiscal": 2979.72,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "CONDOR ATACADISTA DE MATERIAIS PARA CONSTRUCAO S/A",
@@ -1181,11 +1186,7 @@
             "qtd": 1,
             "total": 1465
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       },
       {
         "cfop": "2-403",
@@ -1194,6 +1195,10 @@
         "contabil": 1244.39,
         "fiscal": 1244.39,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "BR ACESSORIOS PARA BORRACHARIA LTDA",
@@ -1223,11 +1228,7 @@
             "qtd": 1,
             "total": 81.17
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       },
       {
         "cfop": "2-933",
@@ -1236,6 +1237,10 @@
         "contabil": 150,
         "fiscal": 150,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "SKYTEF SOLUCOES EM CAPTURA DE TRANSACOES LTDA",
@@ -1244,11 +1249,7 @@
             "qtd": 1,
             "total": 150
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       },
       {
         "cfop": "2-949",
@@ -1257,6 +1258,10 @@
         "contabil": 96.06,
         "fiscal": 96.06,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "SEMAR IMPORT ATACADISTA LTDA",
@@ -1265,11 +1270,7 @@
             "qtd": 1,
             "total": 96.06
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       },
       {
         "cfop": "1-949",
@@ -1278,6 +1279,10 @@
         "contabil": 93.04,
         "fiscal": 93.04,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA",
@@ -1286,11 +1291,7 @@
             "qtd": 1,
             "total": 93.04
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       },
       {
         "cfop": "1-411",
@@ -1299,6 +1300,10 @@
         "contabil": 45.56,
         "fiscal": 45.56,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "ARTEMIS SOLUCOES PREVENCAO CONTRA INCENDIO LTDA",
@@ -1307,11 +1312,7 @@
             "qtd": 1,
             "total": 45.56
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       },
       {
         "cfop": "1-652",
@@ -1320,6 +1321,10 @@
         "contabil": 34.18,
         "fiscal": 34.18,
         "imposto": 0,
+        "descricao": "",
+        "finalidade": "",
+        "creditoPisCofins": false,
+        "debitaIcms": false,
         "fornecedores": [
           {
             "nome": "O.V.D. IMPORTADORA E DISTRIBUIDORA LTDA",
@@ -1328,11 +1333,7 @@
             "qtd": 1,
             "total": 34.18
           }
-        ],
-        "descricao": "",
-        "finalidade": "",
-        "creditoPisCofins": false,
-        "debitaIcms": false
+        ]
       }
     ],
     "cfopSaidas": [
