@@ -1,0 +1,11 @@
+{
+  "name": "dashboards-nova-versao",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c green,cyan \"node scripts/dev-api.js\" \"node scripts/dev-web.js\"",
+    "postinstall": "npm install --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

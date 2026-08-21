@@ -1,0 +1,41 @@
+.nova-wrap { width: 100%; }
+.nova-card { max-width: 460px; }
+.nova-lead {
+  margin: 0 0 1.1rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #6b7280;
+  font-weight: 500;
+}
+.nova-textarea { resize: vertical; min-height: 64px; }
+.theme-row { display: flex; gap: 8px; }
+.theme-chip {
+  flex: 1;
+  border: 2px solid #e5e7eb;
+  background: #fff;
+  border-radius: 12px;
+  padding: 0.55rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+}
+.theme-chip.on {
+  border-color: #22a329;
+  background: #f0fdf4;
+  color: #166534;
+}
+.theme-chip.blue.on {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1e40af;
+}
+.nova-back {
+  display: block;
+  text-align: center;
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #22a329;
+  text-decoration: none;
+}
