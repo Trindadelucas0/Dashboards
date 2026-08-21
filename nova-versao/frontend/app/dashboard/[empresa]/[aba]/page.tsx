@@ -563,11 +563,60 @@ export default function AbaPage() {
 
       {showBody && aba === "vendas" && (
         <>
-          <div className="kpi-grid kpi-grid-3">
-            <Kpi color="blue" icon="sack-dollar" value={brl(totalVend)} label="Total de Vendas (NF-e)" sub={d.nfsSaidas ? `${d.nfsSaidas} NFs` : "Planilha pendente"} />
-            <Kpi color="cyan" icon="users" value={`${ufSai.length || "—"} UFs`} label="Estados de Destino" sub={ufSai.slice(0, 3).map((u) => `${u.uf} ${u.pct}%`).join(" · ") || "—"} />
-            <Kpi color="orange" icon="ranking-star" value={topCli[0]?.nome?.slice(0, 18) || "—"} label="Principal cliente" sub={topCli[0] ? `${brl(topCli[0].total)} (${totalVend ? ((topCli[0].total / totalVend) * 100).toFixed(1) : "0"}%)` : "—"} />
-          </div>
+          {(() => {
+            const receita = Number(d.receitaBruta ?? totalVend);
+            const ticket = d.ticketMedio != null ? Number(d.ticketMedio) : (d.nfsSaidas ? totalVend / Number(d.nfsSaidas) : null);
+            const top = topCli[0];
+            const ufTop = ufSai[0];
+            const varVd = (d.variacaoVendas || {}) as { pct: number | null; label?: string };
+            const varPct = varVd.pct;
+            const varTxt =
+              varPct == null
+                ? "—"
+                : `${varPct >= 0 ? "+" : ""}${Number(varPct).toFixed(1).replace(".", ",")}%`;
+            const varSub = varVd.label || "vs mês anterior";
+            return (
+              <div className="kpi-grid kpi-grid-6">
+                <Kpi color="blue" icon="store" value={brlCompact(receita)} label="Receita Bruta" />
+                <Kpi
+                  color="green"
+                  icon="file-invoice"
+                  value={brlCompact(totalVend)}
+                  label="Total Saídas Contábil"
+                  sub={varPct != null ? varTxt : (d.nfsSaidas ? `${d.nfsSaidas} NFs` : "Planilha pendente")}
+                />
+                <Kpi
+                  color="cyan"
+                  icon="receipt"
+                  value={ticket != null ? brlCompact(ticket) : "—"}
+                  label="Ticket médio"
+                  sub="Saídas / NFs"
+                />
+                <Kpi
+                  color="purple"
+                  icon="user-tie"
+                  value={top?.nome?.slice(0, 22) || "—"}
+                  label="Top cliente"
+                  sub={top ? brl(top.total) : undefined}
+                />
+                <Kpi
+                  color="orange"
+                  icon="map-location-dot"
+                  value={ufTop?.uf || "—"}
+                  label="UF principal"
+                  sub={ufTop ? brl(ufTop.total) : undefined}
+                />
+                <Kpi
+                  color="yellow"
+                  icon="chart-line"
+                  value={varTxt}
+                  label="Variação vendas"
+                  sub={varSub}
+                  neg={varPct != null && varPct < 0}
+                />
+              </div>
+            );
+          })()}
           <div className="charts-row cr-2col">
             <div className="chart-card">
               <div className="chart-ttl">Ranking de Clientes por Faturamento</div>

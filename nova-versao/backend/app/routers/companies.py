@@ -56,6 +56,37 @@ def _month_label(comp: str) -> str:
         return comp
 
 
+def _month_short(comp: str) -> str:
+    months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+    try:
+        mm = int(str(comp).split("-")[1])
+        return months[mm - 1]
+    except Exception:  # noqa: BLE001
+        return str(comp)
+
+
+def _vendas_val(pack: dict | None) -> float:
+    p = pack or {}
+    return float(p.get("cfopSaidasTotal") or p.get("receitaBruta") or 0)
+
+
+def variacao_vendas_mom(competencia: str, months: list) -> dict:
+    """Compara saídas do mês atual com o mês anterior na mesma unidade."""
+    comps = [m.competencia for m in months]
+    try:
+        idx = comps.index(competencia)
+    except ValueError:
+        return {"pct": None, "label": "vs mês anterior"}
+    if idx <= 0:
+        return {"pct": None, "label": "vs mês anterior"}
+    curr = _vendas_val(getattr(months[idx], "pack", None))
+    prev = _vendas_val(getattr(months[idx - 1], "pack", None))
+    if not prev:
+        return {"pct": None, "label": f"vs {_month_short(months[idx - 1].competencia)}"}
+    pct = round(100 * (curr - prev) / prev, 1)
+    return {"pct": pct, "label": f"vs {_month_short(months[idx - 1].competencia)}"}
+
+
 @router.get("")
 def list_companies(user: User = Depends(current_user), db: Session = Depends(get_db)):
     ids = allowed_company_ids(user, db)
@@ -322,9 +353,13 @@ def _slice(tab: str, pack: dict) -> dict:
             demais = round(vendas - sum(float(c.get("total") or 0) for c in top10), 2)
         cfops = pack.get("cfopSaidas") or []
         enriched = [{**c, **cfop_meta(str(c.get("cfop") or ""))} for c in cfops]
+        nfs = int(pack.get("nfsSaidas") or 0)
+        ticket = round(vendas / nfs, 2) if nfs > 0 else None
         return {
             "cfopSaidasTotal": vendas,
-            "nfsSaidas": pack.get("nfsSaidas") or 0,
+            "receitaBruta": receita,
+            "nfsSaidas": nfs,
+            "ticketMedio": ticket,
             "cfopSaidas": enriched,
             "clientes": clientes,
             "clientesTop10": top10,
@@ -429,6 +464,8 @@ def tab_payload(
             "deducoes": ded_s,
             "dedPct": ded_pct_s,
         }
+    if tab == "vendas":
+        data["variacaoVendas"] = variacao_vendas_mom(competencia, months)
     return {
         "companyId": company_id,
         "competencia": competencia,

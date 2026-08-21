@@ -94,6 +94,8 @@ def test_slice_finalidade_top_grupos():
 def test_slice_vendas_demais_clientes():
     pack = {
         "cfopSaidasTotal": 100,
+        "receitaBruta": 120,
+        "nfsSaidas": 4,
         "clientes": [
             {"nome": "A", "total": 40, "uf": "DF", "qtd": 1},
             {"nome": "B", "total": 30, "uf": "GO", "qtd": 1},
@@ -109,6 +111,33 @@ def test_slice_vendas_demais_clientes():
     data = _slice("vendas", pack)
     assert data["demaisClientes"] == 30
     assert len(data["clientesTop10"]) == 2
+    assert data["receitaBruta"] == 120
+    assert data["ticketMedio"] == 25.0
+
+
+def test_slice_vendas_ticket_null_without_nfs():
+    data = _slice("vendas", {"cfopSaidasTotal": 100, "nfsSaidas": 0, "cfopSaidas": []})
+    assert data["ticketMedio"] is None
+    assert data["receitaBruta"] == 100
+
+
+def test_variacao_vendas_mom():
+    from app.routers.companies import variacao_vendas_mom
+
+    class M:
+        def __init__(self, competencia, pack):
+            self.competencia = competencia
+            self.pack = pack
+
+    months = [
+        M("2026-01", {"cfopSaidasTotal": 100}),
+        M("2026-02", {"cfopSaidasTotal": 150}),
+    ]
+    first = variacao_vendas_mom("2026-01", months)
+    assert first["pct"] is None
+    second = variacao_vendas_mom("2026-02", months)
+    assert second["pct"] == 50.0
+    assert second["label"] == "vs Jan"
 
 
 def test_empty_tab_aware():

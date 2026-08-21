@@ -69,6 +69,7 @@
 .kpi-grid { display: grid; gap: 16px; margin-bottom: 24px; }
 .kpi-grid-4 { grid-template-columns: repeat(4, 1fr); }
 .kpi-grid-5 { grid-template-columns: repeat(5, 1fr); }
+.kpi-grid-6 { grid-template-columns: repeat(6, 1fr); }
 .kpi-grid-8 { grid-template-columns: repeat(4, 1fr); }
 .kpi-grid-3 { grid-template-columns: repeat(3, 1fr); }
 .kpi-card {
@@ -186,11 +187,12 @@ thead th.c, td.c { text-align: center; }
 .chart-wrap.h260 { height: 260px; }
 @media (max-width: 1024px) {
   .kpi-grid-4, .kpi-grid-5, .kpi-grid-8, .kpi-grid-3, .cr-2col, .tax-grid, .ind-grid, .margin-grid, .mem-grid { grid-template-columns: 1fr 1fr; }
+  .kpi-grid-6 { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 768px) {
   .sidebar { transform: translateX(-100%); }
   .sidebar.mob-open { transform: translateX(0); }
   .main-wrapper, .main-wrapper.sb-collapsed { margin-left: 0; }
-  .kpi-grid-4, .kpi-grid-5, .kpi-grid-8, .kpi-grid-3, .cr-2col, .tax-grid, .ind-grid, .margin-grid, .mem-grid { grid-template-columns: 1fr; }
+  .kpi-grid-4, .kpi-grid-5, .kpi-grid-6, .kpi-grid-8, .kpi-grid-3, .cr-2col, .tax-grid, .ind-grid, .margin-grid, .mem-grid { grid-template-columns: 1fr; }
   .header-title span { display: none; }
 }
