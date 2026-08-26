@@ -57,6 +57,25 @@ export function dreLineKey(descricao: string) {
   return foldLabel(descricao);
 }
 
+export function isTrimestreCompetencia(key: string) {
+  return /^q[1-4]-\d{4}$/i.test(key || "");
+}
+
+export function mesesDoTrimestre(key: string): string[] {
+  const m = /^q([1-4])-(\d{4})$/i.exec(key || "");
+  if (!m) return [];
+  const q = Number(m[1]);
+  const year = m[2];
+  const start = (q - 1) * 3 + 1;
+  return [0, 1, 2].map((i) => `${year}-${String(start + i).padStart(2, "0")}`);
+}
+
+export function trimestreLabel(key: string) {
+  const m = /^q([1-4])-(\d{4})$/i.exec(key || "");
+  if (!m) return key;
+  return `${m[1]}º Trimestre ${m[2]}`;
+}
+
 function isSectionOnly(label: string) {
   const key = foldLabel(label);
   return [
@@ -97,7 +116,7 @@ export function dreRowClass(ln: { descricao: string; grupo?: string }): {
   ) {
     return { kind: "lucro", group: null, deduction: false, cmv: false };
   }
-  if (key.includes("receita liquida") || key === "lucro bruto" || key.startsWith("= ")) {
+  if (key.includes("receita liquida") || key === "lucro bruto") {
     return { kind: "total", group: null, deduction: false, cmv: false };
   }
   if (isCmvLine(ln)) {
@@ -118,7 +137,9 @@ export function dreRowClass(ln: { descricao: string; grupo?: string }): {
     key.includes("cofins") ||
     /\bpis\b/.test(key) ||
     key.includes("substituicao") ||
-    key.includes("iss ")
+    key.includes("iss ") ||
+    key.includes("contribuicao social") ||
+    key.includes("imposto de renda")
   ) {
     return { kind: "line", group: GROUP_DEDUCOES, deduction: true, cmv: false };
   }
@@ -156,11 +177,74 @@ function withSign(label: string, kind: DreRowKind, deduction: boolean, group: st
   return raw;
 }
 
+function sumNums(valores: Array<number | null | undefined>): number | null {
+  const nums = valores.filter((v): v is number => v != null && !Number.isNaN(Number(v)));
+  if (!nums.length) return null;
+  return nums.reduce((a, b) => a + Number(b), 0);
+}
+
 export function dreMediaAcumulado(valores: Array<number | null | undefined>) {
   const nums = valores.filter((v): v is number => v != null && !Number.isNaN(v));
   if (!nums.length) return { media: null as number | null, acumulado: null as number | null };
   const acumulado = nums.reduce((a, b) => a + b, 0);
   return { media: acumulado / nums.length, acumulado };
+}
+
+export function filterDrePorMes(porMes: DreMonth[], selected: string): DreMonth[] {
+  const all = (porMes || []).filter((m) => m.hasDre);
+  if (!selected) return all;
+  if (isTrimestreCompetencia(selected)) {
+    const allowed = new Set(mesesDoTrimestre(selected));
+    return all.filter((m) => allowed.has(m.competencia));
+  }
+  if (/^\d{4}-\d{2}$/.test(selected)) return all.filter((m) => m.competencia === selected);
+  return all;
+}
+
+export function collapseTrimestre(months: DreMonth[], selected: string): DreMonth[] {
+  if (!isTrimestreCompetencia(selected) || months.length === 0) return months;
+  const lineMap = new Map<string, { ln: DreLine; sum: number }>();
+  for (const m of months) {
+    for (const ln of m.dre?.linhas || []) {
+      const desc = (ln.descricao || "").trim();
+      if (!desc || isSectionOnly(desc) || ln.valor == null || Number.isNaN(Number(ln.valor))) continue;
+      const key = dreLineKey(desc);
+      const prev = lineMap.get(key);
+      if (!prev) lineMap.set(key, { ln: { ...ln }, sum: Number(ln.valor) });
+      else prev.sum += Number(ln.valor);
+    }
+  }
+  const linhas = Array.from(lineMap.values()).map(({ ln, sum }) => ({ ...ln, valor: sum }));
+  const cmv = sumNums(months.map((m) => m.cmv ?? null));
+  const allPending = months.every((m) => m.cmvPendente) && cmv == null;
+  return [
+    {
+      competencia: selected.toLowerCase(),
+      label: trimestreLabel(selected),
+      hasDre: true,
+      cmvPendente: allPending,
+      receitaBruta: sumNums(months.map((m) => m.receitaBruta ?? null)),
+      cmv,
+      lucBruto: sumNums(months.map((m) => m.lucBruto ?? null)),
+      lucLiq: sumNums(months.map((m) => m.lucLiq ?? null)),
+      dre: {
+        linhas,
+        hasValores: linhas.some((l) => l.valor != null),
+        source: months.map((m) => m.source || m.dre?.source).filter(Boolean).at(-1),
+      },
+      source: months.map((m) => m.source || m.dre?.source).filter(Boolean).at(-1),
+    },
+  ];
+}
+
+function isSecondaryCmv(key: string, keptCmv: boolean) {
+  if (!keptCmv) return false;
+  return key !== "cmv" && (key.includes("custo das mercadorias") || key.includes("custos das mercadorias") || key.includes("custo da mercadoria"));
+}
+
+function isSecondaryLucro(key: string, hasMainLucro: boolean) {
+  if (!hasMainLucro) return false;
+  return key === "lucro liquido do exercicio";
 }
 
 export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
@@ -178,12 +262,45 @@ export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
     }
   }
 
+  const hasMainLucro = union.some((ln) => {
+    const key = dreLineKey(ln.descricao);
+    return (key.includes("lucro") || key.includes("prejuizo")) && key.includes("exercicio") && key.includes("ou prejuizo");
+  });
+  const hasShortCmv = union.some((ln) => dreLineKey(ln.descricao) === "cmv");
+
   const rows: DrePivotedRow[] = [];
   let lastGroup: string | null = null;
   const groupCount = new Map<string, number>();
+  let keptCmv = false;
 
   for (const ln of union) {
     const meta = dreRowClass(ln);
+    const key = dreLineKey(ln.descricao);
+    if (meta.kind === "line" && meta.group == null) continue;
+    if (isSecondaryCmv(key, hasShortCmv)) continue;
+    if (isSecondaryLucro(key, hasMainLucro)) continue;
+
+    const valores: Record<string, number | null> = {};
+    let hasNumber = false;
+    for (const m of months) {
+      const hit = (m.dre?.linhas || []).find((x) => dreLineKey(x.descricao) === key);
+      if (!hit || hit.valor == null || Number.isNaN(Number(hit.valor))) {
+        valores[m.competencia] = null;
+        continue;
+      }
+      if (meta.cmv && m.cmvPendente && hit.valor == null) {
+        valores[m.competencia] = null;
+        continue;
+      }
+      valores[m.competencia] = Number(hit.valor);
+      hasNumber = true;
+    }
+    if (!hasNumber) continue;
+    if (meta.cmv) {
+      if (keptCmv) continue;
+      keptCmv = true;
+    }
+
     if (meta.group && meta.group !== lastGroup) {
       lastGroup = meta.group;
       rows.push({
@@ -201,20 +318,6 @@ export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
       });
     }
 
-    const key = dreLineKey(ln.descricao);
-    const valores: Record<string, number | null> = {};
-    for (const m of months) {
-      const hit = (m.dre?.linhas || []).find((x) => dreLineKey(x.descricao) === key);
-      if (!hit) {
-        valores[m.competencia] = null;
-        continue;
-      }
-      if (meta.cmv && m.cmvPendente && hit.valor == null) {
-        valores[m.competencia] = null;
-        continue;
-      }
-      valores[m.competencia] = hit.valor == null ? null : Number(hit.valor);
-    }
     const { media, acumulado } = dreMediaAcumulado(months.map((m) => valores[m.competencia]));
     let number: string | undefined;
     if (meta.kind === "line" && meta.group) {
@@ -240,16 +343,20 @@ export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
   return rows;
 }
 
-export function formatDreInt(n: number | null | undefined, deduction = false) {
+export function formatDreInt(n: number | null | undefined, _deduction = false) {
   if (n == null || Number.isNaN(Number(n))) return "—";
   const rounded = Math.round(Number(n));
   const abs = Math.abs(rounded).toLocaleString("pt-BR");
-  if (rounded < 0 || (deduction && rounded > 0)) return `(${abs})`;
+  if (rounded < 0) return `(${abs})`;
   return abs;
 }
 
-export function dreCellNegative(n: number | null | undefined, deduction = false) {
+export function dreCellNegative(n: number | null | undefined, _deduction = false) {
   if (n == null || Number.isNaN(Number(n))) return false;
-  const rounded = Math.round(Number(n));
-  return rounded < 0 || (deduction && rounded > 0);
+  return Math.round(Number(n)) < 0;
+}
+
+export function margemPct(numerador: number | null | undefined, denominador: number | null | undefined) {
+  if (numerador == null || denominador == null || !denominador) return null;
+  return Math.round((Number(numerador) / Number(denominador)) * 10000) / 100;
 }

@@ -1225,12 +1225,11 @@ export default function AbaPage() {
       )}
 
       {showBody && aba === "dre" && (
-        <DreStatement
-          porMes={d.porMes || []}
-          periodoLabel={d.periodoLabel}
-          selectedCompetencia={isTrimestreKey(month) ? undefined : month}
-          source={d.dreSource || d.dre?.source}
-        />
+          <DreStatement
+            porMes={d.porMes || []}
+            selectedCompetencia={month}
+            source={d.dreSource || d.dre?.source}
+          />
       )}
 
       {showBody && aba === "indicadores" && (

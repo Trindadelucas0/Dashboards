@@ -1,19 +1,18 @@
 "use client";
 
 import { useMemo } from "react";
-import { brl } from "@/lib/api";
 import {
+  collapseTrimestre,
   dreCellNegative,
+  filterDrePorMes,
   formatDreInt,
+  isTrimestreCompetencia,
+  margemPct,
   pivotDreMonths,
+  trimestreLabel,
   type DreMonth,
   type DrePivotedRow,
 } from "@/lib/dreStatement";
-
-function moneyOrDash(n: number | null | undefined) {
-  if (n === null || n === undefined) return "—";
-  return brl(n);
-}
 
 function rowClass(row: DrePivotedRow) {
   if (row.kind === "group") return "dre-group";
@@ -47,9 +46,14 @@ function DreValue({
   );
 }
 
+function KpiVal({ value, deduction }: { value: number | null | undefined; deduction?: boolean }) {
+  if (value == null) return <span className="td-mute">—</span>;
+  const neg = dreCellNegative(value, deduction);
+  return <span className={neg ? "t-danger" : undefined}>{formatDreInt(value, deduction)}</span>;
+}
+
 export default function DreStatement({
   porMes,
-  periodoLabel,
   selectedCompetencia,
   source,
 }: {
@@ -58,19 +62,33 @@ export default function DreStatement({
   selectedCompetencia?: string;
   source?: string;
 }) {
-  const months = useMemo(() => (porMes || []).filter((m) => m.hasDre), [porMes]);
-  const rows = useMemo(() => pivotDreMonths(months), [months]);
-  const colSpan = months.length + 3;
-  const pendingMonths = months.filter((m) => m.cmvPendente);
-  const kpi =
-    months.find((m) => m.competencia === selectedCompetencia) || months.at(-1) || null;
-  const titlePeriod = periodoLabel || (kpi?.label ?? "");
+  const selected = selectedCompetencia || "";
+  const isTrim = isTrimestreCompetencia(selected);
+  const tableMonths = useMemo(
+    () => filterDrePorMes(porMes || [], selected),
+    [porMes, selected],
+  );
+  const kpiMonths = useMemo(
+    () => collapseTrimestre(tableMonths, selected),
+    [tableMonths, selected],
+  );
+  const rows = useMemo(() => pivotDreMonths(tableMonths), [tableMonths]);
+  const showResumo = isTrim && tableMonths.length > 1;
+  const colSpan = tableMonths.length + 1 + (showResumo ? 2 : 0);
+  const pendingMonths = tableMonths.filter((m) => m.cmvPendente);
+  const kpi = kpiMonths[0] || null;
+  const titlePeriod = isTrim ? trimestreLabel(selected) : kpi?.label || selected;
   const fonte = source || kpi?.source || kpi?.dre?.source || "Planilha RESULTADO";
+  const mb = margemPct(kpi?.lucBruto, kpi?.receitaBruta);
+  const ml = margemPct(kpi?.lucLiq, kpi?.receitaBruta);
+  const highlightMonth = !isTrim && /^\d{4}-\d{2}$/.test(selected);
 
-  if (!months.length) {
+  if (!tableMonths.length) {
     return (
       <div className="alert-box warn">
-        Importe a planilha RESULTADO para preencher a DRE. CMV e margens não são estimados.
+        {isTrim
+          ? "Sem DRE nos meses deste trimestre. Importe a planilha RESULTADO."
+          : "Sem DRE neste mês. Importe a planilha RESULTADO da competência."}
       </div>
     );
   }
@@ -81,29 +99,37 @@ export default function DreStatement({
         <div className="margin-grid">
           <div className="margin-card">
             <div className="ind-name">Receita Bruta</div>
-            <div className="margin-val">{moneyOrDash(kpi.receitaBruta)}</div>
+            <div className="margin-val">
+              <KpiVal value={kpi.receitaBruta} />
+            </div>
             <div className="margin-sub">{kpi.label}</div>
           </div>
           <div className="margin-card">
             <div className="ind-name">CMV</div>
-            <div className={`margin-val${kpi.cmv != null && kpi.cmv < 0 ? " t-danger" : ""}`}>
-              {kpi.cmvPendente ? "Em lançamento" : moneyOrDash(kpi.cmv)}
+            <div className="margin-val">
+              {kpi.cmvPendente && kpi.cmv == null ? (
+                <span className="dre-nd">Em lançamento</span>
+              ) : (
+                <KpiVal value={kpi.cmv} deduction />
+              )}
             </div>
             <div className="margin-sub">{kpi.label}</div>
           </div>
           <div className="margin-card">
             <div className="ind-name">Lucro Bruto</div>
-            <div className={`margin-val${kpi.lucBruto != null && kpi.lucBruto < 0 ? " t-danger" : ""}`}>
-              {moneyOrDash(kpi.lucBruto)}
+            <div className="margin-val">
+              <KpiVal value={kpi.lucBruto} />
             </div>
-            <div className="margin-sub">MB {kpi.margMb != null ? `${kpi.margMb}%` : "—"}</div>
+            <div className="margin-sub">
+              Após deduções · MB {mb != null ? `${mb}%` : "—"}
+            </div>
           </div>
           <div className="margin-card">
             <div className="ind-name">Lucro Líquido</div>
-            <div className={`margin-val${kpi.lucLiq != null && kpi.lucLiq < 0 ? " t-danger" : ""}`}>
-              {moneyOrDash(kpi.lucLiq)}
+            <div className="margin-val">
+              <KpiVal value={kpi.lucLiq} />
             </div>
-            <div className="margin-sub">ML {kpi.margMl != null ? `${kpi.margMl}%` : "—"}</div>
+            <div className="margin-sub">ML {ml != null ? `${ml}%` : "—"}</div>
           </div>
         </div>
       ) : null}
@@ -119,6 +145,7 @@ export default function DreStatement({
           <div className="ttl">Demonstrativo de Resultado – {titlePeriod}</div>
           <div className="sub">
             Valores em R$ — Fonte: {fonte}
+            {isTrim ? " — Comparativo dos meses do trimestre" : ""}
             {pendingMonths.length
               ? ` — CMV de ${pendingMonths.map((m) => m.label).join(", ")} em elaboração`
               : ""}
@@ -129,14 +156,21 @@ export default function DreStatement({
             <thead>
               <tr>
                 <th className="dre-desc">Descrição</th>
-                {months.map((m) => (
-                  <th key={m.competencia} className="r dre-month">
+                {tableMonths.map((m) => (
+                  <th
+                    key={m.competencia}
+                    className={`r dre-month${highlightMonth && m.competencia === selected ? " dre-col-active" : ""}`}
+                  >
                     {m.label}
                     {m.cmvPendente ? <span className="chip ye dre-cmv-chip">CMV Pendente</span> : null}
                   </th>
                 ))}
-                <th className="r dre-col-media">Média</th>
-                <th className="r dre-col-acum">Acumulado</th>
+                {showResumo ? (
+                  <>
+                    <th className="r dre-col-media">Média</th>
+                    <th className="r dre-col-acum">Acumulado</th>
+                  </>
+                ) : null}
               </tr>
             </thead>
             <tbody>
@@ -155,11 +189,15 @@ export default function DreStatement({
                       {row.number ? <span className="dre-num">{row.number} </span> : null}
                       {row.display}
                     </td>
-                    {months.map((m) => {
+                    {tableMonths.map((m) => {
                       const pending = Boolean(row.cmv && m.cmvPendente && row.valores[m.competencia] == null);
                       const asterisk = Boolean(starKind && m.cmvPendente);
+                      const active = highlightMonth && m.competencia === selected;
                       return (
-                        <td key={m.competencia} className={`r${pending ? " dre-nd" : ""}`}>
+                        <td
+                          key={m.competencia}
+                          className={`r${pending ? " dre-nd" : ""}${active ? " dre-col-active" : ""}`}
+                        >
                           <DreValue
                             value={row.valores[m.competencia]}
                             deduction={row.deduction}
@@ -169,19 +207,23 @@ export default function DreStatement({
                         </td>
                       );
                     })}
-                    <td className="r dre-col-media">
-                      <DreValue value={row.media} deduction={row.deduction} />
-                    </td>
-                    <td className="r dre-col-acum">
-                      <DreValue value={row.acumulado} deduction={row.deduction} />
-                    </td>
+                    {showResumo ? (
+                      <>
+                        <td className="r dre-col-media">
+                          <DreValue value={row.media} deduction={row.deduction} />
+                        </td>
+                        <td className="r dre-col-acum">
+                          <DreValue value={row.acumulado} deduction={row.deduction} />
+                        </td>
+                      </>
+                    ) : null}
                   </tr>
                 );
               })}
               {!rows.length ? (
                 <tr>
                   <td colSpan={colSpan} className="td-mute">
-                    Sem linhas estruturadas na DRE.
+                    Sem linhas com valor neste período.
                   </td>
                 </tr>
               ) : null}
