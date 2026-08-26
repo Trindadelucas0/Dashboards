@@ -167,10 +167,21 @@ _excel_lock = None
 _excel_app = None
 
 
+_WIN32COM_HINT = (
+    "pacote win32com ausente neste Python — no backend rode "
+    ".venv\\Scripts\\pip install -r requirements.txt e reinicie a API; "
+    "Excel Desktop é obrigatório para .xls que o xlrd não lê"
+)
+
+
 def _excel():
     global _excel_lock, _excel_app
     import threading
-    import win32com.client  # type: ignore
+
+    try:
+        import win32com.client  # type: ignore
+    except ImportError as exc:
+        raise RuntimeError(_WIN32COM_HINT) from exc
 
     if _excel_lock is None:
         _excel_lock = threading.Lock()
@@ -257,6 +268,23 @@ def _load_html_grid(path: Path, data: bytes) -> WorkbookGrid:
     return WorkbookGrid(str(path), sheet, rows, "html")
 
 
+def _calamine_sheet_rows(raw_rows: list) -> list[list[str]]:
+    return [[_cell_to_str(c) for c in (row or [])] for row in raw_rows]
+
+
+def _calamine_all_grids(path: Path) -> list[tuple[str, list[list[str]]]]:
+    """Fallback Linux/Docker: lê .xls OLE que o xlrd rejeita (sem Excel COM)."""
+    from python_calamine import CalamineWorkbook
+
+    wb = CalamineWorkbook.from_path(str(path))
+    out: list[tuple[str, list[list[str]]]] = []
+    for name in wb.sheet_names:
+        sheet = wb.get_sheet_by_name(name)
+        rows = _calamine_sheet_rows(sheet.to_python(skip_empty_area=False))
+        out.append((name, rows))
+    return out
+
+
 def load_all_sheets(path: str | Path, data: bytes | None = None) -> list[WorkbookGrid]:
     """Carrega todas as abas (PIS+COFINS no mesmo .xls). HTML retorna uma grid só."""
     path = Path(path)
@@ -277,6 +305,11 @@ def load_all_sheets(path: str | Path, data: bytes | None = None) -> list[Workboo
             return [WorkbookGrid(str(path), name, rows, "xlsx") for name, rows in pairs]
         except Exception as exc:  # noqa: BLE001
             errors.append(f"openpyxl:{exc}")
+        try:
+            pairs = _calamine_all_grids(path)
+            return [WorkbookGrid(str(path), name, rows, "calamine") for name, rows in pairs]
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"calamine:{exc}")
 
     if kind in ("xls", "unknown"):
         try:
@@ -285,8 +318,15 @@ def load_all_sheets(path: str | Path, data: bytes | None = None) -> list[Workboo
         except Exception as exc:  # noqa: BLE001
             errors.append(f"xlrd:{exc}")
         try:
+            pairs = _calamine_all_grids(path)
+            return [WorkbookGrid(str(path), name, rows, "calamine") for name, rows in pairs]
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"calamine:{exc}")
+        try:
             pairs = _com_all_grids(path)
             return [WorkbookGrid(str(path), name, rows, "com") for name, rows in pairs]
+        except ImportError as exc:
+            errors.append(f"com:{_WIN32COM_HINT} ({exc})")
         except Exception as exc:  # noqa: BLE001
             errors.append(f"com:{exc}")
         try:

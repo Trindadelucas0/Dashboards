@@ -41,5 +41,13 @@ def require_company(company_id: str, user: User, db: Session) -> str:
 
 def require_admin(user: User = Depends(current_user)) -> User:
     if not user.is_admin:
-        raise HTTPException(status_code=403, detail="Só o administrador pode cadastrar empresa")
+        raise HTTPException(status_code=403, detail="Só o administrador pode fazer isso")
     return user
+
+
+def tabs_for_user(tabs: list | None, user: User) -> list:
+    """Remove aba importar para quem não é admin."""
+    base = list(tabs or [])
+    if user.is_admin:
+        return base
+    return [t for t in base if t != "importar"]

@@ -1,0 +1,34 @@
+.company-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.company-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid #e5e7eb;
+  background: #fff;
+  border-radius: 12px;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+}
+.company-check.on {
+  border-color: #22a329;
+  background: #f0fdf4;
+  color: #166534;
+}
+.company-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: #22a329;
+}
+.company-empty {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+}

@@ -49,13 +49,12 @@ export default function LoginPage() {
           <form onSubmit={onSubmit}>
             <div className="form-group">
               <label className="form-label" htmlFor="login-username">Usuário</label>
-              <input id="login-username" name="username" className="form-input" required autoComplete="username" placeholder="admin" defaultValue="admin" />
+              <input id="login-username" name="username" className="form-input" required autoComplete="username" placeholder="Seu usuário" />
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="login-password">Senha</label>
-              <input id="login-password" name="password" type="password" className="form-input" required autoComplete="current-password" placeholder="1234" />
+              <input id="login-password" name="password" type="password" className="form-input" required autoComplete="current-password" placeholder="Sua senha" />
             </div>
-            <p className="login-hint">Teste local: <strong>admin</strong> / <strong>1234</strong></p>
             <div className="form-group">
               <button type="submit" className="btn-login" disabled={loading}>
                 {loading ? "Entrando…" : "Entrar"}

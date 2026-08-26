@@ -30,10 +30,24 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
   const empresa = params.empresa;
   const aba = pathname.split("/").pop() || "visao-geral";
   const [company, setCompany] = useState<CompanyDetail | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [month, setMonthState] = useState("");
   const [unidade, setUnidadeState] = useState("");
+
+  useEffect(() => {
+    api<{ isAdmin?: boolean }>("/api/auth/me")
+      .then((me) => {
+        setIsAdmin(Boolean(me.isAdmin));
+        setAuthReady(true);
+      })
+      .catch(() => {
+        setIsAdmin(false);
+        setAuthReady(true);
+      });
+  }, []);
 
   useEffect(() => {
     api<CompanyDetail>(`/api/companies/${empresa}`)
@@ -57,6 +71,15 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
     // eslint-disable-next-line react-hooks/exhaustive-deps -- reidrata só na troca de empresa
   }, [empresa]);
 
+  useEffect(() => {
+    if (!authReady || isAdmin || aba !== "importar") return;
+    const q = new URLSearchParams();
+    if (month) q.set("mes", month);
+    if (unidade) q.set("unidade", unidade);
+    const qs = q.toString();
+    router.replace(`/dashboard/${empresa}/visao-geral${qs ? `?${qs}` : ""}`);
+  }, [aba, authReady, empresa, isAdmin, month, router, unidade]);
+
   async function reloadCompany() {
     try {
       const c = await api<CompanyDetail>(`/api/companies/${empresa}`);
@@ -74,7 +97,9 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
     router.replace(`${pathname}?${q.toString()}`);
   }
 
-  const tabs = company?.tabs || NAV.flatMap((s) => s.items.map((i) => i.id));
+  const tabs = (company?.tabs || NAV.flatMap((s) => s.items.map((i) => i.id))).filter(
+    (id) => isAdmin || id !== "importar",
+  );
   const [title, sub] = TITLES[aba] || [aba, ""];
   const months = useMemo(() => {
     if (!company) return [];

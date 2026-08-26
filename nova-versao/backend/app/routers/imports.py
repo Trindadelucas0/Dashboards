@@ -10,7 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db import get_db
-from app.deps import current_user, require_company
+from app.deps import require_admin, require_company
 from app.companies import COMPANY_BY_ID
 from app.extract.pipeline import classify_and_extract
 from app.extract.workbook import safe_unlink
@@ -81,7 +81,7 @@ def _inherit_batch_competencia(items: list[dict]) -> None:
 async def preview(
     files: list[UploadFile] = File(...),
     company_id: str | None = Form(default=None),
-    user: User = Depends(current_user),
+    user: User = Depends(require_admin),
     db: Session = Depends(get_db),
 ):
     if company_id:
@@ -206,7 +206,7 @@ def _get_or_create_month(
 
 
 @router.post("/commit")
-def commit(body: CommitIn, user: User = Depends(current_user), db: Session = Depends(get_db)):
+def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = Depends(get_db)):
     preview = _PREVIEWS.get(body.previewId)
     if not preview or preview["user_id"] != user.id:
         raise HTTPException(400, "Preview expirado. Envie os arquivos de novo.")

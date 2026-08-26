@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.companies import ALL_TABS, COMPANY_BY_ID, only_digits, slugify
 from app.db import get_db
-from app.deps import allowed_company_ids, current_user, require_admin, require_company
+from app.deps import allowed_company_ids, current_user, require_admin, require_company, tabs_for_user
 from app.extract.cfop import aggregate_macro, cfop_meta, top_grupos
 from app.models import Company, CompanyCnpj, FiscalMonth, User, UserCompany
 
@@ -100,7 +100,7 @@ def list_companies(user: User = Depends(current_user), db: Session = Depends(get
                 "label": row.label,
                 "theme": row.theme,
                 "cnpj": row.cnpj,
-                "tabs": row.tabs or (reg.tabs if reg else []),
+                "tabs": tabs_for_user(row.tabs or (list(reg.tabs) if reg else []), user),
                 "desc": (getattr(row, "description", None) or {
                     "egaplast": "Artefatos e comércio de plásticos",
                     "baifer": "Distribuidora de ferramentas",
@@ -198,7 +198,7 @@ def company_detail(
         "label": company.label,
         "theme": company.theme,
         "cnpj": company.cnpj,
-        "tabs": company.tabs,
+        "tabs": tabs_for_user(company.tabs, user),
         "units": units,
         "months": [
             {
