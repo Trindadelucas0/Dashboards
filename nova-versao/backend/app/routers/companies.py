@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
@@ -110,6 +111,109 @@ def parse_period_key(key: str) -> tuple[str, str | None]:
     if re.fullmatch(r"\d{4}-\d{2}", raw):
         return "month", raw
     return "month", raw or None
+
+
+def year_from_period(competencia: str) -> str:
+    """Ano civil da competência mensal (YYYY-MM) ou do trimestre (q1-2026)."""
+    kind, key = parse_period_key(competencia)
+    if kind == "trimestre" and key:
+        return key.split("-")[-1]
+    raw = str(key or competencia or "")
+    match = re.match(r"(\d{4})", raw)
+    return match.group(1) if match else ""
+
+
+def _fold_dre_label(text: str) -> str:
+    nfkd = unicodedata.normalize("NFKD", text or "")
+    folded = "".join(ch for ch in nfkd if not unicodedata.combining(ch)).lower().strip()
+    folded = re.sub(r"^[\(\)=\+\-\/\s–—−-]+", "", folded)
+    return re.sub(r"\s+", " ", folded)
+
+
+def _is_cmv_line(linha: dict) -> bool:
+    if str(linha.get("grupo") or "").lower() == "cmv":
+        return True
+    key = _fold_dre_label(str(linha.get("descricao") or ""))
+    return (
+        key == "cmv"
+        or "custo das mercadorias" in key
+        or "custos das mercadorias" in key
+        or "custo da mercadoria" in key
+    )
+
+
+def cmv_pendente(pack: dict | None) -> bool:
+    """True se a DRE do mês existe e a linha CMV está sem valor numérico (não trata 0 como pendente)."""
+    pack = pack or {}
+    dre = pack.get("dre") if isinstance(pack.get("dre"), dict) else {}
+    if not (pack.get("hasDre") or dre):
+        return False
+    if pack.get("cmv") is not None:
+        return False
+    if dre.get("cmv") is not None:
+        return False
+    found = False
+    for ln in dre.get("linhas") or []:
+        if not isinstance(ln, dict) or not _is_cmv_line(ln):
+            continue
+        found = True
+        if ln.get("valor") is not None:
+            return False
+    return found
+
+
+def dre_period_label(competencias: list[str]) -> str:
+    if not competencias:
+        return ""
+    year = str(competencias[0])[:4]
+    shorts = [_month_short(c) for c in competencias]
+    if len(shorts) == 1:
+        return f"{shorts[0]} / {year}"
+    return f"{shorts[0]} a {shorts[-1]} / {year}"
+
+
+def dre_media_acumulado(valores: list[float | None]) -> dict[str, float | None]:
+    """Média e soma só dos meses com número; null/None ficam de fora."""
+    nums = [float(v) for v in valores if v is not None]
+    if not nums:
+        return {"media": None, "acumulado": None}
+    return {
+        "media": round(sum(nums) / len(nums), 2),
+        "acumulado": round(sum(nums), 2),
+    }
+
+
+def build_dre_por_mes(months: list, year: str) -> list[dict]:
+    """Meses do ano com DRE oficial, em ordem cronológica."""
+    out: list[dict] = []
+    if not year:
+        return out
+    for row in months or []:
+        comp = str(getattr(row, "competencia", "") or "")
+        if not comp.startswith(year):
+            continue
+        pack = getattr(row, "pack", None) or {}
+        dre = pack.get("dre") if isinstance(pack.get("dre"), dict) else {}
+        if not (pack.get("hasDre") or dre):
+            continue
+        sliced = _slice("dre", pack)
+        out.append(
+            {
+                "competencia": comp,
+                "label": _month_label(comp),
+                "hasDre": True,
+                "cmvPendente": cmv_pendente(pack),
+                "receitaBruta": sliced.get("receitaBruta"),
+                "cmv": sliced.get("cmv"),
+                "lucBruto": sliced.get("lucBruto"),
+                "lucLiq": sliced.get("lucLiq"),
+                "margMb": sliced.get("margMb"),
+                "margMl": sliced.get("margMl"),
+                "dre": dre,
+                "source": dre.get("source"),
+            }
+        )
+    return out
 
 
 def _meses_from_trimestre_key(key: str) -> list[str]:
@@ -761,6 +865,16 @@ def tab_payload(
     if kind == "trimestre":
         data["isTrimestre"] = True
         data["competenciaLabel"] = (pack or {}).get("competenciaLabel")
+    if tab == "dre":
+        year = year_from_period(competencia)
+        por_mes = build_dre_por_mes(months, year)
+        data["porMes"] = por_mes
+        comps = [m["competencia"] for m in por_mes]
+        data["periodoLabel"] = dre_period_label(comps)
+        sources = [m.get("source") for m in por_mes if m.get("source")]
+        data["dreSource"] = sources[-1] if sources else (data.get("dre") or {}).get("source")
+        if por_mes:
+            empty = False
     if tab in ("visao-geral", "recebimentos", "impostos", "indicadores"):
         labels = [_month_label(m.competencia) for m in months]
         compras_s = [float((m.pack or {}).get("totalCompras") or 0) for m in months]

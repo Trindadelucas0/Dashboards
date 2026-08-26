@@ -289,3 +289,70 @@ def test_parse_impostos_jpg_headers():
     ap = apuracao_from_imposto_row(row, receita=1000)
     assert ap["ipi"]["aRecolher"] == 400
     assert composicao_from_apuracao(ap)[0]["label"] == "IPI"
+
+
+def test_dre_por_mes_year_media_and_cmv_pendente():
+    from app.routers.companies import (
+        build_dre_por_mes,
+        cmv_pendente,
+        dre_media_acumulado,
+        dre_period_label,
+        year_from_period,
+    )
+
+    class M:
+        def __init__(self, competencia, pack):
+            self.competencia = competencia
+            self.pack = pack
+
+    assert year_from_period("2026-03") == "2026"
+    assert year_from_period("q2-2026") == "2026"
+    assert dre_media_acumulado([10, 20, None]) == {"media": 15.0, "acumulado": 30.0}
+    assert dre_media_acumulado([None, None]) == {"media": None, "acumulado": None}
+    assert dre_period_label(["2026-01", "2026-05"]) == "Jan a Mai / 2026"
+
+    pack_ok = {
+        "hasDre": True,
+        "receitaBruta": 100,
+        "cmv": -40,
+        "lucBruto": 60,
+        "lucLiq": 10,
+        "dre": {
+            "linhas": [
+                {"descricao": "Receita Bruta", "valor": 100, "grupo": "receita"},
+                {"descricao": "CMV", "valor": -40, "grupo": "cmv"},
+            ],
+            "source": "DRE.xls",
+        },
+    }
+    pack_pending = {
+        "hasDre": True,
+        "receitaBruta": 100,
+        "dre": {
+            "linhas": [
+                {"descricao": "Receita Bruta", "valor": 100, "grupo": "receita"},
+                {"descricao": "CMV", "valor": None, "grupo": "cmv"},
+            ],
+        },
+    }
+    pack_zero = {
+        "hasDre": True,
+        "cmv": 0,
+        "dre": {"linhas": [{"descricao": "CMV", "valor": 0, "grupo": "cmv"}]},
+    }
+    assert cmv_pendente(pack_ok) is False
+    assert cmv_pendente(pack_pending) is True
+    assert cmv_pendente(pack_zero) is False
+
+    months = [
+        M("2025-12", pack_ok),
+        M("2026-01", pack_ok),
+        M("2026-02", pack_pending),
+        M("2026-03", {"hasMovimentacao": True}),
+    ]
+    por = build_dre_por_mes(months, "2026")
+    assert [m["competencia"] for m in por] == ["2026-01", "2026-02"]
+    assert por[0]["cmvPendente"] is False
+    assert por[1]["cmvPendente"] is True
+    assert por[0]["source"] == "DRE.xls"
+    assert build_dre_por_mes(months, "2024") == []

@@ -19,6 +19,7 @@ import { api, brl, brlCompact, formatCnpj, pct } from "@/lib/api";
 import { useDash } from "@/components/DashContext";
 import ImportTab from "@/components/ImportTab";
 import SupplierReportModal from "@/components/SupplierReportModal";
+import DreStatement from "@/components/DreStatement";
 
 ChartJS.register(
   CategoryScale,
@@ -350,7 +351,7 @@ export default function AbaPage() {
       {!loading && !error && payload?.empty && aba !== "impostos" ? (
         <div className="alert-box warn">{emptyMsg(aba)}</div>
       ) : null}
-      {!loading && !error && tri ? <TrimestreBlock tri={tri} asMain={viewingTrimestre} /> : null}
+      {!loading && !error && tri && aba !== "dre" ? <TrimestreBlock tri={tri} asMain={viewingTrimestre} /> : null}
 
       {aba === "finalidade" && !loading && !error ? (
         <SupplierReportModal
@@ -1224,38 +1225,12 @@ export default function AbaPage() {
       )}
 
       {showBody && aba === "dre" && (
-        <>
-          <div className="margin-grid">
-            <div className="margin-card"><div className="ind-name">Receita Bruta</div><div className="margin-val">{moneyOrDash(d.receitaBruta)}</div></div>
-            <div className="margin-card"><div className="ind-name">CMV</div><div className="margin-val">{moneyOrDash(d.cmv)}</div></div>
-            <div className="margin-card"><div className="ind-name">Lucro Bruto</div><div className="margin-val">{moneyOrDash(d.lucBruto)}</div><div className="margin-sub">MB {d.margMb != null ? `${d.margMb}%` : "—"}</div></div>
-            <div className="margin-card"><div className="ind-name">Lucro Líquido</div><div className="margin-val">{moneyOrDash(d.lucLiq)}</div><div className="margin-sub">ML {d.margMl != null ? `${d.margMl}%` : "—"}</div></div>
-          </div>
-          {d.dre?.hasValores === false ? (
-            <div className="alert-box warn">RESULTADO importado sem valores numéricos na exportação. Estrutura abaixo; margens ficam N/D.</div>
-          ) : null}
-          <div className="table-card">
-            <div className="table-head"><div className="ttl">Demonstração do Resultado</div><div className="sub">{d.dre?.source || "Planilha RESULTADO"}</div></div>
-            <div className="tbl-scroll">
-              <table className="dre-tbl">
-                <thead><tr><th>Código</th><th>Descrição</th><th>Grupo</th><th className="r">Valor</th></tr></thead>
-                <tbody>
-                  {(d.dre?.linhas || []).map((l: { codigo?: string; descricao: string; grupo?: string; valor: number | null }, i: number) => (
-                    <tr key={`${l.descricao}-${i}`} className={l.grupo === "resultado" ? "dre-tot" : ""}>
-                      <td className="td-mute">{l.codigo || "—"}</td>
-                      <td>{l.descricao}</td>
-                      <td><span className="chip gy">{l.grupo || "—"}</span></td>
-                      <td className="r td-val">{moneyOrDash(l.valor)}</td>
-                    </tr>
-                  ))}
-                  {!d.dre?.linhas?.length ? (
-                    <tr><td colSpan={4} className="td-mute">Sem linhas estruturadas na DRE.</td></tr>
-                  ) : null}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </>
+        <DreStatement
+          porMes={d.porMes || []}
+          periodoLabel={d.periodoLabel}
+          selectedCompetencia={isTrimestreKey(month) ? undefined : month}
+          source={d.dreSource || d.dre?.source}
+        />
       )}
 
       {showBody && aba === "indicadores" && (
