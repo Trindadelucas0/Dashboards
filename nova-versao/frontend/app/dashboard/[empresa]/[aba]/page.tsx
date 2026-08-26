@@ -979,7 +979,7 @@ export default function AbaPage() {
                       <div className="tax-name">Original</div>
                       <span className="chip gy">Bloco</span>
                     </div>
-                    <div className="tax-cur">{brl(mem?.totalOriginal)}</div>
+                    <div className="tax-cur">{brl(Number(mem?.totalOriginal || 0))}</div>
                     <div className="tax-prev">Débito {brl(debOrig)} · Crédito {brl(credOrig)}</div>
                   </div>
                   <div className="tax-card">
@@ -987,7 +987,7 @@ export default function AbaPage() {
                       <div className="tax-name t-accent">Apuração 5005</div>
                       <span className="chip bl">Bloco</span>
                     </div>
-                    <div className="tax-cur t-accent">{brl(mem?.total5005)}</div>
+                    <div className="tax-cur t-accent">{brl(Number(mem?.total5005 || 0))}</div>
                     <div className="tax-prev">Débitos {brl(deb5005)} · Créditos {brl(cred5005)}</div>
                   </div>
                   <div className="tax-card">
@@ -995,7 +995,7 @@ export default function AbaPage() {
                       <div className="tax-name t-warning">Fora / Outorgado</div>
                       <span className="chip ye">Bloco</span>
                     </div>
-                    <div className="tax-cur t-warning">{brl(mem?.totalFora)}</div>
+                    <div className="tax-cur t-warning">{brl(Number(mem?.totalFora || 0))}</div>
                     <div className="tax-prev">
                       Débito {brl(debFora)} · Crédito {brl(credFora)} · Outorgado {brl(outorg)}
                     </div>
@@ -1064,20 +1064,20 @@ export default function AbaPage() {
                     <div className="mem-card-head">Original</div>
                     <div className="mem-row"><span className="lbl">Débito original</span><span className="val">{brl(debOrig)}</span></div>
                     <div className="mem-row"><span className="lbl">Crédito original</span><span className="val">{brl(credOrig)}</span></div>
-                    <div className="mem-row tot"><span className="lbl">Total</span><span className="val">{brl(mem?.totalOriginal)}</span></div>
+                    <div className="mem-row tot"><span className="lbl">Total</span><span className="val">{brl(Number(mem?.totalOriginal || 0))}</span></div>
                   </div>
                   <div className="mem-card">
                     <div className="mem-card-head">Apuração 5005</div>
                     <div className="mem-row"><span className="lbl">Débitos 5005</span><span className="val">{brl(deb5005)}</span></div>
                     <div className="mem-row"><span className="lbl">Créditos 5005</span><span className="val">{brl(cred5005)}</span></div>
-                    <div className="mem-row tot"><span className="lbl">Total</span><span className="val">{brl(mem?.total5005)}</span></div>
+                    <div className="mem-row tot"><span className="lbl">Total</span><span className="val">{brl(Number(mem?.total5005 || 0))}</span></div>
                   </div>
                   <div className="mem-card">
                     <div className="mem-card-head">Fora / Outorgado</div>
                     <div className="mem-row"><span className="lbl">Débito fora</span><span className="val">{brl(debFora)}</span></div>
                     <div className="mem-row"><span className="lbl">Crédito fora</span><span className="val">{brl(credFora)}</span></div>
                     <div className="mem-row"><span className="lbl">Crédito outorgado</span><span className="val">{brl(outorg)}</span></div>
-                    <div className="mem-row tot"><span className="lbl">Total</span><span className="val">{brl(mem?.totalFora)}</span></div>
+                    <div className="mem-row tot"><span className="lbl">Total</span><span className="val">{brl(Number(mem?.totalFora || 0))}</span></div>
                   </div>
                 </div>
               </>
