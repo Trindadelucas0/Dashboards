@@ -60,10 +60,21 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
         const un = qUn && units.includes(qUn) ? qUn : units[0] || "matriz";
         const monthsUn = months.filter((m) => m.unidade === un);
         const last = monthsUn.at(-1) || months.at(-1);
+        const isTrimKey = /^q[1-4]-\d{4}$/i.test(qMes);
+        const trimOk =
+          isTrimKey &&
+          monthsUn.some((m) => {
+            const mm = Number(String(m.competencia).split("-")[1] || 0);
+            const q = Math.floor((mm - 1) / 3) + 1;
+            const year = String(m.competencia).slice(0, 4);
+            return `q${q}-${year}`.toLowerCase() === qMes.toLowerCase();
+          });
         const mes =
-          qMes && months.some((m) => m.competencia === qMes && (!un || m.unidade === un))
-            ? qMes
-            : last?.competencia || "";
+          trimOk
+            ? qMes.toLowerCase()
+            : qMes && months.some((m) => m.competencia === qMes && (!un || m.unidade === un))
+              ? qMes
+              : last?.competencia || "";
         setUnidadeState(un);
         if (mes) setMonthState(mes);
       })
@@ -162,7 +173,7 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
           <div className="sidebar-foot">
             <div className="sidebar-foot-info">
               <div className="lbl">Competência</div>
-              <div className="val">{month || "—"}</div>
+              <div className="val">{/^q[1-4]-\d{4}$/i.test(month) ? `${month.slice(1, 2)}º Trim ${month.slice(3)}` : (month || "—")}</div>
             </div>
           </div>
         </aside>
@@ -176,7 +187,7 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
               <i className="fas fa-bars" />
             </button>
             <div className="header-title">
-              {title} <span>{sub}{month ? ` – ${month}` : ""}</span>
+              {title} <span>{sub}{month ? ` – ${/^q[1-4]-\d{4}$/i.test(month) ? `${month.slice(1, 2)}º Trimestre ${month.slice(3)}` : month}` : ""}</span>
             </div>
             <div className="header-actions">
               <Link href="/seletor" className="btn-export">Voltar</Link>
@@ -185,8 +196,25 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
                   {company.units.map((u) => <option key={u} value={u}>{u}</option>)}
                 </select>
               ) : null}
-              <select className="period-sel" value={month} onChange={(e) => ctx.setMonth(e.target.value)} aria-label="Mês">
-                {months.map((m) => <option key={m.competencia} value={m.competencia}>{m.label}</option>)}
+              <select className="period-sel" value={month} onChange={(e) => ctx.setMonth(e.target.value)} aria-label="Período">
+                {(() => {
+                  const qs = new Map<string, string>();
+                  for (const m of months) {
+                    const mm = Number(String(m.competencia).split("-")[1] || 0);
+                    const q = Math.floor((mm - 1) / 3) + 1;
+                    const year = String(m.competencia).slice(0, 4);
+                    const k = `q${q}-${year}`;
+                    if (!qs.has(k)) qs.set(k, `${q}º Trimestre ${year}`);
+                  }
+                  return (
+                    <>
+                      {Array.from(qs.entries()).map(([k, lbl]) => (
+                        <option key={k} value={k}>{lbl}</option>
+                      ))}
+                      {months.map((m) => <option key={m.competencia} value={m.competencia}>{m.label}</option>)}
+                    </>
+                  );
+                })()}
               </select>
               <div className="regime-badge">Nova versão</div>
             </div>

@@ -140,6 +140,110 @@ def test_variacao_vendas_mom():
     assert second["label"] == "vs Jan"
 
 
+def test_trimestre_meses_q1_and_q3():
+    from app.routers.companies import _trimestre_meses, _trimestre_label
+
+    assert _trimestre_meses("2026-01") == ["2026-01", "2026-02", "2026-03"]
+    assert _trimestre_meses("2026-02") == ["2026-01", "2026-02", "2026-03"]
+    assert _trimestre_meses("2026-07") == ["2026-07", "2026-08", "2026-09"]
+    assert _trimestre_label("2026-01") == "1º Trimestre 2026"
+    assert _trimestre_label("2026-07") == "3º Trimestre 2026"
+
+
+def test_build_trimestre_totais_partial_and_dedpct():
+    from app.routers.companies import build_trimestre_totais
+
+    class M:
+        def __init__(self, competencia, pack):
+            self.competencia = competencia
+            self.pack = pack
+
+    months = [
+        M(
+            "2026-01",
+            {
+                "totalCompras": 100,
+                "cfopSaidasTotal": 200,
+                "receitaBruta": 200,
+                "nfsEntradas": 1,
+                "nfsSaidas": 2,
+                "apuracao": {
+                    "icms": {"aRecolher": 10},
+                    "pis": {"aRecolher": 4},
+                    "cofins": {"aRecolher": 6},
+                    "icmsSt": {"aRecolher": 0},
+                },
+            },
+        ),
+        M(
+            "2026-03",
+            {
+                "totalCompras": 50,
+                "cfopSaidasTotal": 100,
+                "receitaBruta": 100,
+                "nfsEntradas": 1,
+                "nfsSaidas": 1,
+                "apuracao": {
+                    "icms": {"aRecolher": 5},
+                    "pis": {"aRecolher": 2},
+                    "cofins": {"aRecolher": 3},
+                    "icmsSt": {"aRecolher": 0},
+                },
+            },
+        ),
+    ]
+    tri = build_trimestre_totais("2026-02", months)
+    assert tri["id"] == "q1"
+    assert tri["meses"] == ["2026-01", "2026-02", "2026-03"]
+    assert tri["mesesPresentes"] == ["2026-01", "2026-03"]
+    assert tri["completo"] is False
+    assert "Fev" not in tri["mesesLabel"]
+    assert tri["totais"]["totalCompras"] == 150
+    assert tri["totais"]["cfopSaidasTotal"] == 300
+    assert tri["totais"]["saldoOperacional"] == 150
+    assert tri["totais"]["nfsEntradas"] == 2
+    assert tri["totais"]["nfsSaidas"] == 3
+    assert tri["totais"]["icmsARecolher"] == 15
+    assert tri["totais"]["pisCofinsRecolher"] == 15
+    # deducoes = icms+st+pis+cofins = 10+0+4+6 + 5+0+2+3 = 30
+    assert tri["totais"]["deducoes"] == 30.0
+    # dedPct sobre receita do trimestre (300), não média de % mensais
+    assert tri["totais"]["dedPct"] == 10.0
+    assert tri["totais"]["icmsKpi"]["lbl"] == "ICMS a Recolher"
+    assert tri["totais"]["icmsKpi"]["val"] == 15
+
+
+def test_aggregate_fiscal_packs_and_trimestre_key():
+    from app.routers.companies import (
+        aggregate_fiscal_packs,
+        build_trimestre_totais,
+        is_trimestre_key,
+        _meses_from_trimestre_key,
+    )
+
+    assert is_trimestre_key("q1-2026") is True
+    assert is_trimestre_key("2026-01") is False
+    assert _meses_from_trimestre_key("q1-2026") == ["2026-01", "2026-02", "2026-03"]
+    packs = [
+        {"totalCompras": 100, "cfopSaidasTotal": 200, "receitaBruta": 200, "nfsEntradas": 1, "nfsSaidas": 2, "hasMovimentacao": True},
+        {"totalCompras": 50, "cfopSaidasTotal": 80, "receitaBruta": 80, "nfsEntradas": 1, "nfsSaidas": 1, "hasMovimentacao": True},
+    ]
+    pack = aggregate_fiscal_packs(packs, "1º Trimestre 2026")
+    assert pack["totalCompras"] == 150
+    assert pack["cfopSaidasTotal"] == 280
+    assert pack["isTrimestre"] is True
+    assert pack["competenciaLabel"] == "1º Trimestre 2026"
+
+    class M:
+        def __init__(self, competencia, pack):
+            self.competencia = competencia
+            self.pack = pack
+
+    tri = build_trimestre_totais("q1-2026", [M("2026-01", packs[0]), M("2026-02", packs[1])])
+    assert tri["label"] == "1º Trimestre 2026"
+    assert tri["totais"]["totalCompras"] == 150
+
+
 def test_empty_tab_aware():
     class Row:
         pass
@@ -149,6 +253,7 @@ def test_empty_tab_aware():
     assert _is_empty("dre", {"hasDre": True, "dre": {"linhas": []}}, row) is False
     assert _is_empty("impostos", {"apuracao": {"icms": {}}}, row) is False
     assert _is_empty("balancete", {}, row) is True
+    assert _is_empty("balancete", {"hasBalancete": True, "balancete": {"contas": [{"codigo": "1"}]}}, row) is False
 
 
 def test_cfop_credito_flag():

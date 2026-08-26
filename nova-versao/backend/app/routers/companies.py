@@ -70,6 +70,295 @@ def _vendas_val(pack: dict | None) -> float:
     return float(p.get("cfopSaidasTotal") or p.get("receitaBruta") or 0)
 
 
+def _trimestre_id(competencia: str) -> tuple[str, int, str]:
+    """Retorna (qid, quarter 1-4, year) a partir de YYYY-MM."""
+    try:
+        year, mm = competencia.split("-")[0], int(competencia.split("-")[1])
+        q = (mm - 1) // 3 + 1
+        return f"q{q}", q, year
+    except Exception:  # noqa: BLE001
+        return "q1", 1, competencia[:4] if competencia else ""
+
+
+def _trimestre_meses(competencia: str) -> list[str]:
+    """Lista das 3 competências do trimestre civil da competência."""
+    qid, q, year = _trimestre_id(competencia)
+    if not year:
+        return []
+    start = (q - 1) * 3 + 1
+    return [f"{year}-{m:02d}" for m in range(start, start + 3)]
+
+
+def _trimestre_label(competencia: str) -> str:
+    _, q, year = _trimestre_id(competencia)
+    return f"{q}º Trimestre {year}" if year else f"{q}º Trimestre"
+
+
+def is_trimestre_key(key: str) -> bool:
+    """True para chaves tipo q1-2026."""
+    return bool(re.fullmatch(r"q[1-4]-\d{4}", str(key or "").strip().lower()))
+
+
+def parse_period_key(key: str) -> tuple[str, str | None]:
+    """
+    Retorna ('month', 'YYYY-MM') ou ('trimestre', 'qN-YYYY').
+    Aceita competência mensal ou chave de trimestre.
+    """
+    raw = str(key or "").strip().lower()
+    if is_trimestre_key(raw):
+        return "trimestre", raw
+    if re.fullmatch(r"\d{4}-\d{2}", raw):
+        return "month", raw
+    return "month", raw or None
+
+
+def _meses_from_trimestre_key(key: str) -> list[str]:
+    """q1-2026 → ['2026-01','2026-02','2026-03']."""
+    raw = str(key or "").strip().lower()
+    m = re.fullmatch(r"q([1-4])-(\d{4})", raw)
+    if not m:
+        return []
+    q, year = int(m.group(1)), m.group(2)
+    start = (q - 1) * 3 + 1
+    return [f"{year}-{mm:02d}" for mm in range(start, start + 3)]
+
+
+def trimestre_key_from_competencia(competencia: str) -> str:
+    qid, _, year = _trimestre_id(competencia)
+    return f"{qid}-{year}" if year else qid
+
+
+def _merge_party_lists(packs: list[dict], field: str) -> list[dict]:
+    by_key: dict[str, dict] = {}
+    for p in packs:
+        for item in p.get(field) or []:
+            nome = str(item.get("nome") or "—")
+            uf = str(item.get("uf") or "—")
+            cnpj = str(item.get("cnpj") or "")
+            k = f"{cnpj}|{nome}|{uf}"
+            row = by_key.setdefault(
+                k,
+                {"nome": nome, "cnpj": cnpj, "uf": uf, "total": 0.0, "qtd": 0},
+            )
+            row["total"] = round(float(row["total"]) + float(item.get("total") or 0), 2)
+            row["qtd"] = int(row["qtd"]) + int(item.get("qtd") or 0)
+    out = list(by_key.values())
+    out.sort(key=lambda x: x["total"], reverse=True)
+    return out
+
+
+def _merge_cfop_lists(packs: list[dict], field: str) -> list[dict]:
+    by_cfop: dict[str, dict] = {}
+    party_field = "fornecedores" if field in ("cfopDados", "cfopEntradas") else None
+    for p in packs:
+        for item in p.get(field) or []:
+            cfop = str(item.get("cfop") or "—")
+            row = by_cfop.setdefault(
+                cfop,
+                {
+                    "cfop": cfop,
+                    "total": 0.0,
+                    "qtd": 0,
+                    "descricao": item.get("descricao"),
+                    "finalidade": item.get("finalidade"),
+                    "creditoPisCofins": item.get("creditoPisCofins"),
+                    **({party_field: {}} if party_field else {}),
+                },
+            )
+            row["total"] = round(float(row["total"]) + float(item.get("total") or 0), 2)
+            row["qtd"] = int(row["qtd"]) + int(item.get("qtd") or 0)
+            if not row.get("descricao") and item.get("descricao"):
+                row["descricao"] = item.get("descricao")
+            if party_field:
+                parties = row[party_field]
+                for f in item.get(party_field) or item.get("fornecedores") or []:
+                    pk = f"{f.get('cnpj')}|{f.get('nome')}|{f.get('uf')}"
+                    pr = parties.setdefault(
+                        pk,
+                        {
+                            "nome": f.get("nome"),
+                            "cnpj": f.get("cnpj") or "",
+                            "uf": f.get("uf") or "—",
+                            "total": 0.0,
+                            "qtd": 0,
+                        },
+                    )
+                    pr["total"] = round(float(pr["total"]) + float(f.get("total") or 0), 2)
+                    pr["qtd"] = int(pr["qtd"]) + int(f.get("qtd") or 0)
+    out = []
+    for row in by_cfop.values():
+        item = {k: v for k, v in row.items() if k != "fornecedores" or party_field}
+        if party_field and isinstance(row.get(party_field), dict):
+            parties = list(row[party_field].values())
+            parties.sort(key=lambda x: x["total"], reverse=True)
+            item[party_field] = parties
+        out.append(item)
+    out.sort(key=lambda x: x["total"], reverse=True)
+    return out
+
+
+def _merge_uf_maps(packs: list[dict], field: str) -> dict:
+    out: dict[str, float] = {}
+    for p in packs:
+        for uf, val in (p.get(field) or {}).items():
+            out[str(uf)] = round(float(out.get(str(uf), 0)) + float(val or 0), 2)
+    return out
+
+
+def aggregate_fiscal_packs(packs: list[dict], competencia_label: str) -> dict:
+    """Soma packs mensais em um pack virtual (visão de trimestre)."""
+    packs = [_enrich_fiscal(p or {}) for p in packs if p is not None]
+    if not packs:
+        return {
+            "hasMovimentacao": False,
+            "hasDre": False,
+            "totalCompras": 0,
+            "cfopSaidasTotal": 0,
+            "receitaBruta": 0,
+            "nfsEntradas": 0,
+            "nfsSaidas": 0,
+            "competenciaLabel": competencia_label,
+            "isTrimestre": True,
+        }
+
+    def _sum(key: str) -> float:
+        return round(sum(float(p.get(key) or 0) for p in packs), 2)
+
+    compras = _sum("totalCompras")
+    vendas = round(sum(_vendas_val(p) for p in packs), 2)
+    receita = _sum("receitaBruta") or vendas
+    ap_keys = ("icms", "icmsSt", "pis", "cofins", "ipi")
+    apuracao: dict = {}
+    for k in ap_keys:
+        bucket: dict[str, float] = {}
+        for p in packs:
+            ap = p.get("apuracao") or {}
+            item = ap.get(k) if isinstance(ap, dict) else None
+            if not isinstance(item, dict):
+                continue
+            for f, v in item.items():
+                if isinstance(v, (int, float)):
+                    bucket[f] = round(float(bucket.get(f, 0)) + float(v), 2)
+        if bucket:
+            apuracao[k] = bucket
+    subv = round(sum(float((p.get("apuracao") or {}).get("subvencao") or p.get("subvencao") or 0) for p in packs), 2)
+    if subv:
+        apuracao["subvencao"] = subv
+
+    clientes = _merge_party_lists(packs, "clientes")
+    if not clientes:
+        clientes = _merge_party_lists(packs, "clientesTop10")
+    fornecedores = _merge_party_lists(packs, "fornecedores")
+    top10 = clientes[:10]
+    top_sum = round(sum(float(c.get("total") or 0) for c in top10), 2)
+
+    pack = {
+        "hasMovimentacao": any(p.get("hasMovimentacao") for p in packs),
+        "hasDre": any(p.get("hasDre") for p in packs),
+        "totalCompras": compras,
+        "cfopSaidasTotal": vendas,
+        "receitaBruta": receita,
+        "nfsEntradas": int(sum(int(p.get("nfsEntradas") or 0) for p in packs)),
+        "nfsSaidas": int(sum(int(p.get("nfsSaidas") or 0) for p in packs)),
+        "cfopDados": _merge_cfop_lists(packs, "cfopDados") or _merge_cfop_lists(packs, "cfopEntradas"),
+        "cfopSaidas": _merge_cfop_lists(packs, "cfopSaidas"),
+        "fornecedores": fornecedores,
+        "clientes": clientes,
+        "clientesTop10": top10,
+        "demaisClientes": round(vendas - top_sum, 2),
+        "porUf": _merge_uf_maps(packs, "porUf"),
+        "porUfSaidas": _merge_uf_maps(packs, "porUfSaidas"),
+        "apuracao": apuracao or None,
+        "composicao": None,
+        "deducoes": None,
+        "competenciaLabel": competencia_label,
+        "isTrimestre": True,
+    }
+    return _enrich_fiscal(pack)
+
+
+def _meses_label_presentes(presentes: list[str]) -> str:
+    if not presentes:
+        return ""
+    shorts = [_month_short(c) for c in presentes]
+    year = presentes[0][:4]
+    if len(shorts) == 1:
+        return f"{shorts[0]} / {year}"
+    return f"{shorts[0]} – {shorts[-1]} / {year}"
+
+
+def build_trimestre_totais(competencia: str, months: list) -> dict:
+    """Soma packs dos meses do trimestre civil já gravados na mesma unidade."""
+    kind, key = parse_period_key(competencia)
+    if kind == "trimestre" and key:
+        meses = _meses_from_trimestre_key(key)
+        qid = key.split("-")[0]
+        year = key.split("-")[1] if "-" in key else ""
+        label = f"{qid[1]}º Trimestre {year}" if year else f"{qid[1]}º Trimestre"
+    else:
+        qid, _, _ = _trimestre_id(competencia)
+        meses = _trimestre_meses(competencia)
+        label = _trimestre_label(competencia)
+    by_comp = {m.competencia: m for m in months}
+    presentes = [c for c in meses if c in by_comp]
+    packs = [_enrich_fiscal(getattr(by_comp[c], "pack", None) or {}) for c in presentes]
+
+    def _sum(key_name: str) -> float:
+        return round(sum(float(p.get(key_name) or 0) for p in packs), 2)
+
+    compras = _sum("totalCompras")
+    vendas = sum(_vendas_val(p) for p in packs)
+    vendas = round(vendas, 2)
+    receita = _sum("receitaBruta") or vendas
+    nfs_ent = int(sum(int(p.get("nfsEntradas") or 0) for p in packs))
+    nfs_sai = int(sum(int(p.get("nfsSaidas") or 0) for p in packs))
+
+    icms_sum: float | None = None
+    pis_cofins_sum: float | None = None
+    ded_sum = 0.0
+    has_ded = False
+    for p in packs:
+        ap = p.get("apuracao")
+        if isinstance(ap, dict) and isinstance(ap.get("icms"), dict) and "aRecolher" in ap["icms"]:
+            icms_sum = (icms_sum or 0.0) + float(ap["icms"].get("aRecolher") or 0)
+        pc = _pis_cofins_recolher(ap if isinstance(ap, dict) else None)
+        if pc is not None:
+            pis_cofins_sum = (pis_cofins_sum or 0.0) + pc
+        if p.get("deducoes") is not None:
+            has_ded = True
+            ded_sum += float(p.get("deducoes") or 0)
+
+    if icms_sum is not None:
+        icms_sum = round(icms_sum, 2)
+    if pis_cofins_sum is not None:
+        pis_cofins_sum = round(pis_cofins_sum, 2)
+    deducoes = round(ded_sum, 2) if has_ded else None
+    ded_pct = round(100 * deducoes / receita, 2) if deducoes is not None and receita else None
+
+    return {
+        "id": qid,
+        "key": f"{qid}-{meses[0][:4]}" if meses else qid,
+        "label": label,
+        "meses": meses,
+        "mesesPresentes": presentes,
+        "mesesLabel": _meses_label_presentes(presentes),
+        "completo": len(presentes) == 3,
+        "totais": {
+            "totalCompras": compras,
+            "cfopSaidasTotal": vendas,
+            "receitaBruta": receita,
+            "saldoOperacional": round(vendas - compras, 2),
+            "nfsEntradas": nfs_ent,
+            "nfsSaidas": nfs_sai,
+            "icmsARecolher": icms_sum,
+            "pisCofinsRecolher": pis_cofins_sum,
+            "deducoes": deducoes,
+            "dedPct": ded_pct,
+            "icmsKpi": _icms_kpi({"icms": {"aRecolher": icms_sum}}) if icms_sum is not None else None,
+        },
+    }
+
+
 def variacao_vendas_mom(competencia: str, months: list) -> dict:
     """Compara saídas do mês atual com o mês anterior na mesma unidade."""
     comps = [m.competencia for m in months]
@@ -255,9 +544,14 @@ def _is_empty(tab: str, pack: dict, row) -> bool:
     if tab == "impostos":
         return not (pack.get("apuracao") or pack.get("impostos"))
     if tab == "balancete":
-        return not pack.get("balancete")
+        return not (pack.get("hasBalancete") or pack.get("balancete"))
     if tab == "memoria":
-        return not (pack.get("entradasMeta") or pack.get("saidasMeta") or pack.get("apuracao"))
+        return not (
+            pack.get("entradasMeta")
+            or pack.get("saidasMeta")
+            or pack.get("apuracao")
+            or pack.get("memoriaCalculo")
+        )
     if tab == "importar":
         return False
     return not pack.get("hasMovimentacao")
@@ -394,6 +688,8 @@ def _slice(tab: str, pack: dict) -> dict:
             "entradasMeta": pack.get("entradasMeta"),
             "saidasMeta": pack.get("saidasMeta"),
             "apuracao": pack.get("apuracao"),
+            "memoriaCalculo": pack.get("memoriaCalculo"),
+            "subvencao": pack.get("subvencao") or (pack.get("apuracao") or {}).get("subvencao"),
         }
     if tab == "recebimentos":
         return {"receitaBruta": vendas, "totalCompras": compras}
@@ -429,23 +725,42 @@ def tab_payload(
     require_company(company_id, user, db)
     if tab not in TAB_KEYS:
         raise HTTPException(400, "Aba inválida")
-    row = (
-        db.query(FiscalMonth)
-        .filter(
-            FiscalMonth.company_id == company_id,
-            FiscalMonth.competencia == competencia,
-            FiscalMonth.unidade == unidade,
-        )
-        .first()
-    )
-    pack = row.pack if row else {}
-    data = _slice(tab, pack)
     months = (
         db.query(FiscalMonth)
         .filter(FiscalMonth.company_id == company_id, FiscalMonth.unidade == unidade)
         .order_by(FiscalMonth.competencia)
         .all()
     )
+    kind, period_key = parse_period_key(competencia)
+    row = None
+    presentes: list[str] = []
+    if kind == "trimestre" and period_key:
+        tri_meses = _meses_from_trimestre_key(period_key)
+        by_comp = {m.competencia: m for m in months}
+        presentes = [c for c in tri_meses if c in by_comp]
+        packs = [getattr(by_comp[c], "pack", None) or {} for c in presentes]
+        q = int(period_key[1])
+        year = period_key.split("-")[1]
+        label = f"{q}º Trimestre {year}"
+        pack = aggregate_fiscal_packs(packs, label)
+        empty = not presentes
+    else:
+        row = (
+            db.query(FiscalMonth)
+            .filter(
+                FiscalMonth.company_id == company_id,
+                FiscalMonth.competencia == competencia,
+                FiscalMonth.unidade == unidade,
+            )
+            .first()
+        )
+        pack = row.pack if row else {}
+        empty = _is_empty(tab, pack or {}, row)
+
+    data = _slice(tab, pack)
+    if kind == "trimestre":
+        data["isTrimestre"] = True
+        data["competenciaLabel"] = (pack or {}).get("competenciaLabel")
     if tab in ("visao-geral", "recebimentos", "impostos", "indicadores"):
         labels = [_month_label(m.competencia) for m in months]
         compras_s = [float((m.pack or {}).get("totalCompras") or 0) for m in months]
@@ -465,13 +780,21 @@ def tab_payload(
             "deducoes": ded_s,
             "dedPct": ded_pct_s,
         }
-    if tab == "vendas":
+    if tab == "vendas" and kind == "month":
         data["variacaoVendas"] = variacao_vendas_mom(competencia, months)
+
+    if kind == "trimestre" and period_key:
+        tri_ref = presentes[0] if presentes else (_meses_from_trimestre_key(period_key) or [competencia])[0]
+    else:
+        tri_ref = competencia
+
     return {
         "companyId": company_id,
         "competencia": competencia,
         "unidade": unidade,
         "tab": tab,
-        "empty": _is_empty(tab, pack or {}, row),
+        "empty": empty,
         "data": data,
+        "trimestre": build_trimestre_totais(tri_ref, months),
+        "periodKind": kind,
     }

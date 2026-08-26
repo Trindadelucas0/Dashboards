@@ -36,7 +36,32 @@ ChartJS.defaults.font.family = "Inter, system-ui, sans-serif";
 
 const PAL = ["#22a329", "#3b82f6", "#f59e0b", "#8b5cf6", "#06b6d4", "#f97316", "#ef4444", "#10b981", "#64748b"];
 
-type TabResp = { empty: boolean; data: Record<string, any> };
+type TrimestreTotais = {
+  totalCompras: number;
+  cfopSaidasTotal: number;
+  receitaBruta: number;
+  saldoOperacional: number;
+  nfsEntradas: number;
+  nfsSaidas: number;
+  icmsARecolher: number | null;
+  pisCofinsRecolher: number | null;
+  deducoes: number | null;
+  dedPct: number | null;
+  icmsKpi: { val: number; lbl: string; color: string; sub: string } | null;
+};
+
+type TrimestrePayload = {
+  id: string;
+  key?: string;
+  label: string;
+  meses: string[];
+  mesesPresentes: string[];
+  mesesLabel: string;
+  completo: boolean;
+  totais: TrimestreTotais;
+};
+
+type TabResp = { empty: boolean; data: Record<string, any>; trimestre?: TrimestrePayload };
 
 function rankClass(i: number) {
   if (i === 0) return "g1";
@@ -50,24 +75,104 @@ function moneyOrDash(n: number | null | undefined) {
   return brl(n);
 }
 
+function trimestreSub(tri: TrimestrePayload | undefined) {
+  if (!tri) return "";
+  const n = tri.mesesPresentes?.length || 0;
+  const base = tri.mesesLabel || tri.label;
+  return `${base} (${n} de 3 meses)`;
+}
+
+function isTrimestreKey(key: string) {
+  return /^q[1-4]-\d{4}$/i.test(key || "");
+}
+
+function trimestreKeyFromMonth(competencia: string): string {
+  if (!competencia || !/^\d{4}-\d{2}$/.test(competencia)) return "";
+  const year = competencia.slice(0, 4);
+  const mm = Number(competencia.slice(5, 7));
+  const q = Math.floor((mm - 1) / 3) + 1;
+  return `q${q}-${year}`;
+}
+
+function trimestreChipLabel(key: string) {
+  const m = /^q([1-4])-(\d{4})$/i.exec(key || "");
+  if (!m) return key;
+  return `${m[1]}º Trim`;
+}
+
+function quartersFromMonths(months: { competencia: string }[]) {
+  const map = new Map<string, string[]>();
+  for (const m of months) {
+    const k = trimestreKeyFromMonth(m.competencia);
+    if (!k) continue;
+    const list = map.get(k) || [];
+    list.push(m.competencia);
+    map.set(k, list);
+  }
+  return Array.from(map.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, comps]) => ({ key, comps, label: trimestreChipLabel(key) }));
+}
+
 function MesBar() {
   const { company, month, unidade, setMonth } = useDash();
   const months = (company?.months || []).filter((m) => !unidade || m.unidade === unidade);
   if (!months.length) return null;
+  const quarters = quartersFromMonths(months);
+  const activeTrim = isTrimestreKey(month) ? month.toLowerCase() : trimestreKeyFromMonth(month);
+  const trimMeses = new Set(
+    (isTrimestreKey(month)
+      ? (() => {
+          const m = /^q([1-4])-(\d{4})$/i.exec(month);
+          if (!m) return [] as string[];
+          const q = Number(m[1]);
+          const year = m[2];
+          const start = (q - 1) * 3 + 1;
+          return [0, 1, 2].map((i) => `${year}-${String(start + i).padStart(2, "0")}`);
+        })()
+      : payloadTrimestreMeses(month)
+    ).filter(Boolean),
+  );
+
   return (
     <div className="vd-mes-bar" role="tablist" aria-label="Competência">
-      {months.map((m) => (
-        <button
-          key={`${m.competencia}-${m.unidade}`}
-          type="button"
-          className={`vd-mes-chip ${m.competencia === month ? "active" : ""}`}
-          onClick={() => setMonth(m.competencia)}
-        >
-          {m.label}
-        </button>
+      {quarters.map((q, idx) => (
+        <span key={q.key} className="vd-mes-group">
+          {idx > 0 ? <span className="vd-mes-sep" aria-hidden>|</span> : null}
+          <button
+            type="button"
+            className={`vd-mes-chip vd-mes-chip-trim ${month.toLowerCase() === q.key ? "active" : ""}${activeTrim === q.key ? " in-trim" : ""}`}
+            onClick={() => setMonth(q.key)}
+            title={`Soma dos meses: ${q.comps.join(", ")}`}
+          >
+            {q.label}
+          </button>
+          {months
+            .filter((m) => trimestreKeyFromMonth(m.competencia) === q.key)
+            .map((m) => (
+              <button
+                key={`${m.competencia}-${m.unidade}`}
+                type="button"
+                className={`vd-mes-chip ${m.competencia === month ? "active" : ""}${trimMeses.has(m.competencia) ? " in-trim" : ""}`}
+                onClick={() => setMonth(m.competencia)}
+              >
+                {m.label}
+              </button>
+            ))}
+        </span>
       ))}
     </div>
   );
+}
+
+/** Competências do trimestre civil do mês selecionado (sem API). */
+function payloadTrimestreMeses(competencia: string): string[] {
+  if (!competencia || !/^\d{4}-\d{2}$/.test(competencia)) return [];
+  const year = competencia.slice(0, 4);
+  const mm = Number(competencia.slice(5, 7));
+  const q = Math.floor((mm - 1) / 3);
+  const start = q * 3 + 1;
+  return [0, 1, 2].map((i) => `${year}-${String(start + i).padStart(2, "0")}`);
 }
 
 function Kpi({ color, icon, value, label, sub, neg }: { color: string; icon: string; value: string; label: string; sub?: string; neg?: boolean }) {
@@ -80,6 +185,58 @@ function Kpi({ color, icon, value, label, sub, neg }: { color: string; icon: str
       <div className="kpi-lbl">{label}</div>
       {sub ? <div className="kpi-sub">{sub}</div> : null}
     </article>
+  );
+}
+
+function TrimestreBlock({ tri, asMain }: { tri: TrimestrePayload; asMain?: boolean }) {
+  const tot = tri.totais;
+  const sub = trimestreSub(tri);
+  return (
+    <div className={`trim-block${asMain ? " trim-block-main" : ""}`}>
+      <div className="trim-block-head">
+        <div className="trim-block-title">{asMain ? tri.label : `Total — ${tri.label}`}</div>
+        <div className="trim-block-sub">
+          {asMain
+            ? `Soma dos meses importados: ${tri.mesesLabel || "—"} (${tri.mesesPresentes?.length || 0} de 3)`
+            : `${sub} · use o chip “1º Trim” / “2º Trim” na barra para ver o total somado na aba`}
+        </div>
+      </div>
+      <div className="kpi-grid kpi-grid-4">
+        <Kpi color="cyan" icon="file-invoice" value={brlCompact(tot.cfopSaidasTotal)} label="Vendas no trimestre" sub={sub} />
+        <Kpi
+          color="green"
+          icon="cart-shopping"
+          value={brlCompact(tot.totalCompras)}
+          label="Compras no trimestre"
+          sub={tot.nfsEntradas ? `${tot.nfsEntradas} NFs` : sub}
+        />
+        <Kpi
+          color={tot.saldoOperacional >= 0 ? "green" : "red"}
+          icon="scale-balanced"
+          value={brlCompact(tot.saldoOperacional)}
+          label="Saldo operacional"
+          sub="Vendas − compras (trimestre)"
+          neg={tot.saldoOperacional < 0}
+        />
+        {tot.icmsKpi ? (
+          <Kpi
+            color={tot.icmsKpi.color || "purple"}
+            icon="landmark"
+            value={brlCompact(tot.icmsKpi.val)}
+            label={tot.icmsKpi.lbl}
+            sub={tot.icmsKpi.sub || "Soma mensal no trimestre"}
+          />
+        ) : (
+          <Kpi
+            color="yellow"
+            icon="coins"
+            value={tot.pisCofinsRecolher != null ? brlCompact(Number(tot.pisCofinsRecolher)) : "—"}
+            label="PIS + COFINS"
+            sub={tot.pisCofinsRecolher != null ? "Soma a recolher no trimestre" : "Sem apuração no trimestre"}
+          />
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -128,6 +285,11 @@ export default function AbaPage() {
   }, [params.empresa, month, unidade, aba]);
 
   const d = (payload?.data || {}) as Record<string, any>;
+  const tri = payload?.trimestre;
+  const viewingTrimestre = isTrimestreKey(month) || Boolean(d.isTrimestre);
+  const periodLabel = viewingTrimestre
+    ? (d.competenciaLabel || tri?.label || month)
+    : month;
   const cfopDadosAll = (d.cfopDados || []) as {
     cfop: string;
     descricao?: string;
@@ -177,8 +339,8 @@ export default function AbaPage() {
     <section>
       <div className="sec-header">
         <div>
-          <div className="sec-title">{title} <small>{month}{unidade ? ` · ${unidade}` : ""}</small></div>
-          <div className="sec-sub">{company?.label}{cnpj ? ` — CNPJ ${cnpj}` : ""}</div>
+          <div className="sec-title">{title} <small>{periodLabel}{unidade ? ` · ${unidade}` : ""}</small></div>
+          <div className="sec-sub">{company?.label}{cnpj ? ` — CNPJ ${cnpj}` : ""}{viewingTrimestre && tri ? ` · Soma ${tri.mesesLabel || ""}` : ""}</div>
         </div>
       </div>
       <MesBar />
@@ -187,6 +349,7 @@ export default function AbaPage() {
       {!loading && !error && payload?.empty && aba !== "impostos" ? (
         <div className="alert-box warn">{emptyMsg(aba)}</div>
       ) : null}
+      {!loading && !error && tri ? <TrimestreBlock tri={tri} asMain={viewingTrimestre} /> : null}
 
       {showBody && aba === "visao-geral" && (
         <>
@@ -766,44 +929,213 @@ export default function AbaPage() {
         </>
       )}
 
-      {showBody && aba === "memoria" && (
-        <>
-          <div className="formula-box">
-            Conferência automática: soma das linhas da planilha EXITO deve bater com o Total Geral (± R$ 0,01).
-            Fórmulas de apuração (ICMS/PIS/COFINS) só aparecem quando a planilha de impostos foi importada.
-          </div>
-          <div className="mem-grid">
-            <div className="mem-card">
-              <div className="mem-card-head">Entradas</div>
-              <div className="mem-row"><span className="lbl">Total Geral Excel</span><span className="val">{moneyOrDash(d.entradasMeta?.totalGeralExcel)}</span></div>
-              <div className="mem-row"><span className="lbl">Soma NFs</span><span className="val">{moneyOrDash(d.entradasMeta?.soma)}</span></div>
-              <div className={`mem-row ${Math.abs(d.entradasMeta?.delta || 0) >= 0.02 ? "neg" : "tot"}`}><span className="lbl">Δ</span><span className="val">{d.entradasMeta?.delta ?? "—"}</span></div>
-            </div>
-            <div className="mem-card">
-              <div className="mem-card-head">Saídas</div>
-              <div className="mem-row"><span className="lbl">Total Geral Excel</span><span className="val">{moneyOrDash(d.saidasMeta?.totalGeralExcel)}</span></div>
-              <div className="mem-row"><span className="lbl">Soma NFs</span><span className="val">{moneyOrDash(d.saidasMeta?.soma)}</span></div>
-              <div className={`mem-row ${Math.abs(d.saidasMeta?.delta || 0) >= 0.02 ? "neg" : "tot"}`}><span className="lbl">Δ</span><span className="val">{d.saidasMeta?.delta ?? "—"}</span></div>
-            </div>
-          </div>
-          {ap ? (
+      {showBody && aba === "memoria" && (() => {
+        const mem = d.memoriaCalculo as Record<string, number | string | undefined> | undefined;
+        const hasMem = !!(mem && (mem.debitoOriginal != null || mem.icmsARecolher != null));
+        const icmsVal = Number(mem?.icmsARecolher ?? 0);
+        const icmsCredor = icmsVal < 0;
+        const subvVal = Number(mem?.ganhoReceitaSubvencao ?? d.subvencao ?? 0);
+        const debOrig = Number(mem?.debitoOriginal ?? 0);
+        const credOrig = Number(mem?.creditoOriginal ?? 0);
+        const deb5005 = Number(mem?.debitos5005 ?? 0);
+        const cred5005 = Number(mem?.creditos5005 ?? 0);
+        const debFora = Number(mem?.debitoFora ?? 0);
+        const credFora = Number(mem?.creditoFora ?? 0);
+        const outorg = Number(mem?.creditoOutorgado ?? 0);
+        const toK = (n: number) => +(n / 1000).toFixed(1);
+        const doughSlices = [
+          { label: "Débitos 5005", valor: deb5005 },
+          { label: "Créditos 5005", valor: cred5005 },
+          { label: "Crédito fora", valor: credFora },
+          { label: "Outorgado", valor: outorg },
+        ].filter((s) => s.valor > 0);
+
+        return (
+          <>
+            {hasMem ? (
+              <>
+                <div className="formula-box">
+                  Fonte: APURAÇÃO 5005 · ICMS a recolher alimenta a aba Impostos.
+                </div>
+                <div className="tax-grid">
+                  <div className="tax-card">
+                    <div className="tax-card-head">
+                      <div className={`tax-name ${icmsCredor ? "t-success" : "t-accent"}`}>ICMS a recolher</div>
+                      <span className={`chip ${icmsCredor ? "gr" : "bl"}`}>{icmsCredor ? "Saldo credor" : "Importado"}</span>
+                    </div>
+                    <div className={`tax-cur ${icmsCredor ? "t-success" : "t-accent"}`}>{brl(icmsVal)}</div>
+                    <div className="tax-prev">Fonte APURAÇÃO 5005 · alimenta Impostos</div>
+                  </div>
+                  <div className="tax-card">
+                    <div className="tax-card-head">
+                      <div className="tax-name t-success">Subvenção</div>
+                      <span className="chip gr">Importado</span>
+                    </div>
+                    <div className="tax-cur t-success">{brl(subvVal)}</div>
+                    <div className="tax-prev">Ganho receita de subvenção</div>
+                  </div>
+                  <div className="tax-card">
+                    <div className="tax-card-head">
+                      <div className="tax-name">Original</div>
+                      <span className="chip gy">Bloco</span>
+                    </div>
+                    <div className="tax-cur">{brl(mem?.totalOriginal)}</div>
+                    <div className="tax-prev">Débito {brl(debOrig)} · Crédito {brl(credOrig)}</div>
+                  </div>
+                  <div className="tax-card">
+                    <div className="tax-card-head">
+                      <div className="tax-name t-accent">Apuração 5005</div>
+                      <span className="chip bl">Bloco</span>
+                    </div>
+                    <div className="tax-cur t-accent">{brl(mem?.total5005)}</div>
+                    <div className="tax-prev">Débitos {brl(deb5005)} · Créditos {brl(cred5005)}</div>
+                  </div>
+                  <div className="tax-card">
+                    <div className="tax-card-head">
+                      <div className="tax-name t-warning">Fora / Outorgado</div>
+                      <span className="chip ye">Bloco</span>
+                    </div>
+                    <div className="tax-cur t-warning">{brl(mem?.totalFora)}</div>
+                    <div className="tax-prev">
+                      Débito {brl(debFora)} · Crédito {brl(credFora)} · Outorgado {brl(outorg)}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="charts-row cr-2col">
+                  <div className="chart-card">
+                    <div className="chart-ttl">Débitos × Créditos por bloco</div>
+                    <div className="chart-sub">Valores da memória 5005 (R$ mil)</div>
+                    <div className="chart-wrap h260">
+                      <Bar
+                        data={{
+                          labels: ["Original", "5005", "Fora"],
+                          datasets: [
+                            {
+                              label: "Débitos",
+                              data: [toK(debOrig), toK(deb5005), toK(debFora)],
+                              backgroundColor: "rgba(239,68,68,0.7)",
+                              borderRadius: 4,
+                            },
+                            {
+                              label: "Créditos",
+                              data: [toK(credOrig), toK(cred5005), toK(credFora + outorg)],
+                              backgroundColor: "rgba(34,163,41,0.7)",
+                              borderRadius: 4,
+                            },
+                          ],
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: { legend: { position: "bottom" } },
+                          scales: { y: { ticks: { callback: (v) => `R$ ${v}K` } } },
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="chart-card">
+                    <div className="chart-ttl">Composição da memória</div>
+                    <div className="chart-sub">Participação 5005 + fora / outorgado</div>
+                    <div className="chart-wrap h260">
+                      <Doughnut
+                        data={{
+                          labels: doughSlices.length ? doughSlices.map((s) => s.label) : ["Sem dados"],
+                          datasets: [{
+                            data: doughSlices.length ? doughSlices.map((s) => s.valor) : [1],
+                            backgroundColor: doughSlices.length ? PAL.slice(0, doughSlices.length) : ["#64748b"],
+                            borderWidth: 0,
+                          }],
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          cutout: "60%",
+                          plugins: { legend: { position: "right" } },
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="formula-box">Detalhe dos blocos (planilha APURAÇÃO 5005)</div>
+                <div className="mem-grid mem-grid-3">
+                  <div className="mem-card">
+                    <div className="mem-card-head">Original</div>
+                    <div className="mem-row"><span className="lbl">Débito original</span><span className="val">{brl(debOrig)}</span></div>
+                    <div className="mem-row"><span className="lbl">Crédito original</span><span className="val">{brl(credOrig)}</span></div>
+                    <div className="mem-row tot"><span className="lbl">Total</span><span className="val">{brl(mem?.totalOriginal)}</span></div>
+                  </div>
+                  <div className="mem-card">
+                    <div className="mem-card-head">Apuração 5005</div>
+                    <div className="mem-row"><span className="lbl">Débitos 5005</span><span className="val">{brl(deb5005)}</span></div>
+                    <div className="mem-row"><span className="lbl">Créditos 5005</span><span className="val">{brl(cred5005)}</span></div>
+                    <div className="mem-row tot"><span className="lbl">Total</span><span className="val">{brl(mem?.total5005)}</span></div>
+                  </div>
+                  <div className="mem-card">
+                    <div className="mem-card-head">Fora / Outorgado</div>
+                    <div className="mem-row"><span className="lbl">Débito fora</span><span className="val">{brl(debFora)}</span></div>
+                    <div className="mem-row"><span className="lbl">Crédito fora</span><span className="val">{brl(credFora)}</span></div>
+                    <div className="mem-row"><span className="lbl">Crédito outorgado</span><span className="val">{brl(outorg)}</span></div>
+                    <div className="mem-row tot"><span className="lbl">Total</span><span className="val">{brl(mem?.totalFora)}</span></div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="alert-box warn">
+                Memória ICMS (APURAÇÃO 5005) ainda não importada neste mês. Importe a planilha para preencher os cards e gráficos.
+              </div>
+            )}
+
+            <div className="formula-box">Conferência movimento — Total Geral Excel × soma das NFs</div>
             <div className="mem-grid">
               <div className="mem-card">
-                <div className="mem-card-head">ICMS (apurado)</div>
-                <div className="mem-row"><span className="lbl">Débito / apurado</span><span className="val">{brl(ap.icms?.apurado)}</span></div>
-                <div className="mem-row tot"><span className="lbl">A recolher</span><span className="val">{brl(ap.icms?.aRecolher)}</span></div>
+                <div className="mem-card-head">Entradas</div>
+                <div className="mem-row"><span className="lbl">Total Geral Excel</span><span className="val">{moneyOrDash(d.entradasMeta?.totalGeralExcel)}</span></div>
+                <div className="mem-row"><span className="lbl">Soma NFs</span><span className="val">{moneyOrDash(d.entradasMeta?.soma)}</span></div>
+                <div className={`mem-row ${Math.abs(d.entradasMeta?.delta || 0) >= 0.02 ? "neg" : "tot"}`}>
+                  <span className="lbl">Δ</span>
+                  <span className="val">{d.entradasMeta?.delta ?? "—"}</span>
+                </div>
               </div>
               <div className="mem-card">
-                <div className="mem-card-head">IPI (se houver)</div>
-                <div className="mem-row"><span className="lbl">Débito</span><span className="val">{moneyOrDash(ap.ipi?.apurado)}</span></div>
-                <div className="mem-row tot"><span className="lbl">A recolher</span><span className="val">{moneyOrDash(ap.ipi?.aRecolher)}</span></div>
+                <div className="mem-card-head">Saídas</div>
+                <div className="mem-row"><span className="lbl">Total Geral Excel</span><span className="val">{moneyOrDash(d.saidasMeta?.totalGeralExcel)}</span></div>
+                <div className="mem-row"><span className="lbl">Soma NFs</span><span className="val">{moneyOrDash(d.saidasMeta?.soma)}</span></div>
+                <div className={`mem-row ${Math.abs(d.saidasMeta?.delta || 0) >= 0.02 ? "neg" : "tot"}`}>
+                  <span className="lbl">Δ</span>
+                  <span className="val">{d.saidasMeta?.delta ?? "—"}</span>
+                </div>
               </div>
             </div>
-          ) : (
-            <div className="alert-box">Sem apuração importada — cards tributários ficam N/D.</div>
-          )}
-        </>
-      )}
+
+            {!hasMem && ap ? (
+              <div className="tax-grid">
+                <div className="tax-card">
+                  <div className="tax-card-head">
+                    <div className="tax-name t-accent">ICMS (demonstrativo)</div>
+                    <span className="chip bl">Fallback</span>
+                  </div>
+                  <div className="tax-cur t-accent">{brl(ap.icms?.aRecolher)}</div>
+                  <div className="tax-prev">Apurado: {brl(ap.icms?.apurado)} · importe a 5005 para a memória completa</div>
+                </div>
+                <div className="tax-card">
+                  <div className="tax-card-head">
+                    <div className="tax-name">IPI</div>
+                    <span className="chip gy">{ap.ipi ? "Importado" : "Em apuração"}</span>
+                  </div>
+                  <div className="tax-cur">{moneyOrDash(ap.ipi?.aRecolher)}</div>
+                  <div className="tax-prev">{ap.ipi ? `Apurado: ${brl(ap.ipi?.apurado)}` : "Aguardando planilha"}</div>
+                </div>
+              </div>
+            ) : null}
+
+            {!hasMem && !ap ? (
+              <div className="alert-box warn">Sem APURAÇÃO 5005 nem demonstrativo de impostos — importe a planilha de memória/ICMS.</div>
+            ) : null}
+          </>
+        );
+      })()}
 
       {showBody && aba === "recebimentos" && (
         <>
@@ -830,22 +1162,27 @@ export default function AbaPage() {
         </>
       )}
 
-      {showBody && aba === "balancete" && (
+          {showBody && aba === "balancete" && (
         (() => {
           const bal = d.balancete || {};
+          const totais = (bal.totais || {}) as { contas?: number; debitos?: number; creditos?: number; ativo?: number; passivo?: number };
           const contas = (bal.contas || bal.porMes?.[month]?.contas || []) as {
             codigo: string; descricao: string; saldoAnterior?: number; debito?: number; credito?: number; saldoAtual?: number; grupo?: string;
           }[];
           if (!contas.length) {
             return <div className="alert-box warn">Balancete importado sem contas neste mês/unidade.</div>;
           }
+          const nContas = totais.contas ?? contas.length;
+          const sumDebito = totais.debitos ?? contas.filter((c) => c.codigo === "1" || c.codigo === "2" || c.codigo === "3").reduce((a, c) => a + Number(c.debito || 0), 0);
+          const sumCredito = totais.creditos ?? contas.filter((c) => c.codigo === "1" || c.codigo === "2" || c.codigo === "3").reduce((a, c) => a + Number(c.credito || 0), 0);
+          const sumSaldos = (Number(totais.ativo || 0) + Number(totais.passivo || 0)) || contas.filter((c) => c.codigo === "1" || c.codigo === "2").reduce((a, c) => a + Number(c.saldoAtual || 0), 0);
           return (
             <>
               <div className="kpi-grid kpi-grid-4">
-                <Kpi color="blue" icon="building-columns" value={String(contas.length)} label="Contas" sub="Linhas no balancete" />
-                <Kpi color="green" icon="arrow-trend-up" value={brl(contas.reduce((a, c) => a + Number(c.debito || 0), 0))} label="Débitos" />
-                <Kpi color="orange" icon="arrow-trend-down" value={brl(contas.reduce((a, c) => a + Number(c.credito || 0), 0))} label="Créditos" />
-                <Kpi color="purple" icon="scale-balanced" value={brl(contas.reduce((a, c) => a + Number(c.saldoAtual || 0), 0))} label="Σ Saldos" />
+                <Kpi color="blue" icon="building-columns" value={String(nContas)} label="Contas" sub="Linhas no balancete" />
+                <Kpi color="green" icon="arrow-trend-up" value={brl(sumDebito)} label="Débitos" sub="Grupos de 1º nível" />
+                <Kpi color="orange" icon="arrow-trend-down" value={brl(sumCredito)} label="Créditos" sub="Grupos de 1º nível" />
+                <Kpi color="purple" icon="scale-balanced" value={brl(sumSaldos)} label="Ativo + Passivo" sub="Saldos atuais" />
               </div>
               <div className="table-card">
                 <div className="table-head"><div className="ttl">Contas do balancete</div></div>
