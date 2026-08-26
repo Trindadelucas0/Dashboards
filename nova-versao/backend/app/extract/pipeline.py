@@ -20,13 +20,79 @@ from app.extract.parse_impostos import (
     apuracao_patch_from_demo,
     composicao_from_apuracao,
     deducoes_from_apuracao,
+    is_demonstrativo_icms,
+    parse_demonstrativo_icms,
     parse_demonstrativo_ipi,
     parse_demonstrativo_pis_cofins,
     parse_impostos_icms_ipi,
     parse_st_mensal,
 )
 from app.extract.parse_movimento import parse_movimento
-from app.extract.workbook import WorkbookGrid, is_placeholder_bytes, load_workbook
+from app.extract.workbook import WorkbookGrid, is_placeholder_bytes, load_all_sheets
+
+
+def _deep_merge(base: dict, patch: dict) -> dict:
+    out = dict(base or {})
+    for key, val in (patch or {}).items():
+        if isinstance(val, dict) and isinstance(out.get(key), dict):
+            out[key] = _deep_merge(out[key], val)
+        else:
+            out[key] = val
+    return out
+
+
+def _extract_pis_cofins_sheets(sheets: list[WorkbookGrid], filename: str) -> list[tuple[str, WorkbookGrid]]:
+    out: list[tuple[str, WorkbookGrid]] = []
+    for sh in sheets:
+        tipo = detect_sheet_tipo(sh, filename)
+        if tipo in ("pis", "cofins"):
+            out.append((tipo, sh))
+    return out
+
+
+def _pis_cofins_score(parsed: dict) -> float:
+    return abs(float(parsed.get("aRecolher") or 0)) + abs(float(parsed.get("apurado") or 0))
+
+
+def _apply_pis_cofins_extract(result: dict, tax_sheets: list[tuple[str, WorkbookGrid]], filename: str) -> dict:
+    meta_grid = tax_sheets[0][1]
+    kinds = {t for t, _ in tax_sheets}
+    result["tipo"] = "pis_cofins" if len(kinds) > 1 else tax_sheets[0][0]
+    result["sheet"] = ", ".join(sh.sheet_name for _, sh in tax_sheets)
+    result["parser"] = meta_grid.kind
+    result["cnpj"] = scan_cnpj(meta_grid)
+    result["razao"] = scan_razao(meta_grid)
+    competencia, period_text = scan_period(meta_grid)
+    if not competencia:
+        competencia = competencia_from_filename(filename) or competencia_from_filename(meta_grid.sheet_name or "")
+    result["competencia"] = competencia
+    result["period"] = period_text
+
+    best: dict[str, tuple[WorkbookGrid, dict]] = {}
+    for tributo, sh in tax_sheets:
+        parsed = parse_demonstrativo_pis_cofins(sh, tributo)
+        prev = best.get(tributo)
+        if prev is None or _pis_cofins_score(parsed) > _pis_cofins_score(prev[1]):
+            best[tributo] = (sh, parsed)
+
+    pack_patch: dict = {}
+    meta: dict = {}
+    for tributo, (sh, parsed) in best.items():
+        pack_patch = _deep_merge(pack_patch, apuracao_patch_from_demo(tributo, parsed))
+        meta[tributo] = {
+            "aRecolher": parsed.get("aRecolher"),
+            "apurado": parsed.get("apurado"),
+            "credito": parsed.get("credito"),
+            "sheet": sh.sheet_name,
+        }
+    if len(best) == 1:
+        only = next(iter(best.values()))[1]
+        meta["aRecolher"] = only.get("aRecolher")
+        meta["apurado"] = only.get("apurado")
+        meta["baseCalculo"] = only.get("baseCalculo")
+    result["pack_patch"] = pack_patch
+    result["meta"] = meta
+    return result
 
 
 def _empty_result(filename: str, tipo: str, extra: dict | None = None) -> dict:
@@ -62,7 +128,7 @@ def classify_and_extract(path: str | Path, data: bytes | None = None, db=None) -
         tipo = detect_sheet_tipo(WorkbookGrid(str(path), "", [], "empty"), filename)
         return _empty_result(filename, tipo, {"errors": [EMPTY_FILE_ERROR]})
     try:
-        grid = load_workbook(path, data)
+        sheets = load_all_sheets(path, data)
     except Exception as exc:  # noqa: BLE001
         tipo = detect_sheet_tipo(WorkbookGrid(str(path), "", [], "unknown"), filename)
         return _empty_result(
@@ -70,12 +136,58 @@ def classify_and_extract(path: str | Path, data: bytes | None = None, db=None) -
             tipo,
             {"errors": [f"Não foi possível ler o arquivo: {exc}"], "parser": "fail"},
         )
+
+    tax_sheets = _extract_pis_cofins_sheets(sheets, filename)
+    grid = sheets[0]
     tipo = detect_sheet_tipo(grid, filename)
+
+    if tax_sheets:
+        result = {
+            "file": filename,
+            "sheet": "",
+            "parser": grid.kind,
+            "tipo": "pis_cofins",
+            "cnpj": "",
+            "razao": "",
+            "competencia": "",
+            "period": "",
+            "company_id": None,
+            "company_label": None,
+            "unidade": "matriz",
+            "errors": [],
+            "warnings": [],
+            "pack_patch": None,
+            "lines": [],
+            "meta": {},
+        }
+        result = _apply_pis_cofins_extract(result, tax_sheets, filename)
+        company, unidade = resolve_company(result["cnpj"], result["razao"], filename)
+        if not company and db is not None:
+            from app.companies import resolve_from_db
+
+            company, unidade = resolve_from_db(db, result["cnpj"], result["razao"] or filename)
+        if company and not result["cnpj"] and company.cnpj:
+            result["cnpj"] = company.cnpj
+        result["company_id"] = company.id if company else None
+        result["company_label"] = company.label if company else None
+        result["unidade"] = unidade or "matriz"
+        if not company:
+            result["errors"].append("CNPJ/razão não mapeados para nenhuma empresa cadastrada")
+            return result
+        if not result["competencia"]:
+            result["errors"].append("Competência não identificada no cabeçalho nem no nome do arquivo")
+            return result
+        return result
+
     cnpj = scan_cnpj(grid)
     razao = scan_razao(grid)
     competencia, period_text = scan_period(grid)
     if not competencia:
-        competencia = competencia_from_filename(filename) or competencia_from_filename(grid.sheet_name or "")
+        competencia = (
+            competencia_from_filename(filename)
+            or competencia_from_filename(grid.sheet_name or "")
+            or competencia_from_filename(path.parent.name)
+        )
     company, unidade = resolve_company(cnpj, razao, filename)
     if not company and db is not None:
         from app.companies import resolve_from_db
@@ -110,7 +222,7 @@ def classify_and_extract(path: str | Path, data: bytes | None = None, db=None) -
             result["errors"].append("CNPJ/razão não mapeados para nenhuma empresa cadastrada")
             return result
     # Impostos anuais / ST sem competência no nome — movimento/DRE ainda exigem.
-    if not competencia and tipo not in ("impostos", "irpj", "ipi", "pis", "cofins", "icms_st"):
+    if not competencia and tipo not in ("impostos", "irpj", "ipi", "pis", "cofins", "pis_cofins", "icms", "icms_st"):
         result["errors"].append("Competência não identificada no cabeçalho nem no nome do arquivo")
         return result
 
@@ -189,6 +301,17 @@ def classify_and_extract(path: str | Path, data: bytes | None = None, db=None) -
         parsed = parse_st_mensal(grid)
         result["pack_patch"] = apuracao_patch_from_demo("icms_st", parsed)
         result["meta"] = {"aRecolher": parsed.get("aRecolher"), "ufs": len(parsed.get("byUf") or {})}
+        return result
+
+    if tipo == "icms" or (tipo == "impostos" and is_demonstrativo_icms(grid)):
+        parsed = parse_demonstrativo_icms(grid)
+        result["tipo"] = "icms"
+        result["pack_patch"] = apuracao_patch_from_demo("icms", parsed)
+        result["meta"] = {
+            "aRecolher": parsed.get("aRecolher"),
+            "debitos": parsed.get("debitos"),
+            "apurado": parsed.get("apurado"),
+        }
         return result
 
     if tipo == "impostos":

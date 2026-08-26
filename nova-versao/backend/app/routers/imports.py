@@ -72,7 +72,7 @@ def _inherit_batch_competencia(items: list[dict]) -> None:
     for it in items:
         if it.get("competencia"):
             continue
-        if it.get("tipo") in ("icms_st", "ipi", "pis", "cofins", "impostos", "irpj"):
+        if it.get("tipo") in ("icms_st", "icms", "ipi", "pis", "cofins", "pis_cofins", "impostos", "irpj"):
             it["competencia"] = chosen
             it.setdefault("warnings", []).append(f"Competência herdada do lote: {chosen}")
 

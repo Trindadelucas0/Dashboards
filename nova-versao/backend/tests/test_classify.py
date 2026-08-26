@@ -2,6 +2,7 @@ from app.extract.classify import (
     competencia_from_filename,
     detect_sheet_tipo,
     format_cfop,
+    is_dre_filename,
     is_multi_month_movimento,
     resolve_company,
     scan_cnpj,
@@ -31,13 +32,44 @@ def test_detect_sheet_tipo_ignores_misleading_filename():
     assert detect_sheet_tipo(grid, "Entradas por Cliente 072026.xls") == "saidas"
 
 
-def test_resolve_egaplast_only():
+def test_detect_demonstrativo_icms():
+    grid = WorkbookGrid(
+        "Apuração icms 062026.xls",
+        "Demonst. ICMS 06-2026 (M)",
+        [["EGAPLAST"], ["DEMONSTRATIVO DO ICMS"]],
+        "html",
+    )
+    assert detect_sheet_tipo(grid, "Apuração icms 062026.xls") == "icms"
+    assert detect_sheet_tipo(grid, "qualquer.xls") == "icms"
+
+
+def test_detect_pis_cofins_by_sheet_not_filename():
+    pis = WorkbookGrid(
+        "Apuração pis e cofins 012026.xls",
+        "Demonstrativo de Apuração - PIS",
+        [["DEMONSTRATIVO DA APURAÇÃO DO PIS"]],
+        "html",
+    )
+    cof = WorkbookGrid(
+        "Apuração pis e cofins 012026.xls",
+        "Demonstrativo de Apuração - COF",
+        [["DEMONSTRATIVO DA APURAÇÃO DO COFINS"]],
+        "html",
+    )
+    assert detect_sheet_tipo(pis, "Apuração pis e cofins 012026.xls") == "pis"
+    assert detect_sheet_tipo(cof, "Apuração pis e cofins 012026.xls") == "cofins"
+
+
+def test_resolve_catalog_companies():
     company, unit = resolve_company("03185564000134", "EGAPLAST ARTEFATOS", "Entradas.xls")
     assert company and company.id == "egaplast"
     assert unit == "matriz"
     company, unit = resolve_company("03185564000134", "EGAPLAST", "Entradas filial 61.xls")
     assert company and company.id == "egaplast"
     assert unit == "filial"
+    company, unit = resolve_company("52005382000140", "BAIFER DISTRIBUIDORA", "Entradas 01-2026.xls")
+    assert company and company.id == "baifer"
+    assert unit == "matriz"
     company, _ = resolve_company("36517206000130", "UNICA", "x.xls")
     assert company is None
 
@@ -130,3 +162,27 @@ def test_scan_cnpj_formatted_and_labeled():
 def test_scan_period_competencia_label():
     grid = WorkbookGrid("x.xls", "IRPJ", [["Competência:", "01/03/2026"]], "html")
     assert scan_period(grid)[0] == "2026-03"
+
+
+def test_is_dre_filename_compact():
+    assert is_dre_filename("D. R. E..xls") is True
+    assert is_dre_filename("D. R. E. 01-2026.xls") is True
+    assert is_dre_filename("dre.xls") is True
+    assert is_dre_filename("Entradas 01-2026.xls") is False
+
+
+def test_detect_dre_exito_spaced_name_and_header():
+    grid = WorkbookGrid(
+        "D. R. E..xls",
+        "D. R. E.",
+        [
+            ["Empresa:", "BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA"],
+            ["C.N.P.J.:", "52.005.382/0001-40"],
+            ["Insc. Junta Comercial:  Data: 30/08/2023"],
+            [""],
+            ["DEMONSTRAÇÃO DO RESULTADO DO EXERCÍCIO EM 31/01/2026"],
+        ],
+        "html",
+    )
+    assert detect_sheet_tipo(grid, "D. R. E..xls") == "dre"
+    assert scan_period(grid)[0] == "2026-01"

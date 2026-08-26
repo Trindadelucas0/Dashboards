@@ -103,6 +103,7 @@ def list_companies(user: User = Depends(current_user), db: Session = Depends(get
                 "tabs": row.tabs or (reg.tabs if reg else []),
                 "desc": (getattr(row, "description", None) or {
                     "egaplast": "Artefatos e comércio de plásticos",
+                    "baifer": "Distribuidora de ferramentas",
                 }.get(row.id, row.label)),
             }
         )

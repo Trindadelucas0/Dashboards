@@ -1,8 +1,8 @@
-# Nova versão — Dashboards Êxito (Egaplast)
+# Nova versão — Dashboards Êxito
 
 Sistema isolado (Next.js + Python + Postgres). **Não altera** o dashboard antigo da porta 4243.
 
-Por enquanto a nova-versão opera **somente com Egaplast**. Upload do pacote mensal padrão (Entradas, Saídas, IPI, PIS, EFD/COFINS, ST) grava no mês certo e preenche as abas.
+Empresas no catálogo: **Egaplast** e **Baifer**. Upload do pacote mensal EXITO (Entradas, Saídas, IPI, PIS/COFINS, ICMS, ST) grava no mês certo e preenche as abas.
 
 Use **Python 3.11** no venv (3.14 ainda não tem wheels de psycopg2/lxml).
 
@@ -30,15 +30,21 @@ cd backend
 Login inicial:
 
 - Admin: `admin` + senha de `ADMIN_SEED_PASSWORD` no `.env`
-- Empresa: `egaplast` + senha de `SEED_USER_PASSWORD`
+- Egaplast: `egaplast` + senha de `SEED_USER_PASSWORD`
+- Baifer: `baifer` + senha de `SEED_USER_PASSWORD`
 
-## Pacote padrão Egaplast
+## Pacotes padrão
 
-Fixture: `fixtures/egaplast-padrao/` (cópia do pacote Drive). Todo mês o layout é o mesmo; só mudam os números.
+| Empresa | Fixture |
+|---------|---------|
+| Egaplast | `fixtures/egaplast-padrao/` |
+| Baifer | `fixtures/baifer-padrao/` (Entradas, Saídas e DRE jan/2026) |
+
+Todo mês o layout EXITO é o mesmo; só mudam os números.
 
 ## Calibração
 
 ```bash
 cd nova-versao/backend
-pytest -q tests/test_egaplast_padrao.py
+pytest -q tests/test_egaplast_padrao.py tests/test_baifer_entradas.py tests/test_baifer_saidas.py
 ```

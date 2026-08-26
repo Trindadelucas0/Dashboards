@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from datetime import datetime
 
 from app.companies import CompanyReg, find_by_cnpj, find_by_name, only_digits
@@ -12,6 +13,10 @@ PERIOD_RE = re.compile(
     re.I,
 )
 COMP_DATE_RE = re.compile(r"compet[eê]ncia\s*:?\s*(\d{2})/(\d{2})/(\d{4})", re.I)
+DRE_EM_RE = re.compile(
+    r"demonstra[cç][aã]o do resultado(?: do exerc[ií]cio)?\s+em\s+(\d{2})/(\d{2})/(\d{4})",
+    re.I,
+)
 TRIMESTRE_RE = re.compile(
     r"([1-4])\s*[ºoª°]?\s*trimestre\s*(?:de\s*)?(20\d{2})",
     re.I,
@@ -27,6 +32,17 @@ _MES = (
 RANGE_NAME_RE = re.compile(rf"({_MES})\s*a\s*({_MES})", re.I)
 RANGE_ERROR = "Planilha cobre mais de um mês. Envie um arquivo por competência."
 EMPTY_FILE_ERROR = "Arquivo vazio ou não baixado. Baixe o arquivo e envie de novo."
+
+
+def _fold_text(text: str) -> str:
+    nfkd = unicodedata.normalize("NFKD", text or "")
+    return "".join(ch for ch in nfkd if not unicodedata.combining(ch)).lower()
+
+
+def is_dre_filename(name: str) -> bool:
+    """D. R. E..xls / DRE 01-2026.xls — compacta pontuação para achar 'dre'."""
+    compact = re.sub(r"[^a-z0-9]+", "", _fold_text(name))
+    return compact == "dre" or compact.startswith("dre")
 
 
 def format_cfop(raw: str, raw_num: float | None = None) -> str:
@@ -102,6 +118,9 @@ def scan_period(grid: WorkbookGrid) -> tuple[str, str]:
         m = COMP_DATE_RE.search(joined)
         if m:
             return f"{m.group(3)}-{m.group(2)}", joined
+        m = DRE_EM_RE.search(joined)
+        if m:
+            return f"{m.group(3)}-{m.group(2)}", joined
     return "", ""
 
 
@@ -172,8 +191,21 @@ def detect_sheet_tipo(grid: WorkbookGrid, filename: str) -> str:
         return "saidas"
     if "demonstrativo do ipi" in head or ("ipi" in file_l and "demonst" in file_l):
         return "ipi"
+    if "demonstrativo do icms" in head or "demonst. icms" in name or "demonst icms" in name.replace(".", " "):
+        return "icms"
+    if "icms" in file_l and ("apura" in file_l or "demonst" in file_l) and "st mensal" not in file_l:
+        return "icms"
     if "st mensal" in file_l or "st estados" in name or (file_l.startswith("st ") and "valor" in head):
         return "icms_st"
+    if "demonstrativo da apuração do cofins" in head or "demonstrativo da apuracao do cofins" in head:
+        return "cofins"
+    if "demonstrativo da apuração do pis" in head or "demonstrativo da apuracao do pis" in head:
+        return "pis"
+    name_fold = name.replace(".", " ")
+    if "cof" in name and "pis" not in name:
+        return "cofins"
+    if "pis" in name and "cof" not in name:
+        return "pis"
     if "receitas cumulativas do cofins" in head or ("cofins" in name and "pis" not in name):
         return "cofins"
     if "receitas cumulativas do pis" in head or ("apura" in file_l and "pis" in file_l and "cofins" not in file_l):
@@ -184,7 +216,12 @@ def detect_sheet_tipo(grid: WorkbookGrid, filename: str) -> str:
         return "entradas"
     if "total cliente" in head or "cliente" in head:
         return "saidas"
-    if "resultado" in file_l or "dre" in file_l:
+    if (
+        "demonstracao do resultado" in _fold_text(head)
+        or is_dre_filename(name)
+        or is_dre_filename(file_l)
+        or "resultado" in file_l
+    ):
         return "dre"
     if "irpj" in file_l or "csll" in file_l:
         return "irpj"

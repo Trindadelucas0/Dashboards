@@ -100,7 +100,7 @@ export default function ImportTab() {
         <div>
           <div className="sec-title">Importar planilhas</div>
           <div className="sec-sub">
-            Pacote mensal Egaplast: Entradas, Saídas, IPI, PIS, EFD (COFINS), ST — mesmo layout todo mês.
+            Pacote mensal (Egaplast, Baifer): Entradas, Saídas, Apuração ICMS, IPI, PIS/COFINS (junto ou separado), ST — mesmo layout todo mês.
             O Python lê o CNPJ e a aba; o nome do arquivo não decide o destino.
           </div>
         </div>

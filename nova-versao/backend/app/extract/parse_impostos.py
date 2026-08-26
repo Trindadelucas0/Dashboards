@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from typing import Any
 
 from app.extract.workbook import WorkbookGrid
@@ -148,7 +149,12 @@ def composicao_from_apuracao(ap: dict | None) -> list[dict]:
     out = []
     for key, label in (("icms", "ICMS"), ("icmsSt", "ICMS ST"), ("pis", "PIS"), ("cofins", "COFINS"), ("ipi", "IPI")):
         item = ap.get(key) or {}
-        valor = float(item.get("aRecolher") or item.get("apurado") or 0)
+        if not isinstance(item, dict):
+            continue
+        if item.get("aRecolher") is not None:
+            valor = float(item.get("aRecolher") or 0)
+        else:
+            valor = float(item.get("apurado") or 0)
         if abs(valor) > 0.009:
             out.append({"label": label, "valor": round(valor, 2)})
     return out
@@ -161,24 +167,113 @@ def deducoes_from_apuracao(ap: dict | None) -> float | None:
     return round(sum(p["valor"] for p in parts), 2)
 
 
+def _fold(text: str) -> str:
+    nfkd = unicodedata.normalize("NFKD", text or "")
+    return "".join(ch for ch in nfkd if not unicodedata.combining(ch)).lower().strip()
+
+
 def _row_label(row: list[str]) -> str:
     return " ".join(str(c or "").strip() for c in row if str(c or "").strip()).lower()
 
 
+def _first_label(row: list[str]) -> str:
+    for cell in row:
+        text = str(cell or "").strip()
+        if text:
+            return _fold(text)
+    return ""
+
+
+def _last_numeric(row: list[str]) -> float | None:
+    for cell in reversed(row):
+        if cell is None or str(cell).strip() == "":
+            continue
+        if isinstance(cell, (int, float)) or re.search(r"\d", str(cell)):
+            return round(_num(cell), 2)
+    return None
+
+
 def _find_label_value(grid: WorkbookGrid, *needles: str) -> float | None:
+    folded_needles = [_fold(n) for n in needles]
     for row in grid.rows:
-        label = _row_label(row)
+        label = _fold(_row_label(row))
         if not label:
             continue
-        if not any(n in label for n in needles):
+        if not any(n in label for n in folded_needles):
             continue
-        # valor costuma ser a última célula numérica da linha
-        for cell in reversed(row):
-            if cell is None or str(cell).strip() == "":
-                continue
-            if isinstance(cell, (int, float)) or re.search(r"\d", str(cell)):
-                return round(_num(cell), 2)
+        found = _last_numeric(row)
+        if found is not None:
+            return found
     return None
+
+
+def _label_matches(first: str, *needles: str) -> bool:
+    if not first:
+        return False
+    for raw in needles:
+        needle = _fold(raw)
+        if not needle:
+            continue
+        if first == needle or first.startswith(needle + " ") or first.startswith(needle + ":"):
+            return True
+    return False
+
+
+def _find_row_value(grid: WorkbookGrid, start: int, *needles: str) -> float | None:
+    """Primeira célula (descrição) tem que ser o rótulo — não pega 'Estorno de débitos pelas saídas'."""
+    for row in grid.rows[start:]:
+        if not _label_matches(_first_label(row), *needles):
+            continue
+        found = _last_numeric(row)
+        if found is not None:
+            return found
+    return None
+
+
+def is_demonstrativo_icms(grid: WorkbookGrid) -> bool:
+    for row in grid.rows[:12]:
+        if "demonstrativo do icms" in _fold(_row_label(row)):
+            return True
+    sheet = _fold(grid.sheet_name or "")
+    return "demonst" in sheet and "icms" in sheet
+
+
+def parse_demonstrativo_icms(grid: WorkbookGrid) -> dict:
+    """Demonstrativo do ICMS EXITO — bloco APURAÇÃO (ICMS a recolher / saldo credor)."""
+    apur_i = 0
+    for i, row in enumerate(grid.rows):
+        first = _first_label(row)
+        if first == "apuracao" or first.startswith("apuracao "):
+            apur_i = i
+            break
+
+    debito_saidas = _find_row_value(grid, 0, "debitos pelas saidas")
+    debitos = _find_row_value(grid, apur_i, "total de debitos")
+    if debitos is None:
+        debitos = _find_row_value(grid, 0, "total de debitos")
+    creditos = _find_row_value(grid, apur_i, "total de creditos")
+    if creditos is None:
+        creditos = _find_row_value(grid, 0, "total de creditos")
+    a_recolher = _find_row_value(grid, apur_i, "icms a recolher")
+    saldo_seguinte = _find_row_value(grid, apur_i, "saldo credor de icms")
+    saldo_anterior = _find_row_value(grid, apur_i, "saldo credor do periodo anterior")
+
+    rec = float(a_recolher or 0)
+    credor = float(saldo_seguinte or 0)
+    if abs(rec) < 0.009 and credor > 0.009:
+        rec = -abs(credor)
+
+    apurado = float(debito_saidas if debito_saidas is not None else (debitos or 0))
+    return {
+        "kind": "demonstrativo_icms",
+        "debitos": float(debitos or 0),
+        "creditos": float(creditos or 0),
+        "debitoSaidas": float(debito_saidas or 0),
+        "saldoCredorAnterior": float(saldo_anterior or 0),
+        "saldoCredorSeguinte": credor,
+        "aRecolher": rec,
+        "apurado": apurado,
+    }
 
 
 def parse_demonstrativo_ipi(grid: WorkbookGrid) -> dict:
@@ -196,12 +291,58 @@ def parse_demonstrativo_ipi(grid: WorkbookGrid) -> dict:
     }
 
 
+def is_demonstrativo_apuracao_pis_cofins(grid: WorkbookGrid) -> bool:
+    for row in grid.rows[:8]:
+        folded = _fold(_row_label(row))
+        if "demonstrativo da apuracao do pis" in folded or "demonstrativo da apuracao do cofins" in folded:
+            return True
+    return False
+
+
+def parse_demonstrativo_apuracao_pis_cofins(grid: WorkbookGrid, tributo: str) -> dict:
+    """Demonstrativo da Apuração PIS/COFINS — regime não cumulativo ou cumulativo (EXITO)."""
+    apurado = _find_row_value(
+        grid,
+        0,
+        "valor total da contribuicao nao cumulativa apurada no periodo",
+    )
+    a_recolher = _find_row_value(
+        grid,
+        0,
+        "valor da contribuicao nao cumulativa a recolher",
+    )
+    credito = _find_row_value(grid, 0, "total do credito para o periodo seguinte")
+
+    if apurado is None and a_recolher is None:
+        apurado = _find_row_value(grid, 0, "valor total da contribuicao cumulativa devida")
+        a_recolher = _find_row_value(grid, 0, "valor da contribuicao cumulativa a recolher")
+        if apurado is None:
+            apurado = _find_row_value(
+                grid,
+                0,
+                "51.contribuicao cumulativa apurada a aliquota basica",
+            )
+
+    saldo_devedor = _find_row_value(grid, 0, "saldo devedor da contribuicao")
+    return {
+        "kind": f"demonstrativo_apuracao_{tributo}",
+        "tributo": tributo,
+        "apurado": float(apurado or 0),
+        "aRecolher": float(a_recolher or 0),
+        "credito": float(credito or 0),
+        "saldoDevedor": float(saldo_devedor or 0),
+        "baseCalculo": 0.0,
+    }
+
+
 def parse_demonstrativo_pis_cofins(grid: WorkbookGrid, tributo: str) -> dict:
-    """Demonstrativo consolidado PIS ou COFINS — usa 'Total Imposto' / total CST."""
+    """PIS/COFINS — layout Apuração não cumulativo ou consolidado EFD (Total Imposto)."""
+    if is_demonstrativo_apuracao_pis_cofins(grid):
+        return parse_demonstrativo_apuracao_pis_cofins(grid, tributo)
+
     imposto = _find_label_value(grid, "total imposto")
     base = _find_label_value(grid, "total da base de cálculo", "total da base de calculo")
     if imposto is None:
-        # fallback: última linha 'Total' com 3+ números
         for row in reversed(grid.rows):
             label = _row_label(row)
             if not label.startswith("total"):
@@ -274,13 +415,32 @@ def apuracao_patch_from_demo(tipo: str, parsed: dict) -> dict:
         tax["apurado"] = float(parsed.get("debitos") or tax["apurado"])
         return {"apuracao": {"ipi": tax, "fonte": "demonstrativo_ipi"}, "impostosDemo": {"ipi": parsed}}
     if tipo == "pis":
-        return {"apuracao": {"pis": tax, "fonte": "demonstrativo_pis"}, "impostosDemo": {"pis": parsed}}
+        tax["credito"] = float(parsed.get("credito") or 0)
+        fonte = (
+            "demonstrativo_apuracao_pis"
+            if str(parsed.get("kind") or "").startswith("demonstrativo_apuracao")
+            else "demonstrativo_pis"
+        )
+        return {"apuracao": {"pis": tax, "fonte": fonte}, "impostosDemo": {"pis": parsed}}
     if tipo == "cofins":
-        return {"apuracao": {"cofins": tax, "fonte": "demonstrativo_cofins"}, "impostosDemo": {"cofins": parsed}}
+        tax["credito"] = float(parsed.get("credito") or 0)
+        fonte = (
+            "demonstrativo_apuracao_cofins"
+            if str(parsed.get("kind") or "").startswith("demonstrativo_apuracao")
+            else "demonstrativo_cofins"
+        )
+        return {"apuracao": {"cofins": tax, "fonte": fonte}, "impostosDemo": {"cofins": parsed}}
     if tipo == "icms_st":
         return {
             "apuracao": {"icmsSt": tax, "fonte": "st_mensal"},
             "impostosDemo": {"icmsSt": parsed},
             "porUfSt": parsed.get("byUf") or {},
         }
+    if tipo == "icms":
+        rec = parsed.get("aRecolher")
+        tax["aRecolher"] = float(rec) if rec is not None else 0.0
+        tax["apurado"] = float(parsed.get("apurado") if parsed.get("apurado") is not None else parsed.get("debitos") or 0)
+        tax["credito"] = float(parsed.get("creditos") or 0)
+        tax["saldoCredor"] = float(parsed.get("saldoCredorSeguinte") or 0)
+        return {"apuracao": {"icms": tax, "fonte": "demonstrativo_icms"}, "impostosDemo": {"icms": parsed}}
     return {}

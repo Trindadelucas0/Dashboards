@@ -84,39 +84,65 @@ def safe_unlink(path: str | Path, attempts: int = 5) -> None:
         pass
 
 
-def _xlrd_grid(path: Path) -> tuple[str, list[list[str]]]:
+def _xlrd_sheet_rows(sheet) -> list[list[str]]:
+    rows = []
+    for r in range(sheet.nrows):
+        row = []
+        for c in range(sheet.ncols):
+            val = sheet.cell_value(r, c)
+            if isinstance(val, float) and val == int(val):
+                row.append(str(int(val)))
+            else:
+                row.append(str(val).strip() if val is not None else "")
+        rows.append(row)
+    return rows
+
+
+def _xlrd_grid(path: Path, sheet_index: int = 0) -> tuple[str, list[list[str]]]:
     import xlrd
 
     book = xlrd.open_workbook(str(path), formatting_info=False)
     try:
-        sheet = book.sheet_by_index(0)
-        rows = []
-        for r in range(sheet.nrows):
-            row = []
-            for c in range(sheet.ncols):
-                val = sheet.cell_value(r, c)
-                if isinstance(val, float) and val == int(val):
-                    row.append(str(int(val)))
-                else:
-                    row.append(str(val).strip() if val is not None else "")
-            rows.append(row)
-        return sheet.name, rows
+        sheet = book.sheet_by_index(sheet_index)
+        return sheet.name, _xlrd_sheet_rows(sheet)
     finally:
         book.release_resources()
 
 
-def _openpyxl_grid(path: Path, data: bytes | None = None) -> tuple[str, list[list[str]]]:
+def _xlrd_all_grids(path: Path) -> list[tuple[str, list[list[str]]]]:
+    import xlrd
+
+    book = xlrd.open_workbook(str(path), formatting_info=False)
+    try:
+        return [(book.sheet_by_index(i).name, _xlrd_sheet_rows(book.sheet_by_index(i))) for i in range(book.nsheets)]
+    finally:
+        book.release_resources()
+
+
+def _openpyxl_sheet_rows(ws) -> list[list[str]]:
+    return [["" if v is None else str(v).strip() for v in row] for row in ws.iter_rows(values_only=True)]
+
+
+def _openpyxl_grid(path: Path, data: bytes | None = None, sheet_index: int = 0) -> tuple[str, list[list[str]]]:
     from openpyxl import load_workbook
 
     src = BytesIO(data if data is not None else path.read_bytes())
     wb = load_workbook(src, data_only=True, read_only=True)
     try:
-        ws = wb.worksheets[0]
-        title = ws.title
-        rows = []
-        for row in ws.iter_rows(values_only=True):
-            rows.append(["" if v is None else str(v).strip() for v in row])
-        return title, rows
+        ws = wb.worksheets[sheet_index]
+        return ws.title, _openpyxl_sheet_rows(ws)
+    finally:
+        wb.close()
+        src.close()
+
+
+def _openpyxl_all_grids(path: Path, data: bytes | None = None) -> list[tuple[str, list[list[str]]]]:
+    from openpyxl import load_workbook
+
+    src = BytesIO(data if data is not None else path.read_bytes())
+    wb = load_workbook(src, data_only=True, read_only=True)
+    try:
+        return [(ws.title, _openpyxl_sheet_rows(ws)) for ws in wb.worksheets]
     finally:
         wb.close()
         src.close()
@@ -163,7 +189,21 @@ def _excel():
         return _excel_app
 
 
-def _com_grid(path: Path) -> tuple[str, list[list[str]]]:
+def _com_used_range_to_rows(raw) -> list[list[str]]:
+    rows: list[list[str]] = []
+    if raw is None:
+        return rows
+    if not isinstance(raw, tuple):
+        return [[_cell_to_str(raw)]]
+    for row in raw:
+        if not isinstance(row, tuple):
+            rows.append([_cell_to_str(row)])
+        else:
+            rows.append([_cell_to_str(c) for c in row])
+    return rows
+
+
+def _com_grid(path: Path, sheet_index: int = 1) -> tuple[str, list[list[str]]]:
     global _excel_app
     last: Exception | None = None
     for attempt in range(2):
@@ -171,22 +211,9 @@ def _com_grid(path: Path) -> tuple[str, list[list[str]]]:
             excel = _excel()
             wb = excel.Workbooks.Open(str(path.resolve()), ReadOnly=True)
             try:
-                ws = wb.Worksheets(1)
-                used = ws.UsedRange
-                raw = used.Value
-                rows: list[list[str]] = []
-                if raw is None:
-                    pass
-                elif not isinstance(raw, tuple):
-                    rows = [[_cell_to_str(raw)]]
-                else:
-                    for row in raw:
-                        if not isinstance(row, tuple):
-                            rows.append([_cell_to_str(row)])
-                        else:
-                            rows.append([_cell_to_str(c) for c in row])
-                name = str(ws.Name)
-                return name, rows
+                ws = wb.Worksheets(sheet_index)
+                rows = _com_used_range_to_rows(ws.UsedRange.Value)
+                return str(ws.Name), rows
             finally:
                 wb.Close(False)
         except Exception as exc:  # noqa: BLE001
@@ -197,7 +224,41 @@ def _com_grid(path: Path) -> tuple[str, list[list[str]]]:
     raise last or RuntimeError("Excel COM falhou")
 
 
-def load_workbook(path: str | Path, data: bytes | None = None) -> WorkbookGrid:
+def _com_all_grids(path: Path) -> list[tuple[str, list[list[str]]]]:
+    global _excel_app
+    last: Exception | None = None
+    for attempt in range(2):
+        try:
+            excel = _excel()
+            wb = excel.Workbooks.Open(str(path.resolve()), ReadOnly=True)
+            try:
+                out: list[tuple[str, list[list[str]]]] = []
+                for i in range(1, wb.Worksheets.Count + 1):
+                    ws = wb.Worksheets(i)
+                    out.append((str(ws.Name), _com_used_range_to_rows(ws.UsedRange.Value)))
+                return out
+            finally:
+                wb.Close(False)
+        except Exception as exc:  # noqa: BLE001
+            last = exc
+            _excel_app = None
+            if attempt == 0:
+                time.sleep(0.4)
+    raise last or RuntimeError("Excel COM falhou")
+
+
+def _load_html_grid(path: Path, data: bytes) -> WorkbookGrid:
+    text = data.decode("latin-1", errors="ignore")
+    rows = _html_to_grid(text)
+    sheet = "HTML"
+    title_m = re.search(r"<title>([^<]+)</title>", text, re.I)
+    if title_m:
+        sheet = title_m.group(1).strip()[:80]
+    return WorkbookGrid(str(path), sheet, rows, "html")
+
+
+def load_all_sheets(path: str | Path, data: bytes | None = None) -> list[WorkbookGrid]:
+    """Carrega todas as abas (PIS+COFINS no mesmo .xls). HTML retorna uma grid só."""
     path = Path(path)
     if data is None:
         data = path.read_bytes()
@@ -208,41 +269,36 @@ def load_workbook(path: str | Path, data: bytes | None = None) -> WorkbookGrid:
         raise RuntimeError(f"{path.name}: arquivo vazio ou não baixado")
 
     if kind == "html":
-        try:
-            text = data.decode("latin-1", errors="ignore")
-            rows = _html_to_grid(text)
-            sheet = "HTML"
-            title_m = re.search(r"<title>([^<]+)</title>", text, re.I)
-            if title_m:
-                sheet = title_m.group(1).strip()[:80]
-            return WorkbookGrid(str(path), sheet, rows, "html")
-        except Exception as exc:  # noqa: BLE001
-            errors.append(f"html:{exc}")
+        return [_load_html_grid(path, data)]
 
     if kind == "xlsx":
         try:
-            name, rows = _openpyxl_grid(path, data)
-            return WorkbookGrid(str(path), name, rows, "xlsx")
+            pairs = _openpyxl_all_grids(path, data)
+            return [WorkbookGrid(str(path), name, rows, "xlsx") for name, rows in pairs]
         except Exception as exc:  # noqa: BLE001
             errors.append(f"openpyxl:{exc}")
 
     if kind in ("xls", "unknown"):
         try:
-            name, rows = _xlrd_grid(path)
-            return WorkbookGrid(str(path), name, rows, "xls")
+            pairs = _xlrd_all_grids(path)
+            return [WorkbookGrid(str(path), name, rows, "xls") for name, rows in pairs]
         except Exception as exc:  # noqa: BLE001
             errors.append(f"xlrd:{exc}")
         try:
-            name, rows = _com_grid(path)
-            return WorkbookGrid(str(path), name, rows, "com")
+            pairs = _com_all_grids(path)
+            return [WorkbookGrid(str(path), name, rows, "com") for name, rows in pairs]
         except Exception as exc:  # noqa: BLE001
             errors.append(f"com:{exc}")
         try:
             text = data.decode("latin-1", errors="ignore")
             if "<table" in text.lower():
-                rows = _html_to_grid(text)
-                return WorkbookGrid(str(path), "HTML", rows, "html")
+                return [_load_html_grid(path, data)]
         except Exception as exc:  # noqa: BLE001
             errors.append(f"html-fallback:{exc}")
 
     raise RuntimeError(f"Não foi possível ler {path.name}: {'; '.join(errors)}")
+
+
+def load_workbook(path: str | Path, data: bytes | None = None) -> WorkbookGrid:
+    sheets = load_all_sheets(path, data)
+    return sheets[0]

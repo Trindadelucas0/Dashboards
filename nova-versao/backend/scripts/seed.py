@@ -12,6 +12,11 @@ from app.db import SessionLocal  # noqa: E402
 from app.models import Company, CompanyCnpj, FiscalMonth, ImportRecord, NfeLine, User, UserCompany  # noqa: E402
 from app.security import hash_password  # noqa: E402
 
+COMPANY_DESCRIPTIONS = {
+    "egaplast": "Artefatos e comércio de plásticos",
+    "baifer": "Distribuidora de ferramentas",
+}
+
 
 def upsert_companies(db) -> None:
     for reg in COMPANIES:
@@ -24,7 +29,7 @@ def upsert_companies(db) -> None:
         row.cnpj = reg.cnpj
         row.tabs = list(reg.tabs)
         row.name_re = reg.name_re or ""
-        row.description = "Artefatos e comércio de plásticos"
+        row.description = COMPANY_DESCRIPTIONS.get(reg.id, reg.label)
         aliases: list[tuple[str, str, str]] = []
         seen: set[str] = set()
         for unit in reg.units:
@@ -103,7 +108,7 @@ def main() -> None:
         purge_others(db)
         seed_users(db)
         db.commit()
-        print("Seed concluído (somente Egaplast + admin, sem packs de exemplo).")
+        print("Seed concluído (Egaplast + Baifer + admin, sem packs de exemplo).")
     finally:
         db.close()
 
