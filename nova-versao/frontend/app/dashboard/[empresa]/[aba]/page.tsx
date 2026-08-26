@@ -18,6 +18,7 @@ import {
 import { api, brl, brlCompact, formatCnpj, pct } from "@/lib/api";
 import { useDash } from "@/components/DashContext";
 import ImportTab from "@/components/ImportTab";
+import SupplierReportModal from "@/components/SupplierReportModal";
 
 ChartJS.register(
   CategoryScale,
@@ -350,6 +351,18 @@ export default function AbaPage() {
         <div className="alert-box warn">{emptyMsg(aba)}</div>
       ) : null}
       {!loading && !error && tri ? <TrimestreBlock tri={tri} asMain={viewingTrimestre} /> : null}
+
+      {aba === "finalidade" && !loading && !error ? (
+        <SupplierReportModal
+          empresa={params.empresa}
+          unidade={unidade || "matriz"}
+          month={month}
+          periodLabel={periodLabel}
+          companyName={company?.label || "Empresa"}
+          months={company?.months || []}
+          cfopDados={cfopDadosAll}
+        />
+      ) : null}
 
       {showBody && aba === "visao-geral" && (
         <>
