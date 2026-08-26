@@ -84,8 +84,9 @@ def test_egaplast_demonstrativos_fill_apuracao():
 
 @pytest.mark.skipif(not FIXTURES.exists(), reason="Fixture egaplast-padrao ausente")
 def test_companies_catalog_includes_egaplast_and_baifer():
-    from app.companies import COMPANIES, KEEP_COMPANY_IDS
+    from app.companies import COMPANIES, KEEP_COMPANY_IDS, KEEP_USERNAMES
 
     ids = {c.id for c in COMPANIES}
-    assert ids >= {"egaplast", "baifer"}
-    assert KEEP_COMPANY_IDS >= frozenset({"egaplast", "baifer"})
+    assert ids >= {"egaplast", "baifer", "loja-maquinas"}
+    assert KEEP_COMPANY_IDS >= frozenset({"egaplast", "baifer", "loja-maquinas"})
+    assert "loja-maquinas" in KEEP_USERNAMES

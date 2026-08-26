@@ -8,6 +8,7 @@ Identificação **obrigatória pelo CNPJ do cabeçalho** (primeiras ~12 linhas).
 |----|-------|------|---------|-------|-------|----------|
 | `egaplast` | Egaplast | `03185564000134` | `EGAPLAST` | `egaplast` | green | matriz + filial (mesmo CNPJ) |
 | `baifer` | Baifer | `52005382000140` | `BAIFER` | `baifer` | blue | matriz |
+| `loja-maquinas` | Loja das Máquinas | `13983066000190` | `LOJA DAS MAQUINAS` / `LOJA MÁQUINAS` | `loja-maquinas` | green | matriz |
 
 ### Senhas (seed)
 
@@ -23,7 +24,7 @@ cd nova-versao\backend
 .\.venv\Scripts\python.exe scripts\seed.py
 ```
 
-**Atenção:** `KEEP_COMPANY_IDS` e `KEEP_USERNAMES` controlam o que o seed **mantém**. Empresas/usuários fora dessas listas podem ser **removidos** no seed.
+**Atenção:** o `seed.py` só faz **upsert** do catálogo e usuários seed. **Não apaga** empresas criadas na UI nem `fiscal_months`. Limpeza fiscal manual: `clear_fiscal_data.py --i-know-what-im-doing` (não apaga empresas).
 
 ## Resolução de empresa
 
@@ -69,7 +70,7 @@ Atualizar:
 
 ```python
 KEEP_COMPANY_IDS = frozenset(COMPANY_BY_ID)  # automático se usar COMPANY_BY_ID
-KEEP_USERNAMES = frozenset({"admin", "egaplast", "baifer", "slug-empresa"})
+KEEP_USERNAMES = frozenset({"admin", "egaplast", "baifer", "loja-maquinas"})
 ```
 
 ### 3. Editar `scripts/seed.py`
