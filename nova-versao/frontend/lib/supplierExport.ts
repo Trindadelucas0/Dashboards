@@ -18,6 +18,69 @@ function safeFilePart(s: string, max = 24) {
     .replace(/[\\/:*?"<>|]/g, "");
 }
 
+function loadScript(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+      resolve();
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error(`Falha ao carregar ${src}`));
+    document.head.appendChild(script);
+  });
+}
+
+type JsPdfDoc = {
+  internal: { pageSize: { getHeight: () => number } };
+  setFont: (n: string, s: string) => void;
+  setFontSize: (n: number) => void;
+  setTextColor: (...n: number[]) => void;
+  text: (t: string, x: number, y: number) => void;
+  addPage: () => void;
+  autoTable: (opts: Record<string, unknown>) => void;
+  lastAutoTable?: { finalY: number };
+  save: (name: string) => void;
+};
+
+type JsPdfNs = {
+  jsPDF: new (opts: { orientation: string; unit: string; format: string }) => JsPdfDoc;
+};
+
+type XlsxNs = {
+  utils: {
+    book_new: () => unknown;
+    aoa_to_sheet: (rows: (string | number)[][]) => { "!cols"?: { wch: number }[] };
+    book_append_sheet: (wb: unknown, ws: unknown, name: string) => void;
+  };
+  writeFile: (wb: unknown, name: string) => void;
+};
+
+declare global {
+  interface Window {
+    jspdf?: JsPdfNs;
+    XLSX?: XlsxNs;
+  }
+}
+
+async function loadPdfLibs() {
+  await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+  await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js");
+  const Ctor = window.jspdf?.jsPDF as (JsPdfNs["jsPDF"] & { prototype?: { autoTable?: unknown } }) | undefined;
+  if (!Ctor) throw new Error("Biblioteca jsPDF nao carregada.");
+  if (typeof Ctor.prototype?.autoTable !== "function") {
+    throw new Error("Biblioteca jspdf-autotable nao carregada.");
+  }
+}
+
+async function loadXlsxLib() {
+  await loadScript("https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js");
+  if (!window.XLSX) throw new Error("Biblioteca XLSX nao carregada.");
+}
+
 function buildPrintHtml(data: SupplierReportData) {
   const emitido = new Date().toLocaleDateString("pt-BR");
   let html =
@@ -61,8 +124,8 @@ export function printSupplierReport(data: SupplierReportData) {
 }
 
 export async function exportSupplierPdf(data: SupplierReportData) {
-  const [{ jsPDF }, autoTableMod] = await Promise.all([import("jspdf"), import("jspdf-autotable")]);
-  const autoTable = autoTableMod.default;
+  await loadPdfLibs();
+  const { jsPDF } = window.jspdf as JsPdfNs;
   const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   const margin = 14;
   const pageH = pdf.internal.pageSize.getHeight();
@@ -100,7 +163,7 @@ export async function exportSupplierPdf(data: SupplierReportData) {
     pdf.text(`CNPJ: ${s.cnpj} · UF: ${s.uf}`, margin, y);
     y += 4;
     pdf.setTextColor(0, 0, 0);
-    autoTable(pdf, {
+    pdf.autoTable({
       startY: y,
       margin: { left: margin, right: margin },
       tableWidth: "auto",
@@ -112,8 +175,7 @@ export async function exportSupplierPdf(data: SupplierReportData) {
       footStyles: { fillColor: [241, 245, 249], textColor: [30, 41, 59], fontStyle: "bold" },
       columnStyles: { 3: { halign: "right" }, 4: { halign: "right" } },
     });
-    const last = (pdf as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
-    y = (last?.finalY || y) + 8;
+    y = (pdf.lastAutoTable?.finalY || y) + 8;
   }
   ensureSpace(12);
   pdf.setFont("helvetica", "bold");
@@ -134,7 +196,8 @@ function autoColWidths(aoa: (string | number)[][], maxWch = 50) {
 }
 
 export async function exportSupplierExcel(data: SupplierReportData) {
-  const XLSX = await import("xlsx");
+  await loadXlsxLib();
+  const XLSX = window.XLSX as XlsxNs;
   const emitido = new Date().toLocaleDateString("pt-BR");
   const col3 = data.col3Label || "Finalidade";
   const resumo: (string | number)[][] = [
