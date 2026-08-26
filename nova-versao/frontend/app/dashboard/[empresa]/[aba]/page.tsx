@@ -261,7 +261,6 @@ export default function AbaPage() {
                   options={{
                     responsive: true,
                     maintainAspectRatio: false,
-                    spanGaps: false,
                     plugins: { legend: { position: "bottom" } },
                     scales: { y: { ticks: { callback: (v) => `R$ ${v}K` } } },
                   }}

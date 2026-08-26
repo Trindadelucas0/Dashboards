@@ -81,7 +81,7 @@ export default function ImportTab() {
       }
       if (blocked.length) {
         const reason = blocked
-          .map((s) => `${s.file}: ${s.status}${(s.errors || []).length ? " — " + s.errors.join("; ") : ""}`)
+          .map((s) => `${s.file}: ${s.status}${(s.errors || []).length ? " — " + (s.errors || []).join("; ") : ""}`)
           .join(" | ");
         setError(ok.length ? `Alguns arquivos não gravaram. ${reason}` : `Não gravou. ${reason}`);
       }
