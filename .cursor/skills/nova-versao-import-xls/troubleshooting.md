@@ -25,6 +25,7 @@
 | Filename atípico | Adicionar padrão em `competencia_from_filename` |
 | Cabeçalho sem período | Pedir arquivo com `Competência:` ou renomear `MMYYYY` |
 | ST/imposto anual | Enviar no lote com arquivos que têm competência (herda batch) |
+| APURAÇÃO 5005 via tempfile sem `original_filename` | `imports.py` deve passar `original_filename=UploadFile.filename` |
 
 ### `Planilha cobre mais de um mês`
 
@@ -78,6 +79,15 @@
 | Labels sem acento | `_fold()` normalização em `parse_impostos` |
 | Bloco APURAÇÃO não encontrado | Scan `apuracao` row index |
 | Usando débito saídas como recolher | Regra saldo credor quando `icms a recolher = 0` |
+| Baifer: falta Memória / valor ≠ planilha 5005 | Importar `*APURAÇÃO 5005*.xlsx` (tipo `apuracao_5005`); ver `parse_memoria_5005.py` |
+
+### Memória de Cálculo vazia (Baifer)
+
+| Causa | Fix |
+|-------|-----|
+| Só importou Demonstrativo ICMS | Enviar `APURAÇÃO 5005` no dashboard Baifer |
+| Preview recusou competência | Nome deve ter `MMYYYY` (ex. `012026`) |
+| Empresa não herdada | Abrir Baifer antes de Importar (`company_id` no FormData) |
 
 ### Só PIS ou só COFINS no pack
 

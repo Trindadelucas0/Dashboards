@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
-import { CARD_META } from "@/lib/nav";
+import { CARD_META, firstAllowedTab } from "@/lib/nav";
 import "../selector.css";
 
-type Company = { id: string; label: string; desc: string };
+type Company = { id: string; label: string; desc: string; tabs?: string[] };
 
 export default function SeletorPage() {
   const router = useRouter();
@@ -62,7 +62,7 @@ export default function SeletorPage() {
           {companies.map((c) => {
             const meta = CARD_META[c.id];
             return (
-              <Link key={c.id} href={`/dashboard/${c.id}/visao-geral`} className="dashboard-card">
+              <Link key={c.id} href={`/dashboard/${c.id}/${firstAllowedTab(c.tabs)}`} className="dashboard-card">
                 <div className="card-icon">
                   <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={meta?.icon || CARD_META.egaplast.icon} />
@@ -86,15 +86,15 @@ export default function SeletorPage() {
                 <p className="card-desc">Cadastre CNPJ e razão. A planilha já cai no dashboard certo.</p>
                 <div className="card-arrow">Cadastrar</div>
               </Link>
-              <Link href="/usuarios/novo" className="dashboard-card card-new">
+              <Link href="/usuarios" className="dashboard-card card-new">
                 <div className="card-icon">
                   <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
-                <h2 className="card-title">Novo usuário</h2>
-                <p className="card-desc">Só visualiza o dashboard escolhido — sem importar planilhas.</p>
-                <div className="card-arrow">Criar</div>
+                <h2 className="card-title">Usuários</h2>
+                <p className="card-desc">Crie contas e escolha empresas e módulos que cada uma pode ver.</p>
+                <div className="card-arrow">Gerenciar</div>
               </Link>
             </>
           ) : null}

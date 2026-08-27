@@ -259,7 +259,7 @@ function emptyMsg(aba: string) {
   if (aba === "dre") return "Importe a planilha RESULTADO para preencher a DRE. CMV e margens não são estimados.";
   if (aba === "impostos") return "Impostos só aparecem depois de importar a planilha de apuração. Não inventamos valor.";
   if (aba === "balancete") return "Balancete ainda não importado. Não inventamos saldo contábil.";
-  if (aba === "memoria") return "Sem metadados de conferência neste mês. Importe Entradas/Saídas.";
+  if (aba === "memoria") return "Sem metadados de conferência neste mês. Importe Entradas/Saídas ou a apuração de impostos.";
   return "Sem movimento neste mês. Importe as planilhas na aba Importar.";
 }
 
@@ -311,7 +311,7 @@ export default function AbaPage() {
     finalidade: ["Finalidade de Compras", "Por CFOP — clique para expandir fornecedores"],
     vendas: ["Vendas", "Faturamento de saídas por cliente e UF"],
     impostos: ["Impostos", "Apuração — só entra o que foi importado"],
-    memoria: ["Memória de Cálculo", "Conferência Excel × soma das NFs"],
+    memoria: ["Memória de Cálculo", "ICMS 5005 + PIS/COFINS"],
     recebimentos: ["Recebimentos/Pagamentos", "Estimativa pelo movimento fiscal"],
     balancete: ["Balancete", "Contábil"],
     dre: ["DRE", "Demonstração do resultado"],
@@ -946,6 +946,17 @@ export default function AbaPage() {
       {showBody && aba === "memoria" && (() => {
         const mem = d.memoriaCalculo as Record<string, number | string | undefined> | undefined;
         const hasMem = !!(mem && (mem.debitoOriginal != null || mem.icmsARecolher != null));
+        const taxRow = (row: Record<string, unknown> | null | undefined) =>
+          !!(row && typeof row === "object" && ("aRecolher" in row || "apurado" in row));
+        const hasPis = taxRow(ap?.pis);
+        const hasCofins = taxRow(ap?.cofins);
+        const hasIcmsDemo = taxRow(ap?.icms);
+        const hasIpi = taxRow(ap?.ipi);
+        const hasIcmsSt = taxRow(ap?.icmsSt);
+        const hasPisCofins = hasPis || hasCofins;
+        const hasAnyTax = hasMem || hasPisCofins || hasIcmsDemo || hasIpi || hasIcmsSt;
+        const rb = Number(d.receitaBruta || 0);
+        const pctRb = (v: number) => (rb > 0 ? ((v / rb) * 100).toFixed(2) : "—");
         const icmsVal = Number(mem?.icmsARecolher ?? 0);
         const icmsCredor = icmsVal < 0;
         const subvVal = Number(mem?.ganhoReceitaSubvencao ?? d.subvencao ?? 0);
@@ -963,14 +974,69 @@ export default function AbaPage() {
           { label: "Crédito fora", valor: credFora },
           { label: "Outorgado", valor: outorg },
         ].filter((s) => s.valor > 0);
+        const fonteParts: string[] = [];
+        if (hasMem) fonteParts.push("APURAÇÃO 5005");
+        if (hasPisCofins) fonteParts.push("Demonstrativo PIS/COFINS");
+        if (!hasMem && hasIcmsDemo) fonteParts.push("Demonstrativo ICMS");
+        const fonteTxt = fonteParts.length
+          ? `Fonte: ${fonteParts.join(" + ")}.`
+          : "Importe APURAÇÃO 5005 e/ou Demonstrativo PIS/COFINS.";
+        type ResumoRow = { name: string; apurado: number; credito: number; aRecolher: number };
+        const resumoRows: ResumoRow[] = [];
+        if (hasMem) {
+          resumoRows.push({
+            name: "ICMS",
+            apurado: debOrig,
+            credito: credOrig + cred5005 + credFora + outorg,
+            aRecolher: icmsVal,
+          });
+        } else if (hasIcmsDemo) {
+          resumoRows.push({
+            name: "ICMS",
+            apurado: Number(ap?.icms?.apurado ?? 0),
+            credito: Number(ap?.icms?.credito ?? 0),
+            aRecolher: Number(ap?.icms?.aRecolher ?? 0),
+          });
+        }
+        if (hasIcmsSt) {
+          resumoRows.push({
+            name: "ICMS ST",
+            apurado: Number(ap?.icmsSt?.apurado ?? 0),
+            credito: Number(ap?.icmsSt?.credito ?? 0),
+            aRecolher: Number(ap?.icmsSt?.aRecolher ?? 0),
+          });
+        }
+        if (hasPis) {
+          resumoRows.push({
+            name: "PIS",
+            apurado: Number(ap?.pis?.apurado ?? 0),
+            credito: Number(ap?.pis?.credito ?? 0),
+            aRecolher: Number(ap?.pis?.aRecolher ?? 0),
+          });
+        }
+        if (hasCofins) {
+          resumoRows.push({
+            name: "COFINS",
+            apurado: Number(ap?.cofins?.apurado ?? 0),
+            credito: Number(ap?.cofins?.credito ?? 0),
+            aRecolher: Number(ap?.cofins?.aRecolher ?? 0),
+          });
+        }
+        if (hasIpi) {
+          resumoRows.push({
+            name: "IPI",
+            apurado: Number(ap?.ipi?.apurado ?? 0),
+            credito: Number(ap?.ipi?.credito ?? 0),
+            aRecolher: Number(ap?.ipi?.aRecolher ?? 0),
+          });
+        }
 
         return (
           <>
+            <div className="formula-box">{fonteTxt}</div>
+
             {hasMem ? (
               <>
-                <div className="formula-box">
-                  Fonte: APURAÇÃO 5005 · ICMS a recolher alimenta a aba Impostos.
-                </div>
                 <div className="tax-grid">
                   <div className="tax-card">
                     <div className="tax-card-head">
@@ -1095,11 +1161,98 @@ export default function AbaPage() {
                   </div>
                 </div>
               </>
-            ) : (
+            ) : null}
+
+            {!hasMem ? (
               <div className="alert-box warn">
-                Memória ICMS (APURAÇÃO 5005) ainda não importada neste mês. Importe a planilha para preencher os cards e gráficos.
+                Memória ICMS (APURAÇÃO 5005) ainda não importada neste mês.
+                {hasPisCofins ? " PIS/COFINS abaixo vêm do demonstrativo importado." : " Importe a planilha para preencher os cards e gráficos de ICMS."}
               </div>
-            )}
+            ) : null}
+
+            {(hasPis || hasCofins || (!hasMem && (hasIcmsDemo || hasIpi))) ? (
+              <div className="tax-grid">
+                {!hasMem && hasIcmsDemo ? (
+                  <div className="tax-card">
+                    <div className="tax-card-head">
+                      <div className="tax-name t-accent">ICMS (demonstrativo)</div>
+                      <span className="chip bl">Fallback</span>
+                    </div>
+                    <div className="tax-cur t-accent">{brl(ap?.icms?.aRecolher)}</div>
+                    <div className="tax-prev">Apurado: {brl(ap?.icms?.apurado)} · importe a 5005 para a memória completa</div>
+                  </div>
+                ) : null}
+                {hasPis ? (
+                  <div className="tax-card">
+                    <div className="tax-card-head">
+                      <div className="tax-name t-success">PIS a recolher</div>
+                      <span className="chip gr">Importado</span>
+                    </div>
+                    <div className="tax-cur t-success">{brl(ap?.pis?.aRecolher)}</div>
+                    <div className="tax-prev">
+                      Apurado: {brl(ap?.pis?.apurado)}
+                      {ap?.pis?.credito != null ? ` · Crédito: ${brl(ap.pis.credito)}` : ""}
+                    </div>
+                  </div>
+                ) : null}
+                {hasCofins ? (
+                  <div className="tax-card">
+                    <div className="tax-card-head">
+                      <div className="tax-name t-warning">COFINS a recolher</div>
+                      <span className="chip ye">Importado</span>
+                    </div>
+                    <div className="tax-cur t-warning">{brl(ap?.cofins?.aRecolher)}</div>
+                    <div className="tax-prev">
+                      Apurado: {brl(ap?.cofins?.apurado)}
+                      {ap?.cofins?.credito != null ? ` · Crédito: ${brl(ap.cofins.credito)}` : ""}
+                    </div>
+                  </div>
+                ) : null}
+                {!hasMem && hasIpi ? (
+                  <div className="tax-card">
+                    <div className="tax-card-head">
+                      <div className="tax-name">IPI</div>
+                      <span className="chip gy">Importado</span>
+                    </div>
+                    <div className="tax-cur">{moneyOrDash(ap?.ipi?.aRecolher)}</div>
+                    <div className="tax-prev">Apurado: {brl(ap?.ipi?.apurado)}</div>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
+            {resumoRows.length ? (
+              <div className="table-card">
+                <div className="table-head">
+                  <div className="ttl">Resumo consolidado</div>
+                  <div className="sub">Obrigações apuradas na competência · só o que foi importado</div>
+                </div>
+                <div className="tbl-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Tributo</th>
+                        <th className="r">Apurado</th>
+                        <th className="r">Créditos</th>
+                        <th className="r">A recolher</th>
+                        <th className="r">% s/ RB</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {resumoRows.map((r) => (
+                        <tr key={r.name}>
+                          <td className="fw7">{r.name}</td>
+                          <td className="r">{brl(r.apurado)}</td>
+                          <td className="r">{brl(r.credito)}</td>
+                          <td className="r td-val">{brl(r.aRecolher)}</td>
+                          <td className="r">{pctRb(r.aRecolher)}%</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : null}
 
             <div className="formula-box">Conferência movimento — Total Geral Excel × soma das NFs</div>
             <div className="mem-grid">
@@ -1123,29 +1276,8 @@ export default function AbaPage() {
               </div>
             </div>
 
-            {!hasMem && ap ? (
-              <div className="tax-grid">
-                <div className="tax-card">
-                  <div className="tax-card-head">
-                    <div className="tax-name t-accent">ICMS (demonstrativo)</div>
-                    <span className="chip bl">Fallback</span>
-                  </div>
-                  <div className="tax-cur t-accent">{brl(ap.icms?.aRecolher)}</div>
-                  <div className="tax-prev">Apurado: {brl(ap.icms?.apurado)} · importe a 5005 para a memória completa</div>
-                </div>
-                <div className="tax-card">
-                  <div className="tax-card-head">
-                    <div className="tax-name">IPI</div>
-                    <span className="chip gy">{ap.ipi ? "Importado" : "Em apuração"}</span>
-                  </div>
-                  <div className="tax-cur">{moneyOrDash(ap.ipi?.aRecolher)}</div>
-                  <div className="tax-prev">{ap.ipi ? `Apurado: ${brl(ap.ipi?.apurado)}` : "Aguardando planilha"}</div>
-                </div>
-              </div>
-            ) : null}
-
-            {!hasMem && !ap ? (
-              <div className="alert-box warn">Sem APURAÇÃO 5005 nem demonstrativo de impostos — importe a planilha de memória/ICMS.</div>
+            {!hasAnyTax ? (
+              <div className="alert-box warn">Sem APURAÇÃO 5005 nem demonstrativo de impostos — importe a planilha de memória/ICMS e/ou PIS/COFINS.</div>
             ) : null}
           </>
         );

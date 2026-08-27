@@ -14,6 +14,7 @@ from app.extract.classify import (
     scan_period,
     scan_razao,
 )
+from app.extract.parse_balancete import parse_balancete
 from app.extract.parse_dre import parse_dre
 from app.extract.parse_impostos import (
     apuracao_from_imposto_row,
@@ -21,12 +22,15 @@ from app.extract.parse_impostos import (
     composicao_from_apuracao,
     deducoes_from_apuracao,
     is_demonstrativo_icms,
+    is_demonstrativo_subtri,
+    merge_subtri_sheets,
     parse_demonstrativo_icms,
     parse_demonstrativo_ipi,
     parse_demonstrativo_pis_cofins,
     parse_impostos_icms_ipi,
     parse_st_mensal,
 )
+from app.extract.parse_memoria_5005 import apuracao_patch_from_5005, is_apuracao_5005, parse_apuracao_5005
 from app.extract.parse_movimento import parse_movimento
 from app.extract.workbook import WorkbookGrid, is_placeholder_bytes, load_all_sheets
 
@@ -119,9 +123,14 @@ def _empty_result(filename: str, tipo: str, extra: dict | None = None) -> dict:
     return base
 
 
-def classify_and_extract(path: str | Path, data: bytes | None = None, db=None) -> dict:
+def classify_and_extract(
+    path: str | Path,
+    data: bytes | None = None,
+    db=None,
+    original_filename: str | None = None,
+) -> dict:
     path = Path(path)
-    filename = path.name
+    filename = original_filename or path.name
     if data is None:
         data = path.read_bytes()
     if is_placeholder_bytes(data):
@@ -218,11 +227,24 @@ def classify_and_extract(path: str | Path, data: bytes | None = None, db=None) -
     if not company:
         if tipo == "icms_st":
             result["warnings"].append("ST sem CNPJ — a empresa aberta no dashboard será usada ao gravar")
+        elif tipo == "apuracao_5005" or is_apuracao_5005(grid, filename):
+            # 5005 não traz CNPJ — company_id vem do override no import (Baifer etc.).
+            result["warnings"].append("APURAÇÃO 5005 sem CNPJ — a empresa aberta no dashboard será usada ao gravar")
         else:
             result["errors"].append("CNPJ/razão não mapeados para nenhuma empresa cadastrada")
             return result
-    # Impostos anuais / ST sem competência no nome — movimento/DRE ainda exigem.
-    if not competencia and tipo not in ("impostos", "irpj", "ipi", "pis", "cofins", "pis_cofins", "icms", "icms_st"):
+    # Impostos anuais / ST / 5005 sem competência no nome — movimento/DRE ainda exigem.
+    if not competencia and tipo not in (
+        "impostos",
+        "irpj",
+        "ipi",
+        "pis",
+        "cofins",
+        "pis_cofins",
+        "icms",
+        "icms_st",
+        "apuracao_5005",
+    ):
         result["errors"].append("Competência não identificada no cabeçalho nem no nome do arquivo")
         return result
 
@@ -265,6 +287,23 @@ def classify_and_extract(path: str | Path, data: bytes | None = None, db=None) -
         result["pack_patch"] = pack
         return result
 
+    if tipo == "balancete":
+        parsed = parse_balancete(grid)
+        result["pack_patch"] = {
+            "hasBalancete": True,
+            "balancete": {**parsed, "source": filename, "sheet": grid.sheet_name},
+        }
+        if not parsed.get("hasValores"):
+            result["warnings"].append("Balancete sem valores numéricos reconhecidos")
+            result["errors"].append("Balancete sem contas reconhecidas")
+        result["meta"] = {
+            "lineCount": len(parsed.get("contas") or []),
+            "hasValores": parsed.get("hasValores"),
+            "ativo": (parsed.get("totais") or {}).get("ativo"),
+            "passivo": (parsed.get("totais") or {}).get("passivo"),
+        }
+        return result
+
     if tipo == "dre":
         dre = parse_dre(grid)
         result["pack_patch"] = {
@@ -285,6 +324,21 @@ def classify_and_extract(path: str | Path, data: bytes | None = None, db=None) -
         result["meta"] = {"lineCount": len(dre.get("linhas") or []), "hasValores": dre.get("hasValores")}
         return result
 
+    if tipo == "apuracao_5005" or (tipo in ("desconhecido", "impostos") and is_apuracao_5005(grid, filename)):
+        parsed = parse_apuracao_5005(grid, filename)
+        result["tipo"] = "apuracao_5005"
+        if not result.get("competencia") and parsed.get("competencia"):
+            result["competencia"] = parsed["competencia"]
+        result["pack_patch"] = apuracao_patch_from_5005(parsed)
+        result["meta"] = {
+            "icmsARecolher": parsed.get("icmsARecolher"),
+            "ganhoReceitaSubvencao": parsed.get("ganhoReceitaSubvencao"),
+            "hasValores": parsed.get("hasValores"),
+        }
+        if not parsed.get("hasValores"):
+            result["errors"].append("APURAÇÃO 5005 sem valores reconhecidos")
+        return result
+
     if tipo == "ipi":
         parsed = parse_demonstrativo_ipi(grid)
         result["pack_patch"] = apuracao_patch_from_demo("ipi", parsed)
@@ -298,7 +352,12 @@ def classify_and_extract(path: str | Path, data: bytes | None = None, db=None) -
         return result
 
     if tipo == "icms_st":
-        parsed = parse_st_mensal(grid)
+        if any(is_demonstrativo_subtri(sh, filename) for sh in sheets):
+            subtri_sheets = [sh for sh in sheets if is_demonstrativo_subtri(sh, filename)]
+            parsed = merge_subtri_sheets(subtri_sheets or sheets)
+            result["sheet"] = ", ".join(sh.sheet_name for sh in (subtri_sheets or sheets))
+        else:
+            parsed = parse_st_mensal(grid)
         result["pack_patch"] = apuracao_patch_from_demo("icms_st", parsed)
         result["meta"] = {"aRecolher": parsed.get("aRecolher"), "ufs": len(parsed.get("byUf") or {})}
         return result

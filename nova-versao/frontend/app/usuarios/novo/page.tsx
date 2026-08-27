@@ -4,19 +4,22 @@ import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import UserAccessPicker, {
+  AccessMap,
+  buildAccessPayload,
+  type CompanyOption,
+} from "@/components/UserAccessPicker";
 import "../../login.css";
 import "../../empresas/nova/nova.css";
 import "./novo.css";
-
-type Company = { id: string; label: string };
 
 export default function NovoUsuarioPage() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [selected, setSelected] = useState<string[]>([]);
+  const [companies, setCompanies] = useState<CompanyOption[]>([]);
+  const [access, setAccess] = useState<AccessMap>({});
 
   useEffect(() => {
     (async () => {
@@ -26,7 +29,7 @@ export default function NovoUsuarioPage() {
           router.replace("/seletor");
           return;
         }
-        const list = await api<Company[]>("/api/companies");
+        const list = await api<CompanyOption[]>("/api/companies");
         setCompanies(list);
         setReady(true);
       } catch {
@@ -34,10 +37,6 @@ export default function NovoUsuarioPage() {
       }
     })();
   }, [router]);
-
-  function toggleCompany(id: string) {
-    setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-  }
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -50,8 +49,13 @@ export default function NovoUsuarioPage() {
       setError("As senhas não coincidem");
       return;
     }
-    if (selected.length === 0) {
+    const payload = buildAccessPayload(access);
+    if (payload.length === 0) {
       setError("Selecione pelo menos um dashboard");
+      return;
+    }
+    if (payload.some((a) => a.tabs.length === 0)) {
+      setError("Cada empresa liberada precisa de pelo menos uma aba");
       return;
     }
     setLoading(true);
@@ -61,10 +65,10 @@ export default function NovoUsuarioPage() {
         body: JSON.stringify({
           username,
           password,
-          companyIds: selected,
+          access: payload,
         }),
       });
-      router.push("/seletor");
+      router.push("/usuarios");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível criar o usuário");
     } finally {
@@ -78,7 +82,7 @@ export default function NovoUsuarioPage() {
     <div className="login-page">
       <div className="dot-pattern" aria-hidden="true" />
       <div className="login-wrap nova-wrap">
-        <div className="login-card nova-card">
+        <div className="login-card nova-card nova-card-wide">
           <div className="logo-wrapper">
             <div className="brand-name">
               <span className="dark">Êx</span>
@@ -89,7 +93,7 @@ export default function NovoUsuarioPage() {
           </div>
           <div className="divider" />
           <p className="nova-lead">
-            Cria uma conta só para visualizar os dashboards escolhidos. Não poderá importar planilhas.
+            Escolha as empresas e, em cada uma, quais módulos a conta pode ver. Não poderá importar planilhas.
           </p>
           {error ? <div className="error-box" role="alert">{error}</div> : null}
           <form onSubmit={onSubmit}>
@@ -106,23 +110,8 @@ export default function NovoUsuarioPage() {
               <input id="password2" name="password2" type="password" className="form-input" required minLength={4} autoComplete="new-password" />
             </div>
             <div className="form-group">
-              <span className="form-label">Dashboards permitidos</span>
-              {companies.length === 0 ? (
-                <p className="company-empty">Nenhuma empresa cadastrada ainda.</p>
-              ) : (
-                <div className="company-checks" role="group" aria-label="Empresas">
-                  {companies.map((c) => (
-                    <label key={c.id} className={`company-check ${selected.includes(c.id) ? "on" : ""}`}>
-                      <input
-                        type="checkbox"
-                        checked={selected.includes(c.id)}
-                        onChange={() => toggleCompany(c.id)}
-                      />
-                      <span>{c.label}</span>
-                    </label>
-                  ))}
-                </div>
-              )}
+              <span className="form-label">Empresas e módulos</span>
+              <UserAccessPicker companies={companies} access={access} onChange={setAccess} />
             </div>
             <div className="form-group">
               <button type="submit" className="btn-login" disabled={loading || companies.length === 0}>
@@ -130,7 +119,7 @@ export default function NovoUsuarioPage() {
               </button>
             </div>
           </form>
-          <Link href="/seletor" className="nova-back">Voltar ao seletor</Link>
+          <Link href="/usuarios" className="nova-back">Voltar à lista</Link>
         </div>
         <div className="login-footer">© {new Date().getFullYear()} Êxito · Todos os direitos reservados</div>
       </div>

@@ -45,6 +45,7 @@ flowchart TD
 | `parse_movimento.py` | `parse_movimento`, detecção header dinâmica, `_find_total_geral` |
 | `aggregate.py` | `aggregate`, `merge_entradas`, `merge_saidas`, `validate_movimento` |
 | `parse_impostos.py` | `parse_demonstrativo_icms`, `parse_demonstrativo_ipi`, `parse_demonstrativo_pis_cofins`, `parse_st_mensal`, `parse_impostos_icms_ipi`, `apuracao_patch_from_demo` |
+| `parse_memoria_5005.py` | `parse_apuracao_5005`, `apuracao_patch_from_5005` → `memoriaCalculo` + ICMS/subvenção |
 | `parse_dre.py` | `parse_dre` |
 | `pipeline.py` | `classify_and_extract` — ponto único de entrada |
 | `companies.py` | `COMPANIES`, `find_by_cnpj`, `resolve_from_db` |

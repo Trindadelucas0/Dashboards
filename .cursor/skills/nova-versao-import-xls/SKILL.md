@@ -3,10 +3,11 @@ name: nova-versao-import-xls
 description: >-
   Calibra e valida importação de planilhas EXITO (.xls/.xlsx) no nova-versao
   (Next.js :3000 + FastAPI :8001 + Postgres). Use quando o usuário enviar anexos
-  ou caminhos de Entradas, Saídas, Apuração ICMS, IPI, PIS/COFINS, ST, DRE,
-  impostos anuais, ou pedir calibrar/subir dados mensais Baifer, Egaplast ou
-  nova empresa. Fluxo: mapear CNPJ → probe extract → calibrar parser se falhar →
-  pytest golden → usuário importa no dashboard. NÃO usar para EJS porta 4243.
+  ou caminhos de Entradas, Saídas, Apuração ICMS, APURAÇÃO 5005 (Memória), IPI,
+  PIS/COFINS, ST, DRE, impostos anuais, ou pedir calibrar/subir dados mensais
+  Baifer, Egaplast ou nova empresa. Fluxo: mapear CNPJ → probe extract →
+  calibrar parser se falhar → pytest golden → usuário importa no dashboard.
+  NÃO usar para EJS porta 4243.
 ---
 
 # Nova-versão — Importar planilhas EXITO
@@ -170,11 +171,14 @@ Layout colunas: [layout-exito.md](layout-exito.md).
 | Tipo | Conferir na planilha | Campo pack |
 |------|---------------------|------------|
 | `icms` | linha `ICMS a recolher` ou saldo credor | `apuracao.icms.aRecolher` |
+| `apuracao_5005` | `ICMS A RECOLHER` + blocos Original/5005/Fora + subvenção | `memoriaCalculo`, `apuracao.icms.aRecolher`, `apuracao.subvencao` |
 | `ipi` | `Saldo devedor de IPI` | `apuracao.ipi.aRecolher` |
 | `pis` / `cofins` / `pis_cofins` | `… Não Cumulativa a Recolher` ou cumulativo | `apuracao.pis`, `apuracao.cofins` |
 | `icms_st` | soma UF | `apuracao.icmsSt`, `porUfSt` |
 
 **ICMS com saldo credor:** se `ICMS a recolher = 0` e `Saldo credor … > 0` → `aRecolher` negativo (crédito).
+
+**Baifer Memória / ICMS oficial:** planilha `APURAÇÃO 5005` (padrão mensal). Sem CNPJ — importar com dashboard Baifer aberto. Detalhe: [planilha-tipos.md](planilha-tipos.md#apuração-5005--memória-de-cálculo-padrão-baifer).
 
 **PIS/COFINS arquivo único com 2 abas:** pipeline usa `load_all_sheets` → `tipo: pis_cofins` → merge das duas abas; dedupe por maior score se abas duplicadas.
 
@@ -219,6 +223,7 @@ Matriz completa: [troubleshooting.md](troubleshooting.md).
 | `parse_movimento.py` | Linhas detalhe + Total Geral |
 | `aggregate.py` | CFOP, ranking, `merge_entradas/saidas`, `validate_movimento` |
 | `parse_impostos.py` | ICMS, IPI, PIS/COFINS, ST, tabela anual |
+| `parse_memoria_5005.py` | APURAÇÃO 5005 → `memoriaCalculo` + ICMS/subvenção |
 | `parse_dre.py` | DRE / RESULTADO |
 | `pipeline.py` | Orquestra tudo → `pack_patch` |
 | `companies.py` | Catálogo estático Egaplast/Baifer |
@@ -246,6 +251,7 @@ Alternativa: empresa só no Postgres via `/empresas/nova` — `resolve_from_db` 
 cd nova-versao\backend
 $env:PYTHONPATH='.'
 .\.venv\Scripts\python.exe -m pytest -q tests/test_baifer_entradas.py
+.\.venv\Scripts\python.exe -m pytest -q tests/test_apuracao_5005.py
 .\.venv\Scripts\python.exe -m pytest -q tests/test_demonstrativo_icms.py
 .\.venv\Scripts\python.exe -m pytest -q tests/test_demonstrativo_pis_cofins.py
 .\.venv\Scripts\python.exe -m pytest -q tests/test_egaplast_padrao.py
@@ -255,7 +261,7 @@ $env:PYTHONPATH='.'
 Fixtures:
 
 - `nova-versao/fixtures/egaplast-padrao/` — regressão Egaplast
-- `nova-versao/fixtures/baifer-padrao/` — Baifer Entradas jan/2026
+- `nova-versao/fixtures/baifer-padrao/` — Baifer Entradas / Saídas / DRE / **APURAÇÃO 5005** jan/2026
 
 Golden conhecidos: [validation.md](validation.md#valores-golden).
 

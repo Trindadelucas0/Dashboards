@@ -5,7 +5,7 @@ import { useParams, usePathname, useRouter, useSearchParams } from "next/navigat
 import { useEffect, useMemo, useState } from "react";
 import { DashContext, type CompanyDetail, type DashCtx } from "@/components/DashContext";
 import { api } from "@/lib/api";
-import { NAV } from "@/lib/nav";
+import { firstAllowedTab, NAV } from "@/lib/nav";
 import "../../dashboard.css";
 
 const TITLES: Record<string, [string, string]> = {
@@ -14,7 +14,7 @@ const TITLES: Record<string, [string, string]> = {
   finalidade: ["Finalidade de Compras", "Por CFOP"],
   vendas: ["Vendas", "Saídas por cliente"],
   impostos: ["Impostos", "Apuração"],
-  memoria: ["Memória de Cálculo", "Conferência de totais"],
+  memoria: ["Memória de Cálculo", "ICMS 5005 + PIS/COFINS"],
   recebimentos: ["Recebimentos/Pagamentos", "Estimativa pelo movimento"],
   balancete: ["Balancete", "Contábil"],
   dre: ["DRE", "Demonstração do resultado"],
@@ -83,13 +83,17 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
   }, [empresa]);
 
   useEffect(() => {
-    if (!authReady || isAdmin || aba !== "importar") return;
+    if (!authReady || !company) return;
+    const allowed = (company.tabs || []).filter((id) => isAdmin || id !== "importar");
+    if (!allowed.length) return;
+    if (allowed.includes(aba)) return;
+    const fallback = firstAllowedTab(allowed);
     const q = new URLSearchParams();
     if (month) q.set("mes", month);
     if (unidade) q.set("unidade", unidade);
     const qs = q.toString();
-    router.replace(`/dashboard/${empresa}/visao-geral${qs ? `?${qs}` : ""}`);
-  }, [aba, authReady, empresa, isAdmin, month, router, unidade]);
+    router.replace(`/dashboard/${empresa}/${fallback}${qs ? `?${qs}` : ""}`);
+  }, [aba, authReady, company, empresa, isAdmin, month, router, unidade]);
 
   async function reloadCompany() {
     try {

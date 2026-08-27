@@ -9,6 +9,7 @@ Código: `nova-versao/backend/app/extract/`. Entrada única: `classify_and_extra
 | `entradas` | aba/nome `entrada`; cabeço `Total Fornecedor` | `parse_movimento` + `merge_entradas` | `totalCompras`, `cfopDados`, `fornecedores`, `porUf` |
 | `saidas` | aba `saída/saida`; cabeço `Total Cliente` | `parse_movimento` + `merge_saidas` | `cfopSaidasTotal`, `receitaBruta`, `clientes`, `porUfSaidas` |
 | `icms` | `DEMONSTRATIVO DO ICMS`; filename `apura`+`icms` | `parse_demonstrativo_icms` | `apuracao.icms` |
+| `apuracao_5005` | filename `5005` **ou** labels `DÉBITO ORIGINAL` + `DEBITOS 5005` | `parse_memoria_5005` | `memoriaCalculo`, `apuracao.icms.aRecolher`, `apuracao.subvencao` |
 | `ipi` | `DEMONSTRATIVO DO IPI` | `parse_demonstrativo_ipi` | `apuracao.ipi` |
 | `pis` | cabeço/aba PIS; EFD | `parse_demonstrativo_pis_cofins` | `apuracao.pis` |
 | `cofins` | aba COF; cabeço COFINS | idem | `apuracao.cofins` |
@@ -95,6 +96,65 @@ Bloco **APURAÇÃO** (preferencial):
 ### Filename típico
 
 `Apuração icms 012026.xls` … `072026.xls`
+
+---
+
+## APURAÇÃO 5005 — Memória de Cálculo (padrão Baifer)
+
+Fonte oficial do **ICMS a recolher** e da aba **Memória de Cálculo** na Baifer (Decreto 5005). Preferir estes valores sobre o demonstrativo ICMS quando os dois forem importados.
+
+### Detecção (`detect_sheet_tipo` — prioridade alta)
+
+- Filename contém `5005` (ex. `012026 APURAÇÃO 5005.xlsx`)
+- Ou labels nas primeiras linhas: `DÉBITO ORIGINAL` + (`DEBITOS 5005` ou `CREDITO OUTORGADO`)
+
+### Sem CNPJ
+
+Planilha não traz CNPJ/razão. No preview:
+
+1. Abrir o dashboard da empresa (ex. Baifer) → aba Importar
+2. `company_id` do FormData herda a empresa aberta
+3. Warning esperado: `APURAÇÃO 5005 sem CNPJ — a empresa aberta no dashboard será usada ao gravar`
+
+### Competência
+
+Só no **nome do arquivo** (`MMYYYY` / `MM-YYYY`). O upload usa tempfile; a API passa `original_filename` para `classify_and_extract`.
+
+| Exemplo | Competência |
+|---------|-------------|
+| `012026 APURAÇÃO 5005.xlsx` | `2026-01` |
+| `072026-apuracao-5005.xlsx` | `2026-07` |
+
+### Labels → pack (`parse_memoria_5005`)
+
+| Label planilha | Campo `memoriaCalculo` |
+|----------------|------------------------|
+| DÉBITO ORIGINAL | `debitoOriginal` |
+| CREDITO ORIGINAL | `creditoOriginal` |
+| TOTAL (1º bloco) | `totalOriginal` (se `0` e há débitos/créditos → soma) |
+| DEBITOS 5005 | `debitos5005` |
+| CREDITOS 5005 | `creditos5005` |
+| TOTAL (2º) | `total5005` |
+| DÉBITO FORA | `debitoFora` |
+| CREDITO FORA | `creditoFora` |
+| CREDITO OUTORGADO | `creditoOutorgado` |
+| TOTAL (3º) | `totalFora` |
+| ICMS A RECOLHER | `icmsARecolher` → também `apuracao.icms.aRecolher` |
+| GANHO RECEITA DE SUBVENÇÃO | `ganhoReceitaSubvencao` → `apuracao.subvencao` |
+
+### Filename típico
+
+`MMYYYY APURAÇÃO 5005.xlsx` (Baifer mensal).
+
+Fixture CI: `fixtures/baifer-padrao/012026-apuracao-5005.xlsx`  
+Testes: `tests/test_apuracao_5005.py`
+
+### Relação com Demonstrativo ICMS
+
+| Fonte | Uso |
+|-------|-----|
+| APURAÇÃO 5005 | Memória UI + **ICMS a recolher** Impostos + subvenção |
+| Demonstrativo ICMS | Composição / debitos / créditos do demonstrativo; se importar depois da 5005, `deep_merge` pode sobrescrever `aRecolher` — para Baifer, **reimportar 5005 por último** ou só 5005 para o valor oficial |
 
 ---
 

@@ -132,8 +132,8 @@ Empresas no dashboard antigo **não** estão todas no nova-versao:
 |-------------|-------------|
 | Egaplast | ✅ egaplast |
 | Baifer | ✅ baifer |
+| Loja das Máquinas | ✅ loja-maquinas |
 | Unica | ❌ usar skill dashboard-movimento-xls |
-| Loja das Máquinas | ❌ idem |
 | JPG | ❌ idem |
 
 Migrar empresa EJS → nova-versao = registrar no catálogo + calibrar parsers (layout EXITO costuma ser igual).
@@ -143,6 +143,7 @@ Migrar empresa EJS → nova-versao = registrar no catálogo + calibrar parsers (
 | Empresa | Pasta | Arquivos típicos |
 |---------|-------|------------------|
 | Egaplast | `fixtures/egaplast-padrao/` | Entradas.xls, Saídas.xls, PIS, EFD, IPI, ST |
-| Baifer | `fixtures/baifer-padrao/` | Entradas 01-2026.xls, Saídas 01-2026.xls |
+| Baifer | `fixtures/baifer-padrao/` | Entradas 01-2026.xls, Saídas 01-2026.xls, DRE, Balancete, 5005 |
+| Loja das Máquinas | `fixtures/loja-maquinas-padrao/` | D. R. E. 01-2026.xls, Balancete 01-2026.xls |
 
 Copiar do usuário **1 arquivo por tipo** para CI; golden completo pode usar `@pytest.mark.skipif` na pasta Downloads.

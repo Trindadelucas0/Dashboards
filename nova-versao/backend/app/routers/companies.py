@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import re
 import unicodedata
 
@@ -11,6 +12,7 @@ from app.companies import ALL_TABS, COMPANY_BY_ID, only_digits, slugify
 from app.db import get_db
 from app.deps import allowed_company_ids, current_user, require_admin, require_company, tabs_for_user
 from app.extract.cfop import aggregate_macro, cfop_meta, top_grupos
+from app.extract.parse_dre import normalize_dre_deducoes
 from app.models import Company, CompanyCnpj, FiscalMonth, User, UserCompany
 
 router = APIRouter(prefix="/api/companies", tags=["companies"])
@@ -142,6 +144,15 @@ def _is_cmv_line(linha: dict) -> bool:
     )
 
 
+def _normalized_dre(pack: dict | None) -> dict:
+    """Cópia da DRE com deduções (-) abatendo — não muta o pack gravado."""
+    pack = pack or {}
+    dre = pack.get("dre") if isinstance(pack.get("dre"), dict) else {}
+    if not dre:
+        return {}
+    return normalize_dre_deducoes(copy.deepcopy(dre))
+
+
 def cmv_pendente(pack: dict | None) -> bool:
     """True se a DRE do mês existe e a linha CMV está sem valor numérico (não trata 0 como pendente)."""
     pack = pack or {}
@@ -197,6 +208,7 @@ def build_dre_por_mes(months: list, year: str) -> list[dict]:
         if not (pack.get("hasDre") or dre):
             continue
         sliced = _slice("dre", pack)
+        dre_view = sliced.get("dre") if isinstance(sliced.get("dre"), dict) else dre
         out.append(
             {
                 "competencia": comp,
@@ -209,8 +221,8 @@ def build_dre_por_mes(months: list, year: str) -> list[dict]:
                 "lucLiq": sliced.get("lucLiq"),
                 "margMb": sliced.get("margMb"),
                 "margMl": sliced.get("margMl"),
-                "dre": dre,
-                "source": dre.get("source"),
+                "dre": dre_view,
+                "source": dre_view.get("source") if isinstance(dre_view, dict) else dre.get("source"),
             }
         )
     return out
@@ -767,16 +779,19 @@ def _slice(tab: str, pack: dict) -> dict:
             "meta": pack.get("saidasMeta"),
         }
     if tab == "dre":
+        dre_view = _normalized_dre(pack)
         return {
-            "hasDre": pack.get("hasDre") or False,
-            "dre": pack.get("dre"),
-            "receitaBruta": pack.get("receitaBruta") or vendas,
+            "hasDre": pack.get("hasDre") or bool(dre_view),
+            "dre": dre_view or pack.get("dre"),
+            "receitaBruta": dre_view.get("receitaBruta")
+            if dre_view.get("receitaBruta") is not None
+            else (pack.get("receitaBruta") or vendas),
             "totalCompras": compras,
-            "lucBruto": pack.get("lucBruto"),
-            "lucLiq": pack.get("lucLiq"),
-            "margMb": pack.get("margMb"),
-            "margMl": pack.get("margMl"),
-            "cmv": pack.get("cmv"),
+            "lucBruto": dre_view.get("lucBruto") if dre_view.get("lucBruto") is not None else pack.get("lucBruto"),
+            "lucLiq": dre_view.get("lucLiq") if dre_view.get("lucLiq") is not None else pack.get("lucLiq"),
+            "margMb": dre_view.get("margMb") if dre_view.get("margMb") is not None else pack.get("margMb"),
+            "margMl": dre_view.get("margMl") if dre_view.get("margMl") is not None else pack.get("margMl"),
+            "cmv": dre_view.get("cmv") if dre_view.get("cmv") is not None else pack.get("cmv"),
         }
     if tab == "impostos":
         return {
@@ -794,6 +809,7 @@ def _slice(tab: str, pack: dict) -> dict:
             "apuracao": pack.get("apuracao"),
             "memoriaCalculo": pack.get("memoriaCalculo"),
             "subvencao": pack.get("subvencao") or (pack.get("apuracao") or {}).get("subvencao"),
+            "receitaBruta": receita,
         }
     if tab == "recebimentos":
         return {"receitaBruta": vendas, "totalCompras": compras}

@@ -183,6 +183,39 @@ Valores referência PIS 6448,85 / COFINS 29763,91 (layout consolidado).
 
 ---
 
+## Exemplo 6b — Baifer APURAÇÃO 5005 (Memória padrão)
+
+### Input usuário
+
+```
+01-2026/012026 APURAÇÃO 5005.xlsx … 07-2026/072026 APURAÇÃO 5005.xlsx
+```
+
+Layout padrão mensal: Débito/Crédito original, Débitos/Créditos 5005, Fora/Outorgado, ICMS a recolher, Ganho subvenção.
+
+### Diagnóstico
+
+- Sem CNPJ na planilha → `company_id` do dashboard Baifer
+- Competência só no filename `MMYYYY`
+- Tipo `apuracao_5005` (prioridade sobre demonstrativo ICMS)
+
+### Ação agente
+
+1. Confirmar `parse_memoria_5005` + `original_filename` no preview
+2. `pytest -q tests/test_apuracao_5005.py`
+3. Fixture `fixtures/baifer-padrao/012026-apuracao-5005.xlsx`
+4. Usuário importa na Baifer aberta (ou agente grava se pedido explícito)
+
+### Aceite jan/2026
+
+| Campo | Valor |
+|-------|------:|
+| ICMS a recolher | −1.901,28 |
+| Subvenção | 45.070,99 |
+| Total original | 124.300,10 |
+
+---
+
 ## Exemplo 7 — Mensagens típicas do usuário
 
 | Mensagem | Interpretação |
@@ -191,6 +224,7 @@ Valores referência PIS 6448,85 / COFINS 29763,91 (layout consolidado).
 | "Sube jan a jul Baifer" | Batch 7 meses × tipos enviados |
 | "Só entradas por enquanto" | Escopo entradas; impostos pendente explícito |
 | "Importa no sistema" | **Só** se pedido explícito gravar; senão instruir UI |
+| "APURAÇÃO 5005" / "memória de cálculo" | Tipo `apuracao_5005` — Memória + ICMS Impostos |
 | Anexo sem texto | Assumir pacote mensal EXITO, probe all |
 
 ---

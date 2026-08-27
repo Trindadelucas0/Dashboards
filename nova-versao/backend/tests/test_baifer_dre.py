@@ -5,7 +5,7 @@ import pytest
 from app.extract.pipeline import classify_and_extract
 from app.routers.companies import _slice
 
-DOWNLOADS = Path(r"c:\Users\trind\Downloads\drive-download-20260825T235348Z-1-001")
+DOWNLOADS = Path(r"c:\Users\trind\Downloads\drive-download-20260826T161842Z-1-001")
 FIXTURES = Path(__file__).resolve().parents[2] / "fixtures" / "baifer-padrao"
 FIXTURE_DRE = FIXTURES / "D. R. E. 01-2026.xls"
 
@@ -31,11 +31,12 @@ EXPECTED = {
     "2026-03": {
         "receitaBruta": 590886.49,
         "cmv": -454460.74,
-        "lucBruto": 139378.94,
-        "lucLiq": 140203.67,
-        "margMb": 23.59,
-        "margMl": 23.73,
-        "receitaLiquida": 593839.68,
+        "lucBruto": 27736.86,
+        "lucLiq": 28561.59,
+        "margMb": 4.69,
+        "margMl": 4.83,
+        "receitaLiquida": 482197.60,
+        "icms": -55821.04,
     },
     "2026-04": {
         "receitaBruta": 546988.18,
@@ -64,6 +65,15 @@ EXPECTED = {
         "margMl": 1.64,
         "receitaLiquida": 527687.03,
     },
+    "2026-07": {
+        "receitaBruta": 691952.40,
+        "cmv": -551974.79,
+        "lucBruto": -5813.57,
+        "lucLiq": 5981.32,
+        "margMb": -0.84,
+        "margMl": 0.86,
+        "receitaLiquida": 546161.22,
+    },
 }
 
 
@@ -87,6 +97,17 @@ def _assert_dre(result: dict, competencia: str, expected: dict) -> None:
     assert pack["margMb"] == pytest.approx(expected["margMb"], abs=0.02)
     assert pack["margMl"] == pytest.approx(expected["margMl"], abs=0.02)
     assert dre["receitaLiquida"] == pytest.approx(expected["receitaLiquida"], abs=0.02)
+    if "icms" in expected:
+        icms_line = next(
+            (
+                ln
+                for ln in dre.get("linhas") or []
+                if str(ln.get("descricao") or "").strip() in ("(-) ICMS", "ICMS")
+            ),
+            None,
+        )
+        assert icms_line is not None
+        assert icms_line["valor"] == pytest.approx(expected["icms"], abs=0.02)
 
 
 @pytest.mark.skipif(not FIXTURE_DRE.exists(), reason="Fixture baifer-padrao DRE ausente")

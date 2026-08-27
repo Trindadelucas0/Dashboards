@@ -100,8 +100,10 @@ export default function ImportTab() {
         <div>
           <div className="sec-title">Importar planilhas</div>
           <div className="sec-sub">
-            Pacote mensal (Egaplast, Baifer): Entradas, Saídas, Apuração ICMS, IPI, PIS/COFINS (junto ou separado), ST — mesmo layout todo mês.
-            O Python lê o CNPJ e a aba; o nome do arquivo não decide o destino.
+            Pacote mensal (Egaplast, Baifer): Entradas, Saídas, Apuração ICMS, IPI, PIS/COFINS, ST, DRE, Balancete e — Baifer —
+            <strong> APURAÇÃO 5005</strong> (Memória de Cálculo / ICMS a recolher / subvenção). Mesmo layout todo mês.
+            O Python lê CNPJ e tipo da planilha; a 5005 não tem CNPJ — use o dashboard da empresa aberta.
+            Nome com MMYYYY (ex. <code>012026 APURAÇÃO 5005.xlsx</code>) define o mês.
           </div>
         </div>
       </div>

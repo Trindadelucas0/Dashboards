@@ -2,6 +2,7 @@ from app.extract.classify import (
     competencia_from_filename,
     detect_sheet_tipo,
     format_cfop,
+    is_balancete_filename,
     is_dre_filename,
     is_multi_month_movimento,
     resolve_company,
@@ -169,6 +170,29 @@ def test_is_dre_filename_compact():
     assert is_dre_filename("D. R. E. 01-2026.xls") is True
     assert is_dre_filename("dre.xls") is True
     assert is_dre_filename("Entradas 01-2026.xls") is False
+
+
+def test_is_balancete_filename():
+    assert is_balancete_filename("Balancete.xls") is True
+    assert is_balancete_filename("Balancete 01-2026.xls") is True
+    assert is_balancete_filename("D. R. E..xls") is False
+
+
+def test_detect_balancete_exito():
+    grid = WorkbookGrid(
+        "Balancete.xls",
+        "Balancete",
+        [
+            ["Empresa:", "BAIFER DISTRIBUIDORA DE FERRAMENTAS LTDA"],
+            ["C.N.P.J.:", "52.005.382/0001-40"],
+            ["Período:", "01/01/2026 - 31/01/2026"],
+            [""],
+            ["BALANCETE"],
+        ],
+        "html",
+    )
+    assert detect_sheet_tipo(grid, "Balancete.xls") == "balancete"
+    assert scan_period(grid)[0] == "2026-01"
 
 
 def test_detect_dre_exito_spaced_name_and_header():

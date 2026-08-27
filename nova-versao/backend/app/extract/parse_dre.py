@@ -174,19 +174,21 @@ def _parse_exito_dre(grid: WorkbookGrid) -> dict:
     marg_mb = round(100 * luc_bruto / rb, 2) if rb and luc_bruto is not None else None
     marg_ml = round(100 * luc_liq / rb, 2) if rb and luc_liq is not None else None
 
-    return {
-        "kind": "exito",
-        "linhas": lines,
-        "receitaBruta": rb,
-        "receitaLiquida": totals["receitaLiquida"],
-        "cmv": cmv,
-        "despesas": totals["despesas"],
-        "lucBruto": luc_bruto,
-        "lucLiq": luc_liq,
-        "margMb": marg_mb,
-        "margMl": marg_ml,
-        "hasValores": any(l.get("valor") is not None for l in lines),
-    }
+    return normalize_dre_deducoes(
+        {
+            "kind": "exito",
+            "linhas": lines,
+            "receitaBruta": rb,
+            "receitaLiquida": totals["receitaLiquida"],
+            "cmv": cmv,
+            "despesas": totals["despesas"],
+            "lucBruto": luc_bruto,
+            "lucLiq": luc_liq,
+            "margMb": marg_mb,
+            "margMl": marg_ml,
+            "hasValores": any(l.get("valor") is not None for l in lines),
+        }
+    )
 
 
 def _parse_resultado_legacy(grid: WorkbookGrid) -> dict:
@@ -254,6 +256,114 @@ def _parse_resultado_legacy(grid: WorkbookGrid) -> dict:
         "margMl": marg_ml,
         "hasValores": any(l.get("valor") is not None for l in lines),
     }
+
+
+def _is_lucro_liq_label(key: str) -> bool:
+    if not key or "lucro bruto" in key:
+        return False
+    return (
+        "lucro liquido" in key
+        or "prejuizo do exercicio" in key
+        or "prejuizo liquido" in key
+        or "resultado liquido" in key
+        or "resultado do exercicio" in key
+        or "lucro ou prejuizo" in key
+    )
+
+
+def normalize_dre_deducoes(dre: dict) -> dict:
+    """Força linhas (-) do bloco Deduções a abater e refaz Líquida / Lucro Bruto / Líquido.
+
+    EXITO às vezes exporta ICMS (dedução) com saldo positivo. A UI mostrava parênteses
+    e o total somava o valor — líquida maior que a bruta e lucro bruto inflado.
+    Não altera `(-) OUTRAS RECEITAS OPERACIONAIS` (fora deste bloco).
+    """
+    if not isinstance(dre, dict) or dre.get("kind") == "resultado":
+        return dre
+    linhas = dre.get("linhas")
+    if not isinstance(linhas, list) or not linhas:
+        return dre
+
+    in_deducoes = False
+    header_idx: int | None = None
+    child_idxs: list[int] = []
+    rl_idx: int | None = None
+    lb_idx: int | None = None
+
+    for i, ln in enumerate(linhas):
+        if not isinstance(ln, dict):
+            continue
+        label = str(ln.get("descricao") or "")
+        key = _norm_label(label)
+        if "deducoes da receita" in key:
+            in_deducoes = True
+            header_idx = i
+            child_idxs = []
+            continue
+        if key == "receita liquida":
+            rl_idx = i
+            in_deducoes = False
+            continue
+        if key == "lucro bruto":
+            lb_idx = i
+            continue
+        if not in_deducoes:
+            continue
+        child_idxs.append(i)
+        valor = ln.get("valor")
+        if valor is None:
+            continue
+        if label.strip().startswith("(-)") and float(valor) > 0:
+            ln["valor"] = round(-abs(float(valor)), 2)
+
+    child_sum = 0.0
+    has_child = False
+    for i in child_idxs:
+        valor = linhas[i].get("valor")
+        if valor is None:
+            continue
+        child_sum += float(valor)
+        has_child = True
+    if header_idx is not None and has_child:
+        linhas[header_idx]["valor"] = round(child_sum, 2)
+
+    rb = dre.get("receitaBruta")
+    if rb is None or not has_child:
+        return dre
+
+    old_rl = dre.get("receitaLiquida")
+    new_rl = round(float(rb) + child_sum, 2)
+    dre["receitaLiquida"] = new_rl
+    if rl_idx is not None:
+        linhas[rl_idx]["valor"] = new_rl
+
+    delta = round(new_rl - float(old_rl), 2) if old_rl is not None else 0.0
+    cmv = dre.get("cmv")
+    if cmv is not None:
+        new_lb = round(new_rl + float(cmv), 2)
+        dre["lucBruto"] = new_lb
+        if lb_idx is not None:
+            linhas[lb_idx]["valor"] = new_lb
+    elif dre.get("lucBruto") is not None and delta:
+        dre["lucBruto"] = round(float(dre["lucBruto"]) + delta, 2)
+        if lb_idx is not None:
+            linhas[lb_idx]["valor"] = dre["lucBruto"]
+
+    if dre.get("lucLiq") is not None and delta:
+        dre["lucLiq"] = round(float(dre["lucLiq"]) + delta, 2)
+        for ln in linhas:
+            if not isinstance(ln, dict) or ln.get("valor") is None:
+                continue
+            key = _norm_label(str(ln.get("descricao") or ""))
+            if _is_lucro_liq_label(key):
+                ln["valor"] = round(float(ln["valor"]) + delta, 2)
+
+    if rb:
+        if dre.get("lucBruto") is not None:
+            dre["margMb"] = round(100 * float(dre["lucBruto"]) / float(rb), 2)
+        if dre.get("lucLiq") is not None:
+            dre["margMl"] = round(100 * float(dre["lucLiq"]) / float(rb), 2)
+    return dre
 
 
 def parse_dre(grid: WorkbookGrid) -> dict:

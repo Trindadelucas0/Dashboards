@@ -33,3 +33,16 @@ export const NAV = [
   },
   { section: "Dados", items: [{ id: "importar", label: "Importar planilhas", icon: "fa-file-arrow-up" }] },
 ];
+
+/** Abas liberáveis para viewer (nunca inclui importar). */
+export const VIEWER_TAB_OPTIONS = NAV.flatMap((s) => s.items).filter((i) => i.id !== "importar");
+
+export const ALL_VIEWER_TAB_IDS = VIEWER_TAB_OPTIONS.map((i) => i.id);
+
+export function firstAllowedTab(tabs: string[] | undefined | null): string {
+  if (!tabs?.length) return "visao-geral";
+  for (const opt of VIEWER_TAB_OPTIONS) {
+    if (tabs.includes(opt.id)) return opt.id;
+  }
+  return tabs[0] || "visao-geral";
+}

@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from app.companies import COMPANIES  # noqa: E402
+from app.companies import COMPANIES, VIEWER_TABS  # noqa: E402
 from app.config import get_settings  # noqa: E402
 from app.db import SessionLocal  # noqa: E402
 from app.models import Company, CompanyCnpj, User, UserCompany  # noqa: E402
@@ -82,7 +82,9 @@ def seed_users(db) -> None:
             .first()
         )
         if not link:
-            db.add(UserCompany(user_id=user.id, company_id=reg.id))
+            db.add(UserCompany(user_id=user.id, company_id=reg.id, tabs=list(VIEWER_TABS)))
+        elif not link.tabs:
+            link.tabs = list(VIEWER_TABS)
 
 
 def main() -> None:

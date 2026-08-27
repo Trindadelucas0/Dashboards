@@ -45,6 +45,11 @@ def is_dre_filename(name: str) -> bool:
     return compact == "dre" or compact.startswith("dre")
 
 
+def is_balancete_filename(name: str) -> bool:
+    compact = re.sub(r"[^a-z0-9]+", "", _fold_text(name))
+    return compact == "balancete" or compact.startswith("balancete")
+
+
 def format_cfop(raw: str, raw_num: float | None = None) -> str:
     t = (raw or "").strip()
     m = re.match(r"^(\d)-(\d{3})$", t)
@@ -185,18 +190,35 @@ def detect_sheet_tipo(grid: WorkbookGrid, filename: str) -> str:
     name = (grid.sheet_name or "").lower()
     file_l = filename.lower()
     head = " ".join(" ".join(grid.row(r)).lower() for r in range(min(8, len(grid.rows))))
+    file_fold = _fold_text(filename)
+    labels_fold = _fold_text(" ".join(str(row[0]) for row in (grid.rows or [])[:14] if row))
+    if "5005" in file_fold or (
+        "debito original" in labels_fold and ("debitos 5005" in labels_fold or "credito outorgado" in labels_fold)
+    ):
+        return "apuracao_5005"
     if "entrada" in name:
         return "entradas"
     if "saida" in name or "saída" in name:
         return "saidas"
     if "demonstrativo do ipi" in head or ("ipi" in file_l and "demonst" in file_l):
         return "ipi"
-    if "demonstrativo do icms" in head or "demonst. icms" in name or "demonst icms" in name.replace(".", " "):
-        return "icms"
-    if "icms" in file_l and ("apura" in file_l or "demonst" in file_l) and "st mensal" not in file_l:
-        return "icms"
-    if "st mensal" in file_l or "st estados" in name or (file_l.startswith("st ") and "valor" in head):
+    # ICMS ST antes do ICMS genérico — filename "Apuração icms st" e aba Demonst. SUBTRI
+    head_fold = _fold_text(head)
+    name_fold_dots = name.replace(".", " ")
+    if (
+        "st mensal" in file_l
+        or "subtri" in name
+        or "icms st" in file_l
+        or "icms_st" in file_l
+        or "substituicao tributaria" in head_fold
+        or "st estados" in name
+        or (file_l.startswith("st ") and "valor" in head)
+    ):
         return "icms_st"
+    if "demonstrativo do icms" in head or "demonst. icms" in name or "demonst icms" in name_fold_dots:
+        return "icms"
+    if "icms" in file_l and ("apura" in file_l or "demonst" in file_l):
+        return "icms"
     if "demonstrativo da apuração do cofins" in head or "demonstrativo da apuracao do cofins" in head:
         return "cofins"
     if "demonstrativo da apuração do pis" in head or "demonstrativo da apuracao do pis" in head:
@@ -216,6 +238,12 @@ def detect_sheet_tipo(grid: WorkbookGrid, filename: str) -> str:
         return "entradas"
     if "total cliente" in head or "cliente" in head:
         return "saidas"
+    if (
+        is_balancete_filename(file_l)
+        or is_balancete_filename(name)
+        or "balancete" in _fold_text(head)
+    ):
+        return "balancete"
     if (
         "demonstracao do resultado" in _fold_text(head)
         or is_dre_filename(name)

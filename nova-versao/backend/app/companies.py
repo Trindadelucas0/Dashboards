@@ -17,6 +17,9 @@ ALL_TABS = [
     "importar",
 ]
 
+# Abas que um viewer pode receber (nunca inclui importar).
+VIEWER_TABS = [t for t in ALL_TABS if t != "importar"]
+
 
 @dataclass(frozen=True)
 class Unit:

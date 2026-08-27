@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from sqlalchemy.exc import IntegrityError  # noqa: E402
+from sqlalchemy.orm.attributes import flag_modified  # noqa: E402
 
 from app.db import SessionLocal  # noqa: E402
 from app.extract.pipeline import classify_and_extract  # noqa: E402
@@ -106,6 +107,7 @@ def main() -> int:
                 cleared.add(slot_key)
 
             row.pack = _deep_merge(row.pack or {}, result.get("pack_patch") or {})
+            flag_modified(row, "pack")
 
             if existing and REPLACE:
                 existing.status = "replaced"

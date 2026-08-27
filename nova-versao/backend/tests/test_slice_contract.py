@@ -256,6 +256,32 @@ def test_empty_tab_aware():
     assert _is_empty("balancete", {"hasBalancete": True, "balancete": {"contas": [{"codigo": "1"}]}}, row) is False
 
 
+def test_slice_memoria_pis_cofins_e_receita():
+    """Memória devolve apuração PIS/COFINS (incl. aRecolher 0) + receitaBruta para % s/ RB."""
+    pack = {
+        "hasMovimentacao": True,
+        "totalCompras": 500,
+        "cfopSaidasTotal": 2000,
+        "receitaBruta": 2000,
+        "apuracao": {
+            "icms": {"apurado": 100, "aRecolher": 40, "credito": 60},
+            "pis": {"apurado": 6568.32, "aRecolher": 0, "credito": 18080.71},
+            "cofins": {"apurado": 30254.08, "aRecolher": 0, "credito": 83280.93},
+        },
+        "memoriaCalculo": {"icmsARecolher": 40, "debitoOriginal": 100},
+    }
+    data = _slice("memoria", pack)
+    assert data["receitaBruta"] == 2000
+    assert data["apuracao"]["pis"]["aRecolher"] == 0
+    assert data["apuracao"]["pis"]["apurado"] == 6568.32
+    assert data["apuracao"]["pis"]["credito"] == 18080.71
+    assert data["apuracao"]["cofins"]["aRecolher"] == 0
+    assert data["apuracao"]["cofins"]["apurado"] == 30254.08
+    assert data["memoriaCalculo"]["icmsARecolher"] == 40
+    assert "aRecolher" in data["apuracao"]["pis"]
+    assert "aRecolher" in data["apuracao"]["cofins"]
+
+
 def test_cfop_credito_flag():
     assert cfop_meta("2-102")["creditoPisCofins"] is True
     assert cfop_meta("1-202")["creditoPisCofins"] is False

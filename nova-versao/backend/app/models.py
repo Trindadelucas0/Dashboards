@@ -66,6 +66,7 @@ class UserCompany(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     company_id: Mapped[str] = mapped_column(ForeignKey("companies.id"), nullable=False)
+    tabs: Mapped[list] = mapped_column(JSONB, default=list)
 
     user: Mapped[User] = relationship(back_populates="links")
     company: Mapped[Company] = relationship()

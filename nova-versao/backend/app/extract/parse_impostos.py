@@ -362,6 +362,67 @@ def parse_demonstrativo_pis_cofins(grid: WorkbookGrid, tributo: str) -> dict:
     }
 
 
+def is_demonstrativo_subtri(grid: WorkbookGrid, filename: str = "") -> bool:
+    """Demonstrativo EXITO da Substituição Tributária (aba Demonst. SUBTRI / Apuração icms st)."""
+    file_l = (filename or "").lower()
+    name = (grid.sheet_name or "").lower()
+    head = " ".join(" ".join(str(c or "") for c in row) for row in (grid.rows or [])[:6])
+    head_fold = _fold(head)
+    if "subtri" in name or "icms st" in file_l or "icms_st" in file_l:
+        return True
+    return "substituicao tributaria" in head_fold or "demonstrativo da substituicao" in head_fold
+
+
+def _uf_from_subtri(grid: WorkbookGrid) -> str:
+    head = " ".join(" ".join(str(c or "") for c in row) for row in (grid.rows or [])[:6])
+    m = re.search(r"UF\s+FAVORECIDA\s+([A-Za-z]{2})\b", head, re.I)
+    if m:
+        return m.group(1).upper()
+    m = re.search(r"\b([A-Za-z]{2})\s*\(M\)", grid.sheet_name or "", re.I)
+    if m:
+        return m.group(1).upper()
+    return ""
+
+
+def parse_demonstrativo_subtri(grid: WorkbookGrid) -> dict:
+    """Uma aba SUBTRI (UF favorecida) → aRecolher da linha oficial + UF."""
+    a_recolher = _find_label_value(grid, "substituicao tributaria a recolher")
+    saldo_credor = _find_label_value(grid, "saldo credor de substituicao tributaria")
+    rec = float(a_recolher or 0)
+    credor = float(saldo_credor or 0)
+    if abs(rec) < 0.009 and credor > 0.009:
+        rec = -abs(credor)
+    uf = _uf_from_subtri(grid)
+    by_uf = {uf: rec} if uf else {}
+    return {
+        "kind": "demonstrativo_subtri",
+        "uf": uf,
+        "byUf": by_uf,
+        "aRecolher": rec,
+        "apurado": rec,
+        "saldoCredorSeguinte": credor,
+    }
+
+
+def merge_subtri_sheets(sheets: list[WorkbookGrid]) -> dict:
+    """Soma várias abas SUBTRI (ex. DF + GO) em um único resultado ST."""
+    by_uf: dict[str, float] = {}
+    total = 0.0
+    for sh in sheets:
+        parsed = parse_demonstrativo_subtri(sh)
+        uf = str(parsed.get("uf") or "").upper()
+        val = float(parsed.get("aRecolher") or 0)
+        if uf:
+            by_uf[uf] = round(by_uf.get(uf, 0.0) + val, 2)
+        total = round(total + val, 2)
+    return {
+        "kind": "demonstrativo_subtri",
+        "byUf": by_uf,
+        "aRecolher": total,
+        "apurado": total,
+    }
+
+
 def parse_st_mensal(grid: WorkbookGrid) -> dict:
     """ST MENSAL — tabela UF / VALOR + TOTAL (colunas podem não começar em A)."""
     by_uf: dict[str, float] = {}
@@ -431,8 +492,9 @@ def apuracao_patch_from_demo(tipo: str, parsed: dict) -> dict:
         )
         return {"apuracao": {"cofins": tax, "fonte": fonte}, "impostosDemo": {"cofins": parsed}}
     if tipo == "icms_st":
+        fonte = "demonstrativo_subtri" if str(parsed.get("kind") or "") == "demonstrativo_subtri" else "st_mensal"
         return {
-            "apuracao": {"icmsSt": tax, "fonte": "st_mensal"},
+            "apuracao": {"icmsSt": tax, "fonte": fonte},
             "impostosDemo": {"icmsSt": parsed},
             "porUfSt": parsed.get("byUf") or {},
         }

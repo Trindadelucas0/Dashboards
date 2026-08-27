@@ -152,11 +152,49 @@ Demonstrativo EXITO — conferir por mês na planilha:
 
 | Mês | aRecolher | Nota |
 |-----|-----------|------|
-| 2026-01 Baifer | −1.901,16 | saldo credor |
+| 2026-01 Baifer | −1.901,16 | saldo credor (demonstrativo) |
 | 2026-06 Baifer | 14.834,69 | a recolher |
 | 2026-07 Baifer | 17.806,44 | a recolher |
 
 Egaplast fixture `test_demonstrativo_icms.py` — grid sintético jun/2026: `14834.69`.
+
+## Valores golden — Baifer APURAÇÃO 5005 (Memória / ICMS oficial)
+
+Fonte: `MMYYYY APURAÇÃO 5005.xlsx`. Tipo `apuracao_5005`. Sem CNPJ — `company_id` do dashboard.
+
+Fixture CI: `fixtures/baifer-padrao/012026-apuracao-5005.xlsx`  
+Testes: `tests/test_apuracao_5005.py`
+
+### Janeiro/2026 (completo)
+
+| Campo | Valor |
+|-------|------:|
+| Débito original | 85.763,18 |
+| Crédito original | 38.536,92 |
+| Total original | 124.300,10 |
+| Débitos 5005 | 56.756,77 |
+| Créditos 5005 | 54.601,50 |
+| Total 5005 | 2.155,27 |
+| Débito fora | 168,16 |
+| Crédito fora | 3.970,56 |
+| Crédito outorgado | 254,15 |
+| Total fora | −4.056,55 |
+| ICMS a recolher | −1.901,28 |
+| Ganho receita subvenção | 45.070,99 |
+
+### ICMS a recolher jan–jul/2026
+
+| Competência | icmsARecolher |
+|-------------|--------------:|
+| 2026-01 | −1.901,28 |
+| 2026-02 | 28.441,58 |
+| 2026-03 | 17.592,90 |
+| 2026-04 | 21.349,29 |
+| 2026-05 | 13.105,44 |
+| 2026-06 | 14.834,69 |
+| 2026-07 | 17.806,44 |
+
+**UI:** aba Memória de Cálculo + Impostos (`aRecolher` alinhado à 5005).
 
 ## Valores golden — Egaplast (regressão)
 

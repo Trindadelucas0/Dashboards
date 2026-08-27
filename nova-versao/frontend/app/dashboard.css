@@ -173,7 +173,10 @@ tbody tr:hover td { background: rgba(255,255,255,0.02); }
 .mem-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
 .mem-grid-3 { grid-template-columns: repeat(3, 1fr); }
 .mem-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-.mem-card-head { padding: 12px 16px; font-size: 13px; font-weight: 700; border-bottom: 1px solid var(--border); }
+.mem-card-head {
+  padding: 12px 16px; font-size: 13px; font-weight: 700; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+}
 .mem-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 16px; border-bottom: 1px solid var(--border); font-size: 12px; }
 .mem-row .lbl { color: var(--text-sec); }
 .mem-row .val { font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }

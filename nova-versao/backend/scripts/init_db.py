@@ -29,9 +29,29 @@ def ensure_database() -> None:
 def main() -> None:
     ensure_database()
     Base.metadata.create_all(bind=engine)
+    import json
+
+    from app.companies import VIEWER_TABS  # noqa: E402
+
+    viewer_tabs = json.dumps(VIEWER_TABS)
     with engine.begin() as conn:
         conn.execute(text("ALTER TABLE companies ADD COLUMN IF NOT EXISTS name_re VARCHAR(200) DEFAULT ''"))
         conn.execute(text("ALTER TABLE companies ADD COLUMN IF NOT EXISTS description VARCHAR(255) DEFAULT ''"))
+        conn.execute(text("ALTER TABLE user_companies ADD COLUMN IF NOT EXISTS tabs JSONB DEFAULT '[]'::jsonb"))
+        # Legado sem abas: libera todas as abas de viewer para não cortar acesso.
+        conn.execute(
+            text(
+                """
+                UPDATE user_companies
+                SET tabs = CAST(:tabs AS jsonb)
+                WHERE tabs IS NULL
+                   OR tabs = '[]'::jsonb
+                   OR jsonb_typeof(tabs) <> 'array'
+                   OR jsonb_array_length(tabs) = 0
+                """
+            ),
+            {"tabs": viewer_tabs},
+        )
     print("Banco e tabelas prontos.")
 
 

@@ -7,6 +7,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy.orm import Session
 
 from app.db import get_db
@@ -36,6 +37,22 @@ def _deep_merge(base: dict, patch: dict) -> dict:
         else:
             out[key] = val
     return out
+
+
+def _pack_has_tipo(pack: dict | None, tipo: str) -> bool:
+    pack = pack or {}
+    if tipo == "dre":
+        dre = pack.get("dre") if isinstance(pack.get("dre"), dict) else {}
+        return bool(pack.get("hasDre") and (dre.get("linhas") or dre.get("hasValores")))
+    if tipo == "balancete":
+        bal = pack.get("balancete") if isinstance(pack.get("balancete"), dict) else {}
+        return bool(pack.get("hasBalancete") or bal.get("contas"))
+    return False
+
+
+def _assign_pack(row: FiscalMonth, pack: dict) -> None:
+    row.pack = pack
+    flag_modified(row, "pack")
 
 
 def _apply_session_company(extracted: dict, company_id: str | None, db: Session) -> None:
@@ -72,7 +89,19 @@ def _inherit_batch_competencia(items: list[dict]) -> None:
     for it in items:
         if it.get("competencia"):
             continue
-        if it.get("tipo") in ("icms_st", "icms", "ipi", "pis", "cofins", "pis_cofins", "impostos", "irpj"):
+        if it.get("tipo") in (
+            "icms_st",
+            "icms",
+            "ipi",
+            "pis",
+            "cofins",
+            "pis_cofins",
+            "impostos",
+            "irpj",
+            "apuracao_5005",
+            "dre",
+            "balancete",
+        ):
             it["competencia"] = chosen
             it.setdefault("warnings", []).append(f"Competência herdada do lote: {chosen}")
 
@@ -99,7 +128,7 @@ async def preview(
             tmp.write(data)
             tmp_path = tmp.name
         try:
-            extracted = classify_and_extract(tmp_path, data, db=db)
+            extracted = classify_and_extract(tmp_path, data, db=db, original_filename=name)
         except Exception as exc:  # noqa: BLE001
             extracted = {
                 "file": name,
@@ -232,9 +261,6 @@ def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = De
             unidade = item.get("unidade") or "matriz"
             tipo = item.get("tipo")
             file_hash = item.get("file_hash")
-            if item.get("duplicateHash") and not body.replace:
-                saved.append({"file": item.get("file"), "status": "duplicata", "companyId": company_id})
-                continue
             if not competencia:
                 saved.append(
                     {
@@ -246,8 +272,12 @@ def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = De
                 continue
             slot_key = (company_id, competencia, unidade)
             row = _get_or_create_month(db, slot_rows, company_id, competencia, unidade)
+            if item.get("duplicateHash") and not body.replace:
+                if _pack_has_tipo(row.pack, tipo):
+                    saved.append({"file": item.get("file"), "status": "duplicata", "companyId": company_id})
+                    continue
             if body.replace and slot_key not in cleared_slots:
-                row.pack = {}
+                _assign_pack(row, {})
                 db.query(NfeLine).filter(
                     NfeLine.company_id == company_id,
                     NfeLine.competencia == competencia,
@@ -255,7 +285,7 @@ def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = De
                 ).delete(synchronize_session=False)
                 cleared_slots.add(slot_key)
             patch = item.get("pack_patch") or {}
-            row.pack = _deep_merge(row.pack or {}, patch)
+            _assign_pack(row, _deep_merge(row.pack or {}, patch))
             if file_hash:
                 existing_imp = db.query(ImportRecord).filter(ImportRecord.file_hash == file_hash).first()
                 if existing_imp and not body.replace:

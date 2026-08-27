@@ -1,0 +1,40 @@
+# Cole no SSH da VPS (usuario exito) OU salve o arquivo e rode:
+#   sed -i 's/\r$//' exito-git-pull-build.txt && bash exito-git-pull-build.txt
+#
+# Se colar do Windows e aparecer $'\r', use o sed acima.
+
+set -euo pipefail
+cd /home/exito/projetos/Dashboards
+
+git fetch origin main
+git reset --hard origin/main
+git pull origin main
+
+rm -f frontend git
+
+pm2 stop dashboards-nova-web || true
+
+cd nova-versao/frontend
+rm -rf node_modules .next
+npm ci
+npm run build
+
+pm2 restart dashboards-nova-web --update-env
+pm2 save
+
+docker restart dashboards-nova-api
+
+echo "esperando API..."
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+  if curl -sf http://127.0.0.1:8001/api/health >/dev/null 2>&1; then
+    break
+  fi
+  sleep 3
+done
+
+echo "== health =="
+curl -s http://127.0.0.1:8001/api/health
+echo
+curl -s -o /dev/null -w "web:%{http_code}\n" http://127.0.0.1:9527/
+echo "HEAD=$(git -C /home/exito/projetos/Dashboards log -1 --oneline)"
+echo pronto
