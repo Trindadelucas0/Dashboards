@@ -97,10 +97,39 @@ def parse_apuracao_5005(grid: WorkbookGrid, filename: str = "") -> dict:
                 competencia = f"{m.group(2)}-{m.group(1)}"
                 break
 
+    tot5005 = values.get("total5005")
+    tot_fora = values.get("totalFora")
+    icms = values.get("icmsARecolher")
+    formula_icms = "Total 5005 + Total fora = ICMS a recolher"
+    if tot5005 is not None and tot_fora is not None and icms is not None:
+        formula_icms = f"{tot5005:,.2f} + ({tot_fora:,.2f}) = {icms:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+    linhas_spec = (
+        ("debitoOriginal", "Débito original", "movimento", ""),
+        ("creditoOriginal", "Crédito original", "", ""),
+        ("totalOriginal", "TOTAL original", "débito + crédito", "total"),
+        ("debitos5005", "Débitos 5005", "", ""),
+        ("creditos5005", "Créditos 5005", "", ""),
+        ("total5005", "TOTAL 5005", "débitos − créditos", "total"),
+        ("debitoFora", "Débito fora", "", ""),
+        ("creditoFora", "Crédito fora", "", ""),
+        ("creditoOutorgado", "Crédito outorgado", "", ""),
+        ("totalFora", "TOTAL fora", "déb. − créd. − outorgado", "total"),
+        ("icmsARecolher", "ICMS a recolher", "= tot5005 + totFora", "resultado"),
+        ("ganhoReceitaSubvencao", "Ganho receita de subvenção", "receita (DRE)", "subvencao"),
+    )
+    linhas = [
+        {"key": key, "label": label, "papel": papel, "kind": kind, "valor": values[key]}
+        for key, label, papel, kind in linhas_spec
+        if key in values
+    ]
+
     return {
         "kind": "apuracao_5005",
         "competencia": competencia,
         "hasValores": "icmsARecolher" in values or "debitoOriginal" in values,
+        "formulaIcms": formula_icms,
+        "linhas": linhas,
         **values,
     }
 

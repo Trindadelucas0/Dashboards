@@ -16,6 +16,7 @@ COMPANY_DESCRIPTIONS = {
     "egaplast": "Artefatos e comércio de plásticos",
     "baifer": "Distribuidora de ferramentas",
     "loja-maquinas": "Loja das Máquinas e Ferramentas",
+    "unica": "Comércio atacadista de tintas",
 }
 
 

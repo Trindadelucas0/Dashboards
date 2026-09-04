@@ -14,7 +14,7 @@ const TITLES: Record<string, [string, string]> = {
   finalidade: ["Finalidade de Compras", "Por CFOP"],
   vendas: ["Vendas", "Saídas por cliente"],
   impostos: ["Impostos", "Apuração"],
-  memoria: ["Memória de Cálculo", "ICMS 5005 + PIS/COFINS"],
+    memoria: ["Memória de Cálculo", "Livro da planilha padrão — ICMS 5005, PIS/COFINS e demais tributos"],
   recebimentos: ["Recebimentos/Pagamentos", "Estimativa pelo movimento"],
   balancete: ["Balancete", "Contábil"],
   dre: ["DRE", "Demonstração do resultado"],

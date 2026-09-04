@@ -71,11 +71,20 @@ COMPANIES: tuple[CompanyReg, ...] = (
         theme="green",
         units=(Unit("matriz", "Matriz", "13983066000190", r"LOJA"),),
     ),
+    CompanyReg(
+        id="unica",
+        label="Única",
+        cnpj="36517206000130",
+        name_re=r"\b[UÚ]NICA\b",
+        username="unica",
+        theme="blue",
+        units=(Unit("matriz", "Matriz", "36517206000130", r"UNICA"),),
+    ),
 )
 
 COMPANY_BY_ID = {c.id: c for c in COMPANIES}
 KEEP_COMPANY_IDS = frozenset(COMPANY_BY_ID)
-KEEP_USERNAMES = frozenset({"admin", "egaplast", "baifer", "loja-maquinas"})
+KEEP_USERNAMES = frozenset({"admin", "egaplast", "baifer", "loja-maquinas", "unica"})
 
 
 def only_digits(value: str | None) -> str:
@@ -164,4 +173,4 @@ def _reg_from_row(row) -> CompanyReg:
         name_re=row.name_re or "",
         cnpj=row.cnpj or "",
     )
-
+

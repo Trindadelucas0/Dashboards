@@ -8,6 +8,7 @@ from app.routers.companies import _slice
 DOWNLOADS = Path(r"c:\Users\trind\Downloads\drive-download-20260825T225251Z-1-001")
 FIXTURES = Path(__file__).resolve().parents[2] / "fixtures" / "baifer-padrao"
 FIXTURE_ENT = FIXTURES / "Entradas 01-2026.xls"
+FIXTURE_FORN = FIXTURES / "Relatorio de entrada por fornecedor 08-2026.xls"
 
 EXPECTED = {
     "2026-01": {"total": 606046.53, "nfs": 209},
@@ -44,6 +45,30 @@ def test_baifer_entradas_fixture_fills_compras_tab():
     assert compras["totalCompras"] == pytest.approx(606046.53, abs=0.02)
     assert len(compras["fornecedores"]) > 0
     assert len(compras["ufEntradas"]) > 0
+
+
+@pytest.mark.skipif(not FIXTURE_FORN.exists(), reason="Fixture relatório por fornecedor ausente")
+def test_baifer_entrada_por_fornecedor_ago():
+    result = classify_and_extract(FIXTURE_FORN)
+    assert result["tipo"] == "entradas"
+    assert not result["errors"], result["errors"]
+    assert result["company_id"] == "baifer"
+    assert result["competencia"] == "2026-08"
+    assert abs(result["meta"]["delta"]) < 0.02
+    assert result["meta"]["nfs"] == 211
+    assert result["pack_patch"]["totalCompras"] == pytest.approx(377506.76, abs=0.02)
+
+
+@pytest.mark.skipif(not FIXTURE_FORN.exists(), reason="Fixture relatório por fornecedor ausente")
+def test_baifer_entrada_por_fornecedor_fills_compras_tab():
+    result = classify_and_extract(FIXTURE_FORN)
+    pack = result["pack_patch"] or {}
+    pack["hasMovimentacao"] = True
+    compras = _slice("compras", pack)
+    assert compras["totalCompras"] == pytest.approx(377506.76, abs=0.02)
+    assert len(compras["fornecedores"]) > 0
+    assert len(compras["ufEntradas"]) > 0
+    assert compras["fornecedores"][0]["nome"]
 
 
 @pytest.mark.skipif(not DOWNLOADS.exists(), reason="Pasta Downloads ausente")

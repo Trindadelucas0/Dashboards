@@ -75,8 +75,89 @@ def _find_header(grid: WorkbookGrid) -> tuple[int, dict[str, int]] | None:
     return None
 
 
+def find_padrao_balancete_month_columns(grid: WorkbookGrid, header_row: int = 0) -> dict[str, int]:
+    from app.extract.parse_dre import _MONTH_PADRAO
+
+    cols: dict[str, int] = {}
+    if not grid.rows or header_row >= len(grid.rows):
+        return cols
+    for col, cell in enumerate(grid.row(header_row)):
+        key = _fold(str(cell or ""))
+        if key in _MONTH_PADRAO:
+            cols[_MONTH_PADRAO[key]] = col
+    return cols
+
+
+def _is_padrao_balancete(grid: WorkbookGrid) -> bool:
+    if not grid.rows:
+        return False
+    head = " ".join(_fold(str(c or "")) for c in grid.row(0))
+    return "codigo" in head and "classificacao" in head and "janeiro" in head
+
+
+def parse_balancete_padrao_column(grid: WorkbookGrid, value_col: int) -> dict:
+    """Balancete planilha padrão: valor mensal na coluna do mês → saldoAtual."""
+    header_idx = 0
+    class_col = 1
+    desc_col = 2
+    contas: list[dict] = []
+
+    for raw in (grid.rows or [])[header_idx + 1 :]:
+        cells = list(raw or [])
+        if not cells:
+            continue
+        codigo = str(cells[class_col] if class_col < len(cells) else "").strip()
+        if not _ACCOUNT_RE.match(codigo):
+            continue
+        descricao = str(cells[desc_col] if desc_col < len(cells) else "").strip()
+        if not descricao:
+            continue
+        low = _fold(descricao)
+        if "sistema licenciado" in low or "cpf:" in low or "crc" in low:
+            continue
+        saldo_atual = None
+        if value_col < len(cells):
+            from app.extract.parse_dre import _is_number_cell, _to_float as dre_float
+
+            if _is_number_cell(cells[value_col]):
+                saldo_atual = dre_float(cells[value_col])
+        contas.append(
+            {
+                "codigo": codigo,
+                "descricao": descricao,
+                "nivel": codigo.count(".") + 1,
+                "grupo": _grupo(codigo),
+                "saldoAnterior": None,
+                "debito": None,
+                "credito": None,
+                "saldoAtual": saldo_atual,
+            }
+        )
+
+    by_code = {c["codigo"]: c for c in contas}
+    totais = {
+        "ativo": (by_code.get("1") or {}).get("saldoAtual"),
+        "passivo": (by_code.get("2") or {}).get("saldoAtual"),
+        "resultado": (by_code.get("3") or {}).get("saldoAtual"),
+        "debitos": None,
+        "creditos": None,
+        "contas": len(contas),
+    }
+    return {
+        "kind": "padrao",
+        "contas": contas,
+        "totais": totais,
+        "hasValores": any(c.get("saldoAtual") is not None for c in contas),
+    }
+
+
 def parse_balancete(grid: WorkbookGrid) -> dict:
     """Balancete EXITO: Código interno, Classificação, Descrição, saldos e movimento."""
+    if _is_padrao_balancete(grid):
+        cols = find_padrao_balancete_month_columns(grid)
+        if cols:
+            first_col = cols[sorted(cols.keys())[0]]
+            return parse_balancete_padrao_column(grid, first_col)
     found = _find_header(grid)
     if not found:
         return {

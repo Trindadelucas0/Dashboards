@@ -6,10 +6,10 @@ Código: `nova-versao/backend/app/extract/`. Entrada única: `classify_and_extra
 
 | tipo | Detecção (`detect_sheet_tipo`) | Parser | Chaves principais no pack |
 |------|-------------------------------|--------|---------------------------|
-| `entradas` | aba/nome `entrada`; cabeço `Total Fornecedor` | `parse_movimento` + `merge_entradas` | `totalCompras`, `cfopDados`, `fornecedores`, `porUf` |
+| `entradas` | aba/nome `entrada`; cabeço `Total Fornecedor` / `ACOMPANHAMENTO DE ENTRADAS`; filename `entrada por fornecedor` | `parse_movimento` + `merge_entradas` | `totalCompras`, `cfopDados`, `fornecedores`, `porUf` |
 | `saidas` | aba `saída/saida`; cabeço `Total Cliente` | `parse_movimento` + `merge_saidas` | `cfopSaidasTotal`, `receitaBruta`, `clientes`, `porUfSaidas` |
 | `icms` | `DEMONSTRATIVO DO ICMS`; filename `apura`+`icms` | `parse_demonstrativo_icms` | `apuracao.icms` |
-| `apuracao_5005` | filename `5005` **ou** labels `DÉBITO ORIGINAL` + `DEBITOS 5005` | `parse_memoria_5005` | `memoriaCalculo`, `apuracao.icms.aRecolher`, `apuracao.subvencao` |
+| `apuracao_5005` | filename `5005` **ou** labels `DÉBITO ORIGINAL` + `DEBITOS 5005` | `parse_memoria_5005` | `memoriaCalculo` (+ `linhas`, `formulaIcms`), `apuracao.icms.aRecolher`, `apuracao.subvencao` |
 | `ipi` | `DEMONSTRATIVO DO IPI` | `parse_demonstrativo_ipi` | `apuracao.ipi` |
 | `pis` | cabeço/aba PIS; EFD | `parse_demonstrativo_pis_cofins` | `apuracao.pis` |
 | `cofins` | aba COF; cabeço COFINS | idem | `apuracao.cofins` |
@@ -18,7 +18,22 @@ Código: `nova-versao/backend/app/extract/`. Entrada única: `classify_and_extra
 | `dre` | filename `resultado`/`dre` | `parse_dre` | `dre`, `hasDre`, margens |
 | `impostos` | tabela Empresa/Filial/Mês (JPG layout) | `parse_impostos_icms_ipi` | `impostos`, `apuracao` da linha do mês |
 | `irpj` | filename `irpj`/`csll` | placeholder | `irpj` estrutural |
+| `workbook_padrao` | 9 abas fiscais no mesmo `.xlsx` (`is_workbook_padrao`) | `parse_workbook_padrao` → `parts[]` | um patch por aba (ver abaixo) |
 | `desconhecido` | nenhum match | — | error |
+
+## Planilha padrão v2 (workbook multi-aba)
+
+**Obrigatórias** (as 9): `DRE`, `BALANCETE`, `ICMS 5005-2012`, `PIS COFINS`, `IRPJ`, `CSLL`, `ST`, `DIFAL`, `IPI`.
+**Opcionais** (movimento): `ENTRADAS`/`SAÍDAS` — sinônimos `ENTRADA`, `SAIDA`, `SAIDAS`, `SAÍDA` (`_fold_name`: sem acento, minúsculo).
+
+| Aba | Competência da part | Regra |
+|-----|--------------------|-------|
+| DRE / BALANCETE | `MMYYYY` do filename | Só a coluna daquele mês. Vazia → part `vazia` + warning, **sem pack_patch** (nunca cair para janeiro do modelo) |
+| ENTRADAS / SAÍDAS | `Período:` do cabeçalho da aba | `parse_movimento` + `merge_entradas`/`merge_saidas` (mesmo pack do fluxo EXITO) |
+| 5005, PIS COFINS, ST, DIFAL, IPI | `MMYYYY` do filename | igual v1 |
+| IRPJ / CSLL | `MMYYYY` do filename | gate de CNPJ da aba → `ignorada` se não bater |
+
+Arquivo com só parte das 9 abas: **não** é `workbook_padrao`; cai no fluxo legado (lê só a 1ª aba) e ganha warning `Planilha padrão incompleta (faltam as abas …)`.
 
 ## Competência
 
@@ -52,6 +67,18 @@ Impostos/DRE podem ter competência herdada do lote no preview.
 
 Ver [layout-exito.md](layout-exito.md).
 
+### Relatório de entrada por fornecedor
+
+Filename típico: `Relatorio de entrada por fornecedor MMYYYY.xls` (ex. `… 082026 BAIFER.xls`).
+
+- Título interno: `ACOMPANHAMENTO DE ENTRADAS`
+- Mesmo parser de Entradas (`parse_movimento`); subtotais `Total Fornecedor` são ignorados
+- Competência: período do cabeçalho ou `MMYYYY` no nome
+- Pack e abas UI iguais a Entradas: Compras, Visão Geral, Finalidade
+- Não importar junto com outro `Entradas` do mesmo mês (substitui, não soma)
+
+Golden Baifer ago/2026: `totalCompras` 377506.76, Δ 0, 211 NFs. Fixture: `nova-versao/fixtures/baifer-padrao/Relatorio de entrada por fornecedor 08-2026.xls`.
+
 Validação:
 
 ```python
@@ -60,6 +87,12 @@ delta = soma(linhas detalhe) - Total Geral
 ```
 
 Linha detalhe: coluna código = número inteiro (não `Total Fornecedor`, não cabeçalho).
+
+### Total Geral e Valor Contábil (v2)
+
+- `_find_total_geral` só aceita número nas **colunas de valor** da linha `Total Geral`. Se a linha existe mas não totaliza o Valor Contábil (abas SAÍDAS da planilha padrão), devolve `None` — antes pegava `Isentas`/`Outras` e gerava Δ de milhões.
+- No workbook padrão, `total_geral is None` **com** linhas → part `ok` + warning (confere pela soma). No fluxo EXITO legado continua `error`.
+- `mov.valor_source` diz de onde veio a coluna de valor: `contabil` / `generico` / `ausente` / `fallback`. No workbook padrão, `!= "contabil"` → part `vazia` + warning e **nada gravado** (a coluna `Valor` é ICMS, não faturamento).
 
 Pack meta espelha extract:
 
@@ -141,6 +174,9 @@ Só no **nome do arquivo** (`MMYYYY` / `MM-YYYY`). O upload usa tempfile; a API 
 | TOTAL (3º) | `totalFora` |
 | ICMS A RECOLHER | `icmsARecolher` → também `apuracao.icms.aRecolher` |
 | GANHO RECEITA DE SUBVENÇÃO | `ganhoReceitaSubvencao` → `apuracao.subvencao` |
+| (derivado) | `linhas[]` + `formulaIcms` (`Total 5005 + Total fora`) |
+
+Aba **Memória** no dashboard: livro linha a linha (`MemoriaLivro.tsx`). PIS/COFINS da planilha padrão grava `memoriaPisCofins` (débito/crédito/resumo).
 
 ### Filename típico
 
@@ -214,6 +250,16 @@ Pipeline:
 ### Arquivos separados
 
 Um `.xls` só PIS ou só COFINS → `tipo` = `pis` ou `cofins` (fluxo normal aba 1).
+
+### Aba `PIS COFINS` da planilha padrão
+
+`parse_pis_cofins_padrao`: blocos DÉBITO / CRÉDITO / RESUMO APURAÇÃO.
+
+- `aRecolher = débito − crédito` (**resultado do mês**).
+- A coluna `A RECOLHER` do RESUMO só é aceita se bater com essa conta (tolerância 0,02); senão vira `aRecolherPlanilha` + warning.
+- Motivo: nessas planilhas o RESUMO desconta o `SALDO CREDOR` **acumulado** (o saldo credor do mês N é o `aRecolher` do mês N−1) — somar isso em todo mês duplicaria o mesmo crédito.
+- Golden Baifer jan/2026: PIS `-2030.42`, COFINS `-9352.23` (planilha: `-18080.71` / `-83280.93`).
+- Golden Única jan/2026: PIS `-153.95`, COFINS `-709.09` (planilha: `-83936.33` / `-386579.45`).
 
 ---
 

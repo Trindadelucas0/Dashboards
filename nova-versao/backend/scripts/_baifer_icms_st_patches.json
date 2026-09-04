@@ -1,0 +1,256 @@
+[
+  {
+    "file_name": "Apuração icms st 012026.xls",
+    "file_hash": "abf760edfaa46c478958ede9e610916eb2aece7cd8eff25624f521dc00c0bcbd",
+    "tipo": "icms_st",
+    "competencia": "2026-01",
+    "unidade": "matriz",
+    "company_id": "baifer",
+    "meta": {
+      "aRecolher": 474.62,
+      "ufs": 1
+    },
+    "pack_patch": {
+      "apuracao": {
+        "icmsSt": {
+          "apurado": 474.62,
+          "aRecolher": 474.62,
+          "pctRb": 0.0
+        },
+        "fonte": "demonstrativo_subtri"
+      },
+      "impostosDemo": {
+        "icmsSt": {
+          "kind": "demonstrativo_subtri",
+          "byUf": {
+            "DF": 474.62
+          },
+          "aRecolher": 474.62,
+          "apurado": 474.62
+        }
+      },
+      "porUfSt": {
+        "DF": 474.62
+      }
+    },
+    "aRecolher": 474.62
+  },
+  {
+    "file_name": "Apuração icms st 022026.xls",
+    "file_hash": "9869b72fa05cea1380bfffea5ca206dbe1d24765d0d272312d6261d06ddf198a",
+    "tipo": "icms_st",
+    "competencia": "2026-02",
+    "unidade": "matriz",
+    "company_id": "baifer",
+    "meta": {
+      "aRecolher": 276.53,
+      "ufs": 1
+    },
+    "pack_patch": {
+      "apuracao": {
+        "icmsSt": {
+          "apurado": 276.53,
+          "aRecolher": 276.53,
+          "pctRb": 0.0
+        },
+        "fonte": "demonstrativo_subtri"
+      },
+      "impostosDemo": {
+        "icmsSt": {
+          "kind": "demonstrativo_subtri",
+          "byUf": {
+            "DF": 276.53
+          },
+          "aRecolher": 276.53,
+          "apurado": 276.53
+        }
+      },
+      "porUfSt": {
+        "DF": 276.53
+      }
+    },
+    "aRecolher": 276.53
+  },
+  {
+    "file_name": "Apuração icms st 032026.xls",
+    "file_hash": "7a123b6f12ae7c185b039a08d3456cc4cab5a5335d063427e2cde375edc298c6",
+    "tipo": "icms_st",
+    "competencia": "2026-03",
+    "unidade": "matriz",
+    "company_id": "baifer",
+    "meta": {
+      "aRecolher": 473.01,
+      "ufs": 1
+    },
+    "pack_patch": {
+      "apuracao": {
+        "icmsSt": {
+          "apurado": 473.01,
+          "aRecolher": 473.01,
+          "pctRb": 0.0
+        },
+        "fonte": "demonstrativo_subtri"
+      },
+      "impostosDemo": {
+        "icmsSt": {
+          "kind": "demonstrativo_subtri",
+          "byUf": {
+            "DF": 473.01
+          },
+          "aRecolher": 473.01,
+          "apurado": 473.01
+        }
+      },
+      "porUfSt": {
+        "DF": 473.01
+      }
+    },
+    "aRecolher": 473.01
+  },
+  {
+    "file_name": "Apuração icms st 042026.xls",
+    "file_hash": "a6e57dfaac540d4515bc89209c36bdf4842467b222d813fa338426eaebe030a7",
+    "tipo": "icms_st",
+    "competencia": "2026-04",
+    "unidade": "matriz",
+    "company_id": "baifer",
+    "meta": {
+      "aRecolher": 264.83,
+      "ufs": 2
+    },
+    "pack_patch": {
+      "apuracao": {
+        "icmsSt": {
+          "apurado": 264.83,
+          "aRecolher": 264.83,
+          "pctRb": 0.0
+        },
+        "fonte": "demonstrativo_subtri"
+      },
+      "impostosDemo": {
+        "icmsSt": {
+          "kind": "demonstrativo_subtri",
+          "byUf": {
+            "DF": 263.01,
+            "GO": 1.82
+          },
+          "aRecolher": 264.83,
+          "apurado": 264.83
+        }
+      },
+      "porUfSt": {
+        "DF": 263.01,
+        "GO": 1.82
+      }
+    },
+    "aRecolher": 264.83
+  },
+  {
+    "file_name": "Apuração icms st 052026.xls",
+    "file_hash": "2be7413751922cf473c369a306bfa0602512e000c54fd4f67f8cf5440dae4e44",
+    "tipo": "icms_st",
+    "competencia": "2026-05",
+    "unidade": "matriz",
+    "company_id": "baifer",
+    "meta": {
+      "aRecolher": 461.13,
+      "ufs": 1
+    },
+    "pack_patch": {
+      "apuracao": {
+        "icmsSt": {
+          "apurado": 461.13,
+          "aRecolher": 461.13,
+          "pctRb": 0.0
+        },
+        "fonte": "demonstrativo_subtri"
+      },
+      "impostosDemo": {
+        "icmsSt": {
+          "kind": "demonstrativo_subtri",
+          "byUf": {
+            "DF": 461.13
+          },
+          "aRecolher": 461.13,
+          "apurado": 461.13
+        }
+      },
+      "porUfSt": {
+        "DF": 461.13
+      }
+    },
+    "aRecolher": 461.13
+  },
+  {
+    "file_name": "Apuração icms st 062026.xls",
+    "file_hash": "98f5db1eac3a1ac964e1fa1c0fdfeb1a0a7d86ecbc2a01e9f17b0800fcb6d19f",
+    "tipo": "icms_st",
+    "competencia": "2026-06",
+    "unidade": "matriz",
+    "company_id": "baifer",
+    "meta": {
+      "aRecolher": 100.92,
+      "ufs": 1
+    },
+    "pack_patch": {
+      "apuracao": {
+        "icmsSt": {
+          "apurado": 100.92,
+          "aRecolher": 100.92,
+          "pctRb": 0.0
+        },
+        "fonte": "demonstrativo_subtri"
+      },
+      "impostosDemo": {
+        "icmsSt": {
+          "kind": "demonstrativo_subtri",
+          "byUf": {
+            "DF": 100.92
+          },
+          "aRecolher": 100.92,
+          "apurado": 100.92
+        }
+      },
+      "porUfSt": {
+        "DF": 100.92
+      }
+    },
+    "aRecolher": 100.92
+  },
+  {
+    "file_name": "Apuração icms st 072026.xls",
+    "file_hash": "fe33fb266cbb4f242bd2938d82a80a5568dca74cb2f5c3d7beee1ce3a50c4378",
+    "tipo": "icms_st",
+    "competencia": "2026-07",
+    "unidade": "matriz",
+    "company_id": "baifer",
+    "meta": {
+      "aRecolher": 81.99,
+      "ufs": 1
+    },
+    "pack_patch": {
+      "apuracao": {
+        "icmsSt": {
+          "apurado": 81.99,
+          "aRecolher": 81.99,
+          "pctRb": 0.0
+        },
+        "fonte": "demonstrativo_subtri"
+      },
+      "impostosDemo": {
+        "icmsSt": {
+          "kind": "demonstrativo_subtri",
+          "byUf": {
+            "DF": 81.99
+          },
+          "aRecolher": 81.99,
+          "apurado": 81.99
+        }
+      },
+      "porUfSt": {
+        "DF": 81.99
+      }
+    },
+    "aRecolher": 81.99
+  }
+]

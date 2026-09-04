@@ -52,6 +52,33 @@
 | Header não detectado | Fallback cols entradas/saídas em `parse_movimento` |
 | Excel HTML mal exportado | Tentar COM/xlrd; re-export usuário |
 
+### Saídas com Δ de milhões (planilha padrão)
+
+| Causa | Fix |
+|-------|-----|
+| Linha `Total Geral` existe mas não totaliza o Valor Contábil | Já tratado: `_find_total_geral` devolve `None`; part `ok` + warning e conferência pela soma |
+| Total pego de `Isentas`/`Outras` | Não reintroduzir o scan cego de células na linha do Total Geral |
+
+### Aba de movimento sem coluna `Valor Contábil`
+
+Sintoma: soma ~10× menor que os outros meses e Δ 0,00 "por coincidência" (o Total Geral também é da coluna de imposto).
+
+| Causa | Fix |
+|-------|-----|
+| Export EXITO sem a coluna `Valor Contábil` (só `Base Cálculo`/`Alíq.`/`Valor`) | Part sai `vazia` + warning; **pedir reexport** — não somar base+outras para "reconstruir" o contábil |
+
+### `Planilha padrão incompleta (faltam as abas …)`
+
+| Causa | Fix |
+|-------|-----|
+| Arquivo com parte das 9 abas (ex.: movimento sem DRE/BALANCETE) | Pedir arquivo único com todas as abas; só a 1ª aba foi lida |
+
+### DRE/Balancete de janeiro aparecendo em todo mês
+
+| Causa | Fix |
+|-------|-----|
+| Modelo distribuído com a coluna JANEIRO preenchida | Já tratado: só a coluna do `MMYYYY` do filename é lida; vazia → part `vazia` |
+
 ### `Nenhuma linha de detalhe encontrada`
 
 | Causa | Fix |

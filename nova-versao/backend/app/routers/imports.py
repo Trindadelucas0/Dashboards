@@ -14,6 +14,7 @@ from app.db import get_db
 from app.deps import require_admin, require_company
 from app.companies import COMPANY_BY_ID
 from app.extract.pipeline import classify_and_extract
+from app.extract.parse_workbook_padrao import expand_workbook_parts
 from app.extract.workbook import safe_unlink
 from app.models import Company, FiscalMonth, ImportRecord, NfeLine, User
 from app.security import sha256_bytes
@@ -47,6 +48,23 @@ def _pack_has_tipo(pack: dict | None, tipo: str) -> bool:
     if tipo == "balancete":
         bal = pack.get("balancete") if isinstance(pack.get("balancete"), dict) else {}
         return bool(pack.get("hasBalancete") or bal.get("contas"))
+    ap = pack.get("apuracao") if isinstance(pack.get("apuracao"), dict) else {}
+    if tipo == "apuracao_5005":
+        return bool(pack.get("memoriaCalculo") or ap.get("icms"))
+    if tipo in ("pis", "cofins", "pis_cofins"):
+        return bool(ap.get("pis") or ap.get("cofins"))
+    if tipo == "icms_st":
+        return bool(ap.get("icmsSt"))
+    if tipo == "ipi":
+        return bool(ap.get("ipi"))
+    if tipo == "irpj":
+        return bool(ap.get("irpj"))
+    if tipo == "csll":
+        return bool(ap.get("csll"))
+    if tipo == "difal":
+        return bool(ap.get("difal"))
+    if tipo == "icms":
+        return bool(ap.get("icms"))
     return False
 
 
@@ -98,6 +116,8 @@ def _inherit_batch_competencia(items: list[dict]) -> None:
             "pis_cofins",
             "impostos",
             "irpj",
+            "csll",
+            "difal",
             "apuracao_5005",
             "dre",
             "balancete",
@@ -128,7 +148,14 @@ async def preview(
             tmp.write(data)
             tmp_path = tmp.name
         try:
-            extracted = classify_and_extract(tmp_path, data, db=db, original_filename=name)
+            company_cnpj = ""
+            if company_id:
+                dest = COMPANY_BY_ID.get(company_id) or db.query(Company).filter(Company.id == company_id).first()
+                if dest and getattr(dest, "cnpj", None):
+                    company_cnpj = str(dest.cnpj)
+            extracted = classify_and_extract(
+                tmp_path, data, db=db, original_filename=name, company_cnpj=company_cnpj
+            )
         except Exception as exc:  # noqa: BLE001
             extracted = {
                 "file": name,
@@ -148,37 +175,57 @@ async def preview(
         extracted["file_hash"] = sha256_bytes(data)
         extracted["file"] = name
         _apply_session_company(extracted, company_id, db)
-        existing = (
-            db.query(ImportRecord).filter(ImportRecord.file_hash == extracted["file_hash"]).first()
-            if extracted.get("file_hash")
-            else None
-        )
-        slot = None
-        if extracted.get("company_id") and extracted.get("competencia"):
-            slot = (
-                db.query(FiscalMonth)
-                .filter(
-                    FiscalMonth.company_id == extracted["company_id"],
-                    FiscalMonth.competencia == extracted["competencia"],
-                    FiscalMonth.unidade == (extracted.get("unidade") or "matriz"),
-                )
-                .first()
+        expanded = expand_workbook_parts(extracted)
+        for part in expanded:
+            # Hash por aba (expand_workbook_parts); não sobrescrever com hash do arquivo inteiro
+            # — senão qualquer part gravada marca as demais como duplicateHash.
+            if not part.get("file_hash"):
+                part["file_hash"] = extracted.get("file_hash")
+            part["source_file_hash"] = extracted.get("file_hash")
+            _apply_session_company(part, company_id, db)
+            existing = (
+                db.query(ImportRecord).filter(ImportRecord.file_hash == part.get("file_hash")).first()
+                if part.get("file_hash")
+                else None
             )
-        extracted["duplicateHash"] = bool(existing)
-        extracted["slotExists"] = slot is not None
-        extracted["ok"] = not extracted.get("errors")
-        items.append(extracted)
+            part["duplicateHash"] = bool(existing)
+            slot = None
+            if part.get("company_id") and part.get("competencia"):
+                slot = (
+                    db.query(FiscalMonth)
+                    .filter(
+                        FiscalMonth.company_id == part["company_id"],
+                        FiscalMonth.competencia == part["competencia"],
+                        FiscalMonth.unidade == (part.get("unidade") or "matriz"),
+                    )
+                    .first()
+                )
+            part["slotExists"] = slot is not None
+            if part.get("skipped"):
+                part["ok"] = True
+            else:
+                part["ok"] = not part.get("errors")
+            items.append(part)
 
     _inherit_batch_competencia(items)
     for extracted in items:
+        if extracted.get("skipped"):
+            extracted["ok"] = True
+            continue
         if extracted.get("errors"):
             extracted["ok"] = False
             continue
         if not extracted.get("company_id"):
-            extracted.setdefault("errors", []).append("Empresa não identificada")
-            extracted["ok"] = False
+            if extracted.get("tipo") == "workbook_padrao":
+                extracted.setdefault("warnings", []).append("Empresa será definida ao gravar no dashboard aberto")
+            else:
+                extracted.setdefault("errors", []).append("Empresa não identificada")
+                extracted["ok"] = False
             continue
         if not extracted.get("competencia"):
+            if extracted.get("pack_patch") is None and extracted.get("status") in ("vazia", "ignorada"):
+                extracted["ok"] = True
+                continue
             extracted.setdefault("errors", []).append("Competência não identificada")
             extracted["ok"] = False
             continue
@@ -242,8 +289,18 @@ def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = De
     saved = []
     cleared_slots: set[tuple[str, str, str]] = set()
     slot_rows: dict[tuple[str, str, str], FiscalMonth] = {}
+    pending_hashes: set[str] = set()
     try:
         for item in preview["items"]:
+            if item.get("skipped") or not item.get("pack_patch"):
+                saved.append(
+                    {
+                        "file": item.get("file"),
+                        "status": "ignorado",
+                        "warnings": item.get("warnings") or ["Aba vazia ou ignorada"],
+                    }
+                )
+                continue
             if item.get("errors") or not item.get("ok"):
                 saved.append(
                     {
@@ -293,7 +350,7 @@ def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = De
                 elif existing_imp and body.replace:
                     existing_imp.status = "replaced"
                     existing_imp.meta = item.get("meta") or {}
-                else:
+                elif file_hash not in pending_hashes:
                     db.add(
                         ImportRecord(
                             company_id=company_id,
@@ -306,6 +363,7 @@ def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = De
                             meta=item.get("meta") or {},
                         )
                     )
+                    pending_hashes.add(file_hash)
             for line in item.get("lines") or []:
                 try:
                     with db.begin_nested():

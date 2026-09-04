@@ -198,6 +198,8 @@ def detect_sheet_tipo(grid: WorkbookGrid, filename: str) -> str:
         return "apuracao_5005"
     if "entrada" in name:
         return "entradas"
+    if "acompanhamento de entradas" in _fold_text(head) or "entrada por fornecedor" in file_fold:
+        return "entradas"
     if "saida" in name or "saída" in name:
         return "saidas"
     if "demonstrativo do ipi" in head or ("ipi" in file_l and "demonst" in file_l):

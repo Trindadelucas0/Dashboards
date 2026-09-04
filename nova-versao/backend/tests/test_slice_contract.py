@@ -269,6 +269,8 @@ def test_slice_memoria_pis_cofins_e_receita():
             "cofins": {"apurado": 30254.08, "aRecolher": 0, "credito": 83280.93},
         },
         "memoriaCalculo": {"icmsARecolher": 40, "debitoOriginal": 100},
+        "memoriaPisCofins": {"resumo": {"pis": {"aRecolher": 0}}},
+        "porUfSt": {"DF": 474.62},
     }
     data = _slice("memoria", pack)
     assert data["receitaBruta"] == 2000
@@ -278,6 +280,8 @@ def test_slice_memoria_pis_cofins_e_receita():
     assert data["apuracao"]["cofins"]["aRecolher"] == 0
     assert data["apuracao"]["cofins"]["apurado"] == 30254.08
     assert data["memoriaCalculo"]["icmsARecolher"] == 40
+    assert data["memoriaPisCofins"]["resumo"]["pis"]["aRecolher"] == 0
+    assert data["porUfSt"]["DF"] == 474.62
     assert "aRecolher" in data["apuracao"]["pis"]
     assert "aRecolher" in data["apuracao"]["cofins"]
 
@@ -382,3 +386,33 @@ def test_dre_por_mes_year_media_and_cmv_pendente():
     assert por[1]["cmvPendente"] is True
     assert por[0]["source"] == "DRE.xls"
     assert build_dre_por_mes(months, "2024") == []
+
+
+def test_balancete_por_mes_year_filter():
+    from app.routers.companies import build_balancete_por_mes
+
+    class M:
+        def __init__(self, competencia, pack):
+            self.competencia = competencia
+            self.pack = pack
+
+    bal = {
+        "kind": "padrao",
+        "contas": [
+            {"codigo": "1", "descricao": "ATIVO", "nivel": 1, "grupo": "ativo", "saldoAtual": 100},
+            {"codigo": "1.1", "descricao": "Circulante", "nivel": 2, "grupo": "ativo", "saldoAtual": 40},
+        ],
+        "totais": {"ativo": 100, "passivo": None, "resultado": None, "contas": 2},
+        "hasValores": True,
+    }
+    months = [
+        M("2025-12", {"hasBalancete": True, "balancete": bal}),
+        M("2026-01", {"hasBalancete": True, "balancete": bal}),
+        M("2026-02", {"hasMovimentacao": True}),
+        M("2026-03", {"hasBalancete": True, "balancete": {**bal, "contas": []}}),
+    ]
+    por = build_balancete_por_mes(months, "2026")
+    assert [m["competencia"] for m in por] == ["2026-01"]
+    assert por[0]["totais"]["ativo"] == 100
+    assert por[0]["shortLabel"] == "Jan"
+    assert build_balancete_por_mes(months, "2024") == []

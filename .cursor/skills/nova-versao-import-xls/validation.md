@@ -146,6 +146,25 @@ Fixture CI: `fixtures/baifer-padrao/Saídas 01-2026.xls`.
 
 Arquivo: `Apuração pis e cofins 012026.xls` (2 abas).
 
+## Valores golden — Única planilha padrão 2026
+
+Fonte: `Planilha Padrão DASBORADS - UNICA MM2026.xlsx` (9 abas + ENTRADAS/SAÍDAS). CNPJ `36517206000130`.
+Fixtures CI: `fixtures/unica-padrao/planilha-padrao-012026.xlsx` e `…-042026.xlsx`. Testes: `tests/test_unica_padrao.py`.
+
+| Competência | Entradas (Δ 0) | NFs | Saídas | ICMS 5005 | Subvenção | ST |
+|-------------|---------------:|----:|-------:|----------:|----------:|---:|
+| 2026-01 | 1.790.105,13 | 204 | 1.863.198,21 | 18.164,87 | 139.563,57 | 66.958,60 |
+| 2026-02 | 1.549.056,05 | 162 | 1.749.489,47 | 59.789,54 | 132.906,83 | 59.350,91 |
+| 2026-03 | 2.337.179,25 | 256 | 2.074.977,46 | 19.531,28 | 172.720,45 | 71.713,34 |
+| 2026-04 | 1.898.660,87 | 246 | — (aba sem Valor Contábil) | 65.810,31 | 36.488,51 | 71.751,12 |
+| 2026-05 | 2.462.684,27 | 241 | 2.062.864,56 | 28.183,76 | 155.318,04 | 71.907,31 |
+| 2026-06 | 1.981.355,68 | 230 | 2.270.697,73 | 73.486,07 | 161.882,23 | 81.007,00 |
+| 2026-07 | 2.119.642,66 | 238 | 2.440.744,56 | 67.908,41 | 170.102,60 | 81.871,70 |
+
+Saídas não têm Total Geral utilizável → part `ok` com warning; conferência pela soma das linhas.
+DRE/Balancete: só a coluna JANEIRO vem preenchida (valores do modelo) — fev–jul saem `vazia`.
+Julho vem em dois arquivos incompletos; o que tem movimento não passa em `is_workbook_padrao`.
+
 ## Valores golden — ICMS (exemplos)
 
 Demonstrativo EXITO — conferir por mês na planilha:

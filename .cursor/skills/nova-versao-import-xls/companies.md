@@ -9,6 +9,9 @@ Identificação **obrigatória pelo CNPJ do cabeçalho** (primeiras ~12 linhas).
 | `egaplast` | Egaplast | `03185564000134` | `EGAPLAST` | `egaplast` | green | matriz + filial (mesmo CNPJ) |
 | `baifer` | Baifer | `52005382000140` | `BAIFER` | `baifer` | blue | matriz |
 | `loja-maquinas` | Loja das Máquinas | `13983066000190` | `LOJA DAS MAQUINAS` / `LOJA MÁQUINAS` | `loja-maquinas` | green | matriz |
+| `unica` | Única | `36517206000130` | `\b[UÚ]NICA\b` | `unica` | blue | matriz |
+
+**Única (UNICA COMERCIO ATACADISTA DE TINTAS):** fonte mensal é a planilha padrão v2 (9 abas + ENTRADAS/SAÍDAS no mesmo `.xlsx`), competências 01–07/2026. Fixtures: `fixtures/unica-padrao/`. Testes: `tests/test_unica_padrao.py`.
 
 ### Senhas (seed)
 
@@ -70,7 +73,7 @@ Atualizar:
 
 ```python
 KEEP_COMPANY_IDS = frozenset(COMPANY_BY_ID)  # automático se usar COMPANY_BY_ID
-KEEP_USERNAMES = frozenset({"admin", "egaplast", "baifer", "loja-maquinas"})
+KEEP_USERNAMES = frozenset({"admin", "egaplast", "baifer", "loja-maquinas", "unica"})
 ```
 
 ### 3. Editar `scripts/seed.py`
@@ -133,8 +136,8 @@ Empresas no dashboard antigo **não** estão todas no nova-versao:
 | Egaplast | ✅ egaplast |
 | Baifer | ✅ baifer |
 | Loja das Máquinas | ✅ loja-maquinas |
-| Unica | ❌ usar skill dashboard-movimento-xls |
-| JPG | ❌ idem |
+| Unica | ✅ unica (planilha padrão v2) |
+| JPG | ❌ usar skill dashboard-movimento-xls |
 
 Migrar empresa EJS → nova-versao = registrar no catálogo + calibrar parsers (layout EXITO costuma ser igual).
 
@@ -145,5 +148,6 @@ Migrar empresa EJS → nova-versao = registrar no catálogo + calibrar parsers (
 | Egaplast | `fixtures/egaplast-padrao/` | Entradas.xls, Saídas.xls, PIS, EFD, IPI, ST |
 | Baifer | `fixtures/baifer-padrao/` | Entradas 01-2026.xls, Saídas 01-2026.xls, DRE, Balancete, 5005 |
 | Loja das Máquinas | `fixtures/loja-maquinas-padrao/` | D. R. E. 01-2026.xls, Balancete 01-2026.xls |
+| Única | `fixtures/unica-padrao/` | planilha-padrao-012026.xlsx (abas plurais), planilha-padrao-042026.xlsx (abas singulares) |
 
 Copiar do usuário **1 arquivo por tipo** para CI; golden completo pode usar `@pytest.mark.skipif` na pasta Downloads.

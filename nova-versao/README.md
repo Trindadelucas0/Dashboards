@@ -38,9 +38,12 @@ Login inicial:
 | Empresa | Fixture |
 |---------|---------|
 | Egaplast | `fixtures/egaplast-padrao/` |
-| Baifer | `fixtures/baifer-padrao/` (Entradas, Saídas e DRE jan/2026) |
+| Baifer | `fixtures/baifer-padrao/` (Entradas, relatório por fornecedor ago/2026, Saídas, DRE jan/2026) |
+| **Planilha padrão (9 abas)** | `fixtures/baifer-padrao/planilha-padrao-modelo.xlsx` |
 
-Todo mês o layout EXITO é o mesmo; só mudam os números.
+O import principal é o **workbook padrão** (DRE, Balancete, 5005, PIS/COFINS, ST, DIFAL, IPI, IRPJ, CSLL). Planilhas EXITO soltas (Entradas/Saídas) continuam válidas para movimento.
+
+Todo mês o layout EXITO legado é o mesmo; a planilha padrão só muda os números nas colunas de mês.
 
 ## Calibração
 

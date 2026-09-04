@@ -20,6 +20,8 @@ import { useDash } from "@/components/DashContext";
 import ImportTab from "@/components/ImportTab";
 import SupplierReportModal from "@/components/SupplierReportModal";
 import DreStatement from "@/components/DreStatement";
+import MemoriaLivro from "@/components/MemoriaLivro";
+import BalanceteTree from "@/components/BalanceteTree";
 
 ChartJS.register(
   CategoryScale,
@@ -259,7 +261,7 @@ function emptyMsg(aba: string) {
   if (aba === "dre") return "Importe a planilha RESULTADO para preencher a DRE. CMV e margens não são estimados.";
   if (aba === "impostos") return "Impostos só aparecem depois de importar a planilha de apuração. Não inventamos valor.";
   if (aba === "balancete") return "Balancete ainda não importado. Não inventamos saldo contábil.";
-  if (aba === "memoria") return "Sem metadados de conferência neste mês. Importe Entradas/Saídas ou a apuração de impostos.";
+  if (aba === "memoria") return "Importe a planilha padrão (ou APURAÇÃO 5005 / PIS/COFINS) para ver a memória linha a linha.";
   return "Sem movimento neste mês. Importe as planilhas na aba Importar.";
 }
 
@@ -311,7 +313,7 @@ export default function AbaPage() {
     finalidade: ["Finalidade de Compras", "Por CFOP — clique para expandir fornecedores"],
     vendas: ["Vendas", "Faturamento de saídas por cliente e UF"],
     impostos: ["Impostos", "Apuração — só entra o que foi importado"],
-    memoria: ["Memória de Cálculo", "ICMS 5005 + PIS/COFINS"],
+    memoria: ["Memória de Cálculo", "Livro da planilha padrão — ICMS 5005, PIS/COFINS e demais tributos"],
     recebimentos: ["Recebimentos/Pagamentos", "Estimativa pelo movimento fiscal"],
     balancete: ["Balancete", "Contábil"],
     dre: ["DRE", "Demonstração do resultado"],
@@ -325,7 +327,7 @@ export default function AbaPage() {
   const ufSai = (d.ufSaidas || []) as { uf: string; total: number; pct: number }[];
   const totalComp = Number(d.totalCompras || 0);
   const totalVend = Number(d.cfopSaidasTotal || d.receitaBruta || 0);
-  const serie = d.serie || { labels: [], compras: [], vendas: [], deducoes: [], dedPct: [] };
+  const serie = d.serie || { labels: [], compras: [], vendas: [], deducoes: [], dedPct: [], margMb: [], margMl: [] };
   const maxForn = forn[0]?.total || 1;
   const maxCli = topCli[0]?.total || 1;
   const topForn = forn.slice(0, 8);
@@ -883,405 +885,180 @@ export default function AbaPage() {
       )}
 
       {showImpostosLayout && (
-        <>
-          {payload?.empty || !ap ? (
-            <div className="alert-box warn">Impostos só aparecem depois de importar a planilha de apuração. Não inventamos valor.</div>
-          ) : null}
-          <div className="tax-grid">
-            {([
-              ["ICMS", "icms", "t-accent", "bl"],
-              ["ICMS ST", "icmsSt", "", "pu"],
-              ["PIS", "pis", "t-success", "gr"],
-              ["COFINS", "cofins", "t-warning", "ye"],
-              ["IPI", "ipi", "", "gy"],
-              ["IRPJ/CSLL", "irpj", "", "gy"],
-            ] as const).map(([name, key, curClass, chip]) => {
-              const row = ap?.[key];
-              return (
-                <div className="tax-card" key={key}>
-                  <div className="tax-card-head">
-                    <div className={`tax-name ${curClass}`}>{name}</div>
-                    <span className={`chip ${chip}`}>{row ? "Importado" : "Em apuração"}</span>
-                  </div>
-                  <div className={`tax-cur ${curClass}`}>{row ? brl(row.aRecolher ?? row.apurado) : "—"}</div>
-                  <div className="tax-prev">
-                    {row ? `Apurado: ${brl(row.apurado)} · ${row.pctRb ?? 0}% s/ RB` : "Aguardando planilha deste tributo"}
+        (() => {
+          const vendas = Number(d.receitaBruta || d.cfopSaidasTotal || totalVend || 0);
+          const taxKeys = ["icms", "icmsSt", "pis", "cofins", "ipi", "difal", "irpj", "csll"] as const;
+          let sumRecolher: number | null = null;
+          if (ap) {
+            let any = false;
+            let acc = 0;
+            for (const k of taxKeys) {
+              const row = ap[k];
+              if (row && typeof row === "object" && ("aRecolher" in row || "apurado" in row)) {
+                acc += Number(row.aRecolher ?? 0);
+                any = true;
+              }
+            }
+            sumRecolher = any ? acc : null;
+          }
+          const totalImp =
+            d.deducoes != null && d.deducoes !== undefined ? Number(d.deducoes) : sumRecolher;
+          const pctVendas =
+            vendas > 0 && totalImp != null
+              ? Math.round((10000 * totalImp) / vendas) / 100
+              : d.dedPct != null && vendas > 0
+                ? Number(d.dedPct)
+                : null;
+          const pctSobreVendas = (aRecolher: number | null | undefined) => {
+            if (aRecolher == null || !(vendas > 0)) return null;
+            return Math.round((10000 * Number(aRecolher)) / vendas) / 100;
+          };
+          const fmtPct = (n: number | null | undefined) =>
+            n == null ? "—" : `${n.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}%`;
+
+          return (
+            <>
+              {payload?.empty || !ap ? (
+                <div className="alert-box warn">
+                  Impostos só aparecem depois de importar a planilha de apuração. Não inventamos valor.
+                </div>
+              ) : null}
+
+              <div className="kpi-grid kpi-grid-4 imp-kpi-top">
+                <Kpi
+                  color="cyan"
+                  icon="file-invoice"
+                  value={vendas > 0 ? brlCompact(vendas) : "—"}
+                  label="Vendas do mês"
+                  sub={vendas > 0 ? "Receita bruta / saídas do pack" : "Sem faturamento neste mês"}
+                />
+                <Kpi
+                  color="orange"
+                  icon="coins"
+                  value={totalImp != null ? brlCompact(totalImp) : "—"}
+                  label="Total impostos"
+                  sub={totalImp != null ? "Soma a recolher / deduções do pack" : "Aguardando apuração"}
+                />
+                <Kpi
+                  color="red"
+                  icon="percent"
+                  value={fmtPct(pctVendas)}
+                  label="Total impostos / Vendas"
+                  sub={pctVendas != null ? "% sobre faturamento do mês" : "Sem vendas ou sem apuração"}
+                />
+                <Kpi
+                  color="purple"
+                  icon="chart-pie"
+                  value={fmtPct(d.dedPct != null ? Number(d.dedPct) : pctVendas)}
+                  label="Carga tributária"
+                  sub={d.dedPct != null ? "dedPct do pack" : pctVendas != null ? "Calculado na tela" : "N/D"}
+                />
+              </div>
+
+              <div className="tax-grid">
+                {(
+                  [
+                    ["ICMS", "icms", "t-accent", "bl"],
+                    ["ICMS ST", "icmsSt", "", "pu"],
+                    ["PIS", "pis", "t-success", "gr"],
+                    ["COFINS", "cofins", "t-warning", "ye"],
+                    ["IPI", "ipi", "", "gy"],
+                    ...(ap?.difal ? ([["DIFAL", "difal", "", "gy"]] as const) : []),
+                    ["IRPJ/CSLL", "irpj_csll", "", "gy"],
+                  ] as const
+                ).map(([name, key, curClass, chip]) => {
+                  const row =
+                    key === "irpj_csll"
+                      ? ap?.irpj || ap?.csll
+                        ? {
+                            aRecolher: Number(ap?.irpj?.aRecolher ?? 0) + Number(ap?.csll?.aRecolher ?? 0),
+                            apurado: Number(ap?.irpj?.apurado ?? 0) + Number(ap?.csll?.apurado ?? 0),
+                          }
+                        : null
+                      : (ap?.[key as keyof typeof ap] as { aRecolher?: number; apurado?: number } | null | undefined);
+                  const aRec = row ? Number(row.aRecolher ?? row.apurado) : null;
+                  const pctSv = row ? pctSobreVendas(row.aRecolher ?? row.apurado) : null;
+                  return (
+                    <div className="tax-card" key={key}>
+                      <div className="tax-card-head">
+                        <div className={`tax-name ${curClass}`}>{name}</div>
+                        <span className={`chip ${chip}`}>{row ? "Importado" : "Em apuração"}</span>
+                      </div>
+                      <div className={`tax-cur ${curClass}`}>{row && aRec != null ? brl(aRec) : "—"}</div>
+                      <div className="tax-prev">
+                        {row
+                          ? `Apurado: ${brl(row.apurado)} · % s/ vendas: ${fmtPct(pctSv)}`
+                          : "Aguardando planilha deste tributo"}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="charts-row cr-2col">
+                <div className="chart-card">
+                  <div className="chart-ttl">Evolução — Receita × Deduções</div>
+                  <div className="chart-wrap h260">
+                    <Bar
+                      data={{
+                        labels: serie.labels || [],
+                        datasets: [
+                          {
+                            label: "Receita",
+                            data: (serie.vendas || []).map((v: number) => +(v / 1000).toFixed(1)),
+                            backgroundColor: "rgba(34,163,41,0.7)",
+                            borderRadius: 4,
+                          },
+                          {
+                            label: "Deduções",
+                            data: (serie.deducoes || []).map((v: number | null) =>
+                              v == null ? null : +(v / 1000).toFixed(1),
+                            ),
+                            backgroundColor: "rgba(239,68,68,0.65)",
+                            borderRadius: 4,
+                          },
+                        ],
+                      }}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: "bottom" } },
+                        scales: { y: { ticks: { callback: (v) => `R$ ${v}K` } } },
+                      }}
+                    />
                   </div>
                 </div>
-              );
-            })}
-          </div>
-          <div className="charts-row cr-2col">
-            <div className="chart-card">
-              <div className="chart-ttl">Evolução — Receita × Deduções</div>
-              <div className="chart-wrap h260">
-                <Bar
-                  data={{
-                    labels: serie.labels || [],
-                    datasets: [
-                      { label: "Receita", data: (serie.vendas || []).map((v: number) => +(v / 1000).toFixed(1)), backgroundColor: "rgba(34,163,41,0.7)", borderRadius: 4 },
-                      { label: "Deduções", data: (serie.deducoes || []).map((v: number | null) => (v == null ? null : +(v / 1000).toFixed(1))), backgroundColor: "rgba(239,68,68,0.65)", borderRadius: 4 },
-                    ],
-                  }}
-                  options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom" } }, scales: { y: { ticks: { callback: (v) => `R$ ${v}K` } } } }}
-                />
+                <div className="chart-card">
+                  <div className="chart-ttl">Participação das deduções</div>
+                  <div className="chart-wrap h260">
+                    <Doughnut
+                      data={{
+                        labels: composicao.length ? composicao.map((c) => c.label) : ["Sem dados"],
+                        datasets: [
+                          {
+                            data: composicao.length ? composicao.map((c) => c.valor) : [1],
+                            backgroundColor: PAL,
+                            borderWidth: 0,
+                          },
+                        ],
+                      }}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: "60%",
+                        plugins: { legend: { position: "right" } },
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="chart-card">
-              <div className="chart-ttl">Participação das deduções</div>
-              <div className="chart-wrap h260">
-                <Doughnut
-                  data={{
-                    labels: composicao.length ? composicao.map((c) => c.label) : ["Sem dados"],
-                    datasets: [{ data: composicao.length ? composicao.map((c) => c.valor) : [1], backgroundColor: PAL, borderWidth: 0 }],
-                  }}
-                  options={{ responsive: true, maintainAspectRatio: false, cutout: "60%", plugins: { legend: { position: "right" } } }}
-                />
-              </div>
-            </div>
-          </div>
-        </>
+            </>
+          );
+        })()
       )}
 
-      {showBody && aba === "memoria" && (() => {
-        const mem = d.memoriaCalculo as Record<string, number | string | undefined> | undefined;
-        const hasMem = !!(mem && (mem.debitoOriginal != null || mem.icmsARecolher != null));
-        const taxRow = (row: Record<string, unknown> | null | undefined) =>
-          !!(row && typeof row === "object" && ("aRecolher" in row || "apurado" in row));
-        const hasPis = taxRow(ap?.pis);
-        const hasCofins = taxRow(ap?.cofins);
-        const hasIcmsDemo = taxRow(ap?.icms);
-        const hasIpi = taxRow(ap?.ipi);
-        const hasIcmsSt = taxRow(ap?.icmsSt);
-        const hasPisCofins = hasPis || hasCofins;
-        const hasAnyTax = hasMem || hasPisCofins || hasIcmsDemo || hasIpi || hasIcmsSt;
-        const rb = Number(d.receitaBruta || 0);
-        const pctRb = (v: number) => (rb > 0 ? ((v / rb) * 100).toFixed(2) : "—");
-        const icmsVal = Number(mem?.icmsARecolher ?? 0);
-        const icmsCredor = icmsVal < 0;
-        const subvVal = Number(mem?.ganhoReceitaSubvencao ?? d.subvencao ?? 0);
-        const debOrig = Number(mem?.debitoOriginal ?? 0);
-        const credOrig = Number(mem?.creditoOriginal ?? 0);
-        const deb5005 = Number(mem?.debitos5005 ?? 0);
-        const cred5005 = Number(mem?.creditos5005 ?? 0);
-        const debFora = Number(mem?.debitoFora ?? 0);
-        const credFora = Number(mem?.creditoFora ?? 0);
-        const outorg = Number(mem?.creditoOutorgado ?? 0);
-        const toK = (n: number) => +(n / 1000).toFixed(1);
-        const doughSlices = [
-          { label: "Débitos 5005", valor: deb5005 },
-          { label: "Créditos 5005", valor: cred5005 },
-          { label: "Crédito fora", valor: credFora },
-          { label: "Outorgado", valor: outorg },
-        ].filter((s) => s.valor > 0);
-        const fonteParts: string[] = [];
-        if (hasMem) fonteParts.push("APURAÇÃO 5005");
-        if (hasPisCofins) fonteParts.push("Demonstrativo PIS/COFINS");
-        if (!hasMem && hasIcmsDemo) fonteParts.push("Demonstrativo ICMS");
-        const fonteTxt = fonteParts.length
-          ? `Fonte: ${fonteParts.join(" + ")}.`
-          : "Importe APURAÇÃO 5005 e/ou Demonstrativo PIS/COFINS.";
-        type ResumoRow = { name: string; apurado: number; credito: number; aRecolher: number };
-        const resumoRows: ResumoRow[] = [];
-        if (hasMem) {
-          resumoRows.push({
-            name: "ICMS",
-            apurado: debOrig,
-            credito: credOrig + cred5005 + credFora + outorg,
-            aRecolher: icmsVal,
-          });
-        } else if (hasIcmsDemo) {
-          resumoRows.push({
-            name: "ICMS",
-            apurado: Number(ap?.icms?.apurado ?? 0),
-            credito: Number(ap?.icms?.credito ?? 0),
-            aRecolher: Number(ap?.icms?.aRecolher ?? 0),
-          });
-        }
-        if (hasIcmsSt) {
-          resumoRows.push({
-            name: "ICMS ST",
-            apurado: Number(ap?.icmsSt?.apurado ?? 0),
-            credito: Number(ap?.icmsSt?.credito ?? 0),
-            aRecolher: Number(ap?.icmsSt?.aRecolher ?? 0),
-          });
-        }
-        if (hasPis) {
-          resumoRows.push({
-            name: "PIS",
-            apurado: Number(ap?.pis?.apurado ?? 0),
-            credito: Number(ap?.pis?.credito ?? 0),
-            aRecolher: Number(ap?.pis?.aRecolher ?? 0),
-          });
-        }
-        if (hasCofins) {
-          resumoRows.push({
-            name: "COFINS",
-            apurado: Number(ap?.cofins?.apurado ?? 0),
-            credito: Number(ap?.cofins?.credito ?? 0),
-            aRecolher: Number(ap?.cofins?.aRecolher ?? 0),
-          });
-        }
-        if (hasIpi) {
-          resumoRows.push({
-            name: "IPI",
-            apurado: Number(ap?.ipi?.apurado ?? 0),
-            credito: Number(ap?.ipi?.credito ?? 0),
-            aRecolher: Number(ap?.ipi?.aRecolher ?? 0),
-          });
-        }
-
-        return (
-          <>
-            <div className="formula-box">{fonteTxt}</div>
-
-            {hasMem ? (
-              <>
-                <div className="tax-grid">
-                  <div className="tax-card">
-                    <div className="tax-card-head">
-                      <div className={`tax-name ${icmsCredor ? "t-success" : "t-accent"}`}>ICMS a recolher</div>
-                      <span className={`chip ${icmsCredor ? "gr" : "bl"}`}>{icmsCredor ? "Saldo credor" : "Importado"}</span>
-                    </div>
-                    <div className={`tax-cur ${icmsCredor ? "t-success" : "t-accent"}`}>{brl(icmsVal)}</div>
-                    <div className="tax-prev">Fonte APURAÇÃO 5005 · alimenta Impostos</div>
-                  </div>
-                  <div className="tax-card">
-                    <div className="tax-card-head">
-                      <div className="tax-name t-success">Subvenção</div>
-                      <span className="chip gr">Importado</span>
-                    </div>
-                    <div className="tax-cur t-success">{brl(subvVal)}</div>
-                    <div className="tax-prev">Ganho receita de subvenção</div>
-                  </div>
-                  <div className="tax-card">
-                    <div className="tax-card-head">
-                      <div className="tax-name">Original</div>
-                      <span className="chip gy">Bloco</span>
-                    </div>
-                    <div className="tax-cur">{brl(Number(mem?.totalOriginal || 0))}</div>
-                    <div className="tax-prev">Débito {brl(debOrig)} · Crédito {brl(credOrig)}</div>
-                  </div>
-                  <div className="tax-card">
-                    <div className="tax-card-head">
-                      <div className="tax-name t-accent">Apuração 5005</div>
-                      <span className="chip bl">Bloco</span>
-                    </div>
-                    <div className="tax-cur t-accent">{brl(Number(mem?.total5005 || 0))}</div>
-                    <div className="tax-prev">Débitos {brl(deb5005)} · Créditos {brl(cred5005)}</div>
-                  </div>
-                  <div className="tax-card">
-                    <div className="tax-card-head">
-                      <div className="tax-name t-warning">Fora / Outorgado</div>
-                      <span className="chip ye">Bloco</span>
-                    </div>
-                    <div className="tax-cur t-warning">{brl(Number(mem?.totalFora || 0))}</div>
-                    <div className="tax-prev">
-                      Débito {brl(debFora)} · Crédito {brl(credFora)} · Outorgado {brl(outorg)}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="charts-row cr-2col">
-                  <div className="chart-card">
-                    <div className="chart-ttl">Débitos × Créditos por bloco</div>
-                    <div className="chart-sub">Valores da memória 5005 (R$ mil)</div>
-                    <div className="chart-wrap h260">
-                      <Bar
-                        data={{
-                          labels: ["Original", "5005", "Fora"],
-                          datasets: [
-                            {
-                              label: "Débitos",
-                              data: [toK(debOrig), toK(deb5005), toK(debFora)],
-                              backgroundColor: "rgba(239,68,68,0.7)",
-                              borderRadius: 4,
-                            },
-                            {
-                              label: "Créditos",
-                              data: [toK(credOrig), toK(cred5005), toK(credFora + outorg)],
-                              backgroundColor: "rgba(34,163,41,0.7)",
-                              borderRadius: 4,
-                            },
-                          ],
-                        }}
-                        options={{
-                          responsive: true,
-                          maintainAspectRatio: false,
-                          plugins: { legend: { position: "bottom" } },
-                          scales: { y: { ticks: { callback: (v) => `R$ ${v}K` } } },
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="chart-card">
-                    <div className="chart-ttl">Composição da memória</div>
-                    <div className="chart-sub">Participação 5005 + fora / outorgado</div>
-                    <div className="chart-wrap h260">
-                      <Doughnut
-                        data={{
-                          labels: doughSlices.length ? doughSlices.map((s) => s.label) : ["Sem dados"],
-                          datasets: [{
-                            data: doughSlices.length ? doughSlices.map((s) => s.valor) : [1],
-                            backgroundColor: doughSlices.length ? PAL.slice(0, doughSlices.length) : ["#64748b"],
-                            borderWidth: 0,
-                          }],
-                        }}
-                        options={{
-                          responsive: true,
-                          maintainAspectRatio: false,
-                          cutout: "60%",
-                          plugins: { legend: { position: "right" } },
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="formula-box">Detalhe dos blocos (planilha APURAÇÃO 5005)</div>
-                <div className="mem-grid mem-grid-3">
-                  <div className="mem-card">
-                    <div className="mem-card-head">Original</div>
-                    <div className="mem-row"><span className="lbl">Débito original</span><span className="val">{brl(debOrig)}</span></div>
-                    <div className="mem-row"><span className="lbl">Crédito original</span><span className="val">{brl(credOrig)}</span></div>
-                    <div className="mem-row tot"><span className="lbl">Total</span><span className="val">{brl(Number(mem?.totalOriginal || 0))}</span></div>
-                  </div>
-                  <div className="mem-card">
-                    <div className="mem-card-head">Apuração 5005</div>
-                    <div className="mem-row"><span className="lbl">Débitos 5005</span><span className="val">{brl(deb5005)}</span></div>
-                    <div className="mem-row"><span className="lbl">Créditos 5005</span><span className="val">{brl(cred5005)}</span></div>
-                    <div className="mem-row tot"><span className="lbl">Total</span><span className="val">{brl(Number(mem?.total5005 || 0))}</span></div>
-                  </div>
-                  <div className="mem-card">
-                    <div className="mem-card-head">Fora / Outorgado</div>
-                    <div className="mem-row"><span className="lbl">Débito fora</span><span className="val">{brl(debFora)}</span></div>
-                    <div className="mem-row"><span className="lbl">Crédito fora</span><span className="val">{brl(credFora)}</span></div>
-                    <div className="mem-row"><span className="lbl">Crédito outorgado</span><span className="val">{brl(outorg)}</span></div>
-                    <div className="mem-row tot"><span className="lbl">Total</span><span className="val">{brl(Number(mem?.totalFora || 0))}</span></div>
-                  </div>
-                </div>
-              </>
-            ) : null}
-
-            {!hasMem ? (
-              <div className="alert-box warn">
-                Memória ICMS (APURAÇÃO 5005) ainda não importada neste mês.
-                {hasPisCofins ? " PIS/COFINS abaixo vêm do demonstrativo importado." : " Importe a planilha para preencher os cards e gráficos de ICMS."}
-              </div>
-            ) : null}
-
-            {(hasPis || hasCofins || (!hasMem && (hasIcmsDemo || hasIpi))) ? (
-              <div className="tax-grid">
-                {!hasMem && hasIcmsDemo ? (
-                  <div className="tax-card">
-                    <div className="tax-card-head">
-                      <div className="tax-name t-accent">ICMS (demonstrativo)</div>
-                      <span className="chip bl">Fallback</span>
-                    </div>
-                    <div className="tax-cur t-accent">{brl(ap?.icms?.aRecolher)}</div>
-                    <div className="tax-prev">Apurado: {brl(ap?.icms?.apurado)} · importe a 5005 para a memória completa</div>
-                  </div>
-                ) : null}
-                {hasPis ? (
-                  <div className="tax-card">
-                    <div className="tax-card-head">
-                      <div className="tax-name t-success">PIS a recolher</div>
-                      <span className="chip gr">Importado</span>
-                    </div>
-                    <div className="tax-cur t-success">{brl(ap?.pis?.aRecolher)}</div>
-                    <div className="tax-prev">
-                      Apurado: {brl(ap?.pis?.apurado)}
-                      {ap?.pis?.credito != null ? ` · Crédito: ${brl(ap.pis.credito)}` : ""}
-                    </div>
-                  </div>
-                ) : null}
-                {hasCofins ? (
-                  <div className="tax-card">
-                    <div className="tax-card-head">
-                      <div className="tax-name t-warning">COFINS a recolher</div>
-                      <span className="chip ye">Importado</span>
-                    </div>
-                    <div className="tax-cur t-warning">{brl(ap?.cofins?.aRecolher)}</div>
-                    <div className="tax-prev">
-                      Apurado: {brl(ap?.cofins?.apurado)}
-                      {ap?.cofins?.credito != null ? ` · Crédito: ${brl(ap.cofins.credito)}` : ""}
-                    </div>
-                  </div>
-                ) : null}
-                {!hasMem && hasIpi ? (
-                  <div className="tax-card">
-                    <div className="tax-card-head">
-                      <div className="tax-name">IPI</div>
-                      <span className="chip gy">Importado</span>
-                    </div>
-                    <div className="tax-cur">{moneyOrDash(ap?.ipi?.aRecolher)}</div>
-                    <div className="tax-prev">Apurado: {brl(ap?.ipi?.apurado)}</div>
-                  </div>
-                ) : null}
-              </div>
-            ) : null}
-
-            {resumoRows.length ? (
-              <div className="table-card">
-                <div className="table-head">
-                  <div className="ttl">Resumo consolidado</div>
-                  <div className="sub">Obrigações apuradas na competência · só o que foi importado</div>
-                </div>
-                <div className="tbl-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Tributo</th>
-                        <th className="r">Apurado</th>
-                        <th className="r">Créditos</th>
-                        <th className="r">A recolher</th>
-                        <th className="r">% s/ RB</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {resumoRows.map((r) => (
-                        <tr key={r.name}>
-                          <td className="fw7">{r.name}</td>
-                          <td className="r">{brl(r.apurado)}</td>
-                          <td className="r">{brl(r.credito)}</td>
-                          <td className="r td-val">{brl(r.aRecolher)}</td>
-                          <td className="r">{pctRb(r.aRecolher)}%</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            ) : null}
-
-            <div className="formula-box">Conferência movimento — Total Geral Excel × soma das NFs</div>
-            <div className="mem-grid">
-              <div className="mem-card">
-                <div className="mem-card-head">Entradas</div>
-                <div className="mem-row"><span className="lbl">Total Geral Excel</span><span className="val">{moneyOrDash(d.entradasMeta?.totalGeralExcel)}</span></div>
-                <div className="mem-row"><span className="lbl">Soma NFs</span><span className="val">{moneyOrDash(d.entradasMeta?.soma)}</span></div>
-                <div className={`mem-row ${Math.abs(d.entradasMeta?.delta || 0) >= 0.02 ? "neg" : "tot"}`}>
-                  <span className="lbl">Δ</span>
-                  <span className="val">{d.entradasMeta?.delta ?? "—"}</span>
-                </div>
-              </div>
-              <div className="mem-card">
-                <div className="mem-card-head">Saídas</div>
-                <div className="mem-row"><span className="lbl">Total Geral Excel</span><span className="val">{moneyOrDash(d.saidasMeta?.totalGeralExcel)}</span></div>
-                <div className="mem-row"><span className="lbl">Soma NFs</span><span className="val">{moneyOrDash(d.saidasMeta?.soma)}</span></div>
-                <div className={`mem-row ${Math.abs(d.saidasMeta?.delta || 0) >= 0.02 ? "neg" : "tot"}`}>
-                  <span className="lbl">Δ</span>
-                  <span className="val">{d.saidasMeta?.delta ?? "—"}</span>
-                </div>
-              </div>
-            </div>
-
-            {!hasAnyTax ? (
-              <div className="alert-box warn">Sem APURAÇÃO 5005 nem demonstrativo de impostos — importe a planilha de memória/ICMS e/ou PIS/COFINS.</div>
-            ) : null}
-          </>
-        );
-      })()}
+      {showBody && aba === "memoria" && (
+        <MemoriaLivro d={d} ap={ap} month={month} monthLabel={periodLabel} />
+      )}
 
       {showBody && aba === "recebimentos" && (
         <>
@@ -1308,52 +1085,13 @@ export default function AbaPage() {
         </>
       )}
 
-          {showBody && aba === "balancete" && (
-        (() => {
-          const bal = d.balancete || {};
-          const totais = (bal.totais || {}) as { contas?: number; debitos?: number; creditos?: number; ativo?: number; passivo?: number };
-          const contas = (bal.contas || bal.porMes?.[month]?.contas || []) as {
-            codigo: string; descricao: string; saldoAnterior?: number; debito?: number; credito?: number; saldoAtual?: number; grupo?: string;
-          }[];
-          if (!contas.length) {
-            return <div className="alert-box warn">Balancete importado sem contas neste mês/unidade.</div>;
-          }
-          const nContas = totais.contas ?? contas.length;
-          const sumDebito = totais.debitos ?? contas.filter((c) => c.codigo === "1" || c.codigo === "2" || c.codigo === "3").reduce((a, c) => a + Number(c.debito || 0), 0);
-          const sumCredito = totais.creditos ?? contas.filter((c) => c.codigo === "1" || c.codigo === "2" || c.codigo === "3").reduce((a, c) => a + Number(c.credito || 0), 0);
-          const sumSaldos = (Number(totais.ativo || 0) + Number(totais.passivo || 0)) || contas.filter((c) => c.codigo === "1" || c.codigo === "2").reduce((a, c) => a + Number(c.saldoAtual || 0), 0);
-          return (
-            <>
-              <div className="kpi-grid kpi-grid-4">
-                <Kpi color="blue" icon="building-columns" value={String(nContas)} label="Contas" sub="Linhas no balancete" />
-                <Kpi color="green" icon="arrow-trend-up" value={brl(sumDebito)} label="Débitos" sub="Grupos de 1º nível" />
-                <Kpi color="orange" icon="arrow-trend-down" value={brl(sumCredito)} label="Créditos" sub="Grupos de 1º nível" />
-                <Kpi color="purple" icon="scale-balanced" value={brl(sumSaldos)} label="Ativo + Passivo" sub="Saldos atuais" />
-              </div>
-              <div className="table-card">
-                <div className="table-head"><div className="ttl">Contas do balancete</div></div>
-                <div className="tbl-scroll">
-                  <table>
-                    <thead><tr><th>Código</th><th>Descrição</th><th>Grupo</th><th className="r">Saldo ant.</th><th className="r">Débito</th><th className="r">Crédito</th><th className="r">Saldo atual</th></tr></thead>
-                    <tbody>
-                      {contas.map((c) => (
-                        <tr key={c.codigo + c.descricao}>
-                          <td className="td-mute">{c.codigo}</td>
-                          <td>{c.descricao}</td>
-                          <td><span className="chip gy">{c.grupo || "—"}</span></td>
-                          <td className="r">{moneyOrDash(c.saldoAnterior)}</td>
-                          <td className="r">{moneyOrDash(c.debito)}</td>
-                          <td className="r">{moneyOrDash(c.credito)}</td>
-                          <td className="r td-val">{moneyOrDash(c.saldoAtual)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          );
-        })()
+      {showBody && aba === "balancete" && (
+        <BalanceteTree
+          porMes={d.porMes || []}
+          selectedCompetencia={month}
+          source={d.balanceteSource || d.balancete?.source}
+          periodoLabel={d.periodoLabel}
+        />
       )}
 
       {showBody && aba === "dre" && (
@@ -1365,58 +1103,171 @@ export default function AbaPage() {
       )}
 
       {showBody && aba === "indicadores" && (
-        <>
-          <div className="ind-grid">
-            <div className="ind-card">
-              <div className="ind-name">Receita bruta</div>
-              <div className="ind-val">{brl(d.receitaBruta)}</div>
-              <div className="ind-formula">Σ saídas NF-e</div>
-              <div className="ind-interp">Faturamento do mês importado.</div>
-            </div>
-            <div className="ind-card">
-              <div className="ind-name">Compras</div>
-              <div className="ind-val">{brl(d.totalCompras)}</div>
-              <div className="ind-formula">Σ entradas NF-e</div>
-              <div className="ind-interp">{d.nfsEntradas || 0} notas de entrada.</div>
-            </div>
-            <div className="ind-card">
-              <div className="ind-name">Margem bruta</div>
-              <div className="ind-val">{d.margMb != null ? `${d.margMb}%` : pct(d.margemBruta)}</div>
-              <div className="ind-formula">(Vendas − Compras) / Vendas</div>
-              <div className="ind-interp">{d.hasDre ? "Com DRE importada." : "Estimativa pelo movimento. Sem CMV contábil."}</div>
-            </div>
-            <div className="ind-card">
-              <div className="ind-name">Carga tributária</div>
-              <div className="ind-val">{d.dedPct != null ? `${d.dedPct}%` : "—"}</div>
-              <div className="ind-formula">Deduções / Receita</div>
-              <div className="ind-interp">Preenche após apuração/DRE.</div>
-            </div>
-          </div>
-          <div className="chart-card">
-            <div className="chart-ttl">Evolução % deduções e margem</div>
-            <div className="chart-wrap h260">
-              <Line
-                data={{
-                  labels: serie.labels || [],
-                  datasets: [
-                    { label: "Deduções %", data: serie.dedPct || [], borderColor: "#ef4444", tension: 0.3, fill: false },
-                    {
-                      label: "Margem est. %",
-                      data: (serie.vendas || []).map((v: number, i: number) => {
-                        const c = serie.compras?.[i] || 0;
-                        return v ? +(((v - c) / v) * 100).toFixed(2) : null;
-                      }),
-                      borderColor: "#22a329",
-                      tension: 0.3,
-                      fill: false,
-                    },
-                  ],
-                }}
-                options={{ responsive: true, maintainAspectRatio: false, spanGaps: false, plugins: { legend: { position: "bottom" } }, scales: { y: { ticks: { callback: (v) => `${v}%` } } } }}
-              />
-            </div>
-          </div>
-        </>
+        (() => {
+          const mb = d.margMb != null ? d.margMb : d.margemBruta != null ? +(100 * d.margemBruta).toFixed(2) : null;
+          const ml = d.margMl != null ? d.margMl : null;
+          const mo = d.margMo != null ? d.margMo : null;
+          const carga = d.dedPct != null ? d.dedPct : null;
+          const hasBp = !!(d.hasBalancete || d.balanceteTotais);
+          const statusDot = (ok: boolean | null, label: string) => (
+            <span className={`ind-status-dot ${ok == null ? "nd" : ok ? "ok" : "warn"}`}>
+              <i />
+              {label}
+            </span>
+          );
+          const fmtPct = (n: number | null | undefined) =>
+            n == null ? "N/D" : `${Number(n).toLocaleString("pt-BR", { maximumFractionDigits: 2 })}%`;
+          const margMbSerie =
+            serie.margMb?.length
+              ? serie.margMb
+              : (serie.vendas || []).map((v: number, i: number) => {
+                  const c = serie.compras?.[i] || 0;
+                  return v ? +(((v - c) / v) * 100).toFixed(2) : null;
+                });
+          return (
+            <>
+              <div className="ind-section">
+                <div className="ind-section-ttl">A · Margens</div>
+                <div className="ind-grid ind-grid-3">
+                  <div className="ind-card">
+                    <div className="ind-card-top">
+                      <div className="ind-name">Margem bruta</div>
+                      {statusDot(mb == null ? null : mb >= 0, mb == null ? "Sem DRE" : d.hasDre ? "DRE" : "Estimativa")}
+                    </div>
+                    <div className="ind-val">{fmtPct(mb)}</div>
+                    <div className="ind-formula">
+                      {d.hasDre ? "Lucro bruto / Receita bruta" : "(Vendas − Compras) / Vendas"}
+                    </div>
+                    <div className="ind-interp">
+                      {d.hasDre
+                        ? "Margem oficial da DRE importada."
+                        : d.margemEstimada
+                          ? "Estimativa pelo movimento — sem CMV contábil."
+                          : "Aguardando DRE ou movimento."}
+                    </div>
+                  </div>
+                  <div className="ind-card">
+                    <div className="ind-card-top">
+                      <div className="ind-name">Margem operacional</div>
+                      {statusDot(mo == null ? null : mo >= 0, mo == null ? "N/D" : "DRE")}
+                    </div>
+                    <div className="ind-val">{fmtPct(mo)}</div>
+                    <div className="ind-formula">Lucro operacional / Receita bruta</div>
+                    <div className="ind-interp">
+                      {mo != null
+                        ? "Linha de resultado operacional encontrada na DRE."
+                        : "Em cálculo — a DRE importada não traz lucro/resultado operacional."}
+                    </div>
+                  </div>
+                  <div className="ind-card">
+                    <div className="ind-card-top">
+                      <div className="ind-name">Margem líquida</div>
+                      {statusDot(ml == null ? null : ml >= 0, ml == null ? "N/D" : "DRE")}
+                    </div>
+                    <div className="ind-val">{fmtPct(ml)}</div>
+                    <div className="ind-formula">Lucro líquido / Receita bruta</div>
+                    <div className="ind-interp">
+                      {ml != null ? "Margem líquida da DRE." : "N/D até importar DRE com lucro líquido."}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="ind-section">
+                <div className="ind-section-ttl">B · Carga tributária</div>
+                <div className="ind-grid ind-grid-2">
+                  <div className="ind-card">
+                    <div className="ind-card-top">
+                      <div className="ind-name">Carga sobre receita</div>
+                      {statusDot(carga == null ? null : true, carga == null ? "Em apuração" : "Apuração")}
+                    </div>
+                    <div className="ind-val">{fmtPct(carga)}</div>
+                    <div className="ind-formula">Deduções / Receita</div>
+                    <div className="ind-interp">
+                      {carga != null
+                        ? `Deduções ${d.deducoes != null ? brl(d.deducoes) : "—"} sobre RB ${brl(d.receitaBruta)}.`
+                        : "Preenche após apuração/DRE do mês."}
+                    </div>
+                  </div>
+                  <div className="ind-card">
+                    <div className="ind-card-top">
+                      <div className="ind-name">Receita bruta (referência)</div>
+                      {statusDot(d.receitaBruta ? true : null, d.hasDre ? "DRE" : "Movimento")}
+                    </div>
+                    <div className="ind-val">{d.receitaBruta != null ? brl(d.receitaBruta) : "—"}</div>
+                    <div className="ind-formula">{d.hasDre ? "RB da DRE" : "Σ saídas NF-e"}</div>
+                    <div className="ind-interp">Base usada nos percentuais desta tela.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="ind-section">
+                <div className="ind-section-ttl">C · Indicadores patrimoniais</div>
+                {!hasBp ? (
+                  <div className="ind-bp-banner">
+                    Sem Balancete neste mês — liquidez, endividamento e capital de giro ficam N/D. Não inventamos BP.
+                  </div>
+                ) : (
+                  <div className="alert-box">Balancete presente — indicadores patrimoniais detalhados ainda em construção; totais no card abaixo.</div>
+                )}
+                <div className="ind-grid ind-grid-4">
+                  {[
+                    ["Liquidez corrente", "Ativo circulante / Passivo circulante"],
+                    ["Endividamento", "Passivo / Ativo"],
+                    ["Capital de giro", "AC − PC"],
+                    ["Participação de terceiros", "Passivo / PL"],
+                  ].map(([name, formula]) => (
+                    <div className="ind-card ind-card-nd" key={name}>
+                      <div className="ind-card-top">
+                        <div className="ind-name">{name}</div>
+                        {statusDot(null, hasBp ? "Em cálculo" : "N/D")}
+                      </div>
+                      <div className="ind-val">N/D</div>
+                      <div className="ind-formula">{formula}</div>
+                      <div className="ind-interp">
+                        {hasBp
+                          ? "Exige contas circulantes/PL desdobradas — ainda não mapeadas no pack."
+                          : "Importe o Balancete da competência."}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="ind-section">
+                <div className="ind-section-ttl">D · Evolução</div>
+                <div className="chart-card">
+                  <div className="chart-ttl">Deduções %, margem bruta % e margem líquida %</div>
+                  <div className="chart-wrap h260">
+                    <Line
+                      data={{
+                        labels: serie.labels || [],
+                        datasets: [
+                          { label: "Deduções %", data: serie.dedPct || [], borderColor: "#ef4444", tension: 0.3, fill: false },
+                          { label: "MB %", data: margMbSerie, borderColor: "#22a329", tension: 0.3, fill: false },
+                          {
+                            label: "ML %",
+                            data: serie.margMl || [],
+                            borderColor: "#3b82f6",
+                            tension: 0.3,
+                            fill: false,
+                          },
+                        ],
+                      }}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        spanGaps: false,
+                        plugins: { legend: { position: "bottom" } },
+                        scales: { y: { ticks: { callback: (v) => `${v}%` } } },
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
+          );
+        })()
       )}
     </section>
   );

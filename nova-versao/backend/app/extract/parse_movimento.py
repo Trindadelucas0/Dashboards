@@ -37,6 +37,8 @@ class ExtractedMovimento:
     lines: list[Line] = field(default_factory=list)
     sheet: str = ""
     parser: str = ""
+    # "contabil" | "generico" | "ausente" | "fallback": de onde saiu a coluna de valor
+    valor_source: str = "fallback"
 
 
 def _is_detail_code(val: str) -> bool:
@@ -63,6 +65,12 @@ def _find_cfop(row: list[str]) -> str:
 
 
 def _find_total_geral(grid: WorkbookGrid, valor_cols: list[int]) -> float | None:
+    """Total Geral só vale se houver número nas colunas de valor.
+
+    Planilhas EXITO em que a linha "Total Geral" não totaliza o Valor Contábil
+    (ex.: abas SAÍDAS da planilha padrão) devolvem None — melhor não ter total
+    do que devolver um número de outra coluna (Isentas/Outras/Base).
+    """
     for i, row in enumerate(grid.rows):
         joined = " ".join(str(c) for c in row).lower()
         if "total geral" not in joined:
@@ -75,10 +83,6 @@ def _find_total_geral(grid: WorkbookGrid, valor_cols: list[int]) -> float | None
             for col in valor_cols:
                 num = parse_br_number(_col(cand, col))
                 if num is not None and abs(num) > 0:
-                    return num
-            for cell in reversed(cand):
-                num = parse_br_number(str(cell))
-                if num is not None and abs(num) > 1:
                     return num
     return None
 
@@ -126,6 +130,15 @@ def _header_map(row: list[str]) -> dict[str, int] | None:
     if "nota" in mapping and "codigo" in mapping:
         return mapping
     return None
+
+
+def _valor_source(row: list[str]) -> str:
+    """Identifica se o cabeçalho traz Valor Contábil ou só a coluna Valor (imposto)."""
+    labels = [_norm(c) for c in row]
+    for lab in labels:
+        if ("valor" in lab and "contabil" in lab) or lab in ("vl contabil", "vl. contabil"):
+            return "contabil"
+    return "generico" if "valor" in labels else "ausente"
 
 
 def parse_movimento(grid: WorkbookGrid, tipo: str) -> ExtractedMovimento:
@@ -198,4 +211,5 @@ def parse_movimento(grid: WorkbookGrid, tipo: str) -> ExtractedMovimento:
         lines=lines,
         sheet=grid.sheet_name,
         parser=grid.kind,
+        valor_source=_valor_source(grid.rows[header_row]) if header_row >= 0 else "fallback",
     )

@@ -46,18 +46,47 @@ function DreValue({
   );
 }
 
-function KpiVal({ value, deduction }: { value: number | null | undefined; deduction?: boolean }) {
-  if (value == null) return <span className="td-mute">—</span>;
-  const neg = dreCellNegative(value, deduction);
-  return <span className={neg ? "t-danger" : undefined}>{formatDreInt(value, deduction)}</span>;
+function pctOrDash(n: number | null | undefined) {
+  if (n === null || n === undefined) return "—";
+  return `${Number(n).toLocaleString("pt-BR", { maximumFractionDigits: 2 })}%`;
 }
+
+function MarginKpi({
+  name,
+  value,
+  formula,
+  tone,
+  pending,
+}: {
+  name: string;
+  value: number | null | undefined;
+  formula: string;
+  tone?: "ok" | "warn" | "mute";
+  pending?: boolean;
+}) {
+  return (
+    <div className={`margin-card margin-kpi${tone ? ` tone-${tone}` : ""}`}>
+      <div className="ind-name">{name}</div>
+      <div className={`margin-val${pending || value == null ? " td-mute" : ""}`}>
+        {pending ? "Em lançamento" : pctOrDash(value)}
+      </div>
+      <div className="margin-sub">{formula}</div>
+    </div>
+  );
+}
+
+type DreMonthExt = DreMonth & {
+  margMo?: number | null;
+  lucOperacional?: number | null;
+  dedPct?: number | null;
+};
 
 export default function DreStatement({
   porMes,
   selectedCompetencia,
   source,
 }: {
-  porMes: DreMonth[];
+  porMes: DreMonthExt[];
   periodoLabel?: string;
   selectedCompetencia?: string;
   source?: string;
@@ -76,12 +105,15 @@ export default function DreStatement({
   const showResumo = isTrim && tableMonths.length > 1;
   const colSpan = tableMonths.length + 1 + (showResumo ? 2 : 0);
   const pendingMonths = tableMonths.filter((m) => m.cmvPendente);
-  const kpi = kpiMonths[0] || null;
+  const kpi = (kpiMonths[0] || null) as DreMonthExt | null;
   const titlePeriod = isTrim ? trimestreLabel(selected) : kpi?.label || selected;
   const fonte = source || kpi?.source || kpi?.dre?.source || "Planilha RESULTADO";
-  const mb = margemPct(kpi?.lucBruto, kpi?.receitaBruta);
-  const ml = margemPct(kpi?.lucLiq, kpi?.receitaBruta);
+  const mb = kpi?.margMb ?? margemPct(kpi?.lucBruto, kpi?.receitaBruta);
+  const ml = kpi?.margMl ?? margemPct(kpi?.lucLiq, kpi?.receitaBruta);
+  const mo = kpi?.margMo ?? null;
+  const carga = kpi?.dedPct ?? null;
   const highlightMonth = !isTrim && /^\d{4}-\d{2}$/.test(selected);
+  const cmvPendingKpi = Boolean(kpi?.cmvPendente);
 
   if (!tableMonths.length) {
     return (
@@ -97,40 +129,32 @@ export default function DreStatement({
     <>
       {kpi ? (
         <div className="margin-grid">
-          <div className="margin-card">
-            <div className="ind-name">Receita Bruta</div>
-            <div className="margin-val">
-              <KpiVal value={kpi.receitaBruta} />
-            </div>
-            <div className="margin-sub">{kpi.label}</div>
-          </div>
-          <div className="margin-card">
-            <div className="ind-name">CMV</div>
-            <div className="margin-val">
-              {kpi.cmvPendente && kpi.cmv == null ? (
-                <span className="dre-nd">Em lançamento</span>
-              ) : (
-                <KpiVal value={kpi.cmv} deduction />
-              )}
-            </div>
-            <div className="margin-sub">{kpi.label}</div>
-          </div>
-          <div className="margin-card">
-            <div className="ind-name">Lucro Bruto</div>
-            <div className="margin-val">
-              <KpiVal value={kpi.lucBruto} />
-            </div>
-            <div className="margin-sub">
-              Após deduções · MB {mb != null ? `${mb}%` : "—"}
-            </div>
-          </div>
-          <div className="margin-card">
-            <div className="ind-name">Lucro Líquido</div>
-            <div className="margin-val">
-              <KpiVal value={kpi.lucLiq} />
-            </div>
-            <div className="margin-sub">ML {ml != null ? `${ml}%` : "—"}</div>
-          </div>
+          <MarginKpi
+            name="Margem Bruta (MB)"
+            value={cmvPendingKpi && mb == null ? null : mb}
+            formula="Lucro bruto / Receita bruta"
+            tone={mb != null && mb < 0 ? "warn" : "ok"}
+            pending={cmvPendingKpi && mb == null}
+          />
+          <MarginKpi
+            name="Margem Operacional (MO)"
+            value={mo}
+            formula={mo != null ? "Lucro operacional / RB" : "N/D — sem linha operacional na DRE"}
+            tone={mo == null ? "mute" : mo < 0 ? "warn" : "ok"}
+          />
+          <MarginKpi
+            name="Margem Líquida (ML)"
+            value={cmvPendingKpi && ml == null ? null : ml}
+            formula="Lucro líquido / Receita bruta"
+            tone={ml != null && ml < 0 ? "warn" : "ok"}
+            pending={cmvPendingKpi && ml == null}
+          />
+          <MarginKpi
+            name="Carga tributária"
+            value={carga}
+            formula={carga != null ? "Deduções / Receita" : "N/D — aguardando apuração"}
+            tone={carga == null ? "mute" : "warn"}
+          />
         </div>
       ) : null}
 
@@ -196,7 +220,7 @@ export default function DreStatement({
                       return (
                         <td
                           key={m.competencia}
-                          className={`r${pending ? " dre-nd" : ""}${active ? " dre-col-active" : ""}`}
+                          className={`r${pending ? " dre-nd" : ""}${active ? " dre-col-active" : ""}${row.deduction ? " dre-ded-cell" : ""}`}
                         >
                           <DreValue
                             value={row.valores[m.competencia]}
@@ -233,8 +257,7 @@ export default function DreStatement({
       </div>
       {pendingMonths.length ? (
         <div className="alert-box warn">
-          *Totais dos meses com CMV pendente usam só as linhas já lançadas. Lucro bruto/líquido
-          completa depois do CMV.
+          *Totais dos meses com CMV pendente usam só as linhas já lançadas. Lucro bruto/líquido completa depois do CMV.
         </div>
       ) : null}
     </>

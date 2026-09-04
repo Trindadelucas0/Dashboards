@@ -31,6 +31,11 @@ from app.extract.parse_impostos import (
     parse_st_mensal,
 )
 from app.extract.parse_memoria_5005 import apuracao_patch_from_5005, is_apuracao_5005, parse_apuracao_5005
+from app.extract.parse_workbook_padrao import (
+    extract_workbook_padrao,
+    is_workbook_padrao,
+    padrao_missing_sheets,
+)
 from app.extract.parse_movimento import parse_movimento
 from app.extract.workbook import WorkbookGrid, is_placeholder_bytes, load_all_sheets
 
@@ -128,6 +133,7 @@ def classify_and_extract(
     data: bytes | None = None,
     db=None,
     original_filename: str | None = None,
+    company_cnpj: str | None = None,
 ) -> dict:
     path = Path(path)
     filename = original_filename or path.name
@@ -145,6 +151,9 @@ def classify_and_extract(
             tipo,
             {"errors": [f"Não foi possível ler o arquivo: {exc}"], "parser": "fail"},
         )
+
+    if is_workbook_padrao(sheets):
+        return extract_workbook_padrao(sheets, filename, company_cnpj=company_cnpj or "")
 
     tax_sheets = _extract_pis_cofins_sheets(sheets, filename)
     grid = sheets[0]
@@ -223,6 +232,13 @@ def classify_and_extract(
         "lines": [],
         "meta": {},
     }
+
+    faltando = padrao_missing_sheets(sheets)
+    if faltando:
+        result["warnings"].append(
+            f"Planilha padrão incompleta (faltam as abas {', '.join(faltando)}): apenas a aba "
+            f"{grid.sheet_name} foi lida — reenvie o arquivo com todas as abas do modelo"
+        )
 
     if not company:
         if tipo == "icms_st":

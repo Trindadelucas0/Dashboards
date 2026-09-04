@@ -15,6 +15,10 @@ Parser: `parse_movimento.py` — detecta header dinâmico nas primeiras 40 linha
 
 CNPJ: regex `\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}` ou 14 dígitos após label CNPJ (`classify.scan_cnpj`).
 
+## Relatório de entrada por fornecedor
+
+Mesmo layout de Entradas, agrupado por fornecedor. Filename: `Relatorio de entrada por fornecedor MMYYYY.xls`. Cabeçalho traz dois `Código` (lançamento e código do fornecedor) e um `Valor` de ICMS depois de **Valor Contábil** — o parser usa o primeiro código e **Valor Contábil**.
+
 ## Entradas (aba Entradas)
 
 ### Colunas fallback (0-based) se header não detectado

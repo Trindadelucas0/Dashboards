@@ -7,6 +7,8 @@ import { useDash } from "@/components/DashContext";
 type Item = {
   file: string;
   ok?: boolean;
+  skipped?: boolean;
+  status?: string;
   errors?: string[];
   warnings?: string[];
   company_id?: string;
@@ -25,7 +27,9 @@ type Saved = {
   companyId?: string;
   competencia?: string;
   unidade?: string;
+  tipo?: string;
   errors?: string[];
+  warnings?: string[];
 };
 
 export default function ImportTab() {
@@ -70,14 +74,32 @@ export default function ImportTab() {
         body: JSON.stringify({ previewId, replace, companyId: company?.id }),
       });
       const ok = data.saved.filter((s) => s.status === "saved");
-      const blocked = data.saved.filter((s) => s.status !== "saved");
+      const ignored = data.saved.filter((s) => s.status === "ignorado");
+      const blocked = data.saved.filter((s) => s.status !== "saved" && s.status !== "ignorado");
       if (ok.length) {
         const last = ok[ok.length - 1];
-        setMsg(
-          `Gravado: ${ok.map((s) => `${s.file} → ${s.unidade || ""} ${s.competencia || ""}`).join(", ")}`,
-        );
+        let success = `Gravado: ${ok.map((s) => `${s.file} → ${s.unidade || ""} ${s.competencia || ""}`).join(", ")}`;
+        if (ignored.length) {
+          const avisos = ignored
+            .map((s) => {
+              const detail = (s.warnings || []).join("; ") || "aba vazia ou ignorada";
+              return `${s.file}: ${detail}`;
+            })
+            .join(" | ");
+          success += ` · Avisos (sem gravar): ${avisos}`;
+        }
+        setMsg(success);
         await reloadCompany();
         if (last.competencia) goToSlot(last.competencia, last.unidade || "matriz");
+      } else if (ignored.length) {
+        setMsg(
+          ignored
+            .map((s) => {
+              const detail = (s.warnings || []).join("; ") || "aba vazia ou ignorada";
+              return `${s.file}: ${detail}`;
+            })
+            .join(" | "),
+        );
       }
       if (blocked.length) {
         const reason = blocked
@@ -100,10 +122,9 @@ export default function ImportTab() {
         <div>
           <div className="sec-title">Importar planilhas</div>
           <div className="sec-sub">
-            Pacote mensal (Egaplast, Baifer): Entradas, Saídas, Apuração ICMS, IPI, PIS/COFINS, ST, DRE, Balancete e — Baifer —
-            <strong> APURAÇÃO 5005</strong> (Memória de Cálculo / ICMS a recolher / subvenção). Mesmo layout todo mês.
-            O Python lê CNPJ e tipo da planilha; a 5005 não tem CNPJ — use o dashboard da empresa aberta.
-            Nome com MMYYYY (ex. <code>012026 APURAÇÃO 5005.xlsx</code>) define o mês.
+            <strong>Planilha padrão</strong> (9 abas: DRE, Balancete, 5005, PIS/COFINS, IRPJ, CSLL, ST, DIFAL, IPI) — mesmo esqueleto todo mês; só mudam os números.
+            Também aceita pacote EXITO legado (Entradas, Relatório de entrada por fornecedor, Saídas, demonstrativos separados).
+            Empresa vem do dashboard aberto. Abas vazias ou IRPJ de outra empresa aparecem como aviso, não erro.
           </div>
         </div>
       </div>
@@ -119,9 +140,12 @@ export default function ImportTab() {
       {msg ? <div className="notice">{msg}</div> : null}
       <div className="import-list">
         {items.map((it) => (
-          <article key={it.file} className={`import-item ${it.ok ? "ok" : "err"}`}>
+          <article
+            key={it.file}
+            className={`import-item ${it.skipped ? "warn" : it.ok ? "ok" : "err"}`}
+          >
             <strong>{it.file}</strong>
-            <div>{it.company_label || "empresa ?"} · {it.competencia || "mês ?"} · {it.unidade} · {it.tipo}</div>
+            <div>{it.company_label || "empresa ?"} · {it.competencia || "mês ?"} · {it.unidade} · {it.tipo}{it.status ? ` · ${it.status}` : ""}{it.skipped ? " · ignorada" : ""}</div>
             {it.meta ? <div>Soma {it.meta.soma} · Δ {it.meta.delta} · NFs {it.meta.nfs}</div> : null}
             {it.duplicateHash ? <div>Arquivo já importado (hash).</div> : null}
             {it.slotExists ? <div>Este mês já tem dados. Use substituir para sobrescrever.</div> : null}

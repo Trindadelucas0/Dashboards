@@ -194,6 +194,26 @@ def dre_media_acumulado(valores: list[float | None]) -> dict[str, float | None]:
     }
 
 
+def _marg_mo_from_dre(dre: dict | None, receita: float | None) -> tuple[float | None, float | None]:
+    """Margem operacional só se a DRE tiver linha de lucro/resultado operacional (nunca inventa)."""
+    if not isinstance(dre, dict):
+        return None, None
+    rb = float(receita or 0)
+    for ln in dre.get("linhas") or []:
+        if not isinstance(ln, dict):
+            continue
+        key = str(ln.get("descricao") or "").lower()
+        key = "".join(c for c in key if c.isalnum() or c.isspace())
+        if "lucro operacional" in key or "resultado operacional" in key:
+            val = ln.get("valor")
+            if val is None:
+                return None, None
+            luc = float(val)
+            marg = round(100 * luc / rb, 2) if rb else None
+            return marg, luc
+    return None, None
+
+
 def build_dre_por_mes(months: list, year: str) -> list[dict]:
     """Meses do ano com DRE oficial, em ordem cronológica."""
     out: list[dict] = []
@@ -208,21 +228,65 @@ def build_dre_por_mes(months: list, year: str) -> list[dict]:
         if not (pack.get("hasDre") or dre):
             continue
         sliced = _slice("dre", pack)
+        enriched = _enrich_fiscal(pack)
         dre_view = sliced.get("dre") if isinstance(sliced.get("dre"), dict) else dre
+        rb = sliced.get("receitaBruta")
+        marg_mo, luc_op = _marg_mo_from_dre(dre_view, rb)
         out.append(
             {
                 "competencia": comp,
                 "label": _month_label(comp),
                 "hasDre": True,
                 "cmvPendente": cmv_pendente(pack),
-                "receitaBruta": sliced.get("receitaBruta"),
+                "receitaBruta": rb,
                 "cmv": sliced.get("cmv"),
                 "lucBruto": sliced.get("lucBruto"),
                 "lucLiq": sliced.get("lucLiq"),
+                "lucOperacional": luc_op,
                 "margMb": sliced.get("margMb"),
                 "margMl": sliced.get("margMl"),
+                "margMo": marg_mo,
+                "dedPct": enriched.get("dedPct"),
+                "deducoes": enriched.get("deducoes"),
                 "dre": dre_view,
                 "source": dre_view.get("source") if isinstance(dre_view, dict) else dre.get("source"),
+            }
+        )
+    return out
+
+
+def build_balancete_por_mes(months: list, year: str) -> list[dict]:
+    """Meses do ano com balancete importado, em ordem cronológica."""
+    out: list[dict] = []
+    if not year:
+        return out
+    for row in months or []:
+        comp = str(getattr(row, "competencia", "") or "")
+        if not comp.startswith(year):
+            continue
+        pack = getattr(row, "pack", None) or {}
+        bal = pack.get("balancete") if isinstance(pack.get("balancete"), dict) else {}
+        if not (pack.get("hasBalancete") or bal):
+            continue
+        contas = bal.get("contas") if isinstance(bal.get("contas"), list) else []
+        if not contas:
+            continue
+        totais = bal.get("totais") if isinstance(bal.get("totais"), dict) else {}
+        out.append(
+            {
+                "competencia": comp,
+                "label": _month_label(comp),
+                "shortLabel": _month_short(comp),
+                "hasBalancete": True,
+                "balancete": {
+                    "kind": bal.get("kind"),
+                    "source": bal.get("source") or pack.get("balanceteSource"),
+                    "contas": contas,
+                    "totais": totais,
+                    "hasValores": bal.get("hasValores"),
+                },
+                "totais": totais,
+                "source": bal.get("source") or pack.get("balanceteSource"),
             }
         )
     return out
@@ -655,6 +719,11 @@ def _is_empty(tab: str, pack: dict, row) -> bool:
     if row is None:
         return True
     pack = pack or {}
+    if tab in ("visao-geral", "indicadores", "recebimentos"):
+        if pack.get("hasDre") or pack.get("apuracao") or pack.get("receitaBruta"):
+            return False
+        if pack.get("memoriaCalculo"):
+            return False
     if tab == "dre":
         return not (pack.get("hasDre") or pack.get("dre"))
     if tab == "impostos":
@@ -667,6 +736,12 @@ def _is_empty(tab: str, pack: dict, row) -> bool:
             or pack.get("saidasMeta")
             or pack.get("apuracao")
             or pack.get("memoriaCalculo")
+            or pack.get("memoriaPisCofins")
+            or pack.get("memoriaIpi")
+            or pack.get("memoriaIrpj")
+            or pack.get("memoriaCsll")
+            or pack.get("porUfSt")
+            or pack.get("porUfDifal")
         )
     if tab == "importar":
         return False
@@ -808,27 +883,51 @@ def _slice(tab: str, pack: dict) -> dict:
             "saidasMeta": pack.get("saidasMeta"),
             "apuracao": pack.get("apuracao"),
             "memoriaCalculo": pack.get("memoriaCalculo"),
+            "memoriaPisCofins": pack.get("memoriaPisCofins"),
+            "memoriaIpi": pack.get("memoriaIpi"),
+            "memoriaIrpj": pack.get("memoriaIrpj"),
+            "memoriaCsll": pack.get("memoriaCsll"),
+            "porUfSt": pack.get("porUfSt") or {},
+            "porUfDifal": pack.get("porUfDifal") or {},
             "subvencao": pack.get("subvencao") or (pack.get("apuracao") or {}).get("subvencao"),
             "receitaBruta": receita,
         }
     if tab == "recebimentos":
         return {"receitaBruta": vendas, "totalCompras": compras}
     if tab == "balancete":
-        return {"balancete": pack.get("balancete")}
+        return {
+            "balancete": pack.get("balancete"),
+            "hasBalancete": pack.get("hasBalancete") or bool(pack.get("balancete")),
+        }
     if tab == "indicadores":
         margem = pack.get("margMb")
+        margem_estimada = False
         if margem is None and vendas:
             margem = round(100 * (vendas - compras) / vendas, 2)
+            margem_estimada = True
+        dre_view = pack.get("dre") if isinstance(pack.get("dre"), dict) else {}
+        marg_mo, luc_op = _marg_mo_from_dre(dre_view, receita or vendas)
         return {
-            "receitaBruta": vendas,
+            "receitaBruta": receita or vendas,
             "totalCompras": compras,
             "margemBruta": (vendas - compras) / vendas if vendas else None,
             "margMb": margem,
             "margMl": pack.get("margMl"),
+            "margMo": marg_mo,
+            "lucBruto": pack.get("lucBruto"),
+            "lucLiq": pack.get("lucLiq"),
+            "lucOperacional": luc_op,
+            "cmv": pack.get("cmv"),
+            "deducoes": pack.get("deducoes"),
             "dedPct": pack.get("dedPct"),
             "nfsEntradas": pack.get("nfsEntradas") or 0,
             "nfsSaidas": pack.get("nfsSaidas") or 0,
             "hasDre": pack.get("hasDre") or False,
+            "hasBalancete": pack.get("hasBalancete") or bool(pack.get("balancete")),
+            "margemEstimada": margem_estimada,
+            "balanceteTotais": (pack.get("balancete") or {}).get("totais")
+            if isinstance(pack.get("balancete"), dict)
+            else None,
         }
     return pack
 
@@ -891,6 +990,16 @@ def tab_payload(
         data["dreSource"] = sources[-1] if sources else (data.get("dre") or {}).get("source")
         if por_mes:
             empty = False
+    if tab == "balancete":
+        year = year_from_period(competencia)
+        por_mes = build_balancete_por_mes(months, year)
+        data["porMes"] = por_mes
+        sources = [m.get("source") for m in por_mes if m.get("source")]
+        data["balanceteSource"] = sources[-1] if sources else ((data.get("balancete") or {}).get("source"))
+        comps = [m["competencia"] for m in por_mes]
+        if comps:
+            data["periodoLabel"] = dre_period_label(comps)
+            empty = False
     if tab in ("visao-geral", "recebimentos", "impostos", "indicadores"):
         labels = [_month_label(m.competencia) for m in months]
         compras_s = [float((m.pack or {}).get("totalCompras") or 0) for m in months]
@@ -899,16 +1008,22 @@ def tab_payload(
         ]
         ded_s = []
         ded_pct_s = []
+        marg_mb_s = []
+        marg_ml_s = []
         for m in months:
             ep = _enrich_fiscal(m.pack or {})
             ded_s.append(ep.get("deducoes"))
             ded_pct_s.append(ep.get("dedPct"))
+            marg_mb_s.append(ep.get("margMb"))
+            marg_ml_s.append(ep.get("margMl"))
         data["serie"] = {
             "labels": labels,
             "compras": compras_s,
             "vendas": vendas_s,
             "deducoes": ded_s,
             "dedPct": ded_pct_s,
+            "margMb": marg_mb_s,
+            "margMl": marg_ml_s,
         }
     if tab == "vendas" and kind == "month":
         data["variacaoVendas"] = variacao_vendas_mom(competencia, months)

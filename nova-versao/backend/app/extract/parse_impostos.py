@@ -147,7 +147,16 @@ def composicao_from_apuracao(ap: dict | None) -> list[dict]:
     if not ap:
         return []
     out = []
-    for key, label in (("icms", "ICMS"), ("icmsSt", "ICMS ST"), ("pis", "PIS"), ("cofins", "COFINS"), ("ipi", "IPI")):
+    for key, label in (
+        ("icms", "ICMS"),
+        ("icmsSt", "ICMS ST"),
+        ("pis", "PIS"),
+        ("cofins", "COFINS"),
+        ("ipi", "IPI"),
+        ("irpj", "IRPJ"),
+        ("csll", "CSLL"),
+        ("difal", "DIFAL"),
+    ):
         item = ap.get(key) or {}
         if not isinstance(item, dict):
             continue
@@ -474,7 +483,16 @@ def apuracao_patch_from_demo(tipo: str, parsed: dict) -> dict:
     if tipo == "ipi":
         tax["credito"] = float(parsed.get("creditos") or 0)
         tax["apurado"] = float(parsed.get("debitos") or tax["apurado"])
-        return {"apuracao": {"ipi": tax, "fonte": "demonstrativo_ipi"}, "impostosDemo": {"ipi": parsed}}
+        out = {"apuracao": {"ipi": tax, "fonte": "demonstrativo_ipi"}, "impostosDemo": {"ipi": parsed}}
+        if parsed.get("hasValores") and (parsed.get("resumo") or parsed.get("debito")):
+            out["memoriaIpi"] = {
+                "formula": parsed.get("formula") or "",
+                "debito": parsed.get("debito") or {},
+                "credito": parsed.get("credito") or {},
+                "resumo": parsed.get("resumo") or {},
+                "aRecolher": parsed.get("aRecolher"),
+            }
+        return out
     if tipo == "pis":
         tax["credito"] = float(parsed.get("credito") or 0)
         fonte = (
@@ -505,4 +523,253 @@ def apuracao_patch_from_demo(tipo: str, parsed: dict) -> dict:
         tax["credito"] = float(parsed.get("creditos") or 0)
         tax["saldoCredor"] = float(parsed.get("saldoCredorSeguinte") or 0)
         return {"apuracao": {"icms": tax, "fonte": "demonstrativo_icms"}, "impostosDemo": {"icms": parsed}}
+    if tipo == "irpj":
+        tax["credito"] = float(parsed.get("credito") or 0)
+        out = {"apuracao": {"irpj": tax, "fonte": "planilha_padrao_irpj"}, "impostosDemo": {"irpj": parsed}}
+        if parsed.get("linhas"):
+            out["memoriaIrpj"] = {"linhas": parsed.get("linhas") or [], "aRecolher": parsed.get("aRecolher")}
+        return out
+    if tipo == "csll":
+        tax["credito"] = float(parsed.get("credito") or 0)
+        out = {"apuracao": {"csll": tax, "fonte": "planilha_padrao_csll"}, "impostosDemo": {"csll": parsed}}
+        if parsed.get("linhas"):
+            out["memoriaCsll"] = {"linhas": parsed.get("linhas") or [], "aRecolher": parsed.get("aRecolher")}
+        return out
+    if tipo == "difal":
+        return {
+            "apuracao": {"difal": tax, "fonte": "planilha_padrao_difal"},
+            "impostosDemo": {"difal": parsed},
+            "porUfDifal": parsed.get("byUf") or {},
+        }
     return {}
+
+
+def _padrao_base_line(row: list, tributo: str, wide: bool) -> dict:
+    if wide:
+        return {
+            "tributo": tributo.upper(),
+            "valorProduto": round(_num(row[1] if len(row) > 1 else 0), 2),
+            "valorContabil": round(_num(row[2] if len(row) > 2 else 0), 2),
+            "baseCalculo": round(_num(row[3] if len(row) > 3 else 0), 2),
+            "ajusteBc": round(_num(row[4] if len(row) > 4 else 0), 2),
+            "bcAjustada": round(_num(row[5] if len(row) > 5 else 0), 2),
+            "aliquota": round(_num(row[6] if len(row) > 6 else 0), 6),
+            "valorImposto": round(_num(row[7] if len(row) > 7 else 0), 2),
+        }
+    return {
+        "tributo": tributo.upper(),
+        "valorProduto": round(_num(row[1] if len(row) > 1 else 0), 2),
+        "valorContabil": round(_num(row[2] if len(row) > 2 else 0), 2),
+        "baseCalculo": round(_num(row[3] if len(row) > 3 else 0), 2),
+        "ajusteBc": 0.0,
+        "bcAjustada": round(_num(row[3] if len(row) > 3 else 0), 2),
+        "aliquota": round(_num(row[4] if len(row) > 4 else 0), 6),
+        "valorImposto": round(_num(row[5] if len(row) > 5 else 0), 2),
+    }
+
+
+def _first_tax_label(row: list) -> str:
+    for cell in row:
+        lab = _fold(str(cell or ""))
+        if lab in ("pis", "cofins", "ipi"):
+            return lab
+    return ""
+
+
+def parse_pis_cofins_padrao(grid: WorkbookGrid) -> dict:
+    """Planilha padrão — aba PIS COFINS: débito, crédito e RESUMO APURAÇÃO.
+
+    ``aRecolher`` é o resultado **do mês**: débito − crédito. A coluna A RECOLHER
+    do RESUMO só é aceita quando bate com essa conta; nas planilhas em que ela
+    desconta o saldo credor acumulado de meses anteriores o valor da coluna vira
+    apenas informativo (``aRecolherPlanilha``).
+    """
+    out: dict[str, Any] = {
+        "kind": "padrao_pis_cofins",
+        "hasValores": False,
+        "formula": "aRecolher = débito − crédito",
+        "debito": {"linhas": []},
+        "credito": {"linhas": []},
+        "resumo": {},
+        "warnings": [],
+    }
+    mode = ""
+    for row in grid.rows or []:
+        cells = [str(c or "").strip() for c in row]
+        joined = _fold(" ".join(cells))
+        if not joined:
+            continue
+        if "valor produto" in joined or ("imposto" in joined and "debito" in joined and "credito" in joined):
+            continue
+        if joined in ("debito", "debitos") or joined.endswith(" debito") and len(joined) < 12:
+            mode = "debito"
+            continue
+        if joined in ("credito", "creditos"):
+            mode = "credito"
+            continue
+        if "resumo apuracao" in joined:
+            mode = "resumo"
+            continue
+        tributo = _first_tax_label(row)
+        if tributo not in ("pis", "cofins"):
+            continue
+        if mode in ("debito", "credito"):
+            line = _padrao_base_line(row, tributo, wide=True)
+            if abs(line["valorImposto"]) + abs(line["valorProduto"]) < 0.009:
+                continue
+            out[mode]["linhas"].append(line)
+            continue
+        if mode != "resumo":
+            continue
+        deb = _num(row[2] if len(row) > 2 else 0)
+        cred = _num(row[3] if len(row) > 3 else 0)
+        saldo = _num(row[4] if len(row) > 4 else 0)
+        rec = _num(row[5] if len(row) > 5 else 0)
+        if abs(deb) + abs(cred) + abs(rec) < 0.009:
+            continue
+        calculado = round(deb - cred, 2)
+        planilha = round(rec, 2)
+        confere = abs(planilha - calculado) < 0.02
+        a_recolher = planilha if confere else calculado
+        resumo_row = {
+            "tributo": tributo.upper(),
+            "debito": round(deb, 2),
+            "credito": round(cred, 2),
+            "saldoCredor": round(saldo, 2),
+            "aRecolher": a_recolher,
+            "aRecolherPlanilha": planilha,
+            "aRecolherCalculado": calculado,
+            "fonte": "resumo" if confere else "debito-credito",
+        }
+        out["resumo"][tributo] = resumo_row
+        out[tributo] = {
+            "kind": f"padrao_{tributo}",
+            "debitos": round(deb, 2),
+            "credito": round(cred, 2),
+            "saldoCredor": round(saldo, 2),
+            "aRecolher": a_recolher,
+            "aRecolherPlanilha": planilha,
+            "apurado": round(deb, 2),
+            "hasValores": True,
+        }
+        if not confere:
+            out["warnings"].append(
+                f"{tributo.upper()}: coluna A RECOLHER do RESUMO ({planilha}) não bate com débito − crédito "
+                f"({calculado}) — usado o cálculo do mês; saldo credor acumulado {round(saldo, 2)} fica informativo"
+            )
+        out["hasValores"] = True
+    return out
+
+
+def parse_ipi_padrao(grid: WorkbookGrid) -> dict:
+    """Planilha padrão — aba IPI: débito, crédito e RESUMO APURAÇÃO."""
+    out: dict[str, Any] = {
+        "kind": "padrao_ipi",
+        "hasValores": False,
+        "formula": "aRecolher = débito − crédito − saldo credor",
+        "debito": {"linhas": []},
+        "credito": {"linhas": []},
+        "resumo": {},
+    }
+    mode = ""
+    for row in grid.rows or []:
+        cells = [str(c or "").strip() for c in row]
+        joined = _fold(" ".join(cells))
+        if not joined:
+            continue
+        if "valor produto" in joined or ("imposto" in joined and "debito" in joined):
+            continue
+        if joined in ("debito", "debitos"):
+            mode = "debito"
+            continue
+        if joined in ("credito", "creditos"):
+            mode = "credito"
+            continue
+        if "resumo apuracao" in joined:
+            mode = "resumo"
+            continue
+        tributo = _first_tax_label(row)
+        if tributo != "ipi":
+            continue
+        if mode in ("debito", "credito"):
+            line = _padrao_base_line(row, tributo, wide=False)
+            if abs(line["valorImposto"]) + abs(line["valorProduto"]) < 0.009:
+                continue
+            out[mode]["linhas"].append(line)
+            continue
+        if mode != "resumo":
+            continue
+        deb = _num(row[2] if len(row) > 2 else 0)
+        cred = _num(row[3] if len(row) > 3 else 0)
+        saldo = _num(row[4] if len(row) > 4 else 0)
+        rec = _num(row[5] if len(row) > 5 else 0)
+        if abs(deb) + abs(cred) + abs(rec) < 0.009:
+            continue
+        out["debitos"] = round(deb, 2)
+        out["creditos"] = round(cred, 2)
+        out["saldoCredor"] = round(saldo, 2)
+        out["aRecolher"] = round(rec, 2)
+        out["apurado"] = round(deb, 2)
+        out["hasValores"] = True
+        out["resumo"] = {
+            "ipi": {
+                "tributo": "IPI",
+                "debito": round(deb, 2),
+                "credito": round(cred, 2),
+                "saldoCredor": round(saldo, 2),
+                "aRecolher": round(rec, 2),
+            }
+        }
+    return out
+
+
+def parse_difal_padrao(grid: WorkbookGrid) -> dict:
+    """Mesma grade UF/VALOR da aba ST."""
+    parsed = parse_st_mensal(grid)
+    parsed["kind"] = "padrao_difal"
+    return parsed
+
+
+def parse_irpj_csll_padrao(grid: WorkbookGrid, tipo: str) -> dict:
+    """Demonstrativo IRPJ/CSLL — linhas do livro + saldo devedor."""
+    linhas: list[dict] = []
+    a_recolher: float | None = None
+    for row in grid.rows or []:
+        texts = [str(c or "").strip() for c in row if str(c or "").strip()]
+        if not texts:
+            continue
+        label_raw = next((str(c or "").strip() for c in row if str(c or "").strip()), "")
+        nums = []
+        for cell in row:
+            if cell is None or str(cell).strip() == "":
+                continue
+            if isinstance(cell, (int, float)) or re.search(r"\d", str(cell)):
+                n = _num(cell)
+                if str(cell).strip() not in (label_raw,) and (isinstance(cell, (int, float)) or re.search(r"[\d]", str(cell))):
+                    if not re.fullmatch(r"\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}", str(cell).strip()):
+                        nums.append(round(n, 2))
+        folded = _fold(label_raw)
+        if folded.startswith("demonstrativo") or folded.startswith("estabelecimento"):
+            linhas.append({"label": label_raw, "valor": None, "valores": [], "kind": "titulo"})
+            continue
+        valor = nums[-1] if nums else None
+        kind = "linha"
+        if "saldo devedor" in folded:
+            kind = "resultado"
+            if valor is not None:
+                a_recolher = float(valor)
+        elif folded in ("apuracao", "adicional do irpj", "percentual de presuncao majorado"):
+            kind = "grupo"
+        linhas.append({"label": label_raw, "valor": valor, "valores": nums, "kind": kind})
+    if a_recolher is None:
+        return {"kind": f"padrao_{tipo}", "hasValores": False, "linhas": linhas}
+    if abs(a_recolher) < 0.009:
+        return {"kind": f"padrao_{tipo}", "hasValores": False, "linhas": linhas}
+    return {
+        "kind": f"padrao_{tipo}",
+        "aRecolher": float(a_recolher),
+        "apurado": float(a_recolher),
+        "credito": 0.0,
+        "hasValores": True,
+        "linhas": linhas,
+    }

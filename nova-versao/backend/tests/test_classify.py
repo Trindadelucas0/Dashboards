@@ -33,6 +33,18 @@ def test_detect_sheet_tipo_ignores_misleading_filename():
     assert detect_sheet_tipo(grid, "Entradas por Cliente 072026.xls") == "saidas"
 
 
+def test_detect_entrada_por_fornecedor_filename_and_acompanhamento():
+    by_name = WorkbookGrid(
+        "Relatorio de entrada por fornecedor 082026 BAIFER.xls",
+        "Plan1",
+        [["ACOMPANHAMENTO DE ENTRADAS"], ["Total Fornecedor"]],
+        "html",
+    )
+    assert detect_sheet_tipo(by_name, "Relatorio de entrada por fornecedor 082026 BAIFER.xls") == "entradas"
+    by_head = WorkbookGrid("qualquer.xls", "Plan1", [["ACOMPANHAMENTO DE ENTRADAS"]], "html")
+    assert detect_sheet_tipo(by_head, "qualquer.xls") == "entradas"
+
+
 def test_detect_demonstrativo_icms():
     grid = WorkbookGrid(
         "Apuração icms 062026.xls",
@@ -71,8 +83,9 @@ def test_resolve_catalog_companies():
     company, unit = resolve_company("52005382000140", "BAIFER DISTRIBUIDORA", "Entradas 01-2026.xls")
     assert company and company.id == "baifer"
     assert unit == "matriz"
-    company, _ = resolve_company("36517206000130", "UNICA", "x.xls")
-    assert company is None
+    company, unit = resolve_company("36517206000130", "UNICA COMERCIO ATACADISTA DE TINTAS", "x.xls")
+    assert company and company.id == "unica"
+    assert unit == "matriz"
 
 
 
@@ -93,6 +106,36 @@ def test_header_map_prefers_valor_contabil_over_icms_valor():
     assert mapping is not None
     assert mapping["valor"] == 22
     assert mapping["nota"] == 4
+
+
+def test_header_map_entrada_por_fornecedor_keeps_first_codigo_and_valor_contabil():
+    row = [
+        "Código",
+        "Data Emissão",
+        "Data Entrada",
+        "Nota",
+        "Série",
+        "Espécie",
+        "Código",
+        "Fornecedor",
+        "CNPJ/CPF/CEI/CAEPF",
+        "Insc. Est.",
+        "CFOP",
+        "AC.",
+        "UF",
+        "Valor Contábil",
+        "Tipo",
+        "Base Cálculo",
+        "Alíq.",
+        "Valor",
+        "IPI",
+    ]
+    mapping = _header_map(row)
+    assert mapping is not None
+    assert mapping["codigo"] == 0
+    assert mapping["nome"] == 7
+    assert mapping["valor"] == 13
+    assert mapping["nota"] == 3
 
 
 def test_saidas_uses_valor_contabil_not_zero_icms():
