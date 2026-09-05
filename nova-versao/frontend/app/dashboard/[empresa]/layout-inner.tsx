@@ -15,7 +15,7 @@ const TITLES: Record<string, [string, string]> = {
   vendas: ["Vendas", "Saídas por cliente"],
   impostos: ["Impostos", "Apuração"],
     memoria: ["Memória de Cálculo", "Livro da planilha padrão — ICMS 5005, PIS/COFINS e demais tributos"],
-  recebimentos: ["Recebimentos/Pagamentos", "Estimativa pelo movimento"],
+  recebimentos: ["Recebimentos/Pagamentos", "Estimativa NF-e — KPIs, gráficos e série"],
   balancete: ["Balancete", "Contábil"],
   dre: ["DRE", "Demonstração do resultado"],
   indicadores: ["Indicadores", "Margens e giro"],

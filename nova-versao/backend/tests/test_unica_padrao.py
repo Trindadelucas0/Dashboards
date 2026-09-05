@@ -14,8 +14,30 @@ from app.routers.imports import _deep_merge
 FIXTURES = Path(__file__).resolve().parents[2] / "fixtures" / "unica-padrao"
 JAN = FIXTURES / "planilha-padrao-012026.xlsx"
 ABR = FIXTURES / "planilha-padrao-042026.xlsx"
+DOWNLOADS = Path.home() / "Downloads"
 
 UNICA_CNPJ = "36517206000130"
+
+
+def _jul_parcial_path() -> Path | None:
+    """Workbook ~370 KB com ENTRADAS/SAÍDAS sem DRE/BAL (julho B)."""
+    if not DOWNLOADS.is_dir():
+        return None
+    cands = [
+        p
+        for p in DOWNLOADS.iterdir()
+        if "UNICA" in p.name.upper() and "072026" in p.name and p.stat().st_size > 200_000
+    ]
+    return cands[0] if cands else None
+
+
+def _jun_path() -> Path | None:
+    if not DOWNLOADS.is_dir():
+        return None
+    cands = [
+        p for p in DOWNLOADS.iterdir() if "UNICA" in p.name.upper() and "062026" in p.name
+    ]
+    return cands[0] if cands else None
 
 
 def _extract(path: Path) -> dict:
@@ -170,3 +192,45 @@ def test_janeiro_pack_merge_compras_e_vendas():
     assert compras["totalCompras"] == pytest.approx(1790105.13, abs=0.02)
     vendas = _slice("vendas", pack)
     assert vendas["cfopSaidasTotal"] == pytest.approx(1863198.21, abs=0.02)
+
+
+@pytest.mark.skipif(_jul_parcial_path() is None, reason="Downloads Unica 072026 parcial ausente")
+def test_julho_parcial_sem_dre_bal_movimento_golden():
+    path = _jul_parcial_path()
+    assert path is not None
+    sheets = load_all_sheets(path)
+    assert is_workbook_padrao(sheets)
+    nomes = {s.sheet_name.upper() for s in sheets}
+    assert "ENTRADAS" in nomes or "ENTRADA" in nomes
+    assert "DRE" not in nomes
+    assert "BALANCETE" not in nomes
+
+    result = _extract(path)
+    assert result["tipo"] == "workbook_padrao"
+    assert result["competencia"] == "2026-07"
+    assert any("parcial" in w.lower() or "faltam" in w.lower() for w in (result.get("warnings") or []))
+
+    entradas = _part(result, "entradas")
+    assert entradas["status"] == "ok"
+    assert abs(entradas["meta"]["delta"] or 0) < 0.02
+    assert entradas["meta"]["nfs"] == 238
+    assert entradas["pack_patch"]["totalCompras"] == pytest.approx(2119642.66, abs=0.02)
+
+    saidas = _part(result, "saidas")
+    assert saidas["status"] == "ok"
+    assert saidas["pack_patch"]["cfopSaidasTotal"] == pytest.approx(2440744.56, abs=0.02)
+
+    pis = _part(result, "pis_cofins")
+    ap = pis["pack_patch"]["apuracao"]
+    assert ap["pis"]["aRecolher"] == pytest.approx(3699.88, abs=0.02)
+    assert ap["cofins"]["aRecolher"] == pytest.approx(17041.86, abs=0.02)
+
+
+@pytest.mark.skipif(_jun_path() is None, reason="Downloads Unica 062026 ausente")
+def test_junho_st_golden_81007():
+    path = _jun_path()
+    assert path is not None
+    result = _extract(path)
+    st = _part(result, "icms_st")
+    assert st is not None
+    assert st["pack_patch"]["apuracao"]["icmsSt"]["aRecolher"] == pytest.approx(81007.0, abs=0.02)

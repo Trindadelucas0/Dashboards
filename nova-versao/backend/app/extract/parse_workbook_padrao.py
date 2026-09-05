@@ -63,11 +63,19 @@ def _sheet_map(sheets: list[WorkbookGrid]) -> dict[str, WorkbookGrid]:
 
 
 def is_workbook_padrao(sheets: list[WorkbookGrid]) -> bool:
-    """True quando o arquivo traz o conjunto completo de abas do modelo padrão."""
-    if len(sheets) < 9:
+    """True para o esqueleto completo OU workbook parcial com movimento + abas fiscais.
+
+    Parcial (ex. Unica jul B ~370 KB): ENTRADAS/SAÍDAS sem DRE/BALANCETE, mas com
+    ICMS 5005 / PIS COFINS / ST / etc. — ainda extrai movimento e impostos presentes.
+    """
+    if not sheets:
         return False
     names = {_fold_name(s.sheet_name) for s in sheets}
-    return _PADRAO_SHEETS.issubset(names)
+    if _PADRAO_SHEETS.issubset(names):
+        return True
+    has_mov = bool(names & set(_MOVIMENTO_SHEETS))
+    padrao_n = len(_PADRAO_SHEETS & names)
+    return has_mov and padrao_n >= 3
 
 
 def padrao_missing_sheets(sheets: list[WorkbookGrid]) -> list[str]:
@@ -301,6 +309,14 @@ def extract_workbook_padrao(
 
     parts: list[dict] = []
     warnings: list[str] = []
+
+    missing = padrao_missing_sheets(sheets)
+    if missing:
+        warnings.append(
+            "Workbook parcial (faltam "
+            + ", ".join(missing)
+            + "): extraindo movimento e impostos presentes; DRE/Balancete ausentes não são inventados"
+        )
 
     bal_grid = smap.get("balancete")
     tax_comp = anchor or (dre_months[0][0] if dre_months else "")
@@ -568,8 +584,9 @@ def _deep_merge_patch(base: dict, patch: dict) -> dict:
 
 
 def expand_workbook_parts(extracted: dict) -> list[dict]:
-    """Expande parts do workbook padrão em itens de preview/commit."""
-    if extracted.get("tipo") != "workbook_padrao":
+    """Expande parts do workbook padrão / DRE Análise Vertical em itens de preview/commit."""
+    tipo = extracted.get("tipo")
+    if tipo not in ("workbook_padrao", "dre_vertical"):
         return [extracted]
     base = {k: v for k, v in extracted.items() if k not in ("parts", "pack_patch")}
     file_hash = extracted.get("file_hash")
@@ -579,7 +596,12 @@ def expand_workbook_parts(extracted: dict) -> list[dict]:
         item["file"] = f"{extracted.get('file', '')} · {part.get('sheet') or part.get('tipo')}"
         if file_hash:
             part_tipo = part.get("tipo") or "part"
-            item["file_hash"] = sha256_bytes(f"{file_hash}:{part_tipo}".encode())
+            # dre_vertical: várias parts `dre` — incluir competência no hash
+            if tipo == "dre_vertical":
+                key = f"{part_tipo}:{part.get('competencia') or ''}"
+            else:
+                key = part_tipo
+            item["file_hash"] = sha256_bytes(f"{file_hash}:{key}".encode())
             item["source_file_hash"] = file_hash
         if part.get("status") in ("vazia", "ignorada") and not part.get("pack_patch"):
             item["ok"] = True

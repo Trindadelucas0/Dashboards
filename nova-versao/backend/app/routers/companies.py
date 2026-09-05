@@ -11,9 +11,10 @@ from sqlalchemy.orm import Session
 from app.companies import ALL_TABS, COMPANY_BY_ID, only_digits, slugify
 from app.db import get_db
 from app.deps import allowed_company_ids, current_user, require_admin, require_company, tabs_for_user
-from app.extract.cfop import aggregate_macro, cfop_meta, top_grupos
+from app.extract.cfop import aggregate_macro, aggregate_servicos, cfop_meta, top_grupos
 from app.extract.parse_dre import normalize_dre_deducoes
-from app.models import Company, CompanyCnpj, FiscalMonth, User, UserCompany
+from app.extract.aggregate import tipo_doc, vendas_por_doc
+from app.models import Company, CompanyCnpj, FiscalMonth, NfeLine, User, UserCompany
 
 router = APIRouter(prefix="/api/companies", tags=["companies"])
 
@@ -830,6 +831,7 @@ def _slice(tab: str, pack: dict) -> dict:
             "cfopDados": enriched,
             "macro": aggregate_macro(cfops),
             "topGrupos": top_grupos(enriched, 4),
+            "servicosTomados": aggregate_servicos(enriched),
         }
     if tab == "vendas":
         clientes = pack.get("clientes") or pack.get("clientesTop10") or []
@@ -841,15 +843,25 @@ def _slice(tab: str, pack: dict) -> dict:
         enriched = [{**c, **cfop_meta(str(c.get("cfop") or ""))} for c in cfops]
         nfs = int(pack.get("nfsSaidas") or 0)
         ticket = round(vendas / nfs, 2) if nfs > 0 else None
+        clientes_out = [
+            {**c, "tipoDoc": c.get("tipoDoc") or tipo_doc(c.get("cnpj") or c.get("doc") or "")}
+            for c in clientes
+        ]
+        top10_out = [
+            {**c, "tipoDoc": c.get("tipoDoc") or tipo_doc(c.get("cnpj") or c.get("doc") or "")}
+            for c in top10
+        ]
+        por_doc = pack.get("vendasPorDoc") or vendas_por_doc(clientes_out, vendas)
         return {
             "cfopSaidasTotal": vendas,
             "receitaBruta": receita,
             "nfsSaidas": nfs,
             "ticketMedio": ticket,
             "cfopSaidas": enriched,
-            "clientes": clientes,
-            "clientesTop10": top10,
+            "clientes": clientes_out,
+            "clientesTop10": top10_out,
             "demaisClientes": demais,
+            "vendasPorDoc": por_doc,
             "ufSaidas": _uf_list(pack.get("porUfSaidas") or {}, vendas) or _uf_from_parties(clientes, vendas),
             "meta": pack.get("saidasMeta"),
         }
@@ -876,6 +888,7 @@ def _slice(tab: str, pack: dict) -> dict:
             "composicao": pack.get("composicao") or [],
             "deducoes": pack.get("deducoes"),
             "dedPct": pack.get("dedPct"),
+            "porUfSt": pack.get("porUfSt") or {},
         }
     if tab == "memoria":
         return {
@@ -893,7 +906,23 @@ def _slice(tab: str, pack: dict) -> dict:
             "receitaBruta": receita,
         }
     if tab == "recebimentos":
-        return {"receitaBruta": vendas, "totalCompras": compras}
+        nfs_e = int(pack.get("nfsEntradas") or 0)
+        nfs_s = int(pack.get("nfsSaidas") or 0)
+        ticket = round(vendas / nfs_s, 2) if nfs_s > 0 and vendas else None
+        pct_cv = round(100 * compras / vendas, 2) if vendas else None
+        cobertura = round(vendas / compras, 2) if compras else None
+        return {
+            "receitaBruta": vendas,
+            "cfopSaidasTotal": vendas,
+            "totalCompras": compras,
+            "saldo": round(vendas - compras, 2),
+            "hasMovimentacao": bool(pack.get("hasMovimentacao")),
+            "nfsEntradas": nfs_e,
+            "nfsSaidas": nfs_s,
+            "ticketMedio": ticket,
+            "comprasSobreVendasPct": pct_cv,
+            "cobertura": cobertura,
+        }
     if tab == "balancete":
         return {
             "balancete": pack.get("balancete"),
@@ -930,6 +959,54 @@ def _slice(tab: str, pack: dict) -> dict:
             else None,
         }
     return pack
+
+
+def _nfe_line_item(r) -> dict:
+    doc = r.doc or ""
+    return {
+        "competencia": r.competencia,
+        "nota": r.nota or "",
+        "serie": r.serie or "",
+        "nome": r.nome or "",
+        "doc": doc,
+        "tipoDoc": tipo_doc(doc),
+        "uf": r.uf or "",
+        "cfop": r.cfop or "",
+        "valor": float(r.valor or 0),
+    }
+
+
+@router.get("/{company_id}/months/{competencia}/nfe-lines")
+def nfe_lines_payload(
+    company_id: str,
+    competencia: str,
+    unidade: str = "matriz",
+    tipo: str = "saidas",
+    user: User = Depends(current_user),
+    db: Session = Depends(get_db),
+):
+    """Linhas NF do mês (ou trimestre) para exportação detalhada. Ownership no servidor."""
+    require_company(company_id, user, db)
+    kind_tipo = (tipo or "saidas").strip().lower()
+    if kind_tipo not in ("saidas", "entradas"):
+        raise HTTPException(400, "tipo deve ser saidas ou entradas")
+    kind, period_key = parse_period_key(competencia)
+    q = (
+        db.query(NfeLine)
+        .filter(
+            NfeLine.company_id == company_id,
+            NfeLine.unidade == unidade,
+            NfeLine.tipo == kind_tipo,
+        )
+    )
+    if kind == "trimestre" and period_key:
+        meses = _meses_from_trimestre_key(period_key)
+        q = q.filter(NfeLine.competencia.in_(meses))
+    else:
+        q = q.filter(NfeLine.competencia == competencia)
+    rows = q.order_by(NfeLine.competencia, NfeLine.nota, NfeLine.serie, NfeLine.cfop).all()
+    items = [_nfe_line_item(r) for r in rows]
+    return {"companyId": company_id, "competencia": competencia, "unidade": unidade, "tipo": kind_tipo, "items": items, "count": len(items)}
 
 
 @router.get("/{company_id}/months/{competencia}/{tab}")
@@ -1002,10 +1079,38 @@ def tab_payload(
             empty = False
     if tab in ("visao-geral", "recebimentos", "impostos", "indicadores"):
         labels = [_month_label(m.competencia) for m in months]
-        compras_s = [float((m.pack or {}).get("totalCompras") or 0) for m in months]
-        vendas_s = [
-            float((m.pack or {}).get("cfopSaidasTotal") or (m.pack or {}).get("receitaBruta") or 0) for m in months
-        ]
+        competencias = [m.competencia for m in months]
+        if tab == "recebimentos":
+            # Gaps (null) quando o mês não tem movimento — evita zeros falsos no gráfico.
+            def _serie_mov(m, key: str, *alt_keys: str):
+                p = m.pack or {}
+                if not p.get("hasMovimentacao"):
+                    return None
+                for k in (key, *alt_keys):
+                    if p.get(k) is not None:
+                        return float(p.get(k) or 0)
+                return 0.0
+
+            def _serie_nfs(m, key: str):
+                p = m.pack or {}
+                if not p.get("hasMovimentacao"):
+                    return None
+                if p.get(key) is None:
+                    return None
+                return int(p.get(key) or 0)
+
+            compras_s = [_serie_mov(m, "totalCompras") for m in months]
+            vendas_s = [_serie_mov(m, "cfopSaidasTotal", "receitaBruta") for m in months]
+            nfs_e_s = [_serie_nfs(m, "nfsEntradas") for m in months]
+            nfs_s_s = [_serie_nfs(m, "nfsSaidas") for m in months]
+        else:
+            compras_s = [float((m.pack or {}).get("totalCompras") or 0) for m in months]
+            vendas_s = [
+                float((m.pack or {}).get("cfopSaidasTotal") or (m.pack or {}).get("receitaBruta") or 0)
+                for m in months
+            ]
+            nfs_e_s = [int((m.pack or {}).get("nfsEntradas") or 0) for m in months]
+            nfs_s_s = [int((m.pack or {}).get("nfsSaidas") or 0) for m in months]
         ded_s = []
         ded_pct_s = []
         marg_mb_s = []
@@ -1020,6 +1125,9 @@ def tab_payload(
             "labels": labels,
             "compras": compras_s,
             "vendas": vendas_s,
+            "nfsEntradas": nfs_e_s,
+            "nfsSaidas": nfs_s_s,
+            "competencias": competencias,
             "deducoes": ded_s,
             "dedPct": ded_pct_s,
             "margMb": marg_mb_s,

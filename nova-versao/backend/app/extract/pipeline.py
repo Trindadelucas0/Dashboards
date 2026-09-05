@@ -15,7 +15,7 @@ from app.extract.classify import (
     scan_razao,
 )
 from app.extract.parse_balancete import parse_balancete
-from app.extract.parse_dre import parse_dre
+from app.extract.parse_dre import extract_dre_vertical, is_analise_vertical_dre, parse_dre
 from app.extract.parse_impostos import (
     apuracao_from_imposto_row,
     apuracao_patch_from_demo,
@@ -157,6 +157,10 @@ def classify_and_extract(
 
     tax_sheets = _extract_pis_cofins_sheets(sheets, filename)
     grid = sheets[0]
+    # Análise Vertical multi-mês: parts por competência (antes do caminho DRE unitário)
+    if is_analise_vertical_dre(grid, filename):
+        return extract_dre_vertical(grid, filename, company_cnpj=company_cnpj or "")
+
     tipo = detect_sheet_tipo(grid, filename)
 
     if tax_sheets:

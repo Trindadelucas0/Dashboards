@@ -212,6 +212,7 @@ def test_is_dre_filename_compact():
     assert is_dre_filename("D. R. E..xls") is True
     assert is_dre_filename("D. R. E. 01-2026.xls") is True
     assert is_dre_filename("dre.xls") is True
+    assert is_dre_filename("Análise Vertical do D. R. E.xls") is True
     assert is_dre_filename("Entradas 01-2026.xls") is False
 
 

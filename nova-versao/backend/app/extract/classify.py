@@ -40,9 +40,12 @@ def _fold_text(text: str) -> str:
 
 
 def is_dre_filename(name: str) -> bool:
-    """D. R. E..xls / DRE 01-2026.xls — compacta pontuação para achar 'dre'."""
+    """D. R. E..xls / DRE 01-2026.xls / Análise Vertical do D. R. E.xls."""
     compact = re.sub(r"[^a-z0-9]+", "", _fold_text(name))
-    return compact == "dre" or compact.startswith("dre")
+    if compact == "dre" or compact.startswith("dre"):
+        return True
+    # Análise Vertical do D.R.E. → analiseverticaldodre
+    return "analisevertical" in compact and "dre" in compact
 
 
 def is_balancete_filename(name: str) -> bool:
@@ -246,11 +249,21 @@ def detect_sheet_tipo(grid: WorkbookGrid, filename: str) -> str:
         or "balancete" in _fold_text(head)
     ):
         return "balancete"
+    head_fold_full = _fold_text(head)
+    labels0 = _fold_text(" ".join(str(row[0]) for row in (grid.rows or [])[:8] if row))
     if (
-        "demonstracao do resultado" in _fold_text(head)
+        "demonstracao do resultado" in head_fold_full
         or is_dre_filename(name)
         or is_dre_filename(file_l)
         or "resultado" in file_l
+        or (
+            "receita bruta" in labels0
+            and ("analise vertical" in head_fold_full or "analise vertical" in _fold_text(name) + _fold_text(file_l))
+        )
+        or (
+            "receita bruta" in labels0
+            and re.search(r"(0[1-9]|1[0-2])/20\d{2}", head)
+        )
     ):
         return "dre"
     if "irpj" in file_l or "csll" in file_l:

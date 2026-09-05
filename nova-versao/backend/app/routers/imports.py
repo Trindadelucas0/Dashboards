@@ -216,7 +216,7 @@ async def preview(
             extracted["ok"] = False
             continue
         if not extracted.get("company_id"):
-            if extracted.get("tipo") == "workbook_padrao":
+            if extracted.get("tipo") in ("workbook_padrao", "dre_vertical", "dre"):
                 extracted.setdefault("warnings", []).append("Empresa será definida ao gravar no dashboard aberto")
             else:
                 extracted.setdefault("errors", []).append("Empresa não identificada")

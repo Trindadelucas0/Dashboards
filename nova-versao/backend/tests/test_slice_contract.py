@@ -89,6 +89,27 @@ def test_slice_finalidade_top_grupos():
     assert "2.150" in data["topGrupos"][0]["grupo"]
     assert data["topGrupos"][0]["pct"] == 70.0
     assert data["macro"]
+    assert data["servicosTomados"]["total"] == 0
+
+
+def test_slice_finalidade_servicos_tomados():
+    pack = {
+        "hasMovimentacao": True,
+        "totalCompras": 200,
+        "cfopDados": [
+            {"cfop": "1-102", "total": 100, "qtd": 1},
+            {"cfop": "1-933", "total": 70, "qtd": 3},
+            {"cfop": "2-353", "total": 30, "qtd": 1},
+        ],
+    }
+    data = _slice("finalidade", pack)
+    st = data["servicosTomados"]
+    assert st["total"] == 100
+    assert st["qtd"] == 4
+    assert st["pctCompras"] == 50.0
+    macro = {m["key"]: m for m in data["macro"]}
+    assert macro["servicos"]["total"] == 100
+    assert any(c["finalidade"] == "Serviço ISSQN" for c in data["cfopDados"])
 
 
 def test_slice_vendas_demais_clientes():
@@ -119,6 +140,62 @@ def test_slice_vendas_ticket_null_without_nfs():
     data = _slice("vendas", {"cfopSaidasTotal": 100, "nfsSaidas": 0, "cfopSaidas": []})
     assert data["ticketMedio"] is None
     assert data["receitaBruta"] == 100
+
+
+def test_slice_recebimentos_kpis():
+    pack = {
+        "hasMovimentacao": True,
+        "cfopSaidasTotal": 2270697.73,
+        "totalCompras": 1981355.68,
+        "nfsSaidas": 954,
+        "nfsEntradas": 230,
+    }
+    data = _slice("recebimentos", pack)
+    assert data["cfopSaidasTotal"] == 2270697.73
+    assert data["totalCompras"] == 1981355.68
+    assert data["saldo"] == round(2270697.73 - 1981355.68, 2)
+    assert data["nfsSaidas"] == 954
+    assert data["nfsEntradas"] == 230
+    assert data["ticketMedio"] == round(2270697.73 / 954, 2)
+    assert data["comprasSobreVendasPct"] == round(100 * 1981355.68 / 2270697.73, 2)
+    assert data["cobertura"] == round(2270697.73 / 1981355.68, 2)
+    assert data["hasMovimentacao"] is True
+
+
+def test_slice_recebimentos_sem_vendas_nao_inventa_pct():
+    data = _slice("recebimentos", {"hasMovimentacao": True, "totalCompras": 100, "nfsEntradas": 2})
+    assert data["ticketMedio"] is None
+    assert data["comprasSobreVendasPct"] is None
+    assert data["cobertura"] == 0.0
+    assert data["saldo"] == -100.0
+
+
+def test_slice_recebimentos_sem_compras_cobertura_null():
+    data = _slice(
+        "recebimentos",
+        {"hasMovimentacao": True, "cfopSaidasTotal": 200, "nfsSaidas": 4, "totalCompras": 0},
+    )
+    assert data["ticketMedio"] == 50.0
+    assert data["cobertura"] is None
+    assert data["comprasSobreVendasPct"] == 0.0
+
+
+def test_slice_vendas_por_doc_from_clientes():
+    pack = {
+        "cfopSaidasTotal": 100,
+        "nfsSaidas": 2,
+        "clientes": [
+            {"nome": "PF", "cnpj": "123.456.789-01", "total": 40, "qtd": 1, "uf": "DF"},
+            {"nome": "PJ", "cnpj": "12.345.678/0001-99", "total": 60, "qtd": 1, "uf": "SP"},
+        ],
+        "cfopSaidas": [],
+    }
+    data = _slice("vendas", pack)
+    assert data["clientes"][0]["tipoDoc"] == "cpf"
+    assert data["clientes"][1]["tipoDoc"] == "cnpj"
+    assert data["vendasPorDoc"]["cpf"]["total"] == 40.0
+    assert data["vendasPorDoc"]["cpf"]["pct"] == 40.0
+    assert data["vendasPorDoc"]["cnpj"]["pct"] == 60.0
 
 
 def test_variacao_vendas_mom():

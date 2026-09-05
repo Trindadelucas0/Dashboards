@@ -13,7 +13,7 @@
 | Vendas | 3 | clientes + UF | ranking + CFOP + Demais | alinhado |
 | Impostos | tax-grid | evolução + composição | — | layout ok; dados só com apuração |
 | Memória | conferência + fórmulas | — | mem-cards | alinhado |
-| Recebimentos | 3 | série mensal | — | proxy movimento |
+| Recebimentos | 8+4 | barras Rec×Pag + doughnut mês | evolução mensal | estimativa NF-e |
 | DRE | margin-grid | — | dre-tbl | parser RESULTADO |
 | Indicadores | 4 | evolução % | — | alinhado |
 | Balancete | placeholder/tabela | — | contas | sem inventar |

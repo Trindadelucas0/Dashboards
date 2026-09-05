@@ -19,6 +19,30 @@ def format_cnpj(digits: str) -> str:
     return d or "—"
 
 
+def tipo_doc(doc: str) -> str:
+    """11 dígitos = CPF, 14 = CNPJ, qualquer outro = outros."""
+    d = only_digits(doc or "")
+    if len(d) == 11:
+        return "cpf"
+    if len(d) == 14:
+        return "cnpj"
+    return "outros"
+
+
+def vendas_por_doc(ranking: list, soma: float) -> dict:
+    buckets = {k: {"total": 0.0, "qtd": 0, "pct": None} for k in ("cpf", "cnpj", "outros")}
+    for p in ranking or []:
+        t = p.get("tipoDoc") or tipo_doc(p.get("cnpj") or p.get("doc") or "")
+        if t not in buckets:
+            t = "outros"
+        buckets[t]["total"] += float(p.get("total") or 0)
+        buckets[t]["qtd"] += int(p.get("qtd") or 0)
+    for b in buckets.values():
+        b["total"] = round2(b["total"])
+        b["pct"] = round2(100 * b["total"] / soma) if soma else None
+    return buckets
+
+
 def unique_nfs(lines: list[Line]) -> int:
     seen: set[str] = set()
     for line in lines:
@@ -47,13 +71,29 @@ def aggregate(lines: list[Line], party_field: str) -> dict:
         bucket["total"] += valor
         bucket["nfs"].add(nf_key)
         p = bucket["parties"].setdefault(
-            party_key, {"nome": line.nome, "cnpj": format_cnpj(line.doc), "uf": uf, "total": 0.0, "nfs": set()}
+            party_key,
+            {
+                "nome": line.nome,
+                "cnpj": format_cnpj(line.doc),
+                "tipoDoc": tipo_doc(line.doc),
+                "uf": uf,
+                "total": 0.0,
+                "nfs": set(),
+            },
         )
         p["total"] += valor
         p["nfs"].add(nf_key)
 
         gp = by_party.setdefault(
-            party_key, {"nome": line.nome, "cnpj": format_cnpj(line.doc), "uf": uf, "total": 0.0, "nfs": set()}
+            party_key,
+            {
+                "nome": line.nome,
+                "cnpj": format_cnpj(line.doc),
+                "tipoDoc": tipo_doc(line.doc),
+                "uf": uf,
+                "total": 0.0,
+                "nfs": set(),
+            },
         )
         gp["total"] += valor
         gp["nfs"].add(nf_key)
@@ -65,6 +105,7 @@ def aggregate(lines: list[Line], party_field: str) -> dict:
             {
                 "nome": p["nome"],
                 "cnpj": p["cnpj"],
+                "tipoDoc": p.get("tipoDoc") or tipo_doc(p.get("cnpj") or ""),
                 "uf": p["uf"],
                 "qtd": len(p["nfs"]),
                 "total": round2(p["total"]),
@@ -80,6 +121,7 @@ def aggregate(lines: list[Line], party_field: str) -> dict:
         {
             "nome": p["nome"],
             "cnpj": p["cnpj"],
+            "tipoDoc": p.get("tipoDoc") or tipo_doc(p.get("cnpj") or ""),
             "uf": p["uf"],
             "qtd": len(p["nfs"]),
             "total": round2(p["total"]),
@@ -150,6 +192,7 @@ def merge_saidas(pack: dict, mov: ExtractedMovimento) -> dict:
     pack["cfopSaidasDetalhe"] = agg["cfopList"]
     pack["clientes"] = agg["ranking"]
     pack["clientesTop10"] = agg["ranking"][:10]
+    pack["vendasPorDoc"] = vendas_por_doc(agg["ranking"], agg["soma"])
     top_sum = sum(float(x["total"]) for x in pack["clientesTop10"])
     pack["demaisClientes"] = round2(agg["soma"] - top_sum)
     pack["porUfSaidas"] = agg["byUf"]

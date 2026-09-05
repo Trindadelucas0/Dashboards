@@ -13,6 +13,10 @@ CFOP_INFO: dict[str, tuple[str, str]] = {
     "2-202": ("Devolução de venda interestadual", "Devolução Venda"),
     "1-411": ("Devolução de venda com ST", "Devolução Venda"),
     "2-411": ("Devolução de venda com ST (inter)", "Devolução Venda"),
+    "1-353": ("Aquisição de serviço de transporte", "Serviço Transp."),
+    "2-353": ("Aquisição de serviço de transporte (interestadual)", "Serviço Transp."),
+    "1-933": ("Aquisição de serviço sujeito ao ISSQN", "Serviço ISSQN"),
+    "2-933": ("Aquisição de serviço sujeito ao ISSQN (interestadual)", "Serviço ISSQN"),
     "5-102": ("Venda de mercadoria adquirida de terceiros", "Venda"),
     "6-102": ("Venda interestadual de mercadoria", "Venda"),
     "5-405": ("Venda com ST", "Venda c/ ST"),
@@ -60,6 +64,8 @@ SINIEF_GRUPOS: dict[str, str] = {
     "3.900": "3.900 Outras Entradas de Mercadorias ou Aquisições de Serviços",
 }
 
+_SERVICO_FIN = frozenset({"Serviço ISSQN", "Serviço Transp.", "Serviço Comunicação"})
+
 
 def _cfop_digits(cfop: str) -> str:
     return "".join(ch for ch in (cfop or "") if ch.isdigit())
@@ -84,7 +90,27 @@ def sinief_grupo(cfop: str) -> str:
 
 
 def _credito_pis_cofins(finalidade: str) -> bool:
-    return finalidade in ("Revenda", "Revenda c/ ST", "Ativo Imobilizado", "Uso e consumo")
+    return finalidade in (
+        "Revenda",
+        "Revenda c/ ST",
+        "Ativo Imobilizado",
+        "Uso e consumo",
+        "Serviço Transp.",
+    )
+
+
+def _heuristica_servico(cfop: str) -> tuple[str, str] | None:
+    """Devolve (descricao, finalidade) se o CFOP for serviço reconhecível."""
+    digits = _cfop_digits(cfop)
+    last = digits[-3:] if len(digits) >= 3 else ""
+    code = sinief_code(cfop)
+    if last in ("933", "932"):
+        return ("Aquisição de serviço sujeito ao ISSQN", "Serviço ISSQN")
+    if last.startswith("35") or code.endswith(".350"):
+        return ("Aquisição de serviço de transporte", "Serviço Transp.")
+    if last.startswith("30") or code.endswith(".300"):
+        return ("Aquisição de serviço de comunicação", "Serviço Comunicação")
+    return None
 
 
 def cfop_meta(cfop: str) -> dict:
@@ -95,6 +121,14 @@ def cfop_meta(cfop: str) -> dict:
             "descricao": info[0],
             "finalidade": info[1],
             "creditoPisCofins": _credito_pis_cofins(info[1]),
+            "grupo": grupo,
+        }
+    serv = _heuristica_servico(cfop)
+    if serv:
+        return {
+            "descricao": serv[0],
+            "finalidade": serv[1],
+            "creditoPisCofins": _credito_pis_cofins(serv[1]),
             "grupo": grupo,
         }
     digits = _cfop_digits(cfop)
@@ -119,6 +153,8 @@ def macro_grupo(cfop: str) -> str:
         return "ativo"
     if "Devol" in fin:
         return "devol"
+    if fin in _SERVICO_FIN or str(fin).startswith("Serviço"):
+        return "servicos"
     return "outros"
 
 
@@ -126,7 +162,14 @@ MACRO = (
     {"key": "revenda", "label": "Revenda", "badge": "1.102 / 2.102 / 1.403", "color": "#22a329", "cardColor": "blue", "icon": "rotate-left", "sub": "Compra p/ comercialização"},
     {"key": "ativo", "label": "Ativo Imobilizado", "badge": "1.551", "color": "#f97316", "cardColor": "orange", "icon": "building", "sub": "Bens para o ativo imobilizado"},
     {"key": "devol", "label": "Devoluções / Retornos", "badge": "1.202 / 1.411", "color": "#8b5cf6", "cardColor": "purple", "icon": "arrows-rotate", "sub": "Devoluções de venda"},
-    {"key": "outros", "label": "Outros", "badge": "Demais CFOPs", "color": "#06b6d4", "cardColor": "cyan", "icon": "box-open", "sub": "Serviços e demais entradas"},
+    {"key": "servicos", "label": "Serviços", "badge": "1.933 / 2.353", "color": "#64748b", "cardColor": "slate", "icon": "handshake", "sub": "ISSQN, transporte e comunicação"},
+    {"key": "outros", "label": "Outros", "badge": "Demais CFOPs", "color": "#06b6d4", "cardColor": "cyan", "icon": "box-open", "sub": "Bonificação e demais entradas"},
+)
+
+_TIPO_SERVICO_ORDER = (
+    ("Serviço ISSQN", "ISSQN", "#64748b"),
+    ("Serviço Transp.", "Transporte", "#f59e0b"),
+    ("Serviço Comunicação", "Comunicação", "#06b6d4"),
 )
 
 
@@ -143,6 +186,65 @@ def aggregate_macro(cfop_dados: list[dict]) -> list[dict]:
         b = buckets[m["key"]]
         out.append({**m, "total": round(b["total"], 2), "qtd": b["qtd"], "pct": round(100 * b["total"] / total, 1) if total else 0})
     return out
+
+
+def aggregate_servicos(cfop_dados: list[dict]) -> dict:
+    """Painel Serviços Tomados: só CFOPs com finalidade de serviço."""
+    compras = sum(float(r.get("total") or 0) for r in (cfop_dados or []))
+    tipo_buckets: dict[str, dict] = {
+        fin: {"label": lbl, "color": color, "total": 0.0, "qtd": 0}
+        for fin, lbl, color in _TIPO_SERVICO_ORDER
+    }
+    tipo_buckets["outros_serv"] = {"label": "Outros serviços", "color": "#94a3b8", "total": 0.0, "qtd": 0}
+    cfops: list[dict] = []
+    total = 0.0
+    qtd = 0
+    for row in cfop_dados or []:
+        cfop = str(row.get("cfop") or "")
+        meta = cfop_meta(cfop)
+        fin = meta["finalidade"]
+        if fin not in _SERVICO_FIN and not str(fin).startswith("Serviço"):
+            continue
+        val = float(row.get("total") or 0)
+        n = int(row.get("qtd") or 0)
+        total += val
+        qtd += n
+        bucket_key = fin if fin in _SERVICO_FIN else "outros_serv"
+        tipo_buckets[bucket_key]["total"] += val
+        tipo_buckets[bucket_key]["qtd"] += n
+        cfops.append(
+            {
+                **row,
+                "descricao": row.get("descricao") or meta["descricao"],
+                "finalidade": fin,
+                "creditoPisCofins": meta["creditoPisCofins"],
+                "grupo": row.get("grupo") or meta["grupo"],
+            }
+        )
+    order_keys = [fin for fin, _, _ in _TIPO_SERVICO_ORDER] + ["outros_serv"]
+    por_tipo = []
+    for key in order_keys:
+        b = tipo_buckets[key]
+        if abs(b["total"]) < 0.005 and not b["qtd"]:
+            continue
+        por_tipo.append(
+            {
+                "key": key,
+                "label": b["label"],
+                "color": b["color"],
+                "total": round(b["total"], 2),
+                "qtd": b["qtd"],
+                "pct": round(100 * b["total"] / total, 1) if total else 0.0,
+            }
+        )
+    cfops.sort(key=lambda x: float(x.get("total") or 0), reverse=True)
+    return {
+        "total": round(total, 2),
+        "qtd": qtd,
+        "pctCompras": round(100 * total / compras, 1) if compras else 0.0,
+        "porTipo": por_tipo,
+        "cfops": cfops,
+    }
 
 
 def top_grupos(cfop_dados: list[dict], n: int = 4) -> list[dict]:

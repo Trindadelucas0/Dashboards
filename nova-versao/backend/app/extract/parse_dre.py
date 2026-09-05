@@ -417,6 +417,7 @@ def parse_dre_padrao_column(grid: WorkbookGrid, value_col: int) -> dict:
     despesas_sum = 0.0
     has_despesa = False
     extras_pos = 0.0
+    saw_luc_liq_label = False
 
     for raw in grid.rows or []:
         cells = list(raw or [])
@@ -449,7 +450,7 @@ def parse_dre_padrao_column(grid: WorkbookGrid, value_col: int) -> dict:
         elif key == "lucro bruto" or label.strip().startswith("= LUCRO BRUTO"):
             totals["lucBruto"] = valor
             row["grupo"] = "resultado"
-        elif "despesas operacionais" in key:
+        elif key == "despesas operacionais":
             in_despesas = True
             totals["despesas"] = valor
             row["grupo"] = "despesas"
@@ -466,6 +467,7 @@ def parse_dre_padrao_column(grid: WorkbookGrid, value_col: int) -> dict:
                 extras_pos += float(valor)
             row["grupo"] = "receita"
         elif _is_lucro_liq_label(key) or label.strip().startswith("= LUCRO OU PREJU"):
+            saw_luc_liq_label = True
             totals["lucLiq"] = valor
             row["grupo"] = "resultado"
         elif label.strip().startswith("= "):
@@ -479,7 +481,9 @@ def parse_dre_padrao_column(grid: WorkbookGrid, value_col: int) -> dict:
     if luc_bruto is None and totals["receitaLiquida"] is not None and cmv is not None:
         luc_bruto = round(float(totals["receitaLiquida"]) + float(cmv), 2)
     luc_liq = totals["lucLiq"]
-    if luc_liq is None and luc_bruto is not None:
+    # Só inventa lucro líquido se a planilha não tiver linha de resultado
+    # (célula vazia na linha existente = null, não inventar).
+    if luc_liq is None and luc_bruto is not None and not saw_luc_liq_label:
         extra = despesas_sum if has_despesa else 0.0
         luc_liq = round(float(luc_bruto) + extra + extras_pos, 2)
     marg_mb = round(100 * luc_bruto / rb, 2) if rb and luc_bruto is not None else None
@@ -502,12 +506,213 @@ def parse_dre_padrao_column(grid: WorkbookGrid, value_col: int) -> dict:
     )
 
 
+_MMYYYY_COL_RE = re.compile(r"^(0[1-9]|1[0-2])/(20\d{2})$")
+
+
+def find_vertical_month_columns(grid: WorkbookGrid, header_row: int = 0) -> dict[str, int]:
+    """Mapa YYYY-MM → coluna (Análise Vertical: 01/2026, 02/2026…; ignora % e TOTAL)."""
+    cols: dict[str, int] = {}
+    if not grid.rows or header_row >= len(grid.rows):
+        return cols
+    for col, cell in enumerate(grid.row(header_row)):
+        key = str(cell or "").strip()
+        m = _MMYYYY_COL_RE.match(key)
+        if m:
+            cols[f"{m.group(2)}-{m.group(1)}"] = col
+    return cols
+
+
+def is_analise_vertical_dre(grid: WorkbookGrid, filename: str = "") -> bool:
+    """DRE Análise Vertical: cabeçalho MM/YYYY + RECEITA BRUTA (multi-mês num arquivo)."""
+    months = find_vertical_month_columns(grid)
+    if len(months) < 2:
+        return False
+    labels = " ".join(_fold(str(row[0] if row else "")) for row in (grid.rows or [])[:12])
+    if "receita bruta" not in labels:
+        return False
+    fold_name = _fold(filename) + " " + _fold(grid.sheet_name or "")
+    if "analise vertical" in fold_name or "analisevertical" in re.sub(r"[^a-z0-9]+", "", fold_name):
+        return True
+    # Cabeçalho MM/YYYY + RB basta (mesmo sem "análise" no nome)
+    return True
+
+
+def _column_has_dre_numbers(grid: WorkbookGrid, col: int, start: int = 1) -> bool:
+    for row in (grid.rows or [])[start:]:
+        if col >= len(row):
+            continue
+        cell = row[col]
+        if cell is None or str(cell).strip() == "":
+            continue
+        if _is_number_cell(cell):
+            return True
+    return False
+
+
+def _dre_vertical_pack(dre: dict, filename: str, sheet: str) -> dict:
+    pack: dict = {
+        "hasDre": True,
+        "dre": {**dre, "source": filename, "sheet": sheet, "kind": dre.get("kind") or "analise_vertical"},
+    }
+    if dre.get("receitaBruta") is not None:
+        pack["receitaBruta"] = dre["receitaBruta"]
+        pack["lucBruto"] = dre.get("lucBruto")
+        pack["lucLiq"] = dre.get("lucLiq")
+        pack["margMb"] = dre.get("margMb")
+        pack["margMl"] = dre.get("margMl")
+        pack["cmv"] = dre.get("cmv")
+    return pack
+
+
+def extract_dre_vertical(
+    grid: WorkbookGrid,
+    filename: str,
+    company_cnpj: str = "",
+) -> dict:
+    """Um arquivo Análise Vertical → uma part `dre` por competência preenchida."""
+    from app.companies import find_by_cnpj
+
+    months = find_vertical_month_columns(grid)
+    parts: list[dict] = []
+    parser = grid.kind or "xls"
+
+    for competencia, col in sorted(months.items()):
+        sheet_label = f"DRE {competencia}"
+        if not _column_has_dre_numbers(grid, col, start=1):
+            parts.append(
+                {
+                    "file": filename,
+                    "parser": parser,
+                    "tipo": "dre",
+                    "sheet": sheet_label,
+                    "cnpj": company_cnpj or "",
+                    "razao": "",
+                    "competencia": competencia,
+                    "period": "",
+                    "company_id": None,
+                    "company_label": None,
+                    "unidade": "matriz",
+                    "errors": [],
+                    "warnings": [f"DRE {competencia}: coluna do mês sem valores na planilha"],
+                    "pack_patch": None,
+                    "lines": [],
+                    "meta": {"hasValores": False},
+                    "status": "vazia",
+                }
+            )
+            continue
+        dre = parse_dre_padrao_column(grid, col)
+        dre["kind"] = "analise_vertical"
+        if not dre.get("hasValores"):
+            parts.append(
+                {
+                    "file": filename,
+                    "parser": parser,
+                    "tipo": "dre",
+                    "sheet": sheet_label,
+                    "cnpj": company_cnpj or "",
+                    "razao": "",
+                    "competencia": competencia,
+                    "period": "",
+                    "company_id": None,
+                    "company_label": None,
+                    "unidade": "matriz",
+                    "errors": [],
+                    "warnings": [f"DRE {competencia}: coluna do mês sem valores na planilha"],
+                    "pack_patch": None,
+                    "lines": [],
+                    "meta": {"hasValores": False},
+                    "status": "vazia",
+                }
+            )
+            continue
+        parts.append(
+            {
+                "file": filename,
+                "parser": parser,
+                "tipo": "dre",
+                "sheet": sheet_label,
+                "cnpj": company_cnpj or "",
+                "razao": "",
+                "competencia": competencia,
+                "period": "",
+                "company_id": None,
+                "company_label": None,
+                "unidade": "matriz",
+                "errors": [],
+                "warnings": [],
+                "pack_patch": _dre_vertical_pack(dre, filename, sheet_label),
+                "lines": [],
+                "meta": {
+                    "hasValores": True,
+                    "receitaBruta": dre.get("receitaBruta"),
+                    "lucBruto": dre.get("lucBruto"),
+                    "lucLiq": dre.get("lucLiq"),
+                    "lineCount": len(dre.get("linhas") or []),
+                },
+                "status": "ok",
+            }
+        )
+
+    company, unit = find_by_cnpj(company_cnpj) if company_cnpj else (None, None)
+    company_id = company.id if company else None
+    company_label = company.label if company else None
+    unidade = unit.key if unit else "matriz"
+    cnpj = (company.cnpj if company else "") or company_cnpj or ""
+
+    warnings: list[str] = []
+    if not company:
+        warnings.append(
+            "DRE Análise Vertical sem CNPJ — a empresa aberta no dashboard será usada ao gravar"
+        )
+
+    for part in parts:
+        part["cnpj"] = cnpj
+        part["company_id"] = company_id
+        part["company_label"] = company_label
+        part["unidade"] = unidade
+
+    ok_parts = [p for p in parts if p.get("status") == "ok" and p.get("pack_patch")]
+    first_comp = ok_parts[0]["competencia"] if ok_parts else (parts[0]["competencia"] if parts else "")
+
+    errors: list[str] = []
+    if not ok_parts:
+        errors.append("Análise Vertical do DRE sem colunas mensais com valores")
+
+    return {
+        "file": filename,
+        "sheet": grid.sheet_name,
+        "parser": parser,
+        "tipo": "dre_vertical",
+        "cnpj": cnpj,
+        "razao": "",
+        "competencia": first_comp,
+        "period": "",
+        "company_id": company_id,
+        "company_label": company_label,
+        "unidade": unidade,
+        "errors": errors,
+        "warnings": warnings,
+        "pack_patch": None,
+        "lines": [],
+        "meta": {"partsCount": len(parts), "okParts": len(ok_parts)},
+        "parts": parts,
+    }
+
+
 def parse_dre(grid: WorkbookGrid) -> dict:
     """Extrai linhas rotuladas de planilhas RESULTADO / DRE EXITO.
 
     Quando a planilha só traz estrutura (sem valores numéricos), grava as linhas
     com valor null — a UI mostra N/D sem inventar CMV/margem.
     """
+    if is_analise_vertical_dre(grid):
+        cols = find_vertical_month_columns(grid)
+        if cols:
+            first_comp = sorted(cols.keys())[0]
+            dre = parse_dre_padrao_column(grid, cols[first_comp])
+            dre["kind"] = "analise_vertical"
+            return dre
     if _is_padrao_dre(grid):
         cols = find_padrao_month_columns(grid)
         if cols:

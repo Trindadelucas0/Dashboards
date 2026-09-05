@@ -1,85 +1,16 @@
 import type { SupplierReportData } from "./supplierReport";
-
-function escHtml(s: string) {
-  return String(s ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-function fmtBrl(v: number) {
-  return Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function safeFilePart(s: string, max = 24) {
-  return String(s || "empresa")
-    .slice(0, max)
-    .replace(/[\\/:*?"<>|]/g, "");
-}
-
-function loadScript(src: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[src="${src}"]`);
-    if (existing) {
-      resolve();
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = src;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error(`Falha ao carregar ${src}`));
-    document.head.appendChild(script);
-  });
-}
-
-type JsPdfDoc = {
-  internal: { pageSize: { getHeight: () => number } };
-  setFont: (n: string, s: string) => void;
-  setFontSize: (n: number) => void;
-  setTextColor: (...n: number[]) => void;
-  text: (t: string, x: number, y: number) => void;
-  addPage: () => void;
-  autoTable: (opts: Record<string, unknown>) => void;
-  lastAutoTable?: { finalY: number };
-  save: (name: string) => void;
-};
-
-type JsPdfNs = {
-  jsPDF: new (opts: { orientation: string; unit: string; format: string }) => JsPdfDoc;
-};
-
-type XlsxNs = {
-  utils: {
-    book_new: () => unknown;
-    aoa_to_sheet: (rows: (string | number)[][]) => { "!cols"?: { wch: number }[] };
-    book_append_sheet: (wb: unknown, ws: unknown, name: string) => void;
-  };
-  writeFile: (wb: unknown, name: string) => void;
-};
-
-declare global {
-  interface Window {
-    jspdf?: JsPdfNs;
-    XLSX?: XlsxNs;
-  }
-}
-
-async function loadPdfLibs() {
-  await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
-  await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js");
-  const Ctor = window.jspdf?.jsPDF as (JsPdfNs["jsPDF"] & { prototype?: { autoTable?: unknown } }) | undefined;
-  if (!Ctor) throw new Error("Biblioteca jsPDF nao carregada.");
-  if (typeof Ctor.prototype?.autoTable !== "function") {
-    throw new Error("Biblioteca jspdf-autotable nao carregada.");
-  }
-}
-
-async function loadXlsxLib() {
-  await loadScript("https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js");
-  if (!window.XLSX) throw new Error("Biblioteca XLSX nao carregada.");
-}
+import {
+  autoColWidths,
+  escHtml,
+  exportFileName,
+  fmtBrl,
+  loadPdfLibs,
+  loadXlsxLib,
+  roundMoney,
+  safeFilePart,
+  type JsPdfNs,
+  type XlsxNs,
+} from "./exportLibs";
 
 function buildPrintHtml(data: SupplierReportData) {
   const emitido = new Date().toLocaleDateString("pt-BR");
@@ -184,17 +115,6 @@ export async function exportSupplierPdf(data: SupplierReportData) {
   pdf.save(`relatorio-fornecedor-${safeFilePart(data.companyName)}.pdf`);
 }
 
-function autoColWidths(aoa: (string | number)[][], maxWch = 50) {
-  const widths: number[] = [];
-  for (const row of aoa) {
-    row.forEach((cell, c) => {
-      const len = String(cell ?? "").length + 2;
-      widths[c] = Math.min(Math.max(widths[c] || 10, len), maxWch);
-    });
-  }
-  return widths.map((wch) => ({ wch }));
-}
-
 export async function exportSupplierExcel(data: SupplierReportData) {
   await loadXlsxLib();
   const XLSX = window.XLSX as XlsxNs;
@@ -209,9 +129,9 @@ export async function exportSupplierExcel(data: SupplierReportData) {
     ["Fornecedor", "CNPJ", "UF", "Subtotal (R$)"],
   ];
   for (const s of data.suppliers) {
-    resumo.push([s.nome || "", s.cnpj || "—", s.uf || "—", Math.round(Number(s.subtotal || 0) * 100) / 100]);
+    resumo.push([s.nome || "", s.cnpj || "—", s.uf || "—", roundMoney(Number(s.subtotal || 0))]);
   }
-  resumo.push(["Total Geral", "", "", Math.round(Number(data.totalGeral || 0) * 100) / 100]);
+  resumo.push(["Total Geral", "", "", roundMoney(Number(data.totalGeral || 0))]);
   const detalhado: (string | number)[][] = [
     ["Fornecedor", "CNPJ", "UF", "CFOP", "Descrição", col3, "Qtd NFs", "Valor (R$)"],
   ];
@@ -225,7 +145,7 @@ export async function exportSupplierExcel(data: SupplierReportData) {
         r.desc || "—",
         r.fin || "—",
         Number(r.qtd || 0),
-        Math.round(Number(r.total || 0) * 100) / 100,
+        roundMoney(Number(r.total || 0)),
       ]);
     }
   }
@@ -236,11 +156,5 @@ export async function exportSupplierExcel(data: SupplierReportData) {
   const wsDet = XLSX.utils.aoa_to_sheet(detalhado);
   wsDet["!cols"] = autoColWidths(detalhado, 50);
   XLSX.utils.book_append_sheet(wb, wsDet, "Detalhado");
-  const safeComp = String(data.competencia || "")
-    .replace(/[\\/:*?"<>|]/g, "-")
-    .replace(/\s+/g, "_")
-    .slice(0, 32);
-  const safeDate = new Date().toLocaleDateString("pt-BR").replace(/\//g, "-");
-  const parts = ["relatorio-fornecedor", safeFilePart(data.companyName), safeComp, safeDate].filter(Boolean);
-  XLSX.writeFile(wb, `${parts.join("_")}.xlsx`);
+  XLSX.writeFile(wb, exportFileName(["relatorio-fornecedor", data.companyName, data.competencia], "xlsx"));
 }

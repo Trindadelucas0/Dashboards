@@ -374,7 +374,7 @@ export default function MemoriaLivro({
       },
     ];
     if (stUf.length) {
-      for (const [uf, val] of stUf.slice(0, 6)) {
+      for (const [uf, val] of stUf) {
         rows.splice(rows.length - 1, 0, { label: `UF ${uf}`, value: brl(Number(val)), tone: "plain" });
       }
     }
