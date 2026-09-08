@@ -1323,7 +1323,7 @@ export default function AbaPage() {
           const labels = (serie.labels?.length ? serie.labels : [month || "—"]) as string[];
           const comps = (serie.competencias || []) as string[];
           const sumFilled = (arr: (number | null)[]) =>
-            arr.reduce((s, v) => (v == null ? s : s + Number(v)), 0);
+            arr.reduce<number>((s, v) => (v == null ? s : s + Number(v)), 0);
           const acumRec = sumFilled(vendasSerie);
           const acumPag = sumFilled(comprasSerie);
           const idx = comps.indexOf(month);
@@ -1462,7 +1462,6 @@ export default function AbaPage() {
                             ),
                             backgroundColor: "#22a329",
                             borderRadius: 5,
-                            spanGaps: false,
                           },
                           {
                             label: "Pagamentos",
@@ -1471,7 +1470,6 @@ export default function AbaPage() {
                             ),
                             backgroundColor: "#3b82f6",
                             borderRadius: 5,
-                            spanGaps: false,
                           },
                         ],
                       }}
