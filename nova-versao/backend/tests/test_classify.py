@@ -99,6 +99,9 @@ def test_resolve_catalog_companies():
     assert unit == "sp"
     company, unit = resolve_company("21051983000599", "JPG", "90-Entradas.xls")
     assert unit == "mg"
+    company, unit = resolve_company("48285395000142", "LANNIC", "Entradas.xls")
+    assert company and company.id == "jpg"
+    assert unit == "lannic"
 
 
 

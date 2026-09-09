@@ -316,6 +316,7 @@ thead th.c, td.c { text-align: center; }
 .tax-detail.tax-irpj { --tax-tone: #60a5fa; }
 .tax-detail.tax-csll { --tax-tone: #fbbf24; }
 .tax-detail.tax-subv { --tax-tone: var(--success); }
+.tax-detail.tax-das { --tax-tone: var(--accent); }
 .tax-detail.tax-pending { opacity: 0.92; }
 .tax-detail-head {
   display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;

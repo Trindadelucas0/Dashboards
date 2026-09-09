@@ -459,6 +459,8 @@ export default function AbaPage() {
             const vendas = Number(d.cfopSaidasTotal ?? totalVend);
             const saldo = Number(d.saldoOperacional ?? vendas - totalComp);
             const icmsKpi = d.icmsKpi as { val: number; lbl: string; color: string; sub: string } | null;
+            const dasKpi = d.dasKpi as { val: number; lbl: string; color: string; sub: string } | null;
+            const taxKpi = dasKpi || icmsKpi;
             const pisCofins = d.pisCofinsRecolher;
             const carga = d.dedPct;
             return (
@@ -475,11 +477,11 @@ export default function AbaPage() {
                   neg={saldo < 0}
                 />
                 <Kpi
-                  color={icmsKpi?.color || "purple"}
+                  color={taxKpi?.color || "purple"}
                   icon="landmark"
-                  value={icmsKpi ? brlCompact(icmsKpi.val) : "—"}
-                  label={icmsKpi?.lbl || "ICMS a Recolher"}
-                  sub={icmsKpi?.sub || "Sem apuração neste mês"}
+                  value={taxKpi ? brlCompact(taxKpi.val) : "—"}
+                  label={taxKpi?.lbl || "ICMS a Recolher"}
+                  sub={taxKpi?.sub || "Sem apuração neste mês"}
                 />
                 <Kpi
                   color="yellow"
@@ -1120,7 +1122,7 @@ export default function AbaPage() {
       {showImpostosLayout && (
         (() => {
           const vendas = Number(d.receitaBruta || d.cfopSaidasTotal || totalVend || 0);
-          const taxKeys = ["icms", "icmsSt", "pis", "cofins", "ipi", "difal", "irpj", "csll"] as const;
+          const taxKeys = ["das", "icms", "icmsSt", "pis", "cofins", "ipi", "difal", "irpj", "csll"] as const;
           let sumRecolher: number | null = null;
           if (ap) {
             let any = false;
@@ -1191,6 +1193,7 @@ export default function AbaPage() {
               <div className="tax-grid">
                 {(
                   [
+                    ...(ap?.das ? ([["Simples Nacional", "das", "t-accent", "bl"]] as const) : []),
                     ["ICMS", "icms", "t-accent", "bl"],
                     ["ICMS ST", "icmsSt", "", "pu"],
                     ["PIS", "pis", "t-success", "gr"],
@@ -1199,7 +1202,17 @@ export default function AbaPage() {
                     ...(ap?.difal ? ([["DIFAL", "difal", "", "gy"]] as const) : []),
                     ["IRPJ/CSLL", "irpj_csll", "", "gy"],
                   ] as const
-                ).map(([name, key, curClass, chip]) => {
+                )
+                  .filter(([, key]) => {
+                    if (key === "das") return true;
+                    const present =
+                      key === "irpj_csll"
+                        ? !!(ap?.irpj || ap?.csll)
+                        : !!(ap?.[key as keyof typeof ap] && typeof ap[key as keyof typeof ap] === "object");
+                    if (ap?.das && !present) return false;
+                    return true;
+                  })
+                  .map(([name, key, curClass, chip]) => {
                   const row =
                     key === "irpj_csll"
                       ? ap?.irpj || ap?.csll

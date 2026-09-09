@@ -10,7 +10,7 @@ Identificação **obrigatória pelo CNPJ do cabeçalho** (primeiras ~12 linhas).
 | `baifer` | Baifer | `52005382000140` | `BAIFER` | `baifer` | blue | matriz |
 | `loja-maquinas` | Loja das Máquinas | `13983066000190` | `LOJA DAS MAQUINAS` / `LOJA MÁQUINAS` | `loja-maquinas` | green | matriz |
 | `unica` | Única | `36517206000130` | `\b[UÚ]NICA\b` | `unica` | blue | matriz |
-| `jpg` | JPG | `21051983000165` (Sede) | `JPG\|PRODUTOS FUNCIONAIS` | `jpg` | green | sede, asa_sul, pr, sp, mg + **Todas** (só leitura) |
+| `jpg` | JPG | `21051983000165` (Sede) | `JPG\|PRODUTOS FUNCIONAIS` | `jpg` | green | sede, asa_sul, pr, sp, mg, **lannic** + **Todas** (só leitura) |
 
 **Única (UNICA COMERCIO ATACADISTA DE TINTAS):** fonte mensal é a planilha padrão v2 (9 abas + ENTRADAS/SAÍDAS no mesmo `.xlsx`), competências 01–07/2026. Fixtures: `fixtures/unica-padrao/`. Testes: `tests/test_unica_padrao.py`.
 
@@ -23,8 +23,9 @@ Identificação **obrigatória pelo CNPJ do cabeçalho** (primeiras ~12 linhas).
 | `90-JPG FILIAL MINAS` | `mg` | `21051983000599` | movimento split + `ipi filial mg` |
 | `82- JPG FILIAL SÃO PAULO` | `sp` | `21051983000750` | movimento split + icms/ipi SP |
 | `712-JPG FILIAL BRASILIA` | `asa_sul` | `21051983000327` | movimento split + icms/ipi Asa Sul (filename `asa sul`) |
+| (sem pasta EXITO) | `lannic` | `48285395000142` | Simples Nacional 08/2026 via `scripts/seed_jpg_lannic.py` (PGDAS). Razão `LANNIC` → unidade, não sede. |
 
-Fora do lote: LANNIC; Filial DF (`matriz`) sem Excel. Não gravar `unidade=todas`. Movimento `01-2026 a 08-2026` → `scripts/split_movimento_mensal.py`. Testes: `tests/test_jpg.py`.
+Filial DF (`matriz`) sem Excel. Não gravar `unidade=todas`. Movimento `01-2026 a 08-2026` → `scripts/split_movimento_mensal.py`. Testes: `tests/test_jpg.py`.
 
 ### Senhas (seed)
 

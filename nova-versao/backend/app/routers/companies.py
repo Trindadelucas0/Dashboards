@@ -469,7 +469,7 @@ def aggregate_fiscal_packs(packs: list[dict], competencia_label: str) -> dict:
     compras = _sum("totalCompras")
     vendas = round(sum(_vendas_val(p) for p in packs), 2)
     receita = _sum("receitaBruta") or vendas
-    ap_keys = ("icms", "icmsSt", "pis", "cofins", "ipi")
+    ap_keys = ("das", "icms", "icmsSt", "pis", "cofins", "ipi")
     apuracao: dict = {}
     for k in ap_keys:
         bucket: dict[str, float] = {}
@@ -784,12 +784,12 @@ def _is_empty(tab: str, pack: dict, row) -> bool:
     if tab in ("visao-geral", "indicadores", "recebimentos"):
         if pack.get("hasDre") or pack.get("apuracao") or pack.get("receitaBruta"):
             return False
-        if pack.get("memoriaCalculo"):
+        if pack.get("memoriaCalculo") or pack.get("memoriaSimples"):
             return False
     if tab == "dre":
         return not (pack.get("hasDre") or pack.get("dre"))
     if tab == "impostos":
-        return not (pack.get("apuracao") or pack.get("impostos"))
+        return not (pack.get("apuracao") or pack.get("impostos") or pack.get("memoriaSimples"))
     if tab == "balancete":
         return not (pack.get("hasBalancete") or pack.get("balancete"))
     if tab == "memoria":
@@ -798,6 +798,7 @@ def _is_empty(tab: str, pack: dict, row) -> bool:
             or pack.get("saidasMeta")
             or pack.get("apuracao")
             or pack.get("memoriaCalculo")
+            or pack.get("memoriaSimples")
             or pack.get("memoriaPisCofins")
             or pack.get("memoriaIpi")
             or pack.get("memoriaIrpj")
@@ -820,6 +821,19 @@ def _icms_kpi(apuracao: dict | None) -> dict | None:
     if v < 0:
         return {"val": abs(v), "lbl": "Crédito ICMS", "color": "green", "sub": "Saldo credor no período"}
     return {"val": v, "lbl": "ICMS a Recolher", "color": "purple", "sub": ""}
+
+
+def _das_kpi(apuracao: dict | None) -> dict | None:
+    if not apuracao or not isinstance(apuracao.get("das"), dict):
+        return None
+    raw = apuracao["das"].get("aRecolher")
+    if raw is None:
+        return None
+    aliq = apuracao["das"].get("aliquota")
+    sub = "Simples Nacional"
+    if aliq is not None:
+        sub = f"Simples Nacional · alíq. {float(aliq):.4f}%".replace(".", ",")
+    return {"val": float(raw), "lbl": "DAS a Recolher", "color": "green", "sub": sub}
 
 
 def _pis_cofins_recolher(apuracao: dict | None) -> float | None:
@@ -849,6 +863,7 @@ def _slice(tab: str, pack: dict) -> dict:
             "receitaBruta": receita,
             "saldoOperacional": round(vendas - compras, 2),
             "pisCofinsRecolher": _pis_cofins_recolher(ap),
+            "dasKpi": _das_kpi(ap),
             "icmsKpi": _icms_kpi(ap),
             "nfsEntradas": pack.get("nfsEntradas") or 0,
             "nfsSaidas": pack.get("nfsSaidas") or 0,
@@ -950,6 +965,7 @@ def _slice(tab: str, pack: dict) -> dict:
             "deducoes": pack.get("deducoes"),
             "dedPct": pack.get("dedPct"),
             "porUfSt": pack.get("porUfSt") or {},
+            "memoriaSimples": pack.get("memoriaSimples"),
         }
     if tab == "memoria":
         return {
@@ -957,6 +973,7 @@ def _slice(tab: str, pack: dict) -> dict:
             "saidasMeta": pack.get("saidasMeta"),
             "apuracao": pack.get("apuracao"),
             "memoriaCalculo": pack.get("memoriaCalculo"),
+            "memoriaSimples": pack.get("memoriaSimples"),
             "memoriaPisCofins": pack.get("memoriaPisCofins"),
             "memoriaIpi": pack.get("memoriaIpi"),
             "memoriaIrpj": pack.get("memoriaIrpj"),

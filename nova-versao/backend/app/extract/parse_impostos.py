@@ -224,6 +224,7 @@ def composicao_from_apuracao(ap: dict | None) -> list[dict]:
         return []
     out = []
     for key, label in (
+        ("das", "Simples Nacional"),
         ("icms", "ICMS"),
         ("icmsSt", "ICMS ST"),
         ("pis", "PIS"),

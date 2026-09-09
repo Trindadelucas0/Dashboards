@@ -93,6 +93,7 @@ COMPANIES: tuple[CompanyReg, ...] = (
             Unit("pr", "Filial PR", "21051983000670"),
             Unit("sp", "Filial SP", "21051983000750"),
             Unit("mg", "Filial MG", "21051983000599"),
+            Unit("lannic", "LANNIC Dermocosméticos", "48285395000142", r"LANNIC"),
         ),
     ),
 )
@@ -137,7 +138,21 @@ def find_by_name(razao: str) -> CompanyReg | None:
     for company in COMPANIES:
         if company.name_re and re.search(company.name_re, text, re.I):
             return company
-    return None
+    company, _unit = find_by_unit_name(text)
+    return company
+
+
+def find_by_unit_name(razao: str) -> tuple[CompanyReg | None, Unit | None]:
+    import re
+
+    text = razao or ""
+    if not text:
+        return None, None
+    for company in COMPANIES:
+        for unit in company.units:
+            if unit.name_re and re.search(unit.name_re, text, re.I):
+                return company, unit
+    return None, None
 
 
 def resolve_from_db(db, cnpj: str, razao: str) -> tuple[CompanyReg | None, str]:

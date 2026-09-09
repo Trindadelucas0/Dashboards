@@ -5,9 +5,18 @@ import pytest
 from openpyxl import Workbook
 
 from app.companies import COMPANY_BY_ID, KEEP_USERNAMES
-from app.extract.classify import unit_from_filename
+from app.extract.classify import resolve_company, unit_from_filename
+from app.extract.parse_impostos import composicao_from_apuracao
 from app.extract.pipeline import classify_and_extract
 from app.routers.companies import aggregate_fiscal_packs, catalog_units_payload
+from scripts.seed_jpg_lannic import (
+    ALIQUOTA,
+    BASE_MEMORIA,
+    DAS,
+    PARTILHA,
+    TOTAL_SAIDAS,
+    build_lannic_agosto_2026,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURE_ENT = ROOT / "fixtures" / "jpg-padrao" / "Entradas 01-2026.xlsx"
@@ -18,19 +27,55 @@ def test_jpg_catalog_units():
     assert reg.username == "jpg"
     assert reg.cnpj == "21051983000165"
     keys = [u.key for u in reg.units]
-    assert keys == ["sede", "asa_sul", "pr", "sp", "mg"]
+    assert keys == ["sede", "asa_sul", "pr", "sp", "mg", "lannic"]
     assert "jpg" in KEEP_USERNAMES
     payload = catalog_units_payload("jpg", None)
     assert payload[0] == {"key": "todas", "label": "Todas as unidades"}
-    assert {u["key"] for u in payload} >= {"todas", "sede", "pr", "mg", "sp", "asa_sul"}
+    assert {u["key"] for u in payload} >= {"todas", "sede", "pr", "mg", "sp", "asa_sul", "lannic"}
     assert "matriz" not in {u["key"] for u in payload}
-    assert "lannic" not in {u["key"] for u in payload}
+    lannic = next(u for u in reg.units if u.key == "lannic")
+    assert lannic.cnpj == "48285395000142"
+    assert lannic.label == "LANNIC Dermocosméticos"
 
 
 def test_jpg_filename_unit():
     assert unit_from_filename("ipi filial pr 01 a 08.xls") == "pr"
     assert unit_from_filename("icms filial asa sul 01 a 08.xls") == "asa_sul"
     assert unit_from_filename("ipi filial mg 01 a 08.xls") == "mg"
+    assert unit_from_filename("pgdas lannic 08-2026.pdf") == "lannic"
+
+
+def test_jpg_lannic_cnpj_resolve():
+    company, unit = resolve_company("48285395000142", "LANNIC DERMOCOSMETICOS", "x.xls")
+    assert company and company.id == "jpg"
+    assert unit == "lannic"
+    company, unit = resolve_company("", "LANNIC Dermocosméticos", "pgdas.xls")
+    assert company and company.id == "jpg"
+    assert unit == "lannic"
+
+
+def test_jpg_lannic_das_composicao_and_golden():
+    pack = build_lannic_agosto_2026()
+    ap = pack["apuracao"]
+    assert ap["fonte"] == "pgdas_simples_nacional"
+    assert ap["das"]["aRecolher"] == DAS
+    assert ap["das"]["apurado"] == DAS
+    assert ap["das"]["aliquota"] == ALIQUOTA
+    assert "icms" not in ap
+    assert "irpj" not in ap
+    assert "csll" not in ap
+    comp = composicao_from_apuracao(ap)
+    assert comp == [{"label": "Simples Nacional", "valor": DAS}]
+    assert pack["receitaBruta"] == BASE_MEMORIA
+    assert pack["cfopSaidasTotal"] == BASE_MEMORIA
+    sn = pack["memoriaSimples"]
+    assert sn["totalSaidas"] == TOTAL_SAIDAS
+    assert sn["baseMemoria"] == BASE_MEMORIA
+    assert "rpaPgdas" not in sn
+    assert "diferencaBases" not in sn
+    assert sn["partilha"] == PARTILHA
+    assert pytest.approx(BASE_MEMORIA * ALIQUOTA / 100.0, abs=0.02) == DAS
+    assert pack["deducoes"] == DAS
 
 
 def test_jpg_impostos_table_parts(tmp_path: Path):

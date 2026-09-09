@@ -37,7 +37,7 @@ type TaxCardModel = {
   id: string;
   nome: string;
   subtitle?: string;
-  tone: "icms" | "pis" | "cofins" | "st" | "difal" | "ipi" | "irpj" | "csll" | "subv";
+  tone: "icms" | "pis" | "cofins" | "st" | "difal" | "ipi" | "irpj" | "csll" | "subv" | "das";
   apurado: number | null;
   creditos: number | null;
   aRecolher: number | null;
@@ -299,11 +299,52 @@ export default function MemoriaLivro({
   const hasIrpj = !!(livroIrpj?.linhas?.length);
   const hasCsll = !!(livroCsll?.linhas?.length);
   const hasPisCofins = hasPis || hasCofins;
+  const sn = d.memoriaSimples as Record<string, any> | undefined;
+  const hasSimples = !!(sn || taxRow(ap?.das));
   const rb = Number(d.receitaBruta || 0);
   const subvVal = Number(mem?.ganhoReceitaSubvencao ?? d.subvencao ?? 0);
   const mesLabel = monthTitle(month, monthLabel);
 
   const cards: TaxCardModel[] = [];
+
+  if (hasSimples) {
+    const aRec = Number(sn?.das ?? ap?.das?.aRecolher ?? 0);
+    const st = statusFromValor(aRec);
+    const part = (sn?.partilha || {}) as Record<string, number>;
+    const rows: DetailRow[] = [
+      { label: "Total saídas", value: moneyOrDash(sn?.totalSaidas), tone: "plain" },
+      { label: "Devoluções", value: moneyOrDash(sn?.devolucoes), tone: "credit" },
+      { label: "RBT12", value: moneyOrDash(sn?.rbt12), tone: "plain" },
+      { label: "RBA", value: moneyOrDash(sn?.rba), tone: "plain" },
+      { label: "Faixa", value: String(sn?.faixa || "—"), tone: "plain" },
+      { label: "Fator r", value: sn?.fatorR != null ? String(sn.fatorR) : "—", tone: "plain" },
+      { label: "Anexo", value: String(sn?.anexo || "I Comércio"), tone: "plain" },
+      { label: "Seção", value: String(sn?.secao || "II ST"), tone: "plain" },
+      { label: "Tabela PIS/COFINS", value: String(sn?.tabela || "7 monofásicos"), tone: "plain" },
+      { label: "Alíquota efetiva", value: sn?.aliquota != null || ap?.das?.aliquota != null ? pctAliq(Number(sn?.aliquota ?? ap?.das?.aliquota)) : "—", tone: "plain" },
+      { label: "DAS a recolher", value: brl(aRec), tone: "debit", emphasis: true },
+      { label: "IRPJ (partilha)", value: moneyOrDash(part.irpj), tone: "plain" },
+      { label: "CSLL (partilha)", value: moneyOrDash(part.csll), tone: "plain" },
+      { label: "COFINS (partilha)", value: moneyOrDash(part.cofins), tone: "zero" },
+      { label: "PIS (partilha)", value: moneyOrDash(part.pis), tone: "zero" },
+      { label: "INSS/CPP (partilha)", value: moneyOrDash(part.inss), tone: "plain" },
+      { label: "ICMS (partilha)", value: moneyOrDash(part.icms), tone: "plain" },
+    ];
+    cards.push({
+      id: "das",
+      nome: "Simples Nacional",
+      subtitle: "PGDAS · DAS único",
+      tone: "das",
+      apurado: aRec,
+      creditos: null,
+      aRecolher: aRec,
+      pctRb: pctRb(aRec, rb),
+      vencimento: null,
+      ...st,
+      rows,
+      resumoNome: "Simples Nacional (DAS)",
+    });
+  }
 
   if (hasMem || taxRow(ap?.icms)) {
     const aRec = Number(mem?.icmsARecolher ?? ap?.icms?.aRecolher ?? 0);
@@ -552,7 +593,7 @@ export default function MemoriaLivro({
       rows,
       resumoNome: "IRPJ",
     });
-  } else if (hasMem || hasPisCofins) {
+  } else if ((hasMem || hasPisCofins) && !hasSimples) {
     cards.push({
       id: "irpj",
       nome: "IRPJ",
@@ -605,7 +646,7 @@ export default function MemoriaLivro({
       rows,
       resumoNome: "CSLL",
     });
-  } else if (hasMem || hasPisCofins) {
+  } else if ((hasMem || hasPisCofins) && !hasSimples) {
     cards.push({
       id: "csll",
       nome: "CSLL",
@@ -649,14 +690,14 @@ export default function MemoriaLivro({
     });
   }
 
-  const resumoOrder = ["icms", "st", "pis", "cofins", "irpj", "csll"];
+  const resumoOrder = ["das", "icms", "st", "pis", "cofins", "irpj", "csll"];
   const resumoCards = resumoOrder
     .map((id) => cards.find((c) => c.id === id && c.inResumo !== false))
     .filter(Boolean) as TaxCardModel[];
   const extraCards = cards.filter((c) => !resumoOrder.includes(c.id) || c.inResumo === false);
   const displayCards = [...resumoCards, ...extraCards];
 
-  const hasAnyTax = cards.some((c) => !c.pending) || hasMem || hasPisCofins || hasIcmsSt || hasDifal || hasIpi;
+  const hasAnyTax = cards.some((c) => !c.pending) || hasMem || hasPisCofins || hasIcmsSt || hasDifal || hasIpi || hasSimples;
   const linhas5005Raw = (mem?.linhas || []) as MemLine[];
   const linhas5005: MemLine[] = linhas5005Raw.length
     ? linhas5005Raw
@@ -682,7 +723,7 @@ export default function MemoriaLivro({
       : [];
 
   const hasLivro =
-    hasMem || hasPisCofins || hasIcmsSt || hasDifal || hasIpi || hasIrpj || hasCsll || !!(d.entradasMeta || d.saidasMeta);
+    hasMem || hasPisCofins || hasIcmsSt || hasDifal || hasIpi || hasIrpj || hasCsll || hasSimples || !!(d.entradasMeta || d.saidasMeta);
 
   return (
     <>
@@ -704,7 +745,10 @@ export default function MemoriaLivro({
             aria-expanded={livroOpen}
             onClick={() => setLivroOpen((v) => !v)}
           >
-            <span>{livroOpen ? "Ocultar" : "Ver"} livro técnico (5005, PIS/COFINS, ST…)</span>
+            <span>
+              {livroOpen ? "Ocultar" : "Ver"} livro técnico
+              {hasSimples && !hasMem ? " (PGDAS / Simples Nacional)" : " (5005, PIS/COFINS, ST…)"}
+            </span>
             <span className="mem-livro-chev" aria-hidden>
               {livroOpen ? "▴" : "▾"}
             </span>
@@ -750,6 +794,37 @@ export default function MemoriaLivro({
                     </table>
                   </div>
                 </div>
+              ) : hasSimples ? (
+                <div className="table-card" id="mem-pgdas">
+                  <div className="table-head">
+                    <div className="ttl">PGDAS — Simples Nacional</div>
+                    <div className="sub">DAS = base × alíquota efetiva. Partilha não é guia avulsa.</div>
+                  </div>
+                  <div className="tbl-scroll">
+                    <table className="dre-tbl">
+                      <thead>
+                        <tr>
+                          <th>Descrição</th>
+                          <th className="r">Valor</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Total saídas</td>
+                          <td className="r">{moneyOrDash(sn?.totalSaidas)}</td>
+                        </tr>
+                        <tr>
+                          <td>Devoluções</td>
+                          <td className="r">{moneyOrDash(sn?.devolucoes)}</td>
+                        </tr>
+                        <tr className="dre-lucro">
+                          <td className="fw7">DAS a recolher</td>
+                          <td className="r fw7">{moneyOrDash(sn?.das ?? ap?.das?.aRecolher)}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               ) : (
                 <div className="alert-box warn">
                   Memória ICMS (APURAÇÃO 5005) ainda não importada neste mês.
@@ -761,7 +836,7 @@ export default function MemoriaLivro({
                 <div className="table-card" id="mem-pis">
                   <div className="table-head">
                     <div className="ttl">PIS / COFINS</div>
-                    <div className="sub">{livroPc?.formula || "a recolher = débito − crédito − saldo credor"}</div>
+                    <div className="sub">{livroPc?.formula || "a recolher = débito − crédito"}</div>
                   </div>
                   <BaseBlock title="Débito" lines={livroPc?.debito?.linhas || []} />
                   <BaseBlock title="Crédito" lines={livroPc?.credito?.linhas || []} />
@@ -831,7 +906,9 @@ export default function MemoriaLivro({
 
       {!hasAnyTax && !d.entradasMeta && !d.saidasMeta ? (
         <div className="alert-box warn">
-          Sem APURAÇÃO 5005 nem demonstrativo de impostos — importe a planilha padrão (ou a memória/ICMS e PIS/COFINS).
+          {hasSimples
+            ? "Simples Nacional (PGDAS) neste mês — sem APURAÇÃO 5005."
+            : "Sem APURAÇÃO 5005 nem demonstrativo de impostos — importe a planilha padrão (ou a memória/ICMS e PIS/COFINS)."}
         </div>
       ) : null}
     </>
@@ -896,6 +973,7 @@ function ResumoBlock({ rows, fallback }: { rows: ResumoRow[]; fallback?: Record<
           : null,
       ].filter(Boolean) as ResumoRow[]);
   if (!list.length) return null;
+  const showPlanilha = list.some((r) => r.aRecolherPlanilha != null);
   return (
     <div className="tbl-scroll">
       <table className="dre-tbl">
@@ -905,7 +983,8 @@ function ResumoBlock({ rows, fallback }: { rows: ResumoRow[]; fallback?: Record<
             <th className="r">Débito</th>
             <th className="r">Crédito</th>
             <th className="r">Saldo credor</th>
-            <th className="r">A recolher</th>
+            <th className="r">A recolher (mês)</th>
+            {showPlanilha ? <th className="r">A recolher (planilha)</th> : null}
           </tr>
         </thead>
         <tbody>
@@ -916,6 +995,9 @@ function ResumoBlock({ rows, fallback }: { rows: ResumoRow[]; fallback?: Record<
               <td className="r">{brl(r.credito)}</td>
               <td className="r">{r.saldoCredor != null ? brl(r.saldoCredor) : "—"}</td>
               <td className={`r td-val ${r.aRecolher < 0 ? "dre-num-neg" : ""}`}>{brl(r.aRecolher)}</td>
+              {showPlanilha ? (
+                <td className="r td-mute">{r.aRecolherPlanilha != null ? brl(r.aRecolherPlanilha) : "—"}</td>
+              ) : null}
             </tr>
           ))}
         </tbody>

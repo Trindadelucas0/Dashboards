@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.5.0 — JPG filiais |
-| Última atualização | 09/09/2026 (Memória: livro técnico mostra a recolher do mês e o da planilha) |
+| Versão do sistema | 2.6.2 — LANNIC Simples |
+| Última atualização | 09/09/2026 (Memória LANNIC sem linha Base memória) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,9 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.6.2 | LANNIC Simples | Memória PGDAS sem linha **Base memória** (receita 478.335,06 permanece no pack para KPIs) |
+| 2.6.1 | LANNIC Simples | LANNIC 08/2026: saídas 557.733,52 − devoluções 79.398,46 = base 478.335,06; Memória sem RPA PGDAS nem diferença de bases |
+| 2.6.0 | LANNIC Simples | Unidade JPG `lannic` (CNPJ 48285395000142, login continua `jpg`): pack 08/2026 Simples Nacional (PGDAS); DAS em `apuracao.das`; partilha só em `memoriaSimples`; sem NFs/DRE; cards Impostos/Memória de SN |
 | 2.5.0 | JPG filiais | Empresa **JPG** no catálogo (login `jpg`, um card): unidades `sede` / `asa_sul` / `pr` / `sp` / `mg`; dropdown no header; consolidado **Todas as unidades** soma virtual (`aggregate_fiscal_packs`) sem gravar slot `todas`; split de movimento acumulado (`split_movimento_mensal.py`) |
 | 2.4.8 | Recebimentos tela completa | Aba **Recebimentos/Pagamentos**: 8 KPIs do mês (receb./pag./saldo/% compras/vendas, NFs, ticket, cobertura) + 4 KPIs de acumulado/MoM; gráficos barras Rec×Pag e doughnut do mês; tabela evolução mensal; série com `nfsEntradas`/`nfsSaidas` e lacunas; continua estimativa NF-e (não é caixa) |
 | 2.4.7 | Balancete EXITO Única | Arquivos `Balancete MM-2026…UNICA.xls` (CNPJ 36517206000130) → tipo `balancete`, `pack.hasBalancete` + `pack.balancete` (kind `exito`); competências 2026-02…05; totais Ativo/Passivo/Resultado = Saldo Atual das contas 1/2/3; aba **Balancete** via `BalanceteTree` / `build_balancete_por_mes` |
@@ -116,7 +119,8 @@ Regras de exibição:
 - Vencimento e CST **omitidos** (`—`) quando não existem no pack — a UI não inventa.
 - IRPJ/CSLL sem demonstrativo no mês → card **Em apuração** (linhas com `—` + faixa verde).
 - `% s/ RB` = max(aRecolher, 0) / `receitaBruta` do pack (carga a recolher); sem RB → `—`.
-- Ordem do resumo: ICMS 5005 → ICMS ST → PIS → COFINS → IRPJ → CSLL → TOTAL.
+- Ordem do resumo: Simples Nacional (se houver) → ICMS 5005 → ICMS ST → PIS → COFINS → IRPJ → CSLL → TOTAL.
+- **Simples Nacional (LANNIC):** card/tabela PGDAS com saídas e devoluções (sem linha “Base memória”); partilha IRPJ/CSLL/PIS/COFINS/INSS/ICMS **só no livro**. Sem APURAÇÃO 5005 não aparece empty-state de 5005. Pack: `memoriaSimples` + `apuracao.das` (`fonte: pgdas_simples_nacional`). Partilha **não** vai para `apuracao.icms` / `irpj` / `csll`.
 
 Fórmulas gravadas no pack (não calculadas na UI):
 
@@ -135,8 +139,9 @@ Golden Baifer jan/2026: ICMS a recolher **−1.901,28**, subvenção **45.070,99
 Topo da aba: KPIs **Vendas do mês**, **Total impostos**, **Total impostos / Vendas %**, **Carga tributária**.
 
 - Base de vendas: `receitaBruta` ou `cfopSaidasTotal` do pack (o que vier no slice).
-- Total impostos: `deducoes` do pack; se ausente, soma dos `aRecolher` presentes na apuração.
+- Total impostos: `deducoes` do pack; se ausente, soma dos `aRecolher` presentes na apuração (inclui `das`).
 - `% s/ vendas` por tributo nos cards = `aRecolher / vendas × 100`. Sem vendas ou sem aRecolher → `—` (nunca `0%` inventado).
+- Com `apuracao.das`, a aba mostra o card **Simples Nacional** e **não** lista ICMS/PIS/IPI “Em apuração” vazios.
 
 ### 3.2.2 DRE / Indicadores / Balancete (layout)
 
@@ -198,8 +203,11 @@ Cadastro estático: `backend/app/companies.py` (+ `KEEP_USERNAMES`) e `backend/s
 | `pr` | Filial PR | 21051983000670 | `81-JPG FILIAL CURITIBA` + IPI PR |
 | `sp` | Filial SP | 21051983000750 | `82- JPG FILIAL SÃO PAULO` + ICMS/IPI SP |
 | `mg` | Filial MG | 21051983000599 | `90-JPG FILIAL MINAS` + IPI MG |
+| `lannic` | LANNIC Dermocosméticos | 48285395000142 | Sem Excel na `pasta temporaria`. Seed PGDAS 08/2026 (`scripts/seed_jpg_lannic.py`) |
 
-Fora deste lote (slots vazios até existir planilha): LANNIC; Filial DF (`matriz` no legado) — mesmo CNPJ da Asa Sul, **sem** Excel na pasta temporária.
+Filial DF (`matriz` no legado) — mesmo CNPJ da Asa Sul, **sem** Excel na pasta temporária.
+
+**LANNIC 08/2026 (Simples Nacional):** receita no pack R$ 478.335,06 (saídas 557.733,52 − devoluções 79.398,46); a Memória **não** mostra linha “Base memória”. DAS R$ 28.398,35 (alíq. 5,9369184503617% × base). Partilha só na memória: IRPJ 1.848,41 · CSLL 1.176,26 · COFINS 0 · PIS 0 · INSS/CPP 14.115,16 · ICMS 11.258,52. Sem linhas NF, sem DRE/Balancete. RBT12 560.212,54 · RBA 1.038.547,60 · faixa 360.000,01 a 720.000,00 · fator r 1,00 · Anexo I Comércio · Seção II ST · Tabela 7 PIS/COFINS monofásicos.
 
 Gravação: `FiscalMonth(company_id=jpg, competencia, unidade)` isolado. Merge só no mesmo mês **e** mesma unidade. **Nunca** persistir `unidade=todas`.
 
@@ -314,6 +322,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | UI import | `frontend/components/ImportTab.tsx` |
 | Catálogo de empresas | `backend/app/companies.py`, `backend/scripts/seed.py` |
 | JPG unidades / consolidado | `company_detail` + `tab_payload` (`unidade=todas`) em `backend/app/routers/companies.py`; dropdown em `frontend/app/dashboard/[empresa]/layout-inner.tsx` |
+| LANNIC Simples | `Unit lannic` em `backend/app/companies.py`; pack `scripts/seed_jpg_lannic.py`; UI Impostos `page.tsx` + `MemoriaLivro.tsx` |
 | Split movimento acumulado | `backend/scripts/split_movimento_mensal.py` |
 | Testes golden | `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py` |
 | Fixtures | `fixtures/baifer-padrao/`, `fixtures/unica-padrao/`, `fixtures/egaplast-padrao/`, `fixtures/loja-maquinas-padrao/`, `fixtures/jpg-padrao/` |
@@ -388,4 +397,6 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 Login seed: `admin`, `baifer`, `egaplast`, `loja-maquinas`, `unica`, `jpg` (senhas no `.env`).
 
-**JPG — filiais:** login `jpg` → seletor mostra **um** card JPG → `/dashboard/jpg/visao-geral`. No header, o dropdown lista Matriz Sede, Filial PR/SP/MG, Filial Asa Sul DF e **Todas as unidades**. Movimento acumulado (`01-2026 a 08-2026`) precisa ser separado por mês (`split_movimento_mensal.py`) antes de Importar; impostos de filial (tabela ICMS/IPI) podem ir inteiros — o sistema grava cada mês na unidade do CNPJ/arquivo. Conferir Compras/Vendas/Impostos **da unidade escolhida**; Todas só soma leitura.
+**JPG — filiais:** login `jpg` → seletor mostra **um** card JPG → `/dashboard/jpg/visao-geral`. No header, o dropdown lista Matriz Sede, Filial PR/SP/MG, Filial Asa Sul DF, **LANNIC Dermocosméticos** e **Todas as unidades**. Movimento acumulado (`01-2026 a 08-2026`) precisa ser separado por mês (`split_movimento_mensal.py`) antes de Importar; impostos de filial (tabela ICMS/IPI) podem ir inteiros — o sistema grava cada mês na unidade do CNPJ/arquivo. Conferir Compras/Vendas/Impostos **da unidade escolhida**; Todas só soma leitura.
+
+**JPG — LANNIC:** no dropdown escolha **LANNIC Dermocosméticos**, mês **Ago/2026**. Visão Geral: receita 478.335,06 e KPI **DAS a Recolher** 28.398,35. Impostos: card Simples Nacional (sem cards ICMS/PIS vazios). Memória: saídas 557.733,52 e devoluções 79.398,46 (sem linha Base memória) + partilha. Compras/Vendas/DRE/Balancete ficam vazios (sem NFs). Depois de `seed.py`, rode `python scripts/seed_jpg_lannic.py` no backend para gravar o pack. Sem planilha EXITO deste CNPJ na pasta temporária.

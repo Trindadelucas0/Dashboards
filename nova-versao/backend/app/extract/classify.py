@@ -4,7 +4,7 @@ import re
 import unicodedata
 from datetime import datetime
 
-from app.companies import CompanyReg, find_by_cnpj, find_by_name, only_digits
+from app.companies import CompanyReg, find_by_cnpj, find_by_name, find_by_unit_name, only_digits
 from app.extract.workbook import WorkbookGrid
 
 CNPJ_FMT_RE = re.compile(r"\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}")
@@ -205,6 +205,8 @@ def is_icms_ipi_table(grid: WorkbookGrid) -> bool:
 
 def unit_from_filename(filename: str) -> str:
     low = (filename or "").lower()
+    if "lannic" in low or "dermocosmet" in low:
+        return "lannic"
     if "asa sul" in low:
         return "asa_sul"
     if "filial pr" in low or "curitiba" in low:
@@ -308,6 +310,14 @@ def detect_sheet_tipo(grid: WorkbookGrid, filename: str) -> str:
     return "desconhecido"
 
 
+def _match_unit_name(*texts: str) -> tuple[CompanyReg | None, object]:
+    for text in texts:
+        company, unit = find_by_unit_name(text)
+        if company and unit:
+            return company, unit
+    return None, None
+
+
 def resolve_company(cnpj: str, razao: str, filename: str) -> tuple[CompanyReg | None, str]:
     company, unit = find_by_cnpj(cnpj)
     if company:
@@ -320,11 +330,24 @@ def resolve_company(cnpj: str, razao: str, filename: str) -> tuple[CompanyReg | 
             unit_key = "asa_sul"
         file_unit = unit_from_filename(filename)
         if company.id == "jpg" and file_unit:
-            unit_key = file_unit
+            if unit_key == "lannic" and file_unit != "lannic":
+                pass
+            else:
+                unit_key = file_unit
         return company, unit_key
+    by_unit_co, by_unit = _match_unit_name(razao, filename)
+    if by_unit_co and by_unit:
+        unit_key = by_unit.key
+        file_unit = unit_from_filename(filename)
+        if by_unit_co.id == "jpg" and file_unit:
+            unit_key = file_unit
+        return by_unit_co, unit_key
     by_name = find_by_name(razao) or find_by_name(filename)
     if by_name:
         unit_key = by_name.units[0].key if by_name.units else "matriz"
+        named, named_unit = _match_unit_name(razao, filename)
+        if named and named.id == by_name.id and named_unit:
+            unit_key = named_unit.key
         file_unit = unit_from_filename(filename)
         if by_name.id == "jpg" and file_unit:
             unit_key = file_unit
