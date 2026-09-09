@@ -10,6 +10,15 @@ def round2(n: float) -> float:
     return round(float(n or 0) * 100) / 100
 
 
+def preserve_simples_receita(pack: dict) -> dict:
+    """Com PGDAS, receitaBruta fica a base da memória — não a soma bruta do Excel."""
+    pack = dict(pack or {})
+    sn_base = (pack.get("memoriaSimples") or {}).get("baseMemoria")
+    if sn_base not in (None, ""):
+        pack["receitaBruta"] = float(sn_base)
+    return pack
+
+
 def format_cnpj(digits: str) -> str:
     d = only_digits(digits)
     if len(d) == 14:
@@ -205,7 +214,7 @@ def merge_saidas(pack: dict, mov: ExtractedMovimento) -> dict:
         "period": mov.period,
         "parser": mov.parser,
     }
-    return pack
+    return preserve_simples_receita(pack)
 
 
 def validate_movimento(mov: ExtractedMovimento, agg_soma: float) -> list[str]:

@@ -1,8 +1,8 @@
 """Upsert LANNIC (JPG unidade) 08/2026 — PGDAS Simples Nacional.
 
-Sem planilha EXITO na pasta temporária: números oficiais da memória
-(saídas − devoluções = base) e do DAS. Não copia movimento de outras filiais.
-Não grava linhas NF, DRE nem Balancete.
+Merge no pack existente: não apaga movimento/NFs já importados.
+`receitaBruta` permanece a base PGDAS; `cfopSaidasTotal` do Excel (se houver) fica.
+Não grava linhas NF, DRE nem Balancete (isso vem do import EXITO).
 """
 from __future__ import annotations
 
@@ -15,8 +15,30 @@ sys.path.insert(0, str(ROOT))
 from sqlalchemy.orm.attributes import flag_modified  # noqa: E402
 
 from app.db import SessionLocal  # noqa: E402
+from app.extract.aggregate import preserve_simples_receita  # noqa: E402
 from app.extract.parse_impostos import composicao_from_apuracao, deducoes_from_apuracao  # noqa: E402
+from app.extract.pipeline import _deep_merge  # noqa: E402
 from app.models import Company, FiscalMonth  # noqa: E402
+
+MOVIMENTO_KEEP = (
+    "hasMovimentacao",
+    "totalCompras",
+    "nfsEntradas",
+    "nfsSaidas",
+    "cfopSaidasTotal",
+    "cfopDados",
+    "cfopSaidas",
+    "cfopSaidasDetalhe",
+    "fornecedores",
+    "clientes",
+    "clientesTop10",
+    "vendasPorDoc",
+    "demaisClientes",
+    "porUf",
+    "porUfSaidas",
+    "entradasMeta",
+    "saidasMeta",
+)
 
 COMPANY_ID = "jpg"
 UNIDADE = "lannic"
@@ -82,6 +104,19 @@ def build_lannic_agosto_2026() -> dict:
     return pack
 
 
+def merge_pgdas_into_pack(existing: dict | None, pgdas: dict) -> dict:
+    """Aplica o pack PGDAS sem apagar movimento EXITO já gravado."""
+    base = dict(existing or {})
+    merged = _deep_merge(base, pgdas)
+    if base.get("hasMovimentacao"):
+        for key in MOVIMENTO_KEEP:
+            if key in base:
+                merged[key] = base[key]
+        merged["hasMovimentacao"] = True
+        merged["receitaBruta"] = BASE_MEMORIA
+    return preserve_simples_receita(merged)
+
+
 def upsert_lannic(db) -> str:
     company = db.query(Company).filter(Company.id == COMPANY_ID).first()
     if not company:
@@ -105,7 +140,7 @@ def upsert_lannic(db) -> str:
         )
         db.add(row)
         return "INSERT"
-    row.pack = pack
+    row.pack = merge_pgdas_into_pack(row.pack, pack)
     flag_modified(row, "pack")
     return "UPDATE"
 

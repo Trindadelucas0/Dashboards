@@ -9,6 +9,8 @@ from app.extract.classify import resolve_company, unit_from_filename
 from app.extract.parse_impostos import composicao_from_apuracao
 from app.extract.pipeline import classify_and_extract
 from app.routers.companies import aggregate_fiscal_packs, catalog_units_payload
+from app.extract.aggregate import merge_saidas
+from app.extract.parse_movimento import ExtractedMovimento, Line
 from scripts.seed_jpg_lannic import (
     ALIQUOTA,
     BASE_MEMORIA,
@@ -16,6 +18,7 @@ from scripts.seed_jpg_lannic import (
     PARTILHA,
     TOTAL_SAIDAS,
     build_lannic_agosto_2026,
+    merge_pgdas_into_pack,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -76,6 +79,116 @@ def test_jpg_lannic_das_composicao_and_golden():
     assert sn["partilha"] == PARTILHA
     assert pytest.approx(BASE_MEMORIA * ALIQUOTA / 100.0, abs=0.02) == DAS
     assert pack["deducoes"] == DAS
+
+
+def test_jpg_lannic_merge_saidas_keeps_pgdas_receita():
+    pack = build_lannic_agosto_2026()
+    mov = ExtractedMovimento(
+        tipo="saidas",
+        company="LANNIC",
+        cnpj="48285395000142",
+        period="Período: 01/08/2026 até 31/08/2026",
+        total_geral=893349.52,
+        lines=[
+            Line("1", "1", "1", "CLIENTE", "11111111000111", "DF", "6-108", 893349.52),
+        ],
+    )
+    merged = merge_saidas(pack, mov)
+    assert merged["cfopSaidasTotal"] == pytest.approx(893349.52, abs=0.02)
+    assert merged["receitaBruta"] == BASE_MEMORIA
+    assert merged["apuracao"]["das"]["aRecolher"] == DAS
+    assert merged["memoriaSimples"]["baseMemoria"] == BASE_MEMORIA
+    assert merged["hasMovimentacao"] is True
+
+
+def test_jpg_lannic_seed_merge_keeps_movimento():
+    existing = {
+        "hasMovimentacao": True,
+        "totalCompras": 451739.03,
+        "cfopSaidasTotal": 893349.52,
+        "nfsEntradas": 237,
+        "nfsSaidas": 241,
+        "receitaBruta": 893349.52,
+        "apuracao": {"ipi": {"aRecolher": 1}},
+    }
+    merged = merge_pgdas_into_pack(existing, build_lannic_agosto_2026())
+    assert merged["hasMovimentacao"] is True
+    assert merged["totalCompras"] == pytest.approx(451739.03, abs=0.02)
+    assert merged["cfopSaidasTotal"] == pytest.approx(893349.52, abs=0.02)
+    assert merged["receitaBruta"] == BASE_MEMORIA
+    assert merged["apuracao"]["das"]["aRecolher"] == DAS
+    assert merged["apuracao"]["fonte"] == "pgdas_simples_nacional"
+    assert merged["nfsEntradas"] == 237
+
+
+def test_split_and_probe_movimento_lannic(tmp_path: Path):
+    from scripts.split_movimento_mensal import split_file
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Saidas"
+    ws.append(["144 - LANNIC DERMOCOSMETICOS LTDA"])
+    ws.append(["CNPJ:", "48.285.395/0001-42"])
+    ws.append(["Período: 01/08/2026 até 31/08/2026"])
+    ws.append(
+        [
+            "Código",
+            "Data Emissão",
+            "Nota",
+            "Série",
+            "Esp",
+            "X",
+            "Y",
+            "Z",
+            "W",
+            "Q",
+            "Cliente",
+            "A",
+            "CNPJ/CPF",
+            "IE",
+            "B",
+            "C",
+            "CFOP",
+            "AC",
+            "UF",
+            "Valor Contábil",
+        ]
+    )
+    ws.append(
+        [1, "15/08/2026", "200", "1", "", "", "", "", "", "", "CLI A", "", "11111111000111", "", "", "", "5.102", "", "DF", "557733,52"]
+    )
+    src = tmp_path / "144-Saidas 01-2026 a 08-2026.xlsx"
+    wb.save(src)
+    out = tmp_path / "out"
+    reports = split_file(src, out, "saidas")
+    assert {r["competencia"] for r in reports} == {"2026-08"}
+    ago = next(p for p in out.glob("*.xlsx") if "08-2026" in p.name)
+    result = classify_and_extract(ago)
+    assert result["tipo"] == "saidas"
+    assert result["company_id"] == "jpg"
+    assert result["unidade"] == "lannic"
+    assert result["competencia"] == "2026-08"
+    assert not result["errors"]
+    assert abs(result["meta"]["delta"]) < 0.02
+    assert result["pack_patch"]["cfopSaidasTotal"] == pytest.approx(557733.52, abs=0.02)
+
+
+SPLIT_LANNIC = ROOT.parent / "pasta temporaria" / "_split" / "144" / "lannic"
+
+
+@pytest.mark.skipif(not (SPLIT_LANNIC / "Saidas 08-2026.xlsx").exists(), reason="Split LANNIC ago/2026 ausente")
+def test_jpg_lannic_agosto_split_golden():
+    ent = classify_and_extract(SPLIT_LANNIC / "Entradas 08-2026.xlsx")
+    sai = classify_and_extract(SPLIT_LANNIC / "Saidas 08-2026.xlsx")
+    assert ent["company_id"] == sai["company_id"] == "jpg"
+    assert ent["unidade"] == sai["unidade"] == "lannic"
+    assert ent["tipo"] == "entradas"
+    assert sai["tipo"] == "saidas"
+    assert not ent["errors"] and not sai["errors"]
+    assert abs(ent["meta"]["delta"]) < 0.02
+    assert abs(sai["meta"]["delta"]) < 0.02
+    assert ent["pack_patch"]["totalCompras"] == pytest.approx(451739.03, abs=0.02)
+    assert sai["pack_patch"]["cfopSaidasTotal"] == pytest.approx(893349.52, abs=0.02)
 
 
 def test_jpg_impostos_table_parts(tmp_path: Path):

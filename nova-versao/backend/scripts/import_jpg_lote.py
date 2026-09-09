@@ -18,6 +18,7 @@ from sqlalchemy.orm.attributes import flag_modified  # noqa: E402
 from app.db import SessionLocal  # noqa: E402
 from app.extract.parse_workbook_padrao import expand_workbook_parts  # noqa: E402
 from app.extract.pipeline import classify_and_extract  # noqa: E402
+from app.extract.aggregate import preserve_simples_receita  # noqa: E402
 from app.models import FiscalMonth, ImportRecord, NfeLine  # noqa: E402
 from app.routers.imports import _deep_merge  # noqa: E402
 from app.security import sha256_bytes  # noqa: E402
@@ -125,7 +126,7 @@ def main() -> int:
                     ).delete(synchronize_session=False)
                     cleared.add(slot_key)
 
-                row.pack = _deep_merge(row.pack or {}, item.get("pack_patch") or {})
+                row.pack = preserve_simples_receita(_deep_merge(row.pack or {}, item.get("pack_patch") or {}))
                 flag_modified(row, "pack")
 
                 rec_hash = item.get("file_hash") or file_hash

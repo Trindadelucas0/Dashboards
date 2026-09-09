@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.deps import require_admin, require_company
 from app.companies import COMPANY_BY_ID
+from app.extract.aggregate import preserve_simples_receita
 from app.extract.pipeline import classify_and_extract
 from app.extract.parse_workbook_padrao import expand_workbook_parts
 from app.extract.workbook import safe_unlink
@@ -71,7 +72,7 @@ def _pack_has_tipo(pack: dict | None, tipo: str) -> bool:
 
 
 def _assign_pack(row: FiscalMonth, pack: dict) -> None:
-    row.pack = pack
+    row.pack = preserve_simples_receita(pack)
     flag_modified(row, "pack")
 
 

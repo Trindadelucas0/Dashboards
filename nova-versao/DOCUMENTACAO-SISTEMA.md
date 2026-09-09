@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.6.4 — JPG IPI credor |
-| Última atualização | 09/09/2026 (JPG: IPI saldo credor como ICMS; UI sem APURAÇÃO 5005) |
+| Versão do sistema | 2.6.5 — LANNIC movimento |
+| Última atualização | 09/09/2026 (LANNIC: Entradas/Saídas EXITO mai–ago/2026; merge PGDAS em agosto) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.6.5 | LANNIC movimento | Planilhas 144 Entradas/Saídas (`pasta temporaria/Nova pasta`) split mai–ago/2026 na unidade `lannic`; agosto faz merge com PGDAS (DAS 28.398,35). `receitaBruta` permanece a base 478.335,06; Compras/Vendas usam o Excel. Seed PGDAS não apaga NFs. |
 | 2.6.4 | JPG IPI credor | Demonstrativo IPI EXITO: se saldo devedor = 0 e “saldo credor de IPI para o mês seguinte” > 0 → `apuracao.ipi.aRecolher` negativo (Asa Sul 08/2026: **−1.914,98**). Tabela ICMS/IPI igual. KPI **Crédito IPI** na Visão Geral quando não há ICMS. Dashboard **JPG** não mostra textos/empty-states de APURAÇÃO 5005 (Baifer/Única seguem com 5005). Reimportar IPI já gravado com 0. |
 | 2.6.3 | JPG IRPJ/CSLL | Demonstrativo EXITO IRPJ+CSLL (2 abas CSOC + IRPJ-LP) na **Matriz Sede**: 1º tri em 03/2026 (IRPJ 143.211,70 / CSLL 74.476,66) e 2º tri em 06/2026 (IRPJ 137.737,02 / CSLL 77.617,99); merge no movimento; trimestre soma `irpj`/`csll` |
 | 2.6.2 | LANNIC Simples | Memória PGDAS sem linha **Base memória** (receita 478.335,06 permanece no pack para KPIs) |
@@ -205,11 +206,11 @@ Cadastro estático: `backend/app/companies.py` (+ `KEEP_USERNAMES`) e `backend/s
 | `pr` | Filial PR | 21051983000670 | `81-JPG FILIAL CURITIBA` + IPI PR |
 | `sp` | Filial SP | 21051983000750 | `82- JPG FILIAL SÃO PAULO` + ICMS/IPI SP |
 | `mg` | Filial MG | 21051983000599 | `90-JPG FILIAL MINAS` + IPI MG |
-| `lannic` | LANNIC Dermocosméticos | 48285395000142 | Sem Excel na `pasta temporaria`. Seed PGDAS 08/2026 (`scripts/seed_jpg_lannic.py`) |
+| `lannic` | LANNIC Dermocosméticos | 48285395000142 | `pasta temporaria/Nova pasta` (`144-Entradas` / `144-Saídas` 01 a 08/2026) → split `_split/144/lannic` (dados reais **mai–ago/2026**) + PGDAS 08/2026 (`scripts/seed_jpg_lannic.py`, merge) |
 
 Filial DF (`matriz` no legado) — mesmo CNPJ da Asa Sul, **sem** Excel na pasta temporária.
 
-**LANNIC 08/2026 (Simples Nacional):** receita no pack R$ 478.335,06 (saídas 557.733,52 − devoluções 79.398,46); a Memória **não** mostra linha “Base memória”. DAS R$ 28.398,35 (alíq. 5,9369184503617% × base). Partilha só na memória: IRPJ 1.848,41 · CSLL 1.176,26 · COFINS 0 · PIS 0 · INSS/CPP 14.115,16 · ICMS 11.258,52. Sem linhas NF, sem DRE/Balancete. RBT12 560.212,54 · RBA 1.038.547,60 · faixa 360.000,01 a 720.000,00 · fator r 1,00 · Anexo I Comércio · Seção II ST · Tabela 7 PIS/COFINS monofásicos.
+**LANNIC 08/2026 (Simples Nacional + movimento EXITO):** receita no pack R$ 478.335,06 (PGDAS: saídas 557.733,52 − devoluções 79.398,46); a Memória **não** mostra linha “Base memória”. DAS R$ 28.398,35 (alíq. 5,9369184503617% × base). Partilha só na memória: IRPJ 1.848,41 · CSLL 1.176,26 · COFINS 0 · PIS 0 · INSS/CPP 14.115,16 · ICMS 11.258,52. Compras ago: R$ 451.739,03 (237 NFs). Vendas Excel ago: R$ 893.349,52 (241 NFs; CFOP 6-905+6-910 = 335.616,00 — **não** entra na base PGDAS). Sem DRE/Balancete. RBT12 560.212,54 · RBA 1.038.547,60 · faixa 360.000,01 a 720.000,00 · fator r 1,00 · Anexo I Comércio · Seção II ST · Tabela 7 PIS/COFINS monofásicos. Cabeçalho do `.xls` acumulado diz jan–ago, mas **não há linhas em 01–04/2026**.
 
 **JPG Matriz — IRPJ/CSLL (lucro presumido, 1º e 2º trimestre 2026):** arquivo EXITO com abas `Demonst. CSOC` + `Demonst. IRPJ-LP`. Cabeçalho CNPJ da sede; competência = último mês do trimestre. **Não** espalha pelos 3 meses. Saldo devedor: mar/2026 IRPJ 143.211,70 e CSLL 74.476,66; jun/2026 IRPJ 137.737,02 e CSLL 77.617,99. Fixtures: `fixtures/jpg-padrao/irpj-csll-1t-2026.xls` e `irpj-csll-2t-2026.xls`. Import merge: `python scripts/import_jpg_irpj_csll.py`.
 
@@ -331,7 +332,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | UI import | `frontend/components/ImportTab.tsx` |
 | Catálogo de empresas | `backend/app/companies.py`, `backend/scripts/seed.py` |
 | JPG unidades / consolidado | `company_detail` + `tab_payload` (`unidade=todas`) em `backend/app/routers/companies.py`; `aggregate_fiscal_packs` soma `irpj`/`csll`; dropdown em `frontend/app/dashboard/[empresa]/layout-inner.tsx` |
-| LANNIC Simples | `Unit lannic` em `backend/app/companies.py`; pack `scripts/seed_jpg_lannic.py`; UI Impostos `page.tsx` + `MemoriaLivro.tsx` |
+| LANNIC Simples | `Unit lannic` em `backend/app/companies.py`; pack `scripts/seed_jpg_lannic.py` (merge, não apaga NFs); `preserve_simples_receita` em `aggregate.py`; UI Impostos `page.tsx` + `MemoriaLivro.tsx` |
 | Split movimento acumulado | `backend/scripts/split_movimento_mensal.py` |
 | Testes golden | `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py` |
 | Fixtures | `fixtures/baifer-padrao/`, `fixtures/unica-padrao/`, `fixtures/egaplast-padrao/`, `fixtures/loja-maquinas-padrao/`, `fixtures/jpg-padrao/` |
@@ -357,6 +358,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 18. JPG: um `company_id`; filiais só em `unidade`. Consolidado `todas` é soma na API, não é slot no Postgres. Export CPF/CNPJ exige filial específica.
 19. JPG IRPJ/CSLL EXITO (abas CSOC + IRPJ-LP): grava só no último mês do trimestre (`sede` 03 e 06/2026); merge no movimento; o chip de trimestre soma `apuracao.irpj`/`csll` sem espalhar pelos outros dois meses.
 20. IPI (demonstrativo EXITO ou tabela): se a recolher/saldo devedor ≈ 0 e há saldo credor (ou crédito > débito) → `aRecolher` negativo. KPI Visão Geral: DAS, senão ICMS com valor, senão IPI. JPG não exibe APURAÇÃO 5005 na UI.
+21. LANNIC (Simples): `memoriaSimples.baseMemoria` manda em `receitaBruta` após merge de saídas/import/seed. `cfopSaidasTotal` e `NfeLine` vêm do Excel. Reexecutar `seed_jpg_lannic.py` **não** zera movimento.
 
 ## 6. Pendências de dados (Única)
 
@@ -414,4 +416,4 @@ Login seed: `admin`, `baifer`, `egaplast`, `loja-maquinas`, `unica`, `jpg` (senh
 
 **JPG — IRPJ/CSLL da Matriz:** login `jpg` → unidade **Matriz Sede**. Chip **Mar/2026** (1º trimestre) e **Jun/2026** (2º trimestre): aba Impostos card IRPJ/CSLL e Memória com o livro. O chip de trimestre soma o valor do último mês. Importar sem “substituir mês” (`scripts/import_jpg_irpj_csll.py` ou aba Importar).
 
-**JPG — LANNIC:** no dropdown escolha **LANNIC Dermocosméticos**, mês **Ago/2026**. Visão Geral: receita 478.335,06 e KPI **DAS a Recolher** 28.398,35. Impostos: card Simples Nacional (sem cards ICMS/PIS vazios). Memória: saídas 557.733,52 e devoluções 79.398,46 (sem linha Base memória) + partilha. Compras/Vendas/DRE/Balancete ficam vazios (sem NFs). Depois de `seed.py`, rode `python scripts/seed_jpg_lannic.py` no backend para gravar o pack. Sem planilha EXITO deste CNPJ na pasta temporária.
+**JPG — LANNIC:** no dropdown escolha **LANNIC Dermocosméticos**. Meses **Mai–Jul/2026**: só Compras/Vendas (sem PGDAS). **Ago/2026**: Visão Geral receita 478.335,06 e KPI **DAS a Recolher** 28.398,35; Impostos card Simples Nacional; Memória com saídas PGDAS 557.733,52 e devoluções 79.398,46 (sem linha Base memória) + partilha; Compras 451.739,03 e Vendas 893.349,52 (NFs do Excel). DRE/Balancete vazios. Split: `python scripts/split_movimento_mensal.py` nos `144-Entradas`/`144-Saídas`; gravar com `import_jpg_lote.py` **sem** `--replace`. Fonte: `pasta temporaria/Nova pasta`.

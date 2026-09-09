@@ -23,7 +23,7 @@ Identificação **obrigatória pelo CNPJ do cabeçalho** (primeiras ~12 linhas).
 | `90-JPG FILIAL MINAS` | `mg` | `21051983000599` | movimento split + `ipi filial mg` |
 | `82- JPG FILIAL SÃO PAULO` | `sp` | `21051983000750` | movimento split + icms/ipi SP |
 | `712-JPG FILIAL BRASILIA` | `asa_sul` | `21051983000327` | movimento split + icms/ipi Asa Sul (filename `asa sul`) |
-| (sem pasta EXITO) | `lannic` | `48285395000142` | Simples Nacional 08/2026 via `scripts/seed_jpg_lannic.py` (PGDAS). Razão `LANNIC` → unidade, não sede. |
+| `pasta temporaria/Nova pasta` (`144-Entradas` / `144-Saídas`) | `lannic` | `48285395000142` | Split mensal (`_split/144/lannic`, mai–ago/2026) + PGDAS 08/2026 (`seed_jpg_lannic.py` faz **merge**, não apaga NFs). Razão `LANNIC` → unidade, não sede. |
 
 Filial DF (`matriz`) sem Excel. Não gravar `unidade=todas`. Movimento `01-2026 a 08-2026` → `scripts/split_movimento_mensal.py`. Testes: `tests/test_jpg.py`.
 
