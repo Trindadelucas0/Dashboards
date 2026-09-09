@@ -21,7 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
-| 2.6.4 | IPI saldo credor | IPI a recolher 0 com crédito > débito grava saldo credor (negativo), como o ICMS; KPI da Visão Geral/trimestre usa IPI quando não há ICMS |
+| 2.6.4 | JPG IPI credor | Demonstrativo IPI EXITO: se saldo devedor = 0 e “saldo credor de IPI para o mês seguinte” > 0 → `apuracao.ipi.aRecolher` negativo (Asa Sul 08/2026: **−1.914,98**). Tabela ICMS/IPI igual. KPI **Crédito IPI** na Visão Geral quando não há ICMS. Dashboard **JPG** não mostra textos/empty-states de APURAÇÃO 5005 (Baifer/Única seguem com 5005). Reimportar IPI já gravado com 0. |
 | 2.6.3 | JPG IRPJ/CSLL | Demonstrativo EXITO IRPJ+CSLL (2 abas CSOC + IRPJ-LP) na **Matriz Sede**: 1º tri em 03/2026 (IRPJ 143.211,70 / CSLL 74.476,66) e 2º tri em 06/2026 (IRPJ 137.737,02 / CSLL 77.617,99); merge no movimento; trimestre soma `irpj`/`csll` |
 | 2.6.2 | LANNIC Simples | Memória PGDAS sem linha **Base memória** (receita 478.335,06 permanece no pack para KPIs) |
 | 2.6.1 | LANNIC Simples | LANNIC 08/2026: saídas 557.733,52 − devoluções 79.398,46 = base 478.335,06; Memória sem RPA PGDAS nem diferença de bases |
@@ -217,6 +217,10 @@ Gravação: `FiscalMonth(company_id=jpg, competencia, unidade)` isolado. Merge s
 
 Arquivos de movimento `01-2026 a 08-2026` disparam `RANGE_ERROR`. Pré-processar com `backend/scripts/split_movimento_mensal.py` (filtra **Data Emissão** → `Entradas MM-YYYY.xlsx`). Impostos `icms/ipi filial … 01 a 08.xls` são **demonstrativos EXITO com 8 abas** (uma competência cada); o pipeline gera parts por mês da **mesma** filial (CNPJ). Não misturar PR com MG.
 
+**JPG não usa APURAÇÃO 5005** (Decreto 5005). ICMS/IPI vêm do demonstrativo EXITO (ou tabela filial). Na UI JPG a Memória e o Importar não citam 5005; o parser 5005 continua só para Baifer/Única.
+
+**IPI saldo credor:** mesma regra do ICMS. Linha “Saldo credor de IPI para o mês seguinte” com valor e “Saldo devedor de IPI” = 0 → `aRecolher` negativo e chip **Saldo credor** / KPI **Crédito IPI**. Exemplo Asa Sul 08/2026: saldo credor **1.914,98**. Packs já gravados com IPI 0 não atualizam sozinhos — reimportar o arquivo IPI da filial (sem “substituir mês”).
+
 Consolidado **Todas as unidades**: soma virtual na API (`tab_payload` + `aggregate_fiscal_packs`). Transferências entre filiais podem duplicar no consolidado (igual legado). Export CPF/CNPJ em `todas` é **bloqueado** — escolha uma filial. Sem DRE/Balancete/PIS-COFINS nestas pastas → abas `—` (não inventar).
 
 Ordem de import recomendada: 711 sede → 81 PR → 90 MG → 82 SP → 712 Asa Sul. Login `jpg` → aba **Importar** no dashboard JPG (CNPJ define a unidade).
@@ -308,7 +312,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | Detecção + extração workbook | `backend/app/extract/parse_workbook_padrao.py` |
 | Classificação tipo (Entradas / por fornecedor) | `backend/app/extract/classify.py` → `detect_sheet_tipo` |
 | Parser 5005 | `backend/app/extract/parse_memoria_5005.py` |
-| Parser PIS/COFINS/IPI/IRPJ | `backend/app/extract/parse_impostos.py` (`parse_demonstrativo_exito_irpj_csll`) |
+| Parser PIS/COFINS/IPI/IRPJ | `backend/app/extract/parse_impostos.py` (`parse_demonstrativo_ipi` saldo credor; `parse_demonstrativo_exito_irpj_csll`) |
 | Import IRPJ/CSLL JPG sede | `backend/scripts/import_jpg_irpj_csll.py` (merge 03/2026 e 06/2026) |
 | Parser movimento | `backend/app/extract/parse_movimento.py` |
 | Parser DRE / Análise Vertical | `backend/app/extract/parse_dre.py` (`extract_dre_vertical`, `parse_dre_padrao_column`) |
@@ -352,6 +356,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 16. Balancete EXITO mensal (Única e demais): totais Ativo/Passivo/Resultado vêm do Saldo Atual das contas `1`/`2`/`3`; um arquivo = uma competência.
 18. JPG: um `company_id`; filiais só em `unidade`. Consolidado `todas` é soma na API, não é slot no Postgres. Export CPF/CNPJ exige filial específica.
 19. JPG IRPJ/CSLL EXITO (abas CSOC + IRPJ-LP): grava só no último mês do trimestre (`sede` 03 e 06/2026); merge no movimento; o chip de trimestre soma `apuracao.irpj`/`csll` sem espalhar pelos outros dois meses.
+20. IPI (demonstrativo EXITO ou tabela): se a recolher/saldo devedor ≈ 0 e há saldo credor (ou crédito > débito) → `aRecolher` negativo. KPI Visão Geral: DAS, senão ICMS com valor, senão IPI. JPG não exibe APURAÇÃO 5005 na UI.
 
 ## 6. Pendências de dados (Única)
 
@@ -403,7 +408,9 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 Login seed: `admin`, `baifer`, `egaplast`, `loja-maquinas`, `unica`, `jpg` (senhas no `.env`).
 
-**JPG — filiais:** login `jpg` → seletor mostra **um** card JPG → `/dashboard/jpg/visao-geral`. No header, o dropdown lista Matriz Sede, Filial PR/SP/MG, Filial Asa Sul DF, **LANNIC Dermocosméticos** e **Todas as unidades**. Movimento acumulado (`01-2026 a 08-2026`) precisa ser separado por mês (`split_movimento_mensal.py`) antes de Importar; impostos de filial (tabela ICMS/IPI) podem ir inteiros — o sistema grava cada mês na unidade do CNPJ/arquivo. Conferir Compras/Vendas/Impostos **da unidade escolhida**; Todas só soma leitura. Sem ICMS no mês, o KPI do topo usa **IPI a Recolher** ou **Crédito IPI**.
+**JPG — filiais:** login `jpg` → seletor mostra **um** card JPG → `/dashboard/jpg/visao-geral`. No header, o dropdown lista Matriz Sede, Filial PR/SP/MG, Filial Asa Sul DF, **LANNIC Dermocosméticos** e **Todas as unidades**. Movimento acumulado (`01-2026 a 08-2026`) precisa ser separado por mês (`split_movimento_mensal.py`) antes de Importar; impostos de filial (demonstrativo ICMS/IPI com uma aba por mês) podem ir inteiros — o sistema grava cada mês na unidade do CNPJ/arquivo. Conferir Compras/Vendas/Impostos **da unidade escolhida**; Todas só soma leitura. A JPG **não** importa planilha 5005: textos da Memória/Importar falam só de ICMS/IPI EXITO.
+
+**JPG — IPI crédito:** após reimportar o IPI da filial, meses com saldo credor (ex. Asa Sul **Ago/2026**, R$ 1.914,98) mostram chip **Saldo credor** em Impostos/Memória e, se não houver ICMS no mês, KPI **Crédito IPI** na Visão Geral. Sem ICMS no mês, o KPI do topo usa **IPI a Recolher** ou **Crédito IPI**.
 
 **JPG — IRPJ/CSLL da Matriz:** login `jpg` → unidade **Matriz Sede**. Chip **Mar/2026** (1º trimestre) e **Jun/2026** (2º trimestre): aba Impostos card IRPJ/CSLL e Memória com o livro. O chip de trimestre soma o valor do último mês. Importar sem “substituir mês” (`scripts/import_jpg_irpj_csll.py` ou aba Importar).
 

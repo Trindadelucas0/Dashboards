@@ -1,3 +1,5 @@
+import pytest
+
 from app.extract.cfop import cfop_meta, sinief_grupo, top_grupos
 from app.extract.parse_impostos import apuracao_from_imposto_row, composicao_from_apuracao, parse_impostos_icms_ipi
 from app.extract.workbook import WorkbookGrid
@@ -53,6 +55,22 @@ def test_slice_visao_geral_separates_rb_and_vendas():
     assert data["icmsKpi"]["lbl"] == "Crédito ICMS"
     assert data["icmsKpi"]["val"] == 30
     assert data["icmsKpi"]["color"] == "green"
+
+
+def test_slice_visao_geral_ipi_kpi_credito():
+    pack = {
+        "hasMovimentacao": True,
+        "totalCompras": 100,
+        "cfopSaidasTotal": 200,
+        "apuracao": {
+            "ipi": {"apurado": 323063.81, "aRecolher": -1914.98, "credito": 324978.79},
+        },
+    }
+    data = _slice("visao-geral", pack)
+    assert data["ipiKpi"]["lbl"] == "Crédito IPI"
+    assert data["ipiKpi"]["val"] == pytest.approx(1914.98, abs=0.02)
+    assert data["ipiKpi"]["color"] == "green"
+    assert data["icmsKpi"] is None
 
 
 def test_slice_compras_cfop_and_concentracao():

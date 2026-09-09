@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { brl } from "@/lib/api";
+import { useDash } from "@/components/DashContext";
 
 type MemLine = { key?: string; label: string; papel?: string; kind?: string; valor?: number | null };
 type TaxBaseLine = {
@@ -272,6 +273,7 @@ export default function MemoriaLivro({
   monthLabel?: string;
 }) {
   const [livroOpen, setLivroOpen] = useState(false);
+  const hide5005 = useDash().company?.id === "jpg";
   const mem = d.memoriaCalculo as Record<string, any> | undefined;
   const hasMem = !!(mem && (mem.debitoOriginal != null || mem.icmsARecolher != null));
   const livroPc = d.memoriaPisCofins as {
@@ -295,7 +297,9 @@ export default function MemoriaLivro({
   const hasCofins = taxRow(ap?.cofins) || !!(livroPc?.resumo?.cofins);
   const hasIcmsSt = taxRow(ap?.icmsSt) || stUf.length > 0;
   const hasDifal = taxRow(ap?.difal) || difalUf.length > 0;
-  const hasIpi = !!(livroIpi && (livroIpi.aRecolher != null || (livroIpi.resumo && Object.keys(livroIpi.resumo).length)));
+  const hasIpi =
+    taxRow(ap?.ipi) ||
+    !!(livroIpi && (livroIpi.aRecolher != null || (livroIpi.resumo && Object.keys(livroIpi.resumo).length)));
   const hasIrpj = !!(livroIrpj?.linhas?.length);
   const hasCsll = !!(livroCsll?.linhas?.length);
   const hasPisCofins = hasPis || hasCofins;
@@ -357,36 +361,50 @@ export default function MemoriaLivro({
           : null;
     const st = statusFromValor(aRec);
     const rows: DetailRow[] = [];
-    if (mem?.debitoOriginal != null) rows.push({ label: "Débito original", value: brl(Number(mem.debitoOriginal)), tone: "debit" });
-    if (mem?.creditoOriginal != null) rows.push({ label: "Crédito original", value: brl(Number(mem.creditoOriginal)), tone: "credit" });
-    if (mem?.totalOriginal != null) rows.push({ label: "TOTAL original", value: brl(Number(mem.totalOriginal)), tone: "bold", emphasis: true });
-    if (mem?.debitos5005 != null) rows.push({ label: "Débitos 5005", value: brl(Number(mem.debitos5005)), tone: "debit" });
-    if (mem?.creditos5005 != null) rows.push({ label: "Créditos 5005", value: brl(Number(mem.creditos5005)), tone: "credit" });
-    if (mem?.total5005 != null) rows.push({ label: "TOTAL 5005", value: brl(Number(mem.total5005)), tone: "bold", emphasis: true });
-    if (mem?.debitoFora != null) rows.push({ label: "Débito fora", value: brl(Number(mem.debitoFora)), tone: "debit" });
-    if (mem?.creditoFora != null) rows.push({ label: "Crédito fora", value: brl(Number(mem.creditoFora)), tone: "credit" });
-    if (mem?.creditoOutorgado != null) rows.push({ label: "Crédito outorgado", value: brl(Number(mem.creditoOutorgado)), tone: "credit" });
-    if (mem?.totalFora != null) rows.push({ label: "TOTAL fora", value: brl(Number(mem.totalFora)), tone: "bold", emphasis: true });
-    rows.push({
-      label: "ICMS a recolher",
-      value: brl(aRec),
-      tone: Math.abs(aRec) < 0.005 ? "zero" : aRec < 0 ? "credit" : "debit",
-      emphasis: true,
-    });
-    if (mem?.ganhoReceitaSubvencao != null) {
-      rows.push({ label: "Ganho receita de subvenção", value: brl(Number(mem.ganhoReceitaSubvencao)), tone: "carry" });
-    }
-    if (!rows.length) {
+    if (hide5005) {
       rows.push(
         { label: "Apurado", value: moneyOrDash(apurado), tone: "bold" },
         { label: "Créditos", value: moneyOrDash(creditos), tone: "credit" },
-        { label: "A recolher", value: brl(aRec), tone: aRec < 0 ? "credit" : "debit", emphasis: true },
+        {
+          label: aRec < 0 ? "Saldo credor" : "ICMS a recolher",
+          value: brl(aRec),
+          tone: Math.abs(aRec) < 0.005 ? "zero" : aRec < 0 ? "credit" : "debit",
+          emphasis: true,
+        },
       );
+    } else {
+      if (mem?.debitoOriginal != null) rows.push({ label: "Débito original", value: brl(Number(mem.debitoOriginal)), tone: "debit" });
+      if (mem?.creditoOriginal != null) rows.push({ label: "Crédito original", value: brl(Number(mem.creditoOriginal)), tone: "credit" });
+      if (mem?.totalOriginal != null) rows.push({ label: "TOTAL original", value: brl(Number(mem.totalOriginal)), tone: "bold", emphasis: true });
+      if (mem?.debitos5005 != null) rows.push({ label: "Débitos 5005", value: brl(Number(mem.debitos5005)), tone: "debit" });
+      if (mem?.creditos5005 != null) rows.push({ label: "Créditos 5005", value: brl(Number(mem.creditos5005)), tone: "credit" });
+      if (mem?.total5005 != null) rows.push({ label: "TOTAL 5005", value: brl(Number(mem.total5005)), tone: "bold", emphasis: true });
+      if (mem?.debitoFora != null) rows.push({ label: "Débito fora", value: brl(Number(mem.debitoFora)), tone: "debit" });
+      if (mem?.creditoFora != null) rows.push({ label: "Crédito fora", value: brl(Number(mem.creditoFora)), tone: "credit" });
+      if (mem?.creditoOutorgado != null) rows.push({ label: "Crédito outorgado", value: brl(Number(mem.creditoOutorgado)), tone: "credit" });
+      if (mem?.totalFora != null) rows.push({ label: "TOTAL fora", value: brl(Number(mem.totalFora)), tone: "bold", emphasis: true });
+      rows.push({
+        label: "ICMS a recolher",
+        value: brl(aRec),
+        tone: Math.abs(aRec) < 0.005 ? "zero" : aRec < 0 ? "credit" : "debit",
+        emphasis: true,
+      });
+      if (mem?.ganhoReceitaSubvencao != null) {
+        rows.push({ label: "Ganho receita de subvenção", value: brl(Number(mem.ganhoReceitaSubvencao)), tone: "carry" });
+      }
+      if (rows.length === 1) {
+        rows.length = 0;
+        rows.push(
+          { label: "Apurado", value: moneyOrDash(apurado), tone: "bold" },
+          { label: "Créditos", value: moneyOrDash(creditos), tone: "credit" },
+          { label: "A recolher", value: brl(aRec), tone: aRec < 0 ? "credit" : "debit", emphasis: true },
+        );
+      }
     }
     cards.push({
       id: "icms",
       nome: "ICMS",
-      subtitle: "Decreto 5005",
+      subtitle: hide5005 ? "Apuração ICMS" : "Decreto 5005",
       tone: "icms",
       apurado,
       creditos,
@@ -395,7 +413,7 @@ export default function MemoriaLivro({
       vencimento: null,
       ...st,
       rows,
-      resumoNome: "ICMS (Decreto 5005)",
+      resumoNome: hide5005 ? "ICMS" : "ICMS (Decreto 5005)",
     });
   }
 
@@ -539,13 +557,14 @@ export default function MemoriaLivro({
 
   if (hasIpi) {
     const row = Object.values(livroIpi?.resumo || {})[0];
-    const aRec = Number(livroIpi?.aRecolher ?? row?.aRecolher ?? 0);
-    const debito = Number(row?.debito ?? 0);
-    const credito = Number(row?.credito ?? 0);
+    const aRec = Number(livroIpi?.aRecolher ?? row?.aRecolher ?? ap?.ipi?.aRecolher ?? 0);
+    const debito = Number(row?.debito ?? ap?.ipi?.apurado ?? 0);
+    const credito = Number(row?.credito ?? ap?.ipi?.credito ?? 0);
     const st = statusFromValor(aRec);
     cards.push({
       id: "ipi",
       nome: "IPI",
+      subtitle: aRec < 0 ? "Saldo credor" : "Apuração IPI",
       tone: "ipi",
       apurado: debito,
       creditos: credito,
@@ -555,11 +574,11 @@ export default function MemoriaLivro({
       ...st,
       rows: [
         { label: "Débito", value: brl(debito), tone: "debit" },
-        { label: "Crédito", value: brl(credito), tone: "debit" },
+        { label: "Crédito", value: brl(credito), tone: "credit" },
         {
-          label: "A recolher",
+          label: aRec < 0 ? "Saldo credor" : "A recolher",
           value: brl(aRec),
-          tone: Math.abs(aRec) < 0.005 ? "zero" : aRec < 0 ? "result" : "debit",
+          tone: Math.abs(aRec) < 0.005 ? "zero" : aRec < 0 ? "credit" : "debit",
           emphasis: true,
         },
       ],
@@ -747,7 +766,11 @@ export default function MemoriaLivro({
           >
             <span>
               {livroOpen ? "Ocultar" : "Ver"} livro técnico
-              {hasSimples && !hasMem ? " (PGDAS / Simples Nacional)" : " (5005, PIS/COFINS, ST…)"}
+              {hasSimples && !hasMem
+                ? " (PGDAS / Simples Nacional)"
+                : hide5005
+                  ? " (ICMS, IPI, PIS/COFINS…)"
+                  : " (5005, PIS/COFINS, ST…)"}
             </span>
             <span className="mem-livro-chev" aria-hidden>
               {livroOpen ? "▴" : "▾"}
@@ -756,7 +779,7 @@ export default function MemoriaLivro({
 
           {livroOpen ? (
             <div className="mem-livro-body">
-              {hasMem ? (
+              {hasMem && !hide5005 ? (
                 <div className="table-card" id="mem-5005">
                   <div className="table-head">
                     <div className="ttl">ICMS Decreto 5005</div>
@@ -825,7 +848,7 @@ export default function MemoriaLivro({
                     </table>
                   </div>
                 </div>
-              ) : (
+              ) : hide5005 ? null : (
                 <div className="alert-box warn">
                   Memória ICMS (APURAÇÃO 5005) ainda não importada neste mês.
                   {hasPisCofins ? " PIS/COFINS abaixo vêm da planilha importada." : " Importe a planilha padrão para preencher o livro."}
@@ -847,7 +870,10 @@ export default function MemoriaLivro({
               {hasIcmsSt ? <UfBlock id="mem-st" title="ICMS ST" rows={stUf} total={Number(ap?.icmsSt?.aRecolher ?? 0)} /> : null}
               {hasDifal ? <UfBlock id="mem-difal" title="DIFAL" rows={difalUf} total={Number(ap?.difal?.aRecolher ?? 0)} /> : null}
 
-              {hasIpi ? (
+              {hasIpi &&
+              ((livroIpi?.debito?.linhas || []).length ||
+                (livroIpi?.credito?.linhas || []).length ||
+                Object.keys(livroIpi?.resumo || {}).length) ? (
                 <div className="table-card" id="mem-ipi">
                   <div className="table-head">
                     <div className="ttl">IPI</div>
@@ -907,8 +933,12 @@ export default function MemoriaLivro({
       {!hasAnyTax && !d.entradasMeta && !d.saidasMeta ? (
         <div className="alert-box warn">
           {hasSimples
-            ? "Simples Nacional (PGDAS) neste mês — sem APURAÇÃO 5005."
-            : "Sem APURAÇÃO 5005 nem demonstrativo de impostos — importe a planilha padrão (ou a memória/ICMS e PIS/COFINS)."}
+            ? hide5005
+              ? "Simples Nacional (PGDAS) neste mês."
+              : "Simples Nacional (PGDAS) neste mês — sem APURAÇÃO 5005."
+            : hide5005
+              ? "Sem demonstrativo de impostos neste mês — importe ICMS/IPI ou o movimento da filial."
+              : "Sem APURAÇÃO 5005 nem demonstrativo de impostos — importe a planilha padrão (ou a memória/ICMS e PIS/COFINS)."}
         </div>
       ) : null}
     </>

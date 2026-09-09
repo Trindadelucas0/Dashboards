@@ -122,9 +122,18 @@ export default function ImportTab() {
         <div>
           <div className="sec-title">Importar planilhas</div>
           <div className="sec-sub">
-            <strong>Planilha padrão</strong> (9 abas: DRE, Balancete, 5005, PIS/COFINS, IRPJ, CSLL, ST, DIFAL, IPI) — mesmo esqueleto todo mês; só mudam os números.
-            Também aceita pacote EXITO legado (Entradas, Relatório de entrada por fornecedor, Saídas, demonstrativos separados).
-            Empresa vem do dashboard aberto. Abas vazias ou IRPJ de outra empresa aparecem como aviso, não erro.
+            {company?.id === "jpg" ? (
+              <>
+                Envie Entradas/Saídas EXITO e demonstrativos de <strong>ICMS/IPI</strong> da filial (uma aba por mês ou tabela).
+                Empresa vem do dashboard aberto. A JPG <strong>não</strong> usa planilha APURAÇÃO 5005.
+              </>
+            ) : (
+              <>
+                <strong>Planilha padrão</strong> (9 abas: DRE, Balancete, 5005, PIS/COFINS, IRPJ, CSLL, ST, DIFAL, IPI) — mesmo esqueleto todo mês; só mudam os números.
+                Também aceita pacote EXITO legado (Entradas, Relatório de entrada por fornecedor, Saídas, demonstrativos separados).
+                Empresa vem do dashboard aberto. Abas vazias ou IRPJ de outra empresa aparecem como aviso, não erro.
+              </>
+            )}
           </div>
         </div>
       </div>

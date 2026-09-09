@@ -116,7 +116,9 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
   const tabs = (company?.tabs || NAV.flatMap((s) => s.items.map((i) => i.id))).filter(
     (id) => isAdmin || id !== "importar",
   );
-  const [title, sub] = TITLES[aba] || [aba, ""];
+  const [title, sub] = (empresa === "jpg"
+    ? { ...TITLES, memoria: ["Memória de Cálculo", "Livro da apuração importada — ICMS, IPI e demais tributos"] as [string, string] }
+    : TITLES)[aba] || [aba, ""];
   const months = useMemo(() => {
     if (!company) return [];
     if (!unidade || unidade === "todas") {
