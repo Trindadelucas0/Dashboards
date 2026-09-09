@@ -197,21 +197,35 @@ def impostos_table_parts(
     return parts
 
 
+def _a_recolher_com_credito(a_recolher: float, debito: float, credito: float) -> float:
+    """Se a recolher veio zerado e crédito > débito, grava saldo credor (negativo), como no ICMS."""
+    rec = float(a_recolher or 0)
+    if abs(rec) < 0.009:
+        net = round(float(debito or 0) - float(credito or 0), 2)
+        if net < -0.009:
+            return net
+    return round(rec, 2)
+
+
 def apuracao_from_imposto_row(row: dict | None, receita: float = 0.0) -> dict | None:
     if not row:
         return None
     icms_ap = float(row.get("icmsDebito") or 0)
-    icms_rec = float(row.get("icmsARecolher") or 0)
+    icms_cred = float(row.get("icmsCredito") or 0)
+    icms_rec = _a_recolher_com_credito(float(row.get("icmsARecolher") or 0), icms_ap, icms_cred)
     pct = round(100 * icms_rec / receita, 2) if receita else 0.0
+    ipi_ap = float(row.get("ipiDebito") or 0)
+    ipi_cred = float(row.get("ipiCredito") or 0)
+    ipi_rec = _a_recolher_com_credito(float(row.get("ipiARecolher") or 0), ipi_ap, ipi_cred)
     return {
-        "icms": {"apurado": icms_ap, "aRecolher": icms_rec, "pctRb": pct},
+        "icms": {"apurado": icms_ap, "aRecolher": icms_rec, "credito": icms_cred, "pctRb": pct},
         "icmsSt": {"apurado": 0.0, "aRecolher": 0.0, "pctRb": 0.0},
         "pis": {"apurado": 0.0, "aRecolher": 0.0, "pctRb": 0.0},
         "cofins": {"apurado": 0.0, "aRecolher": 0.0, "pctRb": 0.0},
         "ipi": {
-            "apurado": float(row.get("ipiDebito") or 0),
-            "aRecolher": float(row.get("ipiARecolher") or 0),
-            "credito": float(row.get("ipiCredito") or 0),
+            "apurado": ipi_ap,
+            "aRecolher": ipi_rec,
+            "credito": ipi_cred,
             "pctRb": 0.0,
         },
         "subvencao": 0.0,
@@ -363,17 +377,44 @@ def parse_demonstrativo_icms(grid: WorkbookGrid) -> dict:
 
 
 def parse_demonstrativo_ipi(grid: WorkbookGrid) -> dict:
-    """Demonstrativo IPI EXITO — saldo devedor / créditos / débitos."""
-    debitos = _find_label_value(grid, "total de débitos", "total de debitos") or 0.0
-    creditos = _find_label_value(grid, "total de créditos", "total de creditos") or 0.0
-    a_recolher = _find_label_value(grid, "saldo devedor de ipi")
-    if a_recolher is None:
-        a_recolher = debitos
+    """Demonstrativo IPI EXITO — saldo devedor / saldo credor (mesmo padrão do ICMS)."""
+    apur_i = 0
+    for i, row in enumerate(grid.rows):
+        first = _first_label(row)
+        if first == "apuracao" or first.startswith("apuracao "):
+            apur_i = i
+            break
+
+    debitos = _find_row_value(grid, apur_i, "total de debitos")
+    if debitos is None:
+        debitos = _find_row_value(grid, 0, "total de debitos")
+    creditos = _find_row_value(grid, apur_i, "total de creditos")
+    if creditos is None:
+        creditos = _find_row_value(grid, 0, "total de creditos")
+    a_recolher = _find_row_value(grid, apur_i, "saldo devedor de ipi")
+    saldo_seguinte = _find_row_value(
+        grid,
+        apur_i,
+        "saldo credor de ipi para o mes seguinte",
+        "saldo credor de ipi",
+    )
+    saldo_anterior = _find_row_value(grid, apur_i, "saldo credor do periodo anterior")
+
+    rec = float(a_recolher or 0)
+    credor = float(saldo_seguinte or 0)
+    if abs(rec) < 0.009 and credor > 0.009:
+        rec = -abs(credor)
+    elif a_recolher is None and abs(credor) < 0.009:
+        rec = float(debitos or 0)
+
     return {
         "kind": "demonstrativo_ipi",
-        "debitos": debitos,
-        "creditos": creditos,
-        "aRecolher": float(a_recolher or 0),
+        "debitos": float(debitos or 0),
+        "creditos": float(creditos or 0),
+        "saldoCredorAnterior": float(saldo_anterior or 0),
+        "saldoCredorSeguinte": credor,
+        "aRecolher": rec,
+        "apurado": float(debitos or 0),
     }
 
 
@@ -558,8 +599,11 @@ def apuracao_patch_from_demo(tipo: str, parsed: dict) -> dict:
         "pctRb": 0.0,
     }
     if tipo == "ipi":
+        rec = parsed.get("aRecolher")
+        tax["aRecolher"] = float(rec) if rec is not None else 0.0
         tax["credito"] = float(parsed.get("creditos") or 0)
         tax["apurado"] = float(parsed.get("debitos") or tax["apurado"])
+        tax["saldoCredor"] = float(parsed.get("saldoCredorSeguinte") or 0)
         out = {"apuracao": {"ipi": tax, "fonte": "demonstrativo_ipi"}, "impostosDemo": {"ipi": parsed}}
         if parsed.get("hasValores") and (parsed.get("resumo") or parsed.get("debito")):
             out["memoriaIpi"] = {

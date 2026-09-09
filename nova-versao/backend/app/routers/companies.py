@@ -565,6 +565,7 @@ def build_trimestre_totais(competencia: str, months: list) -> dict:
     nfs_sai = int(sum(int(p.get("nfsSaidas") or 0) for p in packs))
 
     icms_sum: float | None = None
+    ipi_sum: float | None = None
     pis_cofins_sum: float | None = None
     ded_sum = 0.0
     has_ded = False
@@ -572,6 +573,8 @@ def build_trimestre_totais(competencia: str, months: list) -> dict:
         ap = p.get("apuracao")
         if isinstance(ap, dict) and isinstance(ap.get("icms"), dict) and "aRecolher" in ap["icms"]:
             icms_sum = (icms_sum or 0.0) + float(ap["icms"].get("aRecolher") or 0)
+        if isinstance(ap, dict) and isinstance(ap.get("ipi"), dict) and "aRecolher" in ap["ipi"]:
+            ipi_sum = (ipi_sum or 0.0) + float(ap["ipi"].get("aRecolher") or 0)
         pc = _pis_cofins_recolher(ap if isinstance(ap, dict) else None)
         if pc is not None:
             pis_cofins_sum = (pis_cofins_sum or 0.0) + pc
@@ -581,6 +584,8 @@ def build_trimestre_totais(competencia: str, months: list) -> dict:
 
     if icms_sum is not None:
         icms_sum = round(icms_sum, 2)
+    if ipi_sum is not None:
+        ipi_sum = round(ipi_sum, 2)
     if pis_cofins_sum is not None:
         pis_cofins_sum = round(pis_cofins_sum, 2)
     deducoes = round(ded_sum, 2) if has_ded else None
@@ -606,6 +611,7 @@ def build_trimestre_totais(competencia: str, months: list) -> dict:
             "deducoes": deducoes,
             "dedPct": ded_pct,
             "icmsKpi": _icms_kpi({"icms": {"aRecolher": icms_sum}}) if icms_sum is not None else None,
+            "ipiKpi": _ipi_kpi({"ipi": {"aRecolher": ipi_sum}}) if ipi_sum is not None else None,
         },
     }
 
@@ -820,16 +826,24 @@ def _is_empty(tab: str, pack: dict, row) -> bool:
     return not pack.get("hasMovimentacao")
 
 
-def _icms_kpi(apuracao: dict | None) -> dict | None:
-    if not apuracao or not isinstance(apuracao.get("icms"), dict):
+def _tax_kpi(apuracao: dict | None, key: str, recolher_lbl: str, credito_lbl: str) -> dict | None:
+    if not apuracao or not isinstance(apuracao.get(key), dict):
         return None
-    raw = apuracao["icms"].get("aRecolher")
+    raw = apuracao[key].get("aRecolher")
     if raw is None:
         return None
     v = float(raw)
     if v < 0:
-        return {"val": abs(v), "lbl": "Crédito ICMS", "color": "green", "sub": "Saldo credor no período"}
-    return {"val": v, "lbl": "ICMS a Recolher", "color": "purple", "sub": ""}
+        return {"val": abs(v), "lbl": credito_lbl, "color": "green", "sub": "Saldo credor no período"}
+    return {"val": v, "lbl": recolher_lbl, "color": "purple", "sub": ""}
+
+
+def _icms_kpi(apuracao: dict | None) -> dict | None:
+    return _tax_kpi(apuracao, "icms", "ICMS a Recolher", "Crédito ICMS")
+
+
+def _ipi_kpi(apuracao: dict | None) -> dict | None:
+    return _tax_kpi(apuracao, "ipi", "IPI a Recolher", "Crédito IPI")
 
 
 def _das_kpi(apuracao: dict | None) -> dict | None:
@@ -874,6 +888,7 @@ def _slice(tab: str, pack: dict) -> dict:
             "pisCofinsRecolher": _pis_cofins_recolher(ap),
             "dasKpi": _das_kpi(ap),
             "icmsKpi": _icms_kpi(ap),
+            "ipiKpi": _ipi_kpi(ap),
             "nfsEntradas": pack.get("nfsEntradas") or 0,
             "nfsSaidas": pack.get("nfsSaidas") or 0,
             "hasDre": pack.get("hasDre") or False,

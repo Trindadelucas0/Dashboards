@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.6.3 — JPG IRPJ/CSLL |
-| Última atualização | 09/09/2026 (JPG Matriz Sede — IRPJ/CSLL 1º e 2º trimestre 2026) |
+| Versão do sistema | 2.6.4 — JPG IPI credor |
+| Última atualização | 09/09/2026 (JPG: IPI saldo credor como ICMS; UI sem APURAÇÃO 5005) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.6.4 | IPI saldo credor | IPI a recolher 0 com crédito > débito grava saldo credor (negativo), como o ICMS; KPI da Visão Geral/trimestre usa IPI quando não há ICMS |
 | 2.6.3 | JPG IRPJ/CSLL | Demonstrativo EXITO IRPJ+CSLL (2 abas CSOC + IRPJ-LP) na **Matriz Sede**: 1º tri em 03/2026 (IRPJ 143.211,70 / CSLL 74.476,66) e 2º tri em 06/2026 (IRPJ 137.737,02 / CSLL 77.617,99); merge no movimento; trimestre soma `irpj`/`csll` |
 | 2.6.2 | LANNIC Simples | Memória PGDAS sem linha **Base memória** (receita 478.335,06 permanece no pack para KPIs) |
 | 2.6.1 | LANNIC Simples | LANNIC 08/2026: saídas 557.733,52 − devoluções 79.398,46 = base 478.335,06; Memória sem RPA PGDAS nem diferença de bases |
@@ -127,7 +128,7 @@ Fórmulas gravadas no pack (não calculadas na UI):
 
 - ICMS 5005: `Total 5005 + Total fora = ICMS a recolher`
 - PIS/COFINS: `a recolher = débito − crédito` (resultado do mês). A coluna `SALDO CREDOR` da planilha é o crédito **acumulado** de meses anteriores; o valor da planilha fica em `aRecolherPlanilha`, só como referência, para não somar o mesmo crédito em todos os meses. No livro técnico o resumo mostra **A recolher (mês)** e, quando existir, **A recolher (planilha)**.
-- IPI: `a recolher = débito − crédito − saldo credor`
+- IPI: `a recolher = débito − crédito − saldo credor`. Na tabela ICMS/IPI das filiais JPG, se **IPI a Recolher** vier 0 e crédito > débito, grava o saldo credor (negativo). Demonstrativo EXITO: **Saldo credor de IPI para o mês seguinte** vira `aRecolher` negativo (mesmo padrão do ICMS).
 
 Pack: `memoriaCalculo` (5005 + `linhas` + `formulaIcms`), `memoriaPisCofins`, `memoriaIpi`, `memoriaIrpj`, `memoriaCsll`, `porUfSt`, `porUfDifal`.
 
@@ -402,7 +403,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 Login seed: `admin`, `baifer`, `egaplast`, `loja-maquinas`, `unica`, `jpg` (senhas no `.env`).
 
-**JPG — filiais:** login `jpg` → seletor mostra **um** card JPG → `/dashboard/jpg/visao-geral`. No header, o dropdown lista Matriz Sede, Filial PR/SP/MG, Filial Asa Sul DF, **LANNIC Dermocosméticos** e **Todas as unidades**. Movimento acumulado (`01-2026 a 08-2026`) precisa ser separado por mês (`split_movimento_mensal.py`) antes de Importar; impostos de filial (tabela ICMS/IPI) podem ir inteiros — o sistema grava cada mês na unidade do CNPJ/arquivo. Conferir Compras/Vendas/Impostos **da unidade escolhida**; Todas só soma leitura.
+**JPG — filiais:** login `jpg` → seletor mostra **um** card JPG → `/dashboard/jpg/visao-geral`. No header, o dropdown lista Matriz Sede, Filial PR/SP/MG, Filial Asa Sul DF, **LANNIC Dermocosméticos** e **Todas as unidades**. Movimento acumulado (`01-2026 a 08-2026`) precisa ser separado por mês (`split_movimento_mensal.py`) antes de Importar; impostos de filial (tabela ICMS/IPI) podem ir inteiros — o sistema grava cada mês na unidade do CNPJ/arquivo. Conferir Compras/Vendas/Impostos **da unidade escolhida**; Todas só soma leitura. Sem ICMS no mês, o KPI do topo usa **IPI a Recolher** ou **Crédito IPI**.
 
 **JPG — IRPJ/CSLL da Matriz:** login `jpg` → unidade **Matriz Sede**. Chip **Mar/2026** (1º trimestre) e **Jun/2026** (2º trimestre): aba Impostos card IRPJ/CSLL e Memória com o livro. O chip de trimestre soma o valor do último mês. Importar sem “substituir mês” (`scripts/import_jpg_irpj_csll.py` ou aba Importar).
 

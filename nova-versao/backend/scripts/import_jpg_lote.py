@@ -24,6 +24,7 @@ from app.security import sha256_bytes  # noqa: E402
 
 COMPANY = "jpg"
 REPLACE = "--replace" in sys.argv
+REPARSE = "--reparse" in sys.argv
 
 
 def _iter_paths(folder: Path) -> list[Path]:
@@ -34,17 +35,22 @@ def _iter_paths(folder: Path) -> list[Path]:
 
 
 def main() -> int:
-    args = [a for a in sys.argv[1:] if a != "--replace"]
+    args = [a for a in sys.argv[1:] if a not in ("--replace", "--reparse")]
     if not args:
-        print("Uso: import_jpg_lote.py PASTA [--replace]")
+        print("Uso: import_jpg_lote.py PASTA_OU_ARQUIVO [...] [--replace] [--reparse]")
         return 2
-    folder = Path(args[0])
-    if not folder.is_dir():
-        print("ERR pasta ausente", folder)
-        return 1
-    paths = _iter_paths(folder)
+    paths: list[Path] = []
+    for a in args:
+        item = Path(a)
+        if folder := (item if item.is_dir() else None):
+            paths.extend(_iter_paths(folder))
+        elif item.is_file():
+            paths.append(item)
+        else:
+            print("ERR ausente", item)
+            return 1
     if not paths:
-        print("ERR sem .xls/.xlsx", folder)
+        print("ERR sem .xls/.xlsx")
         return 1
 
     db = SessionLocal()
@@ -83,7 +89,7 @@ def main() -> int:
                     .filter(ImportRecord.file_hash == (item.get("file_hash") or file_hash))
                     .first()
                 )
-                if existing and not REPLACE:
+                if existing and not REPLACE and not REPARSE:
                     print("DUP", path.name, competencia, unidade)
                     skipped += 1
                     continue

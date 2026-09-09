@@ -43,6 +43,8 @@ ChartJS.defaults.font.family = "Inter, system-ui, sans-serif";
 
 const PAL = ["#22a329", "#3b82f6", "#f59e0b", "#8b5cf6", "#06b6d4", "#f97316", "#ef4444", "#10b981", "#64748b"];
 
+type TaxKpi = { val: number; lbl: string; color: string; sub: string };
+
 type TrimestreTotais = {
   totalCompras: number;
   cfopSaidasTotal: number;
@@ -54,7 +56,8 @@ type TrimestreTotais = {
   pisCofinsRecolher: number | null;
   deducoes: number | null;
   dedPct: number | null;
-  icmsKpi: { val: number; lbl: string; color: string; sub: string } | null;
+  icmsKpi: TaxKpi | null;
+  ipiKpi?: TaxKpi | null;
 };
 
 type TrimestrePayload = {
@@ -75,6 +78,17 @@ function rankClass(i: number) {
   if (i === 1) return "g2";
   if (i === 2) return "g3";
   return "gn";
+}
+
+function kpiMeaningful(k: TaxKpi | null | undefined) {
+  return !!(k && Math.abs(Number(k.val) || 0) > 0.009);
+}
+
+function pickTaxKpi(das: TaxKpi | null | undefined, icms: TaxKpi | null | undefined, ipi: TaxKpi | null | undefined) {
+  if (das) return das;
+  if (kpiMeaningful(icms)) return icms;
+  if (kpiMeaningful(ipi)) return ipi;
+  return icms || ipi || null;
 }
 
 function moneyOrDash(n: number | null | undefined) {
@@ -225,23 +239,26 @@ function TrimestreBlock({ tri, asMain }: { tri: TrimestrePayload; asMain?: boole
           sub="Vendas − compras (trimestre)"
           neg={tot.saldoOperacional < 0}
         />
-        {tot.icmsKpi ? (
-          <Kpi
-            color={tot.icmsKpi.color || "purple"}
-            icon="landmark"
-            value={brlCompact(tot.icmsKpi.val)}
-            label={tot.icmsKpi.lbl}
-            sub={tot.icmsKpi.sub || "Soma mensal no trimestre"}
-          />
-        ) : (
-          <Kpi
-            color="yellow"
-            icon="coins"
-            value={tot.pisCofinsRecolher != null ? brlCompact(Number(tot.pisCofinsRecolher)) : "—"}
-            label="PIS + COFINS"
-            sub={tot.pisCofinsRecolher != null ? "Soma a recolher no trimestre" : "Sem apuração no trimestre"}
-          />
-        )}
+        {(() => {
+          const taxKpi = pickTaxKpi(null, tot.icmsKpi, tot.ipiKpi);
+          return taxKpi ? (
+            <Kpi
+              color={taxKpi.color || "purple"}
+              icon="landmark"
+              value={brlCompact(taxKpi.val)}
+              label={taxKpi.lbl}
+              sub={taxKpi.sub || "Soma mensal no trimestre"}
+            />
+          ) : (
+            <Kpi
+              color="yellow"
+              icon="coins"
+              value={tot.pisCofinsRecolher != null ? brlCompact(Number(tot.pisCofinsRecolher)) : "—"}
+              label="PIS + COFINS"
+              sub={tot.pisCofinsRecolher != null ? "Soma a recolher no trimestre" : "Sem apuração no trimestre"}
+            />
+          );
+        })()}
       </div>
     </div>
   );
@@ -260,11 +277,16 @@ function darkBar(opts?: { horizontal?: boolean }) {
   };
 }
 
-function emptyMsg(aba: string) {
+function emptyMsg(aba: string, companyId?: string) {
   if (aba === "dre") return "Importe a planilha RESULTADO para preencher a DRE. CMV e margens não são estimados.";
   if (aba === "impostos") return "Impostos só aparecem depois de importar a planilha de apuração. Não inventamos valor.";
   if (aba === "balancete") return "Balancete ainda não importado. Não inventamos saldo contábil.";
-  if (aba === "memoria") return "Importe a planilha padrão (ou APURAÇÃO 5005 / PIS/COFINS) para ver a memória linha a linha.";
+  if (aba === "memoria") {
+    if (companyId === "jpg") {
+      return "Importe o demonstrativo de ICMS/IPI (ou a tabela da filial) para ver a memória linha a linha.";
+    }
+    return "Importe a planilha padrão (ou APURAÇÃO 5005 / PIS/COFINS) para ver a memória linha a linha.";
+  }
   if (aba === "recebimentos") {
     return "Sem movimento neste mês. Importe ENTRADAS/SAÍDAS (workbook parcial com movimento ou planilha EXITO).";
   }
@@ -322,7 +344,9 @@ export default function AbaPage() {
     finalidade: ["Finalidade de Compras", "Por CFOP — clique para expandir fornecedores"],
     vendas: ["Vendas", "Faturamento de saídas por cliente e UF"],
     impostos: ["Impostos", "Apuração — só entra o que foi importado"],
-    memoria: ["Memória de Cálculo", "Livro da planilha padrão — ICMS 5005, PIS/COFINS e demais tributos"],
+    memoria: company?.id === "jpg"
+      ? ["Memória de Cálculo", "Livro da apuração importada — ICMS, IPI e demais tributos"]
+      : ["Memória de Cálculo", "Livro da planilha padrão — ICMS 5005, PIS/COFINS e demais tributos"],
     recebimentos: ["Recebimentos/Pagamentos", "Estimativa pelo movimento fiscal"],
     balancete: ["Balancete", "Contábil"],
     dre: ["DRE", "Demonstração do resultado"],
@@ -390,7 +414,7 @@ export default function AbaPage() {
       {loading ? <div className="notice">Carregando…</div> : null}
       {error ? <div className="error-banner" role="alert">{error}</div> : null}
       {!loading && !error && payload?.empty && aba !== "impostos" && aba !== "recebimentos" ? (
-        <div className="alert-box warn">{emptyMsg(aba)}</div>
+        <div className="alert-box warn">{emptyMsg(aba, company?.id)}</div>
       ) : null}
       {!loading && !error && tri && aba !== "dre" ? <TrimestreBlock tri={tri} asMain={viewingTrimestre} /> : null}
 
@@ -458,9 +482,10 @@ export default function AbaPage() {
             const receita = Number(d.receitaBruta ?? totalVend);
             const vendas = Number(d.cfopSaidasTotal ?? totalVend);
             const saldo = Number(d.saldoOperacional ?? vendas - totalComp);
-            const icmsKpi = d.icmsKpi as { val: number; lbl: string; color: string; sub: string } | null;
-            const dasKpi = d.dasKpi as { val: number; lbl: string; color: string; sub: string } | null;
-            const taxKpi = dasKpi || icmsKpi;
+            const icmsKpi = d.icmsKpi as TaxKpi | null;
+            const dasKpi = d.dasKpi as TaxKpi | null;
+            const ipiKpi = d.ipiKpi as TaxKpi | null;
+            const taxKpi = pickTaxKpi(dasKpi, icmsKpi, ipiKpi);
             const pisCofins = d.pisCofinsRecolher;
             const carga = d.dedPct;
             return (
@@ -1223,6 +1248,7 @@ export default function AbaPage() {
                         : null
                       : (ap?.[key as keyof typeof ap] as { aRecolher?: number; apurado?: number } | null | undefined);
                   const aRec = row ? Number(row.aRecolher ?? row.apurado) : null;
+                  const credor = aRec != null && aRec < -0.005;
                   const pctSv = row ? pctSobreVendas(row.aRecolher ?? row.apurado) : null;
                   const stUfEntries =
                     key === "icmsSt"
@@ -1234,9 +1260,13 @@ export default function AbaPage() {
                     <div className="tax-card" key={key}>
                       <div className="tax-card-head">
                         <div className={`tax-name ${curClass}`}>{name}</div>
-                        <span className={`chip ${chip}`}>{row ? "Importado" : "Em apuração"}</span>
+                        <span className={`chip ${row ? (credor ? "gr" : chip) : chip}`}>
+                          {row ? (credor ? "Saldo credor" : "Importado") : "Em apuração"}
+                        </span>
                       </div>
-                      <div className={`tax-cur ${curClass}`}>{row && aRec != null ? brl(aRec) : "—"}</div>
+                      <div className={`tax-cur ${credor ? "t-success" : curClass}`}>
+                        {row && aRec != null ? brl(credor ? Math.abs(aRec) : aRec) : "—"}
+                      </div>
                       <div className="tax-prev">
                         {row
                           ? `Apurado: ${brl(row.apurado)} · % s/ vendas: ${fmtPct(pctSv)}`

@@ -110,6 +110,117 @@ def test_jpg_impostos_table_parts(tmp_path: Path):
     assert not result.get("errors")
 
 
+def test_jpg_ipi_table_saldo_credor(tmp_path: Path):
+    wb = Workbook()
+    ws = wb.active
+    ws.append(
+        [
+            "Empresa",
+            "Filial",
+            "Mês",
+            "ICMS Crédito",
+            "ICMS Débito",
+            "ICMS a Recolher",
+            "IPI Crédito",
+            "IPI Débito",
+            "IPI a Recolher",
+        ]
+    )
+    ws.append(["JPG", "Filial PR", "Agosto", 0, 0, 0, 324978.79, 323063.81, 0])
+    path = tmp_path / "ipi filial pr 01 a 08.xlsx"
+    wb.save(path)
+    result = classify_and_extract(path)
+    parts = result.get("parts") or []
+    ago = next(p for p in parts if p["competencia"] == "2026-08")
+    ipi = ago["pack_patch"]["apuracao"]["ipi"]
+    assert ipi["aRecolher"] == pytest.approx(-1914.98, abs=0.02)
+    assert ipi["credito"] == pytest.approx(324978.79, abs=0.02)
+
+
+def test_jpg_demonstrativo_ipi_saldo_credor():
+    from app.extract.parse_impostos import apuracao_patch_from_demo, parse_demonstrativo_ipi
+    from app.extract.workbook import WorkbookGrid
+
+    def row(label, valor):
+        cells = [""] * 13
+        cells[0] = label
+        cells[12] = valor
+        return cells
+
+    grid = WorkbookGrid(
+        path="ipi.xls",
+        sheet_name="Demonst. IPI 08-2026",
+        kind="xlsx",
+        rows=[
+            ["DEMONSTRATIVO DO IPI"],
+            ["APURAÇÃO"],
+            row("Saldo credor do período anterior", 0),
+            row("Total de débitos", 323063.81),
+            row("Total de créditos", 324978.79),
+            row("Saldo devedor de IPI", 0),
+            row("Saldo credor de IPI para o mês seguinte", 1914.98),
+        ],
+    )
+    parsed = parse_demonstrativo_ipi(grid)
+    assert parsed["aRecolher"] == pytest.approx(-1914.98, abs=0.02)
+    assert parsed["saldoCredorSeguinte"] == pytest.approx(1914.98, abs=0.02)
+    patch = apuracao_patch_from_demo("ipi", parsed)
+    assert patch["apuracao"]["ipi"]["aRecolher"] == pytest.approx(-1914.98, abs=0.02)
+    assert patch["apuracao"]["ipi"]["saldoCredor"] == pytest.approx(1914.98, abs=0.02)
+
+
+def test_jpg_demonstrativo_ipi_saldo_devedor():
+    from app.extract.parse_impostos import parse_demonstrativo_ipi
+    from app.extract.workbook import WorkbookGrid
+
+    def row(label, valor):
+        cells = [""] * 13
+        cells[0] = label
+        cells[12] = valor
+        return cells
+
+    grid = WorkbookGrid(
+        path="ipi.xls",
+        sheet_name="Demonst. IPI 01-2026",
+        kind="xlsx",
+        rows=[
+            ["DEMONSTRATIVO DO IPI"],
+            ["APURAÇÃO"],
+            row("Total de débitos", 8225.69),
+            row("Total de créditos", 1139.49),
+            row("Saldo devedor de IPI", 7086.2),
+            row("Saldo credor de IPI para o mês seguinte", 0),
+        ],
+    )
+    parsed = parse_demonstrativo_ipi(grid)
+    assert parsed["aRecolher"] == pytest.approx(7086.2, abs=0.02)
+
+
+def test_jpg_ipi_saldo_credor_when_a_recolher_zero(tmp_path: Path):
+    wb = Workbook()
+    ws = wb.active
+    ws.append(
+        [
+            "Empresa",
+            "Filial",
+            "Mês",
+            "ICMS Crédito",
+            "ICMS Débito",
+            "ICMS a Recolher",
+            "IPI Crédito",
+            "IPI Débito",
+            "IPI a Recolher",
+        ]
+    )
+    ws.append(["JPG", "Filial PR", "Março", 0, 0, 0, 100, 20, 0])
+    path = tmp_path / "ipi filial pr 01 a 08.xlsx"
+    wb.save(path)
+    result = classify_and_extract(path)
+    mar = (result.get("parts") or [])[0]
+    assert mar["pack_patch"]["apuracao"]["ipi"]["aRecolher"] == pytest.approx(-80, abs=0.02)
+    assert mar["pack_patch"]["apuracao"]["ipi"]["credito"] == pytest.approx(100, abs=0.02)
+
+
 def test_split_and_probe_movimento(tmp_path: Path):
     from scripts.split_movimento_mensal import split_file
 

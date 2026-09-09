@@ -7,6 +7,7 @@ from app.extract.parse_impostos import (
     apuracao_patch_from_demo,
     composicao_from_apuracao,
     parse_demonstrativo_icms,
+    parse_demonstrativo_ipi,
 )
 from app.extract.pipeline import classify_and_extract
 from app.extract.workbook import WorkbookGrid
@@ -146,3 +147,24 @@ def test_real_apuracao_icms_jun_a_recolher():
     assert parsed["aRecolher"] == pytest.approx(14834.69, abs=0.02)
     assert parsed["debitos"] == pytest.approx(161996.94, abs=0.02)
     assert parsed["creditos"] == pytest.approx(147162.25, abs=0.02)
+
+
+def test_parse_demonstrativo_ipi_saldo_credor():
+    grid = WorkbookGrid(
+        "ipi.xls",
+        "Demonst. IPI",
+        [
+            ["DEMONSTRATIVO DO IPI"],
+            ["APURAÇÃO"],
+            ["Total de débitos", "20"],
+            ["Total de créditos", "100"],
+            ["Saldo credor do período anterior", "0"],
+            ["Saldo credor de IPI para o mês seguinte", "80"],
+        ],
+        "html",
+    )
+    parsed = parse_demonstrativo_ipi(grid)
+    assert parsed["aRecolher"] == pytest.approx(-80, abs=0.02)
+    assert parsed["creditos"] == pytest.approx(100, abs=0.02)
+    patch = apuracao_patch_from_demo("ipi", parsed)
+    assert patch["apuracao"]["ipi"]["aRecolher"] == pytest.approx(-80, abs=0.02)
