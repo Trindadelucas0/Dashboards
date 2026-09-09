@@ -26,6 +26,7 @@ from app.extract.parse_impostos import (
     parse_demonstrativo_icms,
     parse_demonstrativo_ipi,
     parse_demonstrativo_pis_cofins,
+    parse_demonstrativo_exito_irpj_csll,
     parse_impostos_icms_ipi,
     parse_st_mensal,
     impostos_table_parts,
@@ -55,6 +56,15 @@ def _extract_pis_cofins_sheets(sheets: list[WorkbookGrid], filename: str) -> lis
     for sh in sheets:
         tipo = detect_sheet_tipo(sh, filename)
         if tipo in ("pis", "cofins"):
+            out.append((tipo, sh))
+    return out
+
+
+def _extract_irpj_csll_sheets(sheets: list[WorkbookGrid], filename: str) -> list[tuple[str, WorkbookGrid]]:
+    out: list[tuple[str, WorkbookGrid]] = []
+    for sh in sheets:
+        tipo = detect_sheet_tipo(sh, filename)
+        if tipo in ("irpj", "csll"):
             out.append((tipo, sh))
     return out
 
@@ -177,6 +187,39 @@ def _apply_pis_cofins_extract(result: dict, tax_sheets: list[tuple[str, Workbook
     return result
 
 
+def _apply_irpj_csll_extract(
+    result: dict, tax_sheets: list[tuple[str, WorkbookGrid]], filename: str
+) -> dict:
+    meta_grid = tax_sheets[0][1]
+    kinds = {t for t, _ in tax_sheets}
+    result["tipo"] = "irpj_csll" if len(kinds) > 1 else tax_sheets[0][0]
+    result["sheet"] = ", ".join(sh.sheet_name for _, sh in tax_sheets)
+    result["parser"] = meta_grid.kind
+    result["cnpj"] = scan_cnpj(meta_grid)
+    result["razao"] = scan_razao(meta_grid)
+    competencia, period_text = scan_period(meta_grid)
+    if not competencia:
+        competencia = competencia_from_filename(filename) or competencia_from_filename(
+            meta_grid.sheet_name or ""
+        )
+    result["competencia"] = competencia
+    result["period"] = period_text
+
+    pack_patch: dict = {}
+    meta: dict = {}
+    for tributo, sh in tax_sheets:
+        parsed = parse_demonstrativo_exito_irpj_csll(sh, tributo)
+        pack_patch = _deep_merge(pack_patch, apuracao_patch_from_demo(tributo, parsed))
+        meta[tributo] = {
+            "aRecolher": parsed.get("aRecolher"),
+            "apurado": parsed.get("apurado"),
+            "sheet": sh.sheet_name,
+        }
+    result["pack_patch"] = pack_patch
+    result["meta"] = meta
+    return result
+
+
 def _empty_result(filename: str, tipo: str, extra: dict | None = None) -> dict:
     base = {
         "file": filename,
@@ -278,6 +321,48 @@ def classify_and_extract(
             return result
         return result
 
+    irpj_sheets = _extract_irpj_csll_sheets(sheets, filename)
+    if irpj_sheets:
+        result = {
+            "file": filename,
+            "sheet": "",
+            "parser": grid.kind,
+            "tipo": "irpj_csll",
+            "cnpj": "",
+            "razao": "",
+            "competencia": "",
+            "period": "",
+            "company_id": None,
+            "company_label": None,
+            "unidade": "matriz",
+            "errors": [],
+            "warnings": [],
+            "pack_patch": None,
+            "lines": [],
+            "meta": {},
+        }
+        result = _apply_irpj_csll_extract(result, irpj_sheets, filename)
+        company, unidade = resolve_company(result["cnpj"], result["razao"], filename)
+        if not company and db is not None:
+            from app.companies import resolve_from_db
+
+            company, unidade = resolve_from_db(db, result["cnpj"], result["razao"] or filename)
+        if company and not result["cnpj"] and company.cnpj:
+            result["cnpj"] = company.cnpj
+        result["company_id"] = company.id if company else None
+        result["company_label"] = company.label if company else None
+        if company and company.id == "jpg":
+            result["unidade"] = unidade or "sede"
+        else:
+            result["unidade"] = unidade or "matriz"
+        if not company:
+            result["errors"].append("CNPJ/razão não mapeados para nenhuma empresa cadastrada")
+            return result
+        if not result["competencia"]:
+            result["errors"].append("Competência não identificada no cabeçalho nem no nome do arquivo")
+            return result
+        return result
+
     cnpj = scan_cnpj(grid)
     razao = scan_razao(grid)
     competencia, period_text = scan_period(grid)
@@ -342,6 +427,8 @@ def classify_and_extract(
     if not competencia and tipo not in (
         "impostos",
         "irpj",
+        "csll",
+        "irpj_csll",
         "ipi",
         "pis",
         "cofins",
@@ -533,9 +620,9 @@ def classify_and_extract(
             }
         return result
 
-    if tipo == "irpj":
-        result["warnings"].append("IRPJ/CSLL: payload estrutural até calibração das linhas do demonstrativo")
-        result["pack_patch"] = {"irpj": {"source": filename, "sheet": grid.sheet_name, "rows": len(grid.rows)}}
+    if tipo in ("irpj", "csll"):
+        parsed = parse_demonstrativo_exito_irpj_csll(grid, tipo)
+        result["pack_patch"] = apuracao_patch_from_demo(tipo, parsed)
         return result
 
     result["errors"].append(f"Tipo de planilha não reconhecido ({tipo})")

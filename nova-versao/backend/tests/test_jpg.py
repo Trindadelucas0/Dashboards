@@ -176,6 +176,56 @@ def test_aggregate_todas_does_not_invent():
     assert pack["nfsEntradas"] == 2
 
 
+def test_aggregate_includes_irpj_csll():
+    packs = [
+        {
+            "apuracao": {"irpj": {"aRecolher": 143211.70}, "csll": {"aRecolher": 74476.66}},
+            "memoriaIrpj": {"aRecolher": 143211.70, "linhas": [{"label": "Saldo devedor de IRPJ", "valor": 143211.70}]},
+            "memoriaCsll": {"aRecolher": 74476.66, "linhas": [{"label": "Saldo devedor", "valor": 74476.66}]},
+        },
+        {"apuracao": {"ipi": {"aRecolher": 40}}},
+    ]
+    pack = aggregate_fiscal_packs(packs, "1º Trimestre 2026")
+    assert pack["apuracao"]["irpj"]["aRecolher"] == pytest.approx(143211.70, abs=0.02)
+    assert pack["apuracao"]["csll"]["aRecolher"] == pytest.approx(74476.66, abs=0.02)
+    assert pack["apuracao"]["ipi"]["aRecolher"] == pytest.approx(40, abs=0.02)
+    assert pack["memoriaIrpj"]["aRecolher"] == pytest.approx(143211.70, abs=0.02)
+    assert pack["memoriaCsll"]["aRecolher"] == pytest.approx(74476.66, abs=0.02)
+
+
+FIXTURE_IRPJ_1T = ROOT / "fixtures" / "jpg-padrao" / "irpj-csll-1t-2026.xls"
+FIXTURE_IRPJ_2T = ROOT / "fixtures" / "jpg-padrao" / "irpj-csll-2t-2026.xls"
+
+
+@pytest.mark.skipif(not FIXTURE_IRPJ_1T.exists(), reason="Fixture IRPJ/CSLL 1T ausente")
+def test_jpg_sede_irpj_csll_1t():
+    result = classify_and_extract(FIXTURE_IRPJ_1T)
+    assert result["tipo"] == "irpj_csll"
+    assert result["company_id"] == "jpg"
+    assert result["unidade"] == "sede"
+    assert result["competencia"] == "2026-03"
+    assert not result["errors"]
+    ap = (result.get("pack_patch") or {}).get("apuracao") or {}
+    assert ap["irpj"]["aRecolher"] == pytest.approx(143211.70, abs=0.02)
+    assert ap["csll"]["aRecolher"] == pytest.approx(74476.66, abs=0.02)
+    assert ap["irpj"]["fonte"] == "demonstrativo_exito_irpj"
+    assert ap["csll"]["fonte"] == "demonstrativo_exito_csll"
+    assert (result.get("pack_patch") or {}).get("memoriaIrpj", {}).get("aRecolher") == pytest.approx(143211.70, abs=0.02)
+
+
+@pytest.mark.skipif(not FIXTURE_IRPJ_2T.exists(), reason="Fixture IRPJ/CSLL 2T ausente")
+def test_jpg_sede_irpj_csll_2t():
+    result = classify_and_extract(FIXTURE_IRPJ_2T)
+    assert result["tipo"] == "irpj_csll"
+    assert result["company_id"] == "jpg"
+    assert result["unidade"] == "sede"
+    assert result["competencia"] == "2026-06"
+    assert not result["errors"]
+    ap = (result.get("pack_patch") or {}).get("apuracao") or {}
+    assert ap["irpj"]["aRecolher"] == pytest.approx(137737.02, abs=0.02)
+    assert ap["csll"]["aRecolher"] == pytest.approx(77617.99, abs=0.02)
+
+
 @pytest.mark.skipif(not FIXTURE_ENT.exists(), reason="Fixture jpg-padrao ausente")
 def test_jpg_sede_jan_split_golden():
     path = FIXTURE_ENT

@@ -73,6 +73,23 @@ def test_detect_pis_cofins_by_sheet_not_filename():
     assert detect_sheet_tipo(cof, "Apuração pis e cofins 012026.xls") == "cofins"
 
 
+def test_detect_irpj_csll_by_sheet_not_filename():
+    csll = WorkbookGrid(
+        "irpj-csll-1t-2026.xls",
+        "Demonst. CSOC",
+        [["DEMONSTRATIVO DA CSLL"]],
+        "html",
+    )
+    irpj = WorkbookGrid(
+        "irpj-csll-1t-2026.xls",
+        "Demonst. IRPJ-LP",
+        [["DEMONSTRATIVO DO IRPJ"]],
+        "html",
+    )
+    assert detect_sheet_tipo(csll, "irpj-csll-1t-2026.xls") == "csll"
+    assert detect_sheet_tipo(irpj, "irpj-csll-1t-2026.xls") == "irpj"
+
+
 def test_resolve_catalog_companies():
     company, unit = resolve_company("03185564000134", "EGAPLAST ARTEFATOS", "Entradas.xls")
     assert company and company.id == "egaplast"

@@ -469,7 +469,7 @@ def aggregate_fiscal_packs(packs: list[dict], competencia_label: str) -> dict:
     compras = _sum("totalCompras")
     vendas = round(sum(_vendas_val(p) for p in packs), 2)
     receita = _sum("receitaBruta") or vendas
-    ap_keys = ("das", "icms", "icmsSt", "pis", "cofins", "ipi")
+    ap_keys = ("das", "icms", "icmsSt", "pis", "cofins", "ipi", "irpj", "csll")
     apuracao: dict = {}
     for k in ap_keys:
         bucket: dict[str, float] = {}
@@ -486,6 +486,14 @@ def aggregate_fiscal_packs(packs: list[dict], competencia_label: str) -> dict:
     subv = round(sum(float((p.get("apuracao") or {}).get("subvencao") or p.get("subvencao") or 0) for p in packs), 2)
     if subv:
         apuracao["subvencao"] = subv
+
+    memoria_extra: dict = {}
+    for mem_key in ("memoriaIrpj", "memoriaCsll"):
+        for p in reversed(packs):
+            val = p.get(mem_key)
+            if val:
+                memoria_extra[mem_key] = val
+                break
 
     clientes = _merge_party_lists(packs, "clientes")
     if not clientes:
@@ -515,6 +523,7 @@ def aggregate_fiscal_packs(packs: list[dict], competencia_label: str) -> dict:
         "deducoes": None,
         "competenciaLabel": competencia_label,
         "isTrimestre": True,
+        **memoria_extra,
     }
     return _enrich_fiscal(pack)
 

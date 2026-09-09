@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.6.2 — LANNIC Simples |
-| Última atualização | 09/09/2026 (Memória LANNIC sem linha Base memória) |
+| Versão do sistema | 2.6.3 — JPG IRPJ/CSLL |
+| Última atualização | 09/09/2026 (JPG Matriz Sede — IRPJ/CSLL 1º e 2º trimestre 2026) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.6.3 | JPG IRPJ/CSLL | Demonstrativo EXITO IRPJ+CSLL (2 abas CSOC + IRPJ-LP) na **Matriz Sede**: 1º tri em 03/2026 (IRPJ 143.211,70 / CSLL 74.476,66) e 2º tri em 06/2026 (IRPJ 137.737,02 / CSLL 77.617,99); merge no movimento; trimestre soma `irpj`/`csll` |
 | 2.6.2 | LANNIC Simples | Memória PGDAS sem linha **Base memória** (receita 478.335,06 permanece no pack para KPIs) |
 | 2.6.1 | LANNIC Simples | LANNIC 08/2026: saídas 557.733,52 − devoluções 79.398,46 = base 478.335,06; Memória sem RPA PGDAS nem diferença de bases |
 | 2.6.0 | LANNIC Simples | Unidade JPG `lannic` (CNPJ 48285395000142, login continua `jpg`): pack 08/2026 Simples Nacional (PGDAS); DAS em `apuracao.das`; partilha só em `memoriaSimples`; sem NFs/DRE; cards Impostos/Memória de SN |
@@ -198,7 +199,7 @@ Cadastro estático: `backend/app/companies.py` (+ `KEEP_USERNAMES`) e `backend/s
 
 | Unidade (`unidade`) | Label | CNPJ | Pasta deste lote |
 |---------------------|-------|------|------------------|
-| `sede` | Matriz Sede | 21051983000165 | `pasta temporaria/711- JPG PRODUTOS MATRIZ` (só Entradas/Saídas) |
+| `sede` | Matriz Sede | 21051983000165 | `pasta temporaria/711- JPG PRODUTOS MATRIZ` (Entradas/Saídas) + IRPJ/CSLL trimestral EXITO (03/2026 e 06/2026) |
 | `asa_sul` | Filial Asa Sul DF | 21051983000327 | `712-JPG FILIAL BRASILIA` + ICMS/IPI Asa Sul |
 | `pr` | Filial PR | 21051983000670 | `81-JPG FILIAL CURITIBA` + IPI PR |
 | `sp` | Filial SP | 21051983000750 | `82- JPG FILIAL SÃO PAULO` + ICMS/IPI SP |
@@ -208,6 +209,8 @@ Cadastro estático: `backend/app/companies.py` (+ `KEEP_USERNAMES`) e `backend/s
 Filial DF (`matriz` no legado) — mesmo CNPJ da Asa Sul, **sem** Excel na pasta temporária.
 
 **LANNIC 08/2026 (Simples Nacional):** receita no pack R$ 478.335,06 (saídas 557.733,52 − devoluções 79.398,46); a Memória **não** mostra linha “Base memória”. DAS R$ 28.398,35 (alíq. 5,9369184503617% × base). Partilha só na memória: IRPJ 1.848,41 · CSLL 1.176,26 · COFINS 0 · PIS 0 · INSS/CPP 14.115,16 · ICMS 11.258,52. Sem linhas NF, sem DRE/Balancete. RBT12 560.212,54 · RBA 1.038.547,60 · faixa 360.000,01 a 720.000,00 · fator r 1,00 · Anexo I Comércio · Seção II ST · Tabela 7 PIS/COFINS monofásicos.
+
+**JPG Matriz — IRPJ/CSLL (lucro presumido, 1º e 2º trimestre 2026):** arquivo EXITO com abas `Demonst. CSOC` + `Demonst. IRPJ-LP`. Cabeçalho CNPJ da sede; competência = último mês do trimestre. **Não** espalha pelos 3 meses. Saldo devedor: mar/2026 IRPJ 143.211,70 e CSLL 74.476,66; jun/2026 IRPJ 137.737,02 e CSLL 77.617,99. Fixtures: `fixtures/jpg-padrao/irpj-csll-1t-2026.xls` e `irpj-csll-2t-2026.xls`. Import merge: `python scripts/import_jpg_irpj_csll.py`.
 
 Gravação: `FiscalMonth(company_id=jpg, competencia, unidade)` isolado. Merge só no mesmo mês **e** mesma unidade. **Nunca** persistir `unidade=todas`.
 
@@ -304,7 +307,8 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | Detecção + extração workbook | `backend/app/extract/parse_workbook_padrao.py` |
 | Classificação tipo (Entradas / por fornecedor) | `backend/app/extract/classify.py` → `detect_sheet_tipo` |
 | Parser 5005 | `backend/app/extract/parse_memoria_5005.py` |
-| Parser PIS/COFINS/IPI/IRPJ | `backend/app/extract/parse_impostos.py` |
+| Parser PIS/COFINS/IPI/IRPJ | `backend/app/extract/parse_impostos.py` (`parse_demonstrativo_exito_irpj_csll`) |
+| Import IRPJ/CSLL JPG sede | `backend/scripts/import_jpg_irpj_csll.py` (merge 03/2026 e 06/2026) |
 | Parser movimento | `backend/app/extract/parse_movimento.py` |
 | Parser DRE / Análise Vertical | `backend/app/extract/parse_dre.py` (`extract_dre_vertical`, `parse_dre_padrao_column`) |
 | Parser Balancete EXITO / padrão | `backend/app/extract/parse_balancete.py` |
@@ -321,7 +325,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | Estilos dashboard | `frontend/app/dashboard.css` |
 | UI import | `frontend/components/ImportTab.tsx` |
 | Catálogo de empresas | `backend/app/companies.py`, `backend/scripts/seed.py` |
-| JPG unidades / consolidado | `company_detail` + `tab_payload` (`unidade=todas`) em `backend/app/routers/companies.py`; dropdown em `frontend/app/dashboard/[empresa]/layout-inner.tsx` |
+| JPG unidades / consolidado | `company_detail` + `tab_payload` (`unidade=todas`) em `backend/app/routers/companies.py`; `aggregate_fiscal_packs` soma `irpj`/`csll`; dropdown em `frontend/app/dashboard/[empresa]/layout-inner.tsx` |
 | LANNIC Simples | `Unit lannic` em `backend/app/companies.py`; pack `scripts/seed_jpg_lannic.py`; UI Impostos `page.tsx` + `MemoriaLivro.tsx` |
 | Split movimento acumulado | `backend/scripts/split_movimento_mensal.py` |
 | Testes golden | `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py` |
@@ -346,6 +350,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 15. DRE Análise Vertical sem CNPJ herda a empresa do dashboard (como 5005/ST); não inventa `lucLiq` se a linha de resultado operacional estiver vazia.
 16. Balancete EXITO mensal (Única e demais): totais Ativo/Passivo/Resultado vêm do Saldo Atual das contas `1`/`2`/`3`; um arquivo = uma competência.
 18. JPG: um `company_id`; filiais só em `unidade`. Consolidado `todas` é soma na API, não é slot no Postgres. Export CPF/CNPJ exige filial específica.
+19. JPG IRPJ/CSLL EXITO (abas CSOC + IRPJ-LP): grava só no último mês do trimestre (`sede` 03 e 06/2026); merge no movimento; o chip de trimestre soma `apuracao.irpj`/`csll` sem espalhar pelos outros dois meses.
 
 ## 6. Pendências de dados (Única)
 
@@ -398,5 +403,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 Login seed: `admin`, `baifer`, `egaplast`, `loja-maquinas`, `unica`, `jpg` (senhas no `.env`).
 
 **JPG — filiais:** login `jpg` → seletor mostra **um** card JPG → `/dashboard/jpg/visao-geral`. No header, o dropdown lista Matriz Sede, Filial PR/SP/MG, Filial Asa Sul DF, **LANNIC Dermocosméticos** e **Todas as unidades**. Movimento acumulado (`01-2026 a 08-2026`) precisa ser separado por mês (`split_movimento_mensal.py`) antes de Importar; impostos de filial (tabela ICMS/IPI) podem ir inteiros — o sistema grava cada mês na unidade do CNPJ/arquivo. Conferir Compras/Vendas/Impostos **da unidade escolhida**; Todas só soma leitura.
+
+**JPG — IRPJ/CSLL da Matriz:** login `jpg` → unidade **Matriz Sede**. Chip **Mar/2026** (1º trimestre) e **Jun/2026** (2º trimestre): aba Impostos card IRPJ/CSLL e Memória com o livro. O chip de trimestre soma o valor do último mês. Importar sem “substituir mês” (`scripts/import_jpg_irpj_csll.py` ou aba Importar).
 
 **JPG — LANNIC:** no dropdown escolha **LANNIC Dermocosméticos**, mês **Ago/2026**. Visão Geral: receita 478.335,06 e KPI **DAS a Recolher** 28.398,35. Impostos: card Simples Nacional (sem cards ICMS/PIS vazios). Memória: saídas 557.733,52 e devoluções 79.398,46 (sem linha Base memória) + partilha. Compras/Vendas/DRE/Balancete ficam vazios (sem NFs). Depois de `seed.py`, rode `python scripts/seed_jpg_lannic.py` no backend para gravar o pack. Sem planilha EXITO deste CNPJ na pasta temporária.

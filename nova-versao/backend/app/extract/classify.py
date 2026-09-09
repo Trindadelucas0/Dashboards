@@ -299,6 +299,11 @@ def detect_sheet_tipo(grid: WorkbookGrid, filename: str) -> str:
         )
     ):
         return "dre"
+    name_fold_ir = _fold_text(name)
+    if "csoc" in name_fold_ir or "demonstrativo da csll" in head_fold_full:
+        return "csll"
+    if "irpj-lp" in name_fold_ir or "irpj lp" in name_fold_ir or "demonstrativo do irpj" in head_fold_full:
+        return "irpj"
     if "irpj" in file_l or "csll" in file_l:
         return "irpj"
     if "imposto" in file_l or "icms" in file_l:

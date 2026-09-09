@@ -602,13 +602,25 @@ def apuracao_patch_from_demo(tipo: str, parsed: dict) -> dict:
         return {"apuracao": {"icms": tax, "fonte": "demonstrativo_icms"}, "impostosDemo": {"icms": parsed}}
     if tipo == "irpj":
         tax["credito"] = float(parsed.get("credito") or 0)
-        out = {"apuracao": {"irpj": tax, "fonte": "planilha_padrao_irpj"}, "impostosDemo": {"irpj": parsed}}
+        fonte = (
+            "demonstrativo_exito_irpj"
+            if str(parsed.get("kind") or "").startswith("demonstrativo_exito")
+            else "planilha_padrao_irpj"
+        )
+        tax["fonte"] = fonte
+        out = {"apuracao": {"irpj": tax, "fonte": fonte}, "impostosDemo": {"irpj": parsed}}
         if parsed.get("linhas"):
             out["memoriaIrpj"] = {"linhas": parsed.get("linhas") or [], "aRecolher": parsed.get("aRecolher")}
         return out
     if tipo == "csll":
         tax["credito"] = float(parsed.get("credito") or 0)
-        out = {"apuracao": {"csll": tax, "fonte": "planilha_padrao_csll"}, "impostosDemo": {"csll": parsed}}
+        fonte = (
+            "demonstrativo_exito_csll"
+            if str(parsed.get("kind") or "").startswith("demonstrativo_exito")
+            else "planilha_padrao_csll"
+        )
+        tax["fonte"] = fonte
+        out = {"apuracao": {"csll": tax, "fonte": fonte}, "impostosDemo": {"csll": parsed}}
         if parsed.get("linhas"):
             out["memoriaCsll"] = {"linhas": parsed.get("linhas") or [], "aRecolher": parsed.get("aRecolher")}
         return out
@@ -850,3 +862,18 @@ def parse_irpj_csll_padrao(grid: WorkbookGrid, tipo: str) -> dict:
         "hasValores": True,
         "linhas": linhas,
     }
+
+
+def parse_demonstrativo_exito_irpj_csll(grid: WorkbookGrid, tipo: str) -> dict:
+    """EXITO Demonst. IRPJ-LP / CSOC — a recolher = Saldo devedor (não a coluna de receita)."""
+    parsed = parse_irpj_csll_padrao(grid, tipo)
+    if tipo == "csll":
+        a_rec = _find_row_value(grid, 0, "saldo devedor de contribuicao social")
+    else:
+        a_rec = _find_row_value(grid, 0, "saldo devedor de irpj")
+    parsed["kind"] = f"demonstrativo_exito_{tipo}"
+    if a_rec is not None:
+        parsed["aRecolher"] = float(a_rec)
+        parsed["apurado"] = float(a_rec)
+        parsed["hasValores"] = abs(float(a_rec)) >= 0.009
+    return parsed

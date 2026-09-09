@@ -61,6 +61,8 @@ def _pack_has_tipo(pack: dict | None, tipo: str) -> bool:
         return bool(ap.get("irpj"))
     if tipo == "csll":
         return bool(ap.get("csll"))
+    if tipo == "irpj_csll":
+        return bool(ap.get("irpj") or ap.get("csll"))
     if tipo == "difal":
         return bool(ap.get("difal"))
     if tipo == "icms":
@@ -117,6 +119,7 @@ def _inherit_batch_competencia(items: list[dict]) -> None:
             "impostos",
             "irpj",
             "csll",
+            "irpj_csll",
             "difal",
             "apuracao_5005",
             "dre",

@@ -18,7 +18,7 @@ Identificação **obrigatória pelo CNPJ do cabeçalho** (primeiras ~12 linhas).
 
 | Pasta | unidade | CNPJ | O que importar |
 |-------|---------|------|----------------|
-| `711- JPG PRODUTOS MATRIZ` | `sede` | `21051983000165` | Entradas+Saídas (split mensal); sem impostos |
+| `711- JPG PRODUTOS MATRIZ` | `sede` | `21051983000165` | Entradas+Saídas (split mensal) + IRPJ/CSLL trimestral EXITO (`irpj-csll-1t/2t-2026.xls` → 03/2026 e 06/2026, merge) |
 | `81-JPG FILIAL CURITIBA` | `pr` | `21051983000670` | movimento split + `ipi filial pr` |
 | `90-JPG FILIAL MINAS` | `mg` | `21051983000599` | movimento split + `ipi filial mg` |
 | `82- JPG FILIAL SÃO PAULO` | `sp` | `21051983000750` | movimento split + icms/ipi SP |
