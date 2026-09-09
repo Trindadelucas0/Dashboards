@@ -344,7 +344,7 @@ export default function AbaPage() {
     finalidade: ["Finalidade de Compras", "Por CFOP — clique para expandir fornecedores"],
     vendas: ["Vendas", "Faturamento de saídas por cliente e UF"],
     impostos: ["Impostos", "Apuração — só entra o que foi importado"],
-    memoria: company?.id === "jpg"
+    memoria: (company?.id || params.empresa) === "jpg"
       ? ["Memória de Cálculo", "Livro da apuração importada — ICMS, IPI e demais tributos"]
       : ["Memória de Cálculo", "Livro da planilha padrão — ICMS 5005, PIS/COFINS e demais tributos"],
     recebimentos: ["Recebimentos/Pagamentos", "Estimativa pelo movimento fiscal"],
@@ -414,7 +414,7 @@ export default function AbaPage() {
       {loading ? <div className="notice">Carregando…</div> : null}
       {error ? <div className="error-banner" role="alert">{error}</div> : null}
       {!loading && !error && payload?.empty && aba !== "impostos" && aba !== "recebimentos" ? (
-        <div className="alert-box warn">{emptyMsg(aba, company?.id)}</div>
+        <div className="alert-box warn">{emptyMsg(aba, company?.id || params.empresa)}</div>
       ) : null}
       {!loading && !error && tri && aba !== "dre" ? <TrimestreBlock tri={tri} asMain={viewingTrimestre} /> : null}
 

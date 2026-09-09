@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import { brl } from "@/lib/api";
 import { useDash } from "@/components/DashContext";
 
@@ -273,7 +274,8 @@ export default function MemoriaLivro({
   monthLabel?: string;
 }) {
   const [livroOpen, setLivroOpen] = useState(false);
-  const hide5005 = useDash().company?.id === "jpg";
+  const empresa = useParams<{ empresa: string }>()?.empresa;
+  const hide5005 = empresa === "jpg" || useDash().company?.id === "jpg";
   const mem = d.memoriaCalculo as Record<string, any> | undefined;
   const hasMem = !!(mem && (mem.debitoOriginal != null || mem.icmsARecolher != null));
   const livroPc = d.memoriaPisCofins as {

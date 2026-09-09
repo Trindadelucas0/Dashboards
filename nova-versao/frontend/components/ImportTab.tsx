@@ -124,8 +124,8 @@ export default function ImportTab() {
           <div className="sec-sub">
             {company?.id === "jpg" ? (
               <>
-                Envie Entradas/Saídas EXITO e demonstrativos de <strong>ICMS/IPI</strong> da filial (uma aba por mês ou tabela).
-                Empresa vem do dashboard aberto. A JPG <strong>não</strong> usa planilha APURAÇÃO 5005.
+                Envie Entradas/Saídas EXITO e demonstrativos de <strong>ICMS/IPI</strong> da filial (uma aba por mês).
+                Empresa vem do dashboard aberto. Abas vazias ou IRPJ de outra empresa aparecem como aviso, não erro.
               </>
             ) : (
               <>
