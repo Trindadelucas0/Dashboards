@@ -17,6 +17,7 @@ COMPANY_DESCRIPTIONS = {
     "baifer": "Distribuidora de ferramentas",
     "loja-maquinas": "Loja das Máquinas e Ferramentas",
     "unica": "Comércio atacadista de tintas",
+    "jpg": "JPG Produtos Funcionais — sede e filiais",
 }
 
 

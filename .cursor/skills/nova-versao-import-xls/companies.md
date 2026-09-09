@@ -10,15 +10,28 @@ Identificação **obrigatória pelo CNPJ do cabeçalho** (primeiras ~12 linhas).
 | `baifer` | Baifer | `52005382000140` | `BAIFER` | `baifer` | blue | matriz |
 | `loja-maquinas` | Loja das Máquinas | `13983066000190` | `LOJA DAS MAQUINAS` / `LOJA MÁQUINAS` | `loja-maquinas` | green | matriz |
 | `unica` | Única | `36517206000130` | `\b[UÚ]NICA\b` | `unica` | blue | matriz |
+| `jpg` | JPG | `21051983000165` (Sede) | `JPG\|PRODUTOS FUNCIONAIS` | `jpg` | green | sede, asa_sul, pr, sp, mg + **Todas** (só leitura) |
 
 **Única (UNICA COMERCIO ATACADISTA DE TINTAS):** fonte mensal é a planilha padrão v2 (9 abas + ENTRADAS/SAÍDAS no mesmo `.xlsx`), competências 01–07/2026. Fixtures: `fixtures/unica-padrao/`. Testes: `tests/test_unica_padrao.py`.
+
+**JPG ✅** — **uma** empresa / **um** login `jpg` / **um** dashboard `/dashboard/jpg/...`. Filiais são `unidade` (dropdown), não cards novos.
+
+| Pasta | unidade | CNPJ | O que importar |
+|-------|---------|------|----------------|
+| `711- JPG PRODUTOS MATRIZ` | `sede` | `21051983000165` | Entradas+Saídas (split mensal); sem impostos |
+| `81-JPG FILIAL CURITIBA` | `pr` | `21051983000670` | movimento split + `ipi filial pr` |
+| `90-JPG FILIAL MINAS` | `mg` | `21051983000599` | movimento split + `ipi filial mg` |
+| `82- JPG FILIAL SÃO PAULO` | `sp` | `21051983000750` | movimento split + icms/ipi SP |
+| `712-JPG FILIAL BRASILIA` | `asa_sul` | `21051983000327` | movimento split + icms/ipi Asa Sul (filename `asa sul`) |
+
+Fora do lote: LANNIC; Filial DF (`matriz`) sem Excel. Não gravar `unidade=todas`. Movimento `01-2026 a 08-2026` → `scripts/split_movimento_mensal.py`. Testes: `tests/test_jpg.py`.
 
 ### Senhas (seed)
 
 Definidas no `.env` de `nova-versao`:
 
 - Admin: `ADMIN_SEED_PASSWORD` → user `admin`
-- Empresas: `SEED_USER_PASSWORD` → `egaplast`, `baifer`
+- Empresas: `SEED_USER_PASSWORD` → `egaplast`, `baifer`, `jpg`, demais do catálogo
 
 Rodar seed:
 
@@ -39,9 +52,11 @@ Ordem em `pipeline.py`:
 
 ### Unidade (matriz vs filial)
 
-- Default: `matriz`
+- Default: `matriz` (JPG Sede = `sede`, não `matriz`)
 - Egaplast: filename com `\b61\b` ou `filial` → `filial`
-- Tabela impostos anual: pipeline pode ajustar unidade para filial com valor no mês
+- JPG: CNPJ da unidade; filename `asa sul` força `asa_sul` no CNPJ `0003-27`
+- JPG impostos: demonstrativo EXITO com 8 abas (jan–ago); `unit_from_filename` + CNPJ; parts por mês, sem misturar filiais
+- Consolidado `todas`: só leitura na API; **não** gravar
 
 ### Egaplast — filial
 
@@ -73,7 +88,7 @@ Atualizar:
 
 ```python
 KEEP_COMPANY_IDS = frozenset(COMPANY_BY_ID)  # automático se usar COMPANY_BY_ID
-KEEP_USERNAMES = frozenset({"admin", "egaplast", "baifer", "loja-maquinas", "unica"})
+KEEP_USERNAMES = frozenset({"admin", "egaplast", "baifer", "loja-maquinas", "unica", "jpg"})
 ```
 
 ### 3. Editar `scripts/seed.py`

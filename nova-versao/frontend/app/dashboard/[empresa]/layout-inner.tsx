@@ -55,10 +55,11 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
         setCompany(c);
         const qMes = search.get("mes") || "";
         const qUn = search.get("unidade") || "";
-        const units = c.units || [];
+        const units = (c.units || []).map((u) => (typeof u === "string" ? u : u.key));
         const months = c.months || [];
         const un = qUn && units.includes(qUn) ? qUn : units[0] || "matriz";
-        const monthsUn = months.filter((m) => m.unidade === un);
+        const monthsUn =
+          un === "todas" ? months : months.filter((m) => m.unidade === un);
         const last = monthsUn.at(-1) || months.at(-1);
         const isTrimKey = /^q[1-4]-\d{4}$/i.test(qMes);
         const trimOk =
@@ -118,7 +119,17 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
   const [title, sub] = TITLES[aba] || [aba, ""];
   const months = useMemo(() => {
     if (!company) return [];
-    return company.months.filter((m) => !unidade || m.unidade === unidade);
+    if (!unidade || unidade === "todas") {
+      const seen = new Set<string>();
+      const out: CompanyDetail["months"] = [];
+      for (const m of company.months) {
+        if (seen.has(m.competencia)) continue;
+        seen.add(m.competencia);
+        out.push({ ...m, unidade: unidade || m.unidade });
+      }
+      return out;
+    }
+    return company.months.filter((m) => m.unidade === unidade);
   }, [company, unidade]);
 
   const ctx: DashCtx = {
@@ -197,7 +208,11 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
               <Link href="/seletor" className="btn-export">Voltar</Link>
               {company && company.units.length > 1 ? (
                 <select className="period-sel" value={unidade} onChange={(e) => ctx.setUnidade(e.target.value)} aria-label="Unidade">
-                  {company.units.map((u) => <option key={u} value={u}>{u}</option>)}
+                  {company.units.map((u) => {
+                    const key = typeof u === "string" ? u : u.key;
+                    const label = typeof u === "string" ? u : u.label;
+                    return <option key={key} value={key}>{label}</option>;
+                  })}
                 </select>
               ) : null}
               <select className="period-sel" value={month} onChange={(e) => ctx.setMonth(e.target.value)} aria-label="Período">

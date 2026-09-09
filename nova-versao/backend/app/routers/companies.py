@@ -4,6 +4,8 @@ import copy
 import re
 import unicodedata
 
+from types import SimpleNamespace
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
@@ -30,6 +32,65 @@ TAB_KEYS = (
     "dre",
     "indicadores",
 )
+
+
+def _is_todas(unidade: str | None) -> bool:
+    return (unidade or "").strip().lower() == "todas"
+
+
+def catalog_units_payload(company_id: str, company_row) -> list[dict]:
+    """Unidades cadastradas (não só as que já têm mês), com opção Todas se houver 2+."""
+    units: list[dict] = []
+    seen: set[str] = set()
+    reg = COMPANY_BY_ID.get(company_id)
+    if reg and reg.units:
+        for u in reg.units:
+            if u.key in seen:
+                continue
+            units.append({"key": u.key, "label": u.label})
+            seen.add(u.key)
+    else:
+        for a in getattr(company_row, "cnpjs", []) or []:
+            key = a.unidade or "matriz"
+            if key in seen:
+                continue
+            units.append({"key": key, "label": a.label or key})
+            seen.add(key)
+    if not units:
+        units = [{"key": "matriz", "label": "Matriz"}]
+    if len(units) > 1:
+        units = [{"key": "todas", "label": "Todas as unidades"}] + units
+    return units
+
+
+def _query_fiscal_months(db: Session, company_id: str, unidade: str | None):
+    q = db.query(FiscalMonth).filter(FiscalMonth.company_id == company_id)
+    if unidade and not _is_todas(unidade):
+        q = q.filter(FiscalMonth.unidade == unidade)
+    else:
+        q = q.filter(FiscalMonth.unidade != "todas")
+    return q.order_by(FiscalMonth.competencia, FiscalMonth.unidade).all()
+
+
+def _virtual_months_by_competencia(rows: list) -> list:
+    """Soma packs da mesma competência (unidades distintas) — só leitura."""
+    groups: dict[str, list] = {}
+    order: list[str] = []
+    for m in rows:
+        if m.competencia not in groups:
+            groups[m.competencia] = []
+            order.append(m.competencia)
+        groups[m.competencia].append(m)
+    out = []
+    for comp in order:
+        ms = groups[comp]
+        if len(ms) == 1:
+            out.append(ms[0])
+            continue
+        pack = aggregate_fiscal_packs([m.pack or {} for m in ms], _month_label(comp))
+        pack["isTrimestre"] = False
+        out.append(SimpleNamespace(competencia=comp, unidade="todas", pack=pack))
+    return out
 
 
 class CompanyCreateIn(BaseModel):
@@ -659,10 +720,10 @@ def company_detail(
     if not company:
         raise HTTPException(404, "Empresa não encontrada")
     q = db.query(FiscalMonth).filter(FiscalMonth.company_id == company_id)
-    if unidade:
+    if unidade and not _is_todas(unidade):
         q = q.filter(FiscalMonth.unidade == unidade)
     months = q.order_by(FiscalMonth.competencia).all()
-    units = sorted({m.unidade for m in months}) or ["matriz"]
+    units = catalog_units_payload(company_id, company)
     return {
         "id": company.id,
         "label": company.label,
@@ -717,9 +778,9 @@ def _enrich_fiscal(pack: dict) -> dict:
 
 
 def _is_empty(tab: str, pack: dict, row) -> bool:
-    if row is None:
-        return True
     pack = pack or {}
+    if row is None and not pack:
+        return True
     if tab in ("visao-geral", "indicadores", "recebimentos"):
         if pack.get("hasDre") or pack.get("apuracao") or pack.get("receitaBruta"):
             return False
@@ -987,6 +1048,11 @@ def nfe_lines_payload(
 ):
     """Linhas NF do mês (ou trimestre) para exportação detalhada. Ownership no servidor."""
     require_company(company_id, user, db)
+    if _is_todas(unidade):
+        raise HTTPException(
+            400,
+            "Exportação CPF/CNPJ não está disponível em Todas as unidades. Escolha uma filial.",
+        )
     kind_tipo = (tipo or "saidas").strip().lower()
     if kind_tipo not in ("saidas", "entradas"):
         raise HTTPException(400, "tipo deve ser saidas ou entradas")
@@ -1021,12 +1087,8 @@ def tab_payload(
     require_company(company_id, user, db)
     if tab not in TAB_KEYS:
         raise HTTPException(400, "Aba inválida")
-    months = (
-        db.query(FiscalMonth)
-        .filter(FiscalMonth.company_id == company_id, FiscalMonth.unidade == unidade)
-        .order_by(FiscalMonth.competencia)
-        .all()
-    )
+    raw_months = _query_fiscal_months(db, company_id, unidade)
+    months = _virtual_months_by_competencia(raw_months) if _is_todas(unidade) else raw_months
     kind, period_key = parse_period_key(competencia)
     row = None
     presentes: list[str] = []
@@ -1040,6 +1102,14 @@ def tab_payload(
         label = f"{q}º Trimestre {year}"
         pack = aggregate_fiscal_packs(packs, label)
         empty = not presentes
+    elif _is_todas(unidade):
+        same = [m for m in raw_months if m.competencia == competencia]
+        packs = [m.pack or {} for m in same]
+        pack = aggregate_fiscal_packs(packs, _month_label(competencia))
+        pack["isTrimestre"] = False
+        empty = _is_empty(tab, pack or {}, None) if packs else True
+        if not packs:
+            empty = True
     else:
         row = (
             db.query(FiscalMonth)

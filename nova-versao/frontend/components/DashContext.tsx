@@ -2,13 +2,15 @@
 
 import { createContext, useContext } from "react";
 
+export type CompanyUnit = { key: string; label: string };
+
 export type CompanyDetail = {
   id: string;
   label: string;
   theme: string;
   cnpj: string;
   tabs: string[];
-  units: string[];
+  units: CompanyUnit[];
   months: { competencia: string; label: string; unidade: string }[];
 };
 

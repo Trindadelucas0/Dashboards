@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.4.8 — Recebimentos tela completa |
-| Última atualização | 05/09/2026 (aba Recebimentos/Pagamentos: 8 KPIs do mês + acumulado/MoM + 2 gráficos + tabela) |
+| Versão do sistema | 2.5.0 — JPG filiais |
+| Última atualização | 09/09/2026 (Memória: livro técnico mostra a recolher do mês e o da planilha) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.5.0 | JPG filiais | Empresa **JPG** no catálogo (login `jpg`, um card): unidades `sede` / `asa_sul` / `pr` / `sp` / `mg`; dropdown no header; consolidado **Todas as unidades** soma virtual (`aggregate_fiscal_packs`) sem gravar slot `todas`; split de movimento acumulado (`split_movimento_mensal.py`) |
 | 2.4.8 | Recebimentos tela completa | Aba **Recebimentos/Pagamentos**: 8 KPIs do mês (receb./pag./saldo/% compras/vendas, NFs, ticket, cobertura) + 4 KPIs de acumulado/MoM; gráficos barras Rec×Pag e doughnut do mês; tabela evolução mensal; série com `nfsEntradas`/`nfsSaidas` e lacunas; continua estimativa NF-e (não é caixa) |
 | 2.4.7 | Balancete EXITO Única | Arquivos `Balancete MM-2026…UNICA.xls` (CNPJ 36517206000130) → tipo `balancete`, `pack.hasBalancete` + `pack.balancete` (kind `exito`); competências 2026-02…05; totais Ativo/Passivo/Resultado = Saldo Atual das contas 1/2/3; aba **Balancete** via `BalanceteTree` / `build_balancete_por_mes` |
 | 2.4.6 | DRE Análise Vertical | Planilha EXITO `Análise Vertical do D. R. E.xls` (meses `MM/YYYY` nas colunas) → tipo `dre_vertical`, uma part `dre` por competência preenchida; empresa herdada do dashboard se sem CNPJ; jan/2026 sem lucro operacional na planilha → `lucLiq` null (não inventa) |
@@ -120,7 +121,7 @@ Regras de exibição:
 Fórmulas gravadas no pack (não calculadas na UI):
 
 - ICMS 5005: `Total 5005 + Total fora = ICMS a recolher`
-- PIS/COFINS: `a recolher = débito − crédito` (resultado do mês). A coluna `SALDO CREDOR` da planilha é o crédito **acumulado** de meses anteriores; o valor da planilha fica em `aRecolherPlanilha`, só como referência, para não somar o mesmo crédito em todos os meses.
+- PIS/COFINS: `a recolher = débito − crédito` (resultado do mês). A coluna `SALDO CREDOR` da planilha é o crédito **acumulado** de meses anteriores; o valor da planilha fica em `aRecolherPlanilha`, só como referência, para não somar o mesmo crédito em todos os meses. No livro técnico o resumo mostra **A recolher (mês)** e, quando existir, **A recolher (planilha)**.
 - IPI: `a recolher = débito − crédito − saldo credor`
 
 Pack: `memoriaCalculo` (5005 + `linhas` + `formulaIcms`), `memoriaPisCofins`, `memoriaIpi`, `memoriaIrpj`, `memoriaCsll`, `porUfSt`, `porUfDifal`.
@@ -182,8 +183,31 @@ Slice: `_slice("recebimentos")` devolve `saldo`, `ticketMedio`, `comprasSobreVen
 | Baifer | `baifer` | 52005382000140 | azul | Planilha padrão + EXITO |
 | Loja das Máquinas | `loja-maquinas` | 13983066000190 | verde | EXITO legado |
 | Única (UNICA COMERCIO ATACADISTA DE TINTAS) | `unica` | 36517206000130 | azul | Planilha padrão v2 (01–07/2026) |
+| JPG | `jpg` | 21051983000165 (Sede) | verde | EXITO por filial (`unidade`); um dashboard |
 
 Cadastro estático: `backend/app/companies.py` (+ `KEEP_USERNAMES`) e `backend/scripts/seed.py`.
+
+### JPG — um dashboard, várias unidades
+
+**Não** há card, login ou rota por filial. Login `jpg` → `/dashboard/jpg/...`. O dropdown do header escolhe a unidade.
+
+| Unidade (`unidade`) | Label | CNPJ | Pasta deste lote |
+|---------------------|-------|------|------------------|
+| `sede` | Matriz Sede | 21051983000165 | `pasta temporaria/711- JPG PRODUTOS MATRIZ` (só Entradas/Saídas) |
+| `asa_sul` | Filial Asa Sul DF | 21051983000327 | `712-JPG FILIAL BRASILIA` + ICMS/IPI Asa Sul |
+| `pr` | Filial PR | 21051983000670 | `81-JPG FILIAL CURITIBA` + IPI PR |
+| `sp` | Filial SP | 21051983000750 | `82- JPG FILIAL SÃO PAULO` + ICMS/IPI SP |
+| `mg` | Filial MG | 21051983000599 | `90-JPG FILIAL MINAS` + IPI MG |
+
+Fora deste lote (slots vazios até existir planilha): LANNIC; Filial DF (`matriz` no legado) — mesmo CNPJ da Asa Sul, **sem** Excel na pasta temporária.
+
+Gravação: `FiscalMonth(company_id=jpg, competencia, unidade)` isolado. Merge só no mesmo mês **e** mesma unidade. **Nunca** persistir `unidade=todas`.
+
+Arquivos de movimento `01-2026 a 08-2026` disparam `RANGE_ERROR`. Pré-processar com `backend/scripts/split_movimento_mensal.py` (filtra **Data Emissão** → `Entradas MM-YYYY.xlsx`). Impostos `icms/ipi filial … 01 a 08.xls` são **demonstrativos EXITO com 8 abas** (uma competência cada); o pipeline gera parts por mês da **mesma** filial (CNPJ). Não misturar PR com MG.
+
+Consolidado **Todas as unidades**: soma virtual na API (`tab_payload` + `aggregate_fiscal_packs`). Transferências entre filiais podem duplicar no consolidado (igual legado). Export CPF/CNPJ em `todas` é **bloqueado** — escolha uma filial. Sem DRE/Balancete/PIS-COFINS nestas pastas → abas `—` (não inventar).
+
+Ordem de import recomendada: 711 sede → 81 PR → 90 MG → 82 SP → 712 Asa Sul. Login `jpg` → aba **Importar** no dashboard JPG (CNPJ define a unidade).
 
 ### Única — competências 01–07/2026
 
@@ -289,8 +313,10 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | Estilos dashboard | `frontend/app/dashboard.css` |
 | UI import | `frontend/components/ImportTab.tsx` |
 | Catálogo de empresas | `backend/app/companies.py`, `backend/scripts/seed.py` |
-| Testes golden | `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py` |
-| Fixtures | `fixtures/baifer-padrao/`, `fixtures/unica-padrao/`, `fixtures/egaplast-padrao/`, `fixtures/loja-maquinas-padrao/` |
+| JPG unidades / consolidado | `company_detail` + `tab_payload` (`unidade=todas`) em `backend/app/routers/companies.py`; dropdown em `frontend/app/dashboard/[empresa]/layout-inner.tsx` |
+| Split movimento acumulado | `backend/scripts/split_movimento_mensal.py` |
+| Testes golden | `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py` |
+| Fixtures | `fixtures/baifer-padrao/`, `fixtures/unica-padrao/`, `fixtures/egaplast-padrao/`, `fixtures/loja-maquinas-padrao/`, `fixtures/jpg-padrao/` |
 
 ## 5. Regras de negócio
 
@@ -310,7 +336,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 14. CFOPs de serviço (1-933/2-933 ISSQN; 1-353/2-353 transporte; faixa SINIEF `.300` comunicação) entram no macro `servicos` e no painel `servicosTomados` da Finalidade.
 15. DRE Análise Vertical sem CNPJ herda a empresa do dashboard (como 5005/ST); não inventa `lucLiq` se a linha de resultado operacional estiver vazia.
 16. Balancete EXITO mensal (Única e demais): totais Ativo/Passivo/Resultado vêm do Saldo Atual das contas `1`/`2`/`3`; um arquivo = uma competência.
-17. Recebimentos/Pagamentos é estimativa NF-e (saídas × entradas), não caixa. KPIs de % e ticket ficam `—` sem denominador; série deixa lacuna nos meses sem `hasMovimentacao`.
+18. JPG: um `company_id`; filiais só em `unidade`. Consolidado `todas` é soma na API, não é slot no Postgres. Export CPF/CNPJ exige filial específica.
 
 ## 6. Pendências de dados (Única)
 
@@ -360,4 +386,6 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 **Baifer — entradas ago/2026:** login `baifer` → dashboard Baifer → Importar → `Relatorio de entrada por fornecedor 082026 BAIFER.xls` → preview `entradas` / `2026-08` / Δ 0 → Gravar → aba **Compras** total R$ 377.506,76.
 
-Login seed: `admin`, `baifer`, `egaplast`, `loja-maquinas`, `unica` (senhas no `.env`).
+Login seed: `admin`, `baifer`, `egaplast`, `loja-maquinas`, `unica`, `jpg` (senhas no `.env`).
+
+**JPG — filiais:** login `jpg` → seletor mostra **um** card JPG → `/dashboard/jpg/visao-geral`. No header, o dropdown lista Matriz Sede, Filial PR/SP/MG, Filial Asa Sul DF e **Todas as unidades**. Movimento acumulado (`01-2026 a 08-2026`) precisa ser separado por mês (`split_movimento_mensal.py`) antes de Importar; impostos de filial (tabela ICMS/IPI) podem ir inteiros — o sistema grava cada mês na unidade do CNPJ/arquivo. Conferir Compras/Vendas/Impostos **da unidade escolhida**; Todas só soma leitura.

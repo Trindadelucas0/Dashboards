@@ -86,6 +86,19 @@ def test_resolve_catalog_companies():
     company, unit = resolve_company("36517206000130", "UNICA COMERCIO ATACADISTA DE TINTAS", "x.xls")
     assert company and company.id == "unica"
     assert unit == "matriz"
+    company, unit = resolve_company("21051983000165", "JPG PRODUTOS FUNCIONAIS", "711-Entradas.xls")
+    assert company and company.id == "jpg"
+    assert unit == "sede"
+    company, unit = resolve_company("21051983000670", "JPG", "81-Entradas.xls")
+    assert company and company.id == "jpg"
+    assert unit == "pr"
+    company, unit = resolve_company("21051983000327", "JPG", "icms filial asa sul 01 a 08.xls")
+    assert company and company.id == "jpg"
+    assert unit == "asa_sul"
+    company, unit = resolve_company("21051983000750", "JPG", "82-Saidas.xls")
+    assert unit == "sp"
+    company, unit = resolve_company("21051983000599", "JPG", "90-Entradas.xls")
+    assert unit == "mg"
 
 
 

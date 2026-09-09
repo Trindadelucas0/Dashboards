@@ -3,6 +3,10 @@ export const CARD_META: Record<string, { desc: string; icon: string }> = {
     desc: "Artefatos e comércio de plásticos",
     icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4",
   },
+  jpg: {
+    desc: "JPG Produtos Funcionais — sede e filiais",
+    icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4",
+  },
 };
 
 export const NAV = [

@@ -58,12 +58,30 @@ def _num(v: Any) -> float:
 
 def _mes_key(label: str) -> str:
     low = (label or "").strip().lower()
-    return _MES.get(low, "")
+    if low in _MES:
+        return _MES[low]
+    m = re.search(r"(0[1-9]|1[0-2])[/-](20\d{2})", low)
+    if m:
+        return m.group(1)
+    for name, mm in _MES.items():
+        if name in low:
+            return mm
+    return ""
 
 
 def _unit_key(label: str) -> str:
     low = re.sub(r"\s+", " ", (label or "").strip().lower())
-    return _UNIDADE.get(low, re.sub(r"[^a-z0-9]+", "_", low) or "matriz")
+    if "asa sul" in low:
+        return "asa_sul"
+    if "sede" in low:
+        return "sede"
+    mapped = _UNIDADE.get(low)
+    if mapped:
+        return mapped
+    for key, unit in _UNIDADE.items():
+        if key and key in low:
+            return unit
+    return re.sub(r"[^a-z0-9]+", "_", low) or "matriz"
 
 
 def parse_impostos_icms_ipi(grid: WorkbookGrid) -> dict:
@@ -72,7 +90,18 @@ def parse_impostos_icms_ipi(grid: WorkbookGrid) -> dict:
     if not grid.rows:
         return {"kind": "icms_ipi_table", "rows": [], "byCompetenciaUnidade": {}}
 
+    header_i = 0
     header = [str(c or "").strip().lower() for c in grid.rows[0]]
+    for i, raw in enumerate(grid.rows[:12]):
+        cand = [str(c or "").strip().lower() for c in raw]
+        joined = " ".join(cand)
+        folded = joined.replace("ê", "e")
+        if ("filial" in folded or "empresa" in folded) and (
+            "ipi a recolher" in folded or "icms a recolher" in folded
+        ):
+            header_i = i
+            header = cand
+            break
     idx = {h: i for i, h in enumerate(header) if h}
 
     def col(*names: str) -> int | None:
@@ -91,7 +120,7 @@ def parse_impostos_icms_ipi(grid: WorkbookGrid) -> dict:
     i_ipi_deb = col("ipi débito", "ipi debito")
     i_ipi_rec = col("ipi a recolher")
 
-    for raw in grid.rows[1:]:
+    for raw in grid.rows[header_i + 1 :]:
         mes_lbl = str(raw[i_mes] if i_mes is not None and i_mes < len(raw) else "")
         mm = _mes_key(mes_lbl)
         if not mm:
@@ -119,6 +148,53 @@ def parse_impostos_icms_ipi(grid: WorkbookGrid) -> dict:
         by_key[key] = r
 
     return {"kind": "icms_ipi_table", "rows": rows_out, "byCompetenciaUnidade": by_key}
+
+
+def impostos_table_parts(
+    parsed: dict,
+    *,
+    filename: str,
+    sheet_name: str,
+    year: str,
+    preferred_unit: str = "",
+) -> list[dict]:
+    """Uma part por competência (e unidade) da tabela ICMS/IPI — sem gravar slot `todas`."""
+    rows = list(parsed.get("rows") or [])
+    if preferred_unit:
+        rows = [r for r in rows if r.get("unidade") == preferred_unit]
+    parts: list[dict] = []
+    for r in rows:
+        mm = r.get("mes") or ""
+        if not mm:
+            continue
+        competencia = f"{year}-{mm}"
+        unidade = r.get("unidade") or preferred_unit or "matriz"
+        ap = apuracao_from_imposto_row(r)
+        ded = deducoes_from_apuracao(ap)
+        comp = composicao_from_apuracao(ap)
+        parts.append(
+            {
+                "tipo": "impostos",
+                "competencia": competencia,
+                "unidade": unidade,
+                "status": "ok",
+                "pack_patch": {
+                    "impostos": {**parsed, "source": filename, "sheet": sheet_name, "row": r},
+                    "apuracao": ap,
+                    "composicao": comp,
+                    "deducoes": ded,
+                    "dedPct": None,
+                },
+                "meta": {
+                    "aRecolherIcms": r.get("icmsARecolher"),
+                    "aRecolherIpi": r.get("ipiARecolher"),
+                    "filial": r.get("filial"),
+                },
+                "errors": [],
+                "warnings": [],
+            }
+        )
+    return parts
 
 
 def apuracao_from_imposto_row(row: dict | None, receita: float = 0.0) -> dict | None:

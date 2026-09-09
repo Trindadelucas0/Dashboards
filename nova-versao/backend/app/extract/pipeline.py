@@ -8,19 +8,18 @@ from app.extract.classify import (
     RANGE_ERROR,
     competencia_from_filename,
     detect_sheet_tipo,
+    is_icms_ipi_table,
     is_multi_month_movimento,
     resolve_company,
     scan_cnpj,
     scan_period,
     scan_razao,
+    unit_from_filename,
 )
 from app.extract.parse_balancete import parse_balancete
 from app.extract.parse_dre import extract_dre_vertical, is_analise_vertical_dre, parse_dre
 from app.extract.parse_impostos import (
-    apuracao_from_imposto_row,
     apuracao_patch_from_demo,
-    composicao_from_apuracao,
-    deducoes_from_apuracao,
     is_demonstrativo_icms,
     is_demonstrativo_subtri,
     merge_subtri_sheets,
@@ -29,6 +28,7 @@ from app.extract.parse_impostos import (
     parse_demonstrativo_pis_cofins,
     parse_impostos_icms_ipi,
     parse_st_mensal,
+    impostos_table_parts,
 )
 from app.extract.parse_memoria_5005 import apuracao_patch_from_5005, is_apuracao_5005, parse_apuracao_5005
 from app.extract.parse_workbook_padrao import (
@@ -57,6 +57,79 @@ def _extract_pis_cofins_sheets(sheets: list[WorkbookGrid], filename: str) -> lis
         if tipo in ("pis", "cofins"):
             out.append((tipo, sh))
     return out
+
+
+def _demo_icms_ipi_sheets(sheets: list[WorkbookGrid], filename: str) -> list[tuple[str, WorkbookGrid]]:
+    out: list[tuple[str, WorkbookGrid]] = []
+    for sh in sheets:
+        tipo = detect_sheet_tipo(sh, filename)
+        if tipo in ("icms", "ipi"):
+            out.append((tipo, sh))
+    return out
+
+
+def _extract_demo_mensal(sheets_typed: list[tuple[str, WorkbookGrid]], filename: str, db=None) -> dict:
+    """Demonstrativo ICMS/IPI com uma aba por mês (lote JPG filiais)."""
+    first_tipo, first_grid = sheets_typed[0]
+    cnpj = scan_cnpj(first_grid)
+    razao = scan_razao(first_grid)
+    company, unidade = resolve_company(cnpj, razao, filename)
+    if not company and db is not None:
+        from app.companies import resolve_from_db
+
+        company, unidade = resolve_from_db(db, cnpj, razao or filename)
+    file_unit = unit_from_filename(filename)
+    if company and company.id == "jpg" and file_unit:
+        unidade = file_unit
+    parts: list[dict] = []
+    for tipo, grid in sheets_typed:
+        competencia, period_text = scan_period(grid)
+        if not competencia:
+            competencia = competencia_from_filename(grid.sheet_name or "") or competencia_from_filename(filename)
+        parsed = parse_demonstrativo_ipi(grid) if tipo == "ipi" else parse_demonstrativo_icms(grid)
+        pack = apuracao_patch_from_demo(tipo, parsed)
+        errors: list[str] = []
+        if not competencia:
+            errors.append("Competência não identificada na aba")
+        parts.append(
+            {
+                "tipo": tipo,
+                "competencia": competencia,
+                "unidade": unidade or "sede",
+                "status": "ok" if not errors else "erro",
+                "pack_patch": pack,
+                "meta": {
+                    "aRecolher": parsed.get("aRecolher"),
+                    "debitos": parsed.get("debitos"),
+                    "apurado": parsed.get("apurado"),
+                },
+                "errors": errors,
+                "warnings": [],
+                "cnpj": scan_cnpj(grid) or cnpj,
+                "sheet": grid.sheet_name,
+                "period": period_text,
+            }
+        )
+    first = parts[0] if parts else {}
+    return {
+        "file": filename,
+        "sheet": ", ".join(sh.sheet_name for _, sh in sheets_typed),
+        "parser": first_grid.kind,
+        "tipo": "impostos_mensal",
+        "cnpj": cnpj,
+        "razao": razao,
+        "competencia": first.get("competencia") or "",
+        "period": first.get("period") or "",
+        "company_id": company.id if company else None,
+        "company_label": company.label if company else None,
+        "unidade": unidade or "sede",
+        "errors": [] if company else ["CNPJ/razão não mapeados para nenhuma empresa cadastrada"],
+        "warnings": [f"Demonstrativo {first_tipo}: {len(parts)} competência(s)"],
+        "pack_patch": first.get("pack_patch"),
+        "lines": [],
+        "meta": {"partsCount": len(parts)},
+        "parts": parts,
+    }
 
 
 def _pis_cofins_score(parsed: dict) -> float:
@@ -155,6 +228,10 @@ def classify_and_extract(
     if is_workbook_padrao(sheets):
         return extract_workbook_padrao(sheets, filename, company_cnpj=company_cnpj or "")
 
+    demo_sheets = _demo_icms_ipi_sheets(sheets, filename)
+    if len(demo_sheets) > 1:
+        return _extract_demo_mensal(demo_sheets, filename, db)
+
     tax_sheets = _extract_pis_cofins_sheets(sheets, filename)
     grid = sheets[0]
     # Análise Vertical multi-mês: parts por competência (antes do caminho DRE unitário)
@@ -215,6 +292,12 @@ def classify_and_extract(
         from app.companies import resolve_from_db
 
         company, unidade = resolve_from_db(db, cnpj, razao or filename)
+    if not company and (is_icms_ipi_table(grid) or unit_from_filename(filename)):
+        from app.companies import find_by_name
+
+        company = find_by_name(razao) or find_by_name("JPG")
+        if company:
+            unidade = unit_from_filename(filename) or unidade or (company.units[0].key if company.units else "matriz")
     if company and not cnpj and company.cnpj:
         cnpj = company.cnpj
 
@@ -250,6 +333,8 @@ def classify_and_extract(
         elif tipo == "apuracao_5005" or is_apuracao_5005(grid, filename):
             # 5005 não traz CNPJ — company_id vem do override no import (Baifer etc.).
             result["warnings"].append("APURAÇÃO 5005 sem CNPJ — a empresa aberta no dashboard será usada ao gravar")
+        elif tipo == "impostos" or is_icms_ipi_table(grid):
+            result["warnings"].append("Impostos sem CNPJ — empresa do dashboard ou da tabela JPG ao gravar")
         else:
             result["errors"].append("CNPJ/razão não mapeados para nenhuma empresa cadastrada")
             return result
@@ -396,61 +481,48 @@ def classify_and_extract(
     if tipo == "impostos":
         parsed = parse_impostos_icms_ipi(grid)
         if parsed.get("rows"):
-            year = (competencia or "")[:4] or "2026"
-            mm = (competencia or "")[-2:] if competencia else ""
-            unit = result["unidade"] or "matriz"
-            if not mm:
-                # último mês presente na tabela
-                meses = sorted({r["mes"] for r in parsed["rows"]})
-                mm = meses[-1] if meses else ""
-                if mm:
-                    competencia = f"{year}-{mm}"
-                    result["competencia"] = competencia
-                    result["warnings"].append(
-                        f"Competência inferida da tabela de impostos: {competencia} (arquivo anual multi-mês)"
-                    )
-            row = parsed["byCompetenciaUnidade"].get(f"{mm}|{unit}")
-            if not row and str(unit).lower() == "matriz":
-                row = next(
-                    (r for r in parsed["rows"] if r["mes"] == mm and str(r.get("filial") or "").strip().lower() == "matriz"),
-                    None,
-                )
-            # se a linha da matriz/unidade estiver zerada, preferir filial com valor no mês
-            def _row_valor(r: dict | None) -> float:
-                if not r:
-                    return 0.0
-                return abs(float(r.get("icmsARecolher") or 0)) + abs(float(r.get("ipiARecolher") or 0))
+            year = (competencia or "")[:4]
+            if not year or len(year) != 4:
+                import re as _re
 
-            if (not row or _row_valor(row) == 0) and mm:
-                candidatos = [r for r in parsed["rows"] if r["mes"] == mm]
-                candidatos.sort(key=_row_valor, reverse=True)
-                if candidatos and _row_valor(candidatos[0]) > 0:
-                    row = candidatos[0]
-                    result["unidade"] = row["unidade"]
-                    unit = row["unidade"]
-                    result["warnings"].append(
-                        f"Unidade ajustada para filial com apuração no mês: {row.get('filial')} ({unit})"
-                    )
-            elif not row and mm:
-                row = next((r for r in parsed["rows"] if r["mes"] == mm), None)
-                if row:
-                    result["unidade"] = row["unidade"]
-                    unit = row["unidade"]
-                    result["warnings"].append(f"Unidade ajustada para a linha do mês: {unit}")
-            ap = apuracao_from_imposto_row(row)
-            ded = deducoes_from_apuracao(ap)
-            comp = composicao_from_apuracao(ap)
-            result["pack_patch"] = {
-                "impostos": {**parsed, "source": filename, "sheet": grid.sheet_name},
-                "apuracao": ap,
-                "composicao": comp,
-                "deducoes": ded,
-                "dedPct": None,
-            }
-            if not row:
+                ym = _re.search(r"20\d{2}", filename or "")
+                year = ym.group(0) if ym else "2026"
+            preferred = unit_from_filename(filename)
+            if not preferred and result.get("company_id") == "jpg" and result.get("unidade") not in ("", "matriz", "todas"):
+                preferred = result["unidade"]
+            if parsed["rows"] and not result.get("company_id"):
+                from app.companies import find_by_name
+
+                emp = str(parsed["rows"][0].get("empresa") or "")
+                co = find_by_name(emp) or find_by_name("JPG")
+                if co:
+                    result["company_id"] = co.id
+                    result["company_label"] = co.label
+            parts = impostos_table_parts(
+                parsed,
+                filename=filename,
+                sheet_name=grid.sheet_name,
+                year=year,
+                preferred_unit=preferred,
+            )
+            result["tipo"] = "impostos_mensal"
+            result["parts"] = parts
+            if parts:
+                result["competencia"] = parts[0]["competencia"]
+                result["unidade"] = parts[0]["unidade"]
+                result["pack_patch"] = parts[0]["pack_patch"]
+                result["meta"] = {"partsCount": len(parts), **(parts[0].get("meta") or {})}
                 result["warnings"].append(
-                    f"Tabela ICMS/IPI importada, mas sem linha para {competencia}/{unit} — apuração fica vazia até escolher a filial certa"
+                    f"Tabela ICMS/IPI: {len(parts)} competência(s) extraída(s)"
+                    + (f" (unidade {preferred})" if preferred else "")
                 )
+            else:
+                result["warnings"].append(
+                    "Tabela ICMS/IPI reconhecida, mas sem linha para a unidade do arquivo"
+                )
+                result["pack_patch"] = {
+                    "impostos": {**parsed, "source": filename, "sheet": grid.sheet_name},
+                }
         else:
             if not competencia:
                 result["errors"].append("Competência não identificada e tabela ICMS/IPI não reconhecida")

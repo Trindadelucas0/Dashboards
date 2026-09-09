@@ -37,6 +37,9 @@ export async function exportCpfCnpjExcel(opts: {
   clientes: CpfCnpjCliente[];
   vendasPorDoc?: VendasPorDoc;
 }) {
+  if ((opts.unidade || "").toLowerCase() === "todas") {
+    throw new Error("Escolha uma filial no dropdown para exportar CPF/CNPJ. Todas as unidades não concatena notas.");
+  }
   const lines = await api<{ items: NfeLineItem[] }>(
     `/api/companies/${opts.empresaId}/months/${encodeURIComponent(opts.competencia)}/nfe-lines?unidade=${encodeURIComponent(opts.unidade || "matriz")}&tipo=saidas`,
   );

@@ -189,6 +189,35 @@ def competencia_from_filename(name: str) -> str:
     return ""
 
 
+def is_icms_ipi_table(grid: WorkbookGrid) -> bool:
+    if not grid.rows:
+        return False
+    for row in grid.rows[:12]:
+        header = " ".join(str(c or "").strip().lower() for c in row)
+        folded = header.replace("ê", "e")
+        has_mes = "mes" in folded.split() or "mês" in header
+        has_tax = "ipi a recolher" in folded or "icms a recolher" in folded
+        has_org = "filial" in folded or "empresa" in folded
+        if has_mes and has_tax and has_org:
+            return True
+    return False
+
+
+def unit_from_filename(filename: str) -> str:
+    low = (filename or "").lower()
+    if "asa sul" in low:
+        return "asa_sul"
+    if "filial pr" in low or "curitiba" in low:
+        return "pr"
+    if "filial mg" in low or "minas" in low:
+        return "mg"
+    if "filial sp" in low or "sao paulo" in low or "são paulo" in low:
+        return "sp"
+    if "sede" in low:
+        return "sede"
+    return ""
+
+
 def detect_sheet_tipo(grid: WorkbookGrid, filename: str) -> str:
     name = (grid.sheet_name or "").lower()
     file_l = filename.lower()
@@ -205,6 +234,8 @@ def detect_sheet_tipo(grid: WorkbookGrid, filename: str) -> str:
         return "entradas"
     if "saida" in name or "saída" in name:
         return "saidas"
+    if is_icms_ipi_table(grid):
+        return "impostos"
     if "demonstrativo do ipi" in head or ("ipi" in file_l and "demonst" in file_l):
         return "ipi"
     # ICMS ST antes do ICMS genérico — filename "Apuração icms st" e aba Demonst. SUBTRI
@@ -284,9 +315,18 @@ def resolve_company(cnpj: str, razao: str, filename: str) -> tuple[CompanyReg | 
         low = filename.lower()
         if company.id == "egaplast" and re.search(r"\b61\b|filial", low):
             unit_key = "filial"
+        digits = only_digits(cnpj)
+        if company.id == "jpg" and digits == "21051983000327" and "asa sul" in low:
+            unit_key = "asa_sul"
+        file_unit = unit_from_filename(filename)
+        if company.id == "jpg" and file_unit:
+            unit_key = file_unit
         return company, unit_key
     by_name = find_by_name(razao) or find_by_name(filename)
     if by_name:
         unit_key = by_name.units[0].key if by_name.units else "matriz"
+        file_unit = unit_from_filename(filename)
+        if by_name.id == "jpg" and file_unit:
+            unit_key = file_unit
         return by_name, unit_key
     return None, ""

@@ -46,7 +46,8 @@ def test_movimento_import_fills_tabs_and_totals():
     assert len(vendas["clientes"]) > 0
     assert "demaisClientes" in vendas
     assert len(finalidade["cfopDados"]) > 0
-    assert len(finalidade["macro"]) == 4
+    assert len(finalidade["macro"]) == 5
+    assert {m["key"] for m in finalidade["macro"]} >= {"revenda", "servicos", "outros"}
     assert finalidade["cfopDados"][0].get("fornecedores") is not None or "fornecedores" in pack["cfopDados"][0]
     assert memoria["entradasMeta"]["soma"] == pack["totalCompras"]
     assert visao["receitaBruta"] == pack["cfopSaidasTotal"]

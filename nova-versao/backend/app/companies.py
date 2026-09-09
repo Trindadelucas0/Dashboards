@@ -80,11 +80,26 @@ COMPANIES: tuple[CompanyReg, ...] = (
         theme="blue",
         units=(Unit("matriz", "Matriz", "36517206000130", r"UNICA"),),
     ),
+    CompanyReg(
+        id="jpg",
+        label="JPG",
+        cnpj="21051983000165",
+        name_re=r"JPG|PRODUTOS\s*FUNCIONAIS",
+        username="jpg",
+        theme="green",
+        units=(
+            Unit("sede", "Matriz Sede", "21051983000165"),
+            Unit("asa_sul", "Filial Asa Sul DF", "21051983000327"),
+            Unit("pr", "Filial PR", "21051983000670"),
+            Unit("sp", "Filial SP", "21051983000750"),
+            Unit("mg", "Filial MG", "21051983000599"),
+        ),
+    ),
 )
 
 COMPANY_BY_ID = {c.id: c for c in COMPANIES}
 KEEP_COMPANY_IDS = frozenset(COMPANY_BY_ID)
-KEEP_USERNAMES = frozenset({"admin", "egaplast", "baifer", "loja-maquinas", "unica"})
+KEEP_USERNAMES = frozenset({"admin", "egaplast", "baifer", "loja-maquinas", "unica", "jpg"})
 
 
 def only_digits(value: str | None) -> str:

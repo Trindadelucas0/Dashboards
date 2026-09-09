@@ -87,6 +87,7 @@ def test_companies_catalog_includes_egaplast_and_baifer():
     from app.companies import COMPANIES, KEEP_COMPANY_IDS, KEEP_USERNAMES
 
     ids = {c.id for c in COMPANIES}
-    assert ids >= {"egaplast", "baifer", "loja-maquinas"}
-    assert KEEP_COMPANY_IDS >= frozenset({"egaplast", "baifer", "loja-maquinas"})
+    assert ids >= {"egaplast", "baifer", "loja-maquinas", "jpg"}
+    assert KEEP_COMPANY_IDS >= frozenset({"egaplast", "baifer", "loja-maquinas", "jpg"})
     assert "loja-maquinas" in KEEP_USERNAMES
+    assert "jpg" in KEEP_USERNAMES
