@@ -1,0 +1,454 @@
+/* Estudo A4 — Holding IP + Distribuidor Oficial
+   Pensado para impressão e para Edge --print-to-pdf */
+
+@page {
+  size: A4;
+  margin: 16mm 15mm 18mm 15mm;
+}
+
+:root {
+  --ink: #1a1d24;
+  --muted: #5a616c;
+  --rule: #c9c3b8;
+  --paper: #f6f3ed;
+  --accent: #1c3354;
+  --accent-2: #8a5a32;
+  --law: #e8eef4;
+  --warn: #f4eee4;
+  --ok: #e8efe8;
+  --white: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+  font-size: 10.6pt;
+  line-height: 1.42;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+body {
+  max-width: 210mm;
+  margin: 0 auto;
+}
+
+/* —— Capa —— */
+.cover {
+  min-height: 0;
+  padding: 10mm 6mm 8mm;
+  display: flex;
+  flex-direction: column;
+  page-break-after: always;
+  break-after: page;
+}
+
+.cover-kicker {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 8.5pt;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.cover h1 {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-weight: 650;
+  font-size: 24pt;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+  margin: 8mm 0 5mm;
+  max-width: 160mm;
+}
+
+.cover .subtitle {
+  font-size: 13pt;
+  color: var(--muted);
+  max-width: 145mm;
+  margin: 0 0 12mm;
+  line-height: 1.35;
+}
+
+.cover-rule {
+  width: 42mm;
+  height: 2px;
+  background: var(--accent);
+  margin: 0 0 10mm;
+  border: 0;
+}
+
+.cover-meta {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 9pt;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-top: 8mm;
+}
+
+.cover-meta strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.cover-disclaimer {
+  margin-top: 8mm;
+  padding: 7px 11px;
+  border: 1px solid var(--accent-2);
+  background: var(--warn);
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 8.2pt;
+  line-height: 1.38;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* —— Páginas internas —— */
+.page-header {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 7.5pt;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 0.6pt solid var(--rule);
+  padding-bottom: 3mm;
+  margin-bottom: 8mm;
+  display: flex;
+  justify-content: space-between;
+}
+
+h2 {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 14.5pt;
+  font-weight: 650;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  margin: 0 0 4mm;
+  line-height: 1.2;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+h2 .num {
+  display: block;
+  font-size: 8pt;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  font-weight: 600;
+  margin-bottom: 1.5mm;
+}
+
+h3 {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 10.5pt;
+  font-weight: 650;
+  color: var(--accent);
+  margin: 5mm 0 2mm;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+p {
+  margin: 0 0 2.2mm;
+  orphans: 3;
+  widows: 3;
+}
+
+ul,
+ol {
+  margin: 0 0 3mm;
+  padding-left: 5mm;
+}
+
+li {
+  margin-bottom: 1.2mm;
+}
+
+strong {
+  font-weight: 650;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.lead {
+  font-size: 11.4pt;
+  color: #2c3340;
+  margin-bottom: 4mm;
+}
+
+.chapter {
+  page-break-before: always;
+  break-before: page;
+  padding-bottom: 4mm;
+}
+
+.chapter.first {
+  page-break-before: auto;
+  break-before: auto;
+}
+
+/* —— Sumário —— */
+.toc {
+  page-break-after: always;
+  break-after: page;
+}
+
+.toc ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 10pt;
+}
+
+.toc li {
+  display: flex;
+  justify-content: space-between;
+  gap: 6mm;
+  border-bottom: 0.4pt dotted var(--rule);
+  padding: 2.4mm 0;
+  margin: 0;
+}
+
+.toc .t {
+  color: var(--ink);
+}
+
+.toc .n {
+  color: var(--muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* —— Boxes —— */
+.box {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 9pt;
+  line-height: 1.4;
+  padding: 3.2mm 4mm;
+  margin: 0 0 3.5mm;
+  border-left: 2.4pt solid var(--accent);
+  background: var(--law);
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.box.warn {
+  background: var(--warn);
+  border-left-color: var(--accent-2);
+}
+
+.box.ok {
+  background: var(--ok);
+  border-left-color: #3d6b45;
+}
+
+.box .label {
+  display: block;
+  font-size: 7.4pt;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 1mm;
+  color: var(--accent);
+}
+
+.box.warn .label {
+  color: var(--accent-2);
+}
+
+.box.ok .label {
+  color: #2f5a36;
+}
+
+/* —— Tabelas —— */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 8.4pt;
+  line-height: 1.32;
+  margin: 0 0 4mm;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+th,
+td {
+  text-align: left;
+  vertical-align: top;
+  padding: 1.4mm 2mm;
+  border-bottom: 0.5pt solid var(--rule);
+}
+
+thead {
+  display: table-header-group;
+}
+
+tr {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+th {
+  background: var(--accent);
+  color: var(--white);
+  font-weight: 600;
+  font-size: 7.6pt;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+tr:nth-child(even) td {
+  background: rgba(28, 51, 84, 0.04);
+}
+
+.keep {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.note {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 8pt;
+  color: var(--muted);
+  margin: -1.5mm 0 3.5mm;
+  page-break-before: avoid;
+  break-before: avoid;
+}
+
+/* —— Duas colunas —— */
+.cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5mm;
+  margin: 0 0 3.5mm;
+}
+
+.card {
+  border: 0.6pt solid var(--rule);
+  padding: 3mm 3.5mm;
+  background: var(--white);
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.card h3 {
+  margin-top: 0;
+  font-size: 10pt;
+}
+
+.check li {
+  list-style: none;
+  padding-left: 0;
+}
+
+.check {
+  padding-left: 0;
+  list-style: none;
+}
+
+.check li::before {
+  content: "☐  ";
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  color: var(--accent);
+}
+
+/* —— Diagrama —— */
+.diagram-wrap {
+  background: var(--white);
+  border: 0.6pt solid var(--rule);
+  padding: 4mm 3mm 3mm;
+  margin: 0 0 4mm;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.diagram-caption {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 8pt;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 2mm;
+}
+
+svg text {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+}
+
+.sources {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 8.2pt;
+  color: var(--muted);
+  columns: 2;
+  column-gap: 8mm;
+}
+
+.sources p {
+  break-inside: avoid;
+  margin-bottom: 2mm;
+}
+
+footer.colophon {
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 8pt;
+  color: var(--muted);
+  border-top: 0.6pt solid var(--rule);
+  margin-top: 6mm;
+  padding-top: 3mm;
+}
+
+@media screen {
+  body {
+    padding: 12mm 0 20mm;
+    background: #d8d2c8;
+  }
+
+  .sheet {
+    background: var(--paper);
+    box-shadow: 0 8px 28px rgba(26, 29, 36, 0.18);
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 0 15mm 12mm;
+  }
+
+  .cover {
+    min-height: auto;
+    padding-top: 22mm;
+  }
+}
+
+@media print {
+  body {
+    background: white;
+    max-width: none;
+  }
+
+  .sheet {
+    padding: 0;
+    box-shadow: none;
+    background: white;
+  }
+
+  .cover {
+    min-height: 0;
+    padding-top: 4mm;
+  }
+
+  a[href]::after {
+    content: none;
+  }
+}

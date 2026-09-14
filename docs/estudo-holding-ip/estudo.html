@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estudo — Holding IP e Distribuidor Oficial</title>
+  <link rel="stylesheet" href="print.css">
+</head>
+<body>
+  <div class="sheet">
+
+    <section class="cover">
+      <div class="cover-kicker">Estudo para reunião com cliente · Setembro 2026</div>
+      <h1>Holding de propriedade intelectual e distribuidor oficial</h1>
+      <p class="subtitle">O que significa cada figura, o que a lei exige para licença de uso de marca, o que existe (e o que não existe) sobre “distribuidor oficial”, markup e tributação do royalty no Brasil e na Espanha.</p>
+      <hr class="cover-rule">
+      <p class="cover-meta">
+        <strong>Natureza.</strong> Documento educacional e de estruturação de pauta.<br>
+        <strong>Recorte.</strong> Genérico — sem nomes, CNPJ ou marca de um caso concreto.<br>
+        <strong>Uso.</strong> Impressão A4 / PDF para leitura conjunta com o cliente.
+      </p>
+      <div class="cover-disclaimer">
+        <strong>Isto não é parecer jurídico nem tributário.</strong> Leis, alíquotas, convênios e entendimento da Receita, do CARF, do STF e da Agencia Tributaria espanhola mudam. Qualquer implementação exige advogado de propriedade industrial, tributarista no Brasil e, se houver peça na Espanha, asesor fiscal local. Números neste estudo são de referência em vigor na data da capa, não cotação do caso.
+      </div>
+    </section>
+
+    <section class="toc">
+      <div class="page-header"><span>Holding IP · Distribuidor oficial</span><span>Sumário</span></div>
+      <h2><span class="num">Conteúdo</span>Como ler este estudo</h2>
+      <p class="lead">Doze capítulos curtos. Cada um responde uma pergunta que o cliente fará na mesa. O objetivo não é “montar a holding hoje”; é sair da reunião com o vocabulário certo, as leis certas e a lista do que o advogado precisa ver.</p>
+      <ol>
+        <li><span class="t">1. O modelo em uma página</span><span class="n">Dois contratos, um fluxo</span></li>
+        <li><span class="t">2. O que é Holding IP</span><span class="n">Dona da marca, não da operação</span></li>
+        <li><span class="t">3. O que é distribuidor oficial</span><span class="n">Título comercial, não cargo legal</span></li>
+        <li><span class="t">4. O que precisa existir para isso acontecer</span><span class="n">Checklist mínimo</span></li>
+        <li><span class="t">5. Normas da licença de uso de marca</span><span class="n">LPI, INPI, três planos</span></li>
+        <li><span class="t">6. O que a lei diz sobre distribuidor oficial</span><span class="n">Código Civil, CADE, Espanha</span></li>
+        <li><span class="t">7. Markup — o que tem de ser usado</span><span class="n">Margem comercial × preço de transferência</span></li>
+        <li><span class="t">8. Tributação do uso de marca no Brasil</span><span class="n">Quem paga e quem recebe</span></li>
+        <li><span class="t">9. Tributação na Espanha</span><span class="n">IS, IVA, patent box (marcas fora)</span></li>
+        <li><span class="t">10. Brasil × Espanha no mesmo grupo</span><span class="n">Convênio, IRRF, CIDE</span></li>
+        <li><span class="t">11. Riscos clássicos e exemplos públicos</span><span class="n">Substância, CARF, analogias</span></li>
+        <li><span class="t">12. O que levar ao advogado e ao contador</span><span class="n">Próximo passo</span></li>
+      </ol>
+      <div class="box warn" style="margin-top:8mm">
+        <span class="label">Três correções que este estudo deixa explícitas</span>
+        1) Averbação no INPI (art. 211 da Lei 9.279/96) continua importante para efeitos perante terceiros; não é mais, de forma pacífica, a trava única de dedução de IRPJ após a Lei 14.596/2023.<br>
+        2) Colocar o royalty numa holding <strong>não garante</strong> regime mais barato (Lucro Presumido costuma usar base de 32% em cessão de direitos; ISS e PIS/COFINS podem incidir).<br>
+        3) Na Espanha, o incentivo de patent box (art. 23 da LIS) <strong>não se aplica a marcas</strong>.
+      </div>
+    </section>
+
+    <!-- 1 -->
+    <section class="chapter first">
+      <div class="page-header"><span>Holding IP · Distribuidor oficial</span><span>Capítulo 1</span></div>
+      <h2><span class="num">Capítulo 1</span>O modelo em uma página</h2>
+      <p class="lead">A ideia é simples: uma empresa dona da marca (Holding IP) autoriza outra empresa a usar essa marca e a vender o produto (distribuidora oficial). A distribuidora paga royalty. São duas relações jurídicas, não uma.</p>
+
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 720 320" width="100%" height="auto" role="img" aria-label="Fluxo Holding IP, licença, distribuidora e revenda">
+          <rect x="8" y="8" width="704" height="304" fill="#f6f3ed" stroke="#c9c3b8"/>
+          <rect x="28" y="36" width="150" height="56" fill="#1c3354"/>
+          <text x="103" y="60" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">Sócios</text>
+          <text x="103" y="78" text-anchor="middle" fill="#d7e0ea" font-size="10">pessoas físicas</text>
+          <line x1="103" y1="92" x2="103" y2="118" stroke="#1c3354" stroke-width="1.6"/>
+          <polygon points="103,124 99,116 107,116" fill="#1c3354"/>
+          <rect x="28" y="126" width="150" height="72" fill="#fff" stroke="#1c3354" stroke-width="1.8"/>
+          <text x="103" y="150" text-anchor="middle" fill="#1c3354" font-size="12" font-weight="700">Holding IP</text>
+          <text x="103" y="168" text-anchor="middle" fill="#5a616c" font-size="10">dona da marca</text>
+          <text x="103" y="184" text-anchor="middle" fill="#8a5a32" font-size="9">registro INPI / OEPM</text>
+          <line x1="178" y1="162" x2="248" y2="162" stroke="#8a5a32" stroke-width="1.8"/>
+          <polygon points="254,162 246,158 246,166" fill="#8a5a32"/>
+          <text x="216" y="152" text-anchor="middle" fill="#8a5a32" font-size="9" font-weight="700">licença + royalty</text>
+          <rect x="258" y="126" width="188" height="72" fill="#fff" stroke="#8a5a32" stroke-width="1.8"/>
+          <text x="352" y="150" text-anchor="middle" fill="#1c3354" font-size="12" font-weight="700">Distribuidora oficial</text>
+          <text x="352" y="168" text-anchor="middle" fill="#5a616c" font-size="10">compra, estoque, vende</text>
+          <text x="352" y="184" text-anchor="middle" fill="#5a616c" font-size="9">usa a marca com autorização</text>
+          <line x1="446" y1="162" x2="516" y2="162" stroke="#1c3354" stroke-width="1.6"/>
+          <polygon points="522,162 514,158 514,166" fill="#1c3354"/>
+          <text x="482" y="152" text-anchor="middle" fill="#5a616c" font-size="9">revenda</text>
+          <rect x="526" y="126" width="166" height="72" fill="#fff" stroke="#c9c3b8"/>
+          <text x="609" y="154" text-anchor="middle" fill="#1c3354" font-size="12" font-weight="700">Clientes</text>
+          <text x="609" y="172" text-anchor="middle" fill="#5a616c" font-size="10">lojas / B2B / consumidor</text>
+          <rect x="258" y="230" width="188" height="56" fill="#e8eef4" stroke="#1c3354"/>
+          <text x="352" y="254" text-anchor="middle" fill="#1c3354" font-size="11" font-weight="700">Fábrica ou importação</text>
+          <text x="352" y="272" text-anchor="middle" fill="#5a616c" font-size="9">contrato de distribuição (produto)</text>
+          <line x1="352" y1="230" x2="352" y2="198" stroke="#1c3354" stroke-width="1.4"/>
+          <polygon points="352,198 348,206 356,206" fill="#1c3354"/>
+        </svg>
+        <p class="diagram-caption">Figura 1. A holding cobra pelo <em>nome</em>. A fábrica/fornecedor vende o <em>produto</em>. A distribuidora opera os dois contratos.</p>
+      </div>
+
+      <div class="cols">
+        <div class="card">
+          <h3>Contrato 1 — Licença de marca</h3>
+          <p>Holding IP autoriza o uso do nome, logo e sinais. Cobra royalty. Continua dona da marca. Sem este contrato, “distribuidor oficial” é só marketing.</p>
+        </div>
+        <div class="card">
+          <h3>Contrato 2 — Distribuição</h3>
+          <p>Quem fabrica ou importa vende o produto à distribuidora para revenda numa zona. Meta, estoque, prazo, exclusividade. Isso não transfere a marca.</p>
+        </div>
+      </div>
+      <div class="box">
+        <span class="label">O que a lei diz</span>
+        Licença de marca está na Lei de Propriedade Industrial (Lei 9.279/96). Distribuição está no Código Civil (arts. 710 a 721). São diplomas diferentes. Um não substitui o outro.
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="chapter">
+      <div class="page-header"><span>Holding IP · Distribuidor oficial</span><span>Capítulo 2</span></div>
+      <h2><span class="num">Capítulo 2</span>O que é Holding IP</h2>
+      <p class="lead">Holding IP (ou IP holding) é a sociedade cuja função principal é ser <strong>dona e gestora dos intangíveis</strong> — em especial a marca. Ela não precisa ter caminhão, estoque nem loja. Precisa ter a marca, regras de uso e substância suficiente para justificar o royalty.</p>
+      <h3>O que ela faz</h3>
+      <ul>
+        <li>Registra e mantém a marca (INPI no Brasil; OEPM na Espanha; e, se o caso pedir, outros países).</li>
+        <li>Licencia o uso para a(s) empresa(s) que operam.</li>
+        <li>Cobra royalty e fiscaliza qualidade, tom visual e desvio de uso.</li>
+        <li>Decide o que acontece com a marca se a operação for vendida, falir ou receber sócio novo.</li>
+      </ul>
+      <h3>Para que grupos usam isso</h3>
+      <table>
+        <thead>
+          <tr><th>Motivo</th><th>O que isso resolve</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Proteger o ativo</td><td>Credor da distribuidora não leva automaticamente a marca, se a segregação for real e lícita.</td></tr>
+          <tr><td>Vender a operação sem vender o nome</td><td>Comprador opera como licenciado; a família/grupo permanece dona da marca.</td></tr>
+          <tr><td>Entrar sócio na operação</td><td>O sócio operacional não precisa ser dono do ativo mais valioso.</td></tr>
+          <tr><td>Várias praças</td><td>Uma holding licencia SP, NE, e-commerce, exportação — cada uma paga uso.</td></tr>
+        </tbody>
+      </table>
+      <div class="box warn">
+        <span class="label">Substância — sem isso a Receita ataca</span>
+        Holding que “só existe para receber royalty”, sem ter desenvolvido a marca, sem gente, sem custo de proteção e sem decisão real sobre o ativo, é o alvo clássico de autuação: falta de propósito negocial, reclassificação da despesa e, no limite, distribuição disfarçada de lucros. Royalty não se sustenta só no organograma.
+      </div>
+      <p>Na linguagem da OCDE isso se chama <strong>DEMPE</strong>: quem desenvolve, aprimora, mantém, protege e explora o intangível é quem tem direito econômico ao retorno. A holding precisa exercer (e documentar) essas funções — ainda que enxuta.</p>
+    </section>
+
+    <!-- 3 -->
+    <section class="chapter">
+      <div class="page-header"><span>Holding IP · Distribuidor oficial</span><span>Capítulo 3</span></div>
+      <h2><span class="num">Capítulo 3</span>O que é distribuidor oficial</h2>
+      <p class="lead"><strong>Distribuidor oficial</strong> é um título comercial. Significa: esta empresa está autorizada pelo dono da marca/produto a comprar, estoquear e revender aquela linha, usando o nome de forma controlada. Não é um cargo criado por lei federal brasileira nem espanhola.</p>
+      <p>Na prática o distribuidor oficial:</p>
+      <ul>
+        <li>compra o produto (assume estoque, inadimplência e logística);</li>
+        <li>revende a lojas, subdistribuidores ou cliente final;</li>
+        <li>usa logo em caminhão, cartão, site e ponto de venda, nos limites do contrato de licença;</li>
+        <li>pode ser exclusivo (só ele na zona) ou um entre vários autorizados;</li>
+        <li><strong>não é dono da marca</strong> — se o contrato acaba, some a palavra “oficial”.</li>
+      </ul>
+      <h3>Não confundir com outras figuras</h3>
+      <table>
+        <thead>
+          <tr><th>Figura</th><th>O que faz</th><th>Lei de referência</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Distribuidor</td><td>Compra e revende; risco próprio</td><td>Código Civil, arts. 710–721</td></tr>
+          <tr><td>Representante comercial</td><td>Intermedia; em regra não compra o estoque; ganha comissão</td><td>Lei 4.886/1965</td></tr>
+          <tr><td>Franquia</td><td>Marca + método de operar + padrão de unidade; COF</td><td>Lei 13.966/2019</td></tr>
+          <tr><td>Concessionária de veículos</td><td>Rede de concessionários com lei própria</td><td>Lei 6.729/1979 (Lei Ferrari)</td></tr>
+          <tr><td>Licenciado fabricante</td><td>Paga para estampar a marca em produto que ele mesmo faz</td><td>LPI (licença) + contrato</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Se o “distribuidor” também recebe o manual de como montar a loja, layout, script e fundo de propaganda, a relação pode ser reclassificada como franquia — com deveres da Lei 13.966/2019.</p>
+      <div class="box">
+        <span class="label">O que a lei não diz</span>
+        Não há artigo que defina “distribuidor oficial”, nem no Brasil nem na Espanha. O direito de usar essa expressão vem do contrato com o titular da marca. Sem contrato, a expressão pode ser publicidade enganosa (CDC) e uso indevido de marca (LPI).
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="chapter">
+      <div class="page-header"><span>Holding IP · Distribuidor oficial</span><span>Capítulo 4</span></div>
+      <h2><span class="num">Capítulo 4</span>O que precisa existir para isso acontecer</h2>
+      <p class="lead">O organograma no papel não basta. Abaixo está o mínimo para o modelo ser sério o bastante para mostrar a um cliente — e para sobreviver a uma fiscalização.</p>
+      <h3>Peças jurídicas e de registro</h3>
+      <ul class="check">
+        <li>Marca depositada ou registrada no INPI (Brasil) e, se o mercado for espanhol, na OEPM (e/ou marca da União Europeia).</li>
+        <li>Duas pessoas jurídicas distintas: Holding IP e empresa operacional/distribuidora.</li>
+        <li>Contrato escrito de licença de uso de marca (território, exclusividade, royalty, qualidade, fim do uso).</li>
+        <li>Contrato escrito de distribuição (produto, zona, meta, estoque, rescisão).</li>
+        <li>Averbação da licença no INPI (art. 211 da LPI) — prudência, efeitos perante terceiros.</li>
+        <li>Manual de marca (cores, logo, o que pode e o que não pode).</li>
+      </ul>
+      <h3>Peças econômicas e fiscais</h3>
+      <ul class="check">
+        <li>Critério de royalty documentado (percentual, base de cálculo, mínimo mensal).</li>
+        <li>Markup comercial da distribuidora (margem de revenda) separado do royalty.</li>
+        <li>Se forem ligadas: estudo de preços de transferência / arm’s length (Lei 14.596/2023 no Brasil; art. 18 da LIS na Espanha).</li>
+        <li>Substância na holding: quem decide sobre a marca, quem paga INPI/advogado, quem aprova campanha.</li>
+        <li>Notas, contratos e razão contábil alinhados (a NF de royalty precisa bater com o contrato).</li>
+        <li>Se houver remessa ao exterior: certificado de residência fiscal e enquadramento no convênio.</li>
+      </ul>
+      <div class="box ok">
+        <span class="label">Teste rápido de honestidade</span>
+        Se a holding sumir amanhã, a marca continua protegida? Se a distribuidora sumir, a holding ainda tem o ativo e pode licenciar outro? Se as duas respostas forem “sim”, o desenho faz sentido. Se a holding for só uma conta corrente, o desenho é cosmética fiscal.
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="chapter">
+      <div class="page-header"><span>Holding IP · Distribuidor oficial</span><span>Capítulo 5</span></div>
+      <h2><span class="num">Capítulo 5</span>Normas da licença de uso de marca (Brasil)</h2>
+      <p class="lead">A licença é o contrato pelo qual o titular autoriza outrem a usar a marca, com ou sem exclusividade, sem transferir a propriedade. O núcleo está na Lei 9.279/96 (Lei da Propriedade Industrial — LPI).</p>
+      <h3>O que a LPI regula</h3>
+      <table>
+        <thead>
+          <tr><th>Tema</th><th>Onde está</th><th>Em linguagem de cliente</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Quem é dono da marca</td><td>Arts. 129 e seguintes</td><td>Dono é quem registrou (ou, em alguns casos, quem comprovadamente usou antes).</td></tr>
+          <tr><td>Licença de uso</td><td>Arts. 139 e seguintes (e disciplina INPI)</td><td>Pode ser exclusiva ou não; o titular continua dono.</td></tr>
+          <tr><td>Averbação no INPI</td><td>Art. 211</td><td>O INPI registra contratos de transferência de tecnologia, franquia e similares <strong>para produzirem efeitos em relação a terceiros</strong>.</td></tr>
+          <tr><td>Qualidade</td><td>Lógica do registro + contrato</td><td>Licença “nua”, sem controle de qualidade, enfraquece a marca.</td></tr>
+        </tbody>
+      </table>
+      <p>Portarias INPI nº 26 e 27/2023 atualizaram a prática de averbação (formalidades, pedidos de marca ainda em tramitação, etc.). Vale conferir o manual vigente do INPI na hora de protocolar — o instituto muda formulário com alguma frequência.</p>
+      <h3>Três planos que não devem ser misturados</h3>
+      <p>Um briefing comum diz: “sem averbação no INPI o royalty não é dedutível”. Isso era o dogma antigo. Hoje é preciso separar:</p>
+      <table>
+        <thead>
+          <tr><th>Plano</th><th>Norma</th><th>O que vale hoje (visão de estudo)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Civil / INPI</td>
+            <td>Art. 211 da LPI</td>
+            <td>Averbação continua o caminho para a licença valer <strong>perante terceiros</strong> (banco, outro pretenso licenciado, juízo). Entre as partes, o contrato escrito já obriga.</td>
+          </tr>
+          <tr>
+            <td>Câmbio / remessa ao exterior</td>
+            <td>Lei 14.286/2021 (marco cambial)</td>
+            <td>A lógica antiga de “sem INPI o Banco Central não deixa remeter” foi afrouxada. Ainda se pede contrato e enquadramento cambial; a averbação deixou de ser o gargalo exclusivo da remessa.</td>
+          </tr>
+          <tr>
+            <td>IRPJ / CSLL</td>
+            <td>Lei 14.596/2023 (preços de transferência, intangíveis)</td>
+            <td>Teto histórico de 1% a 5% da Portaria MF 436/1958 foi <strong>revogado</strong> no novo regime. A medida passa a ser arm’s length (valor de mercado entre independentes). Averbação como condição única de dedução <strong>não é mais o dogma pacífico</strong>. A prudência, mesmo assim, é averbar.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="box warn">
+        <span class="label">Como falar isso com o cliente</span>
+        “Vamos averbar no INPI porque a marca precisa valer contra terceiro e porque a Receita ainda olha formalidade. Mas a briga de 2024 em diante, se as empresas forem ligadas e houver peça no exterior, é preço de mercado e substância — não só o carimbo do INPI.”
+      </div>
+      <p>No mesmo grupo <strong>dentro do Brasil</strong>, a despesa de royalty ainda precisa ser necessária à atividade (lógica do art. 47 da Lei 4.506/1964 / RIR) e não pode ser artificial. Holding vazia + royalty alto continua risco, com ou sem averbação.</p>
+    </section>
+
+    <!-- 6 -->
+    <section class="chapter">
+      <div class="page-header"><span>Holding IP · Distribuidor oficial</span><span>Capítulo 6</span></div>
+      <h2><span class="num">Capítulo 6</span>O que a lei diz sobre “distribuidor oficial”</h2>
+      <p class="lead">Não existe lei brasileira intitulada “do distribuidor oficial”. O que existe é o contrato de distribuição (e figuras vizinhas), mais as regras de marca, consumidor e concorrência.</p>
+      <h3>Brasil — o que realmente rege</h3>
+      <table>
+        <thead>
+          <tr><th>Norma</th><th>O que o cliente precisa saber</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Código Civil, art. 710</td><td>Agência: promover negócios de outro, sem vínculo de emprego, em zona determinada. Caracteriza-se a <strong>distribuição</strong> quando o agente tem a coisa à sua disposição (estoque).</td></tr>
+          <tr><td>Art. 711</td><td>Salvo ajuste em contrário, exclusividade de zona: o proponente não constitui outro na mesma incumbência; o distribuidor exclusivo pode ter direito à remuneração dos negócios da zona mesmo sem ter participado deles. <strong>Quem não escrever o contrário herda exclusividade.</strong></td></tr>
+          <tr><td>Art. 713</td><td>Despesas da distribuição correm, em regra, por conta do distribuidor.</td></tr>
+          <tr><td>Art. 720</td><td>Contrato por prazo indeterminado: aviso prévio de 90 dias, depois de prazo compatível com o investimento feito.</td></tr>
+          <tr><td>Art. 721</td><td>Aplicam-se, no que couber, mandato, comissão e lei especial.</td></tr>
+          <tr><td>Lei 4.886/1965</td><td>Só se a figura for representação comercial (comissão, sem compra típica). Não usar de propósito se o modelo é compra-e-revenda.</td></tr>
+          <tr><td>Lei 13.966/2019</td><td>Franquia — se houver padrão de negócio + marca + know-how sistemático.</td></tr>
+          <tr><td>Lei 6.729/1979</td><td>Só concessionária de veículos automotores.</td></tr>
+          <tr><td>Lei 12.529/2011 (CADE)</td><td>Exclusividade territorial e restrição de marca rival podem ser lícitas, mas abusos (fechamento de mercado) são antitruste.</td></tr>
+          <tr><td>CDC (Lei 8.078/1990)</td><td>Se vende a consumidor: garantia, publicidade, “oficial” não pode enganar.</td></tr>
+          <tr><td>LPI</td><td>Uso da marca pelo distribuidor só com autorização do titular.</td></tr>
+        </tbody>
+      </table>
+      <div class="box">
+        <span class="label">Ponto que surpreende fabricante</span>
+        O art. 711 do Código Civil presume exclusividade. Contrato omisso + zona definida = risco de o distribuidor cobrar até venda direta do fabricante naquela praça. A cláusula “não exclusivo” precisa estar escrita, se essa for a intenção.
+      </div>
+      <h3>Espanha — também não há “distribuidor oficial” legal</h3>
+      <ul>
+        <li><strong>Ley 17/2001 de Marcas</strong> — titularidade e licença de marca.</li>
+        <li>Contrato de distribución — atípico/mercantil; liberdade de cláusulas, com boa-fé e normas de concorrência da UE/Espanha.</li>
+        <li><strong>Ley 12/1992</strong> — contrato de agencia (se for agente, não comprador-revendedor). Não aplicar de propósito ao distribuidor que compra estoque.</li>
+        <li>Direito da concorrência (UE): restrições verticais (exclusividade, preço mínimo de revenda) têm teto e cláusulas proibidas.</li>
+      </ul>
+    </section>
+
+    <!-- 7 -->
+    <section class="chapter">
+      <div class="page-header"><span>Holding IP · Distribuidor oficial</span><span>Capítulo 7</span></div>
+      <h2><span class="num">Capítulo 7</span>Markup — o que tem de ser usado</h2>
+      <p class="lead">“Markup” neste desenho tem <strong>dois sentidos</strong>. Misturá-los é o erro mais comum em reunião: a margem da distribuidora não é o royalty da holding, e o royalty entre empresas do mesmo grupo não pode ser um percentual inventado no PowerPoint.</p>
+      <h3>1. Markup comercial do distribuidor</h3>
+      <p>É a margem de revenda: compro o produto a 80 e vendo a 100. Paga estoque, gente, inadimplência e lucro operacional. Convive com o royalty; não se confunde com ele.</p>
+      <p>Exemplo didático (números redondos, não recomendação):</p>
+      <table>
+        <thead>
+          <tr><th>Linha</th><th>Valor</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Venda do mês</td><td>R$ 1.000.000</td></tr>
+          <tr><td>Custo da mercadoria (compra da fábrica)</td><td>(R$ 720.000)</td></tr>
+          <tr><td>Markup bruto de distribuição</td><td>R$ 280.000 (28% sobre venda)</td></tr>
+          <tr><td>Royalty 4% sobre venda líquida, pago à holding</td><td>(R$ 40.000)</td></tr>
+          <tr><td>Sobra para despesa operacional + lucro da distribuidora</td><td>R$ 240.000</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Royalty alto demais esgota a distribuidora. Royalty irrisório, só para “ter contrato”, também é mau sinal para o fisco (falta de substância econômica).</p>
+      <h3>2. Markup / preço de transferência do royalty entre ligadas</h3>
+      <p>Quando holding e distribuidora são do mesmo grupo, o valor do royalty precisa ser o que independentes combinariam (<strong>arm’s length</strong>).</p>
+      <p>No Brasil, a Lei 14.596/2023 alinhou o país à OCDE. Métodos típicos (nomes da lei / prática):</p>
+      <table>
+        <thead>
+          <tr><th>Método</th><th>Ideia</th><th>Quando costuma aparecer</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>PIC (preço independente comparável)</td><td>Comparar com licença semelhante entre terceiros</td><td>Melhor, se existir comparável real de marca</td></tr>
+          <tr><td>PRL (preço de revenda menos lucro)</td><td>Parte da margem de revenda</td><td>Distribuição de produto; menos direto para marca pura</td></tr>
+          <tr><td>MCL (custo mais lucro / “cost plus”)</td><td>Custo da holding + markup</td><td>Se a holding tem custo real de gestão da marca</td></tr>
+          <tr><td>MLT (margem líquida da transação)</td><td>Margem operacional comparável</td><td>Muito usado na prática OCDE (TNMM)</td></tr>
+          <tr><td>MDL (divisão do lucro)</td><td>Repartir o lucro conjunto</td><td>Marca e operação muito entrelaçadas</td></tr>
+        </tbody>
+      </table>
+      <div class="box">
+        <span class="label">O “markup que tem de ser usado”</span>
+        Não existe percentual mágico na lei (o teto antigo de 1%–5% caiu no novo regime de preços de transferência). O que tem de ser usado é <strong>método documentado + comparáveis + funções DEMPE</strong>. Holding que só emite boleto de royalty, sem função, não “ganha” markup: o fisco pode zerar a despesa do outro lado. Na Espanha o equivalente é o regime de <strong>operaciones vinculadas</strong> (art. 18 da Lei 27/2014, LIS), também arm’s length.
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="chapter">
+      <div class="page-header"><span>Holding IP · Distribuidor oficial</span><span>Capítulo 8</span></div>
+      <h2><span class="num">Capítulo 8</span>Tributação do uso de marca no Brasil</h2>
+      <p class="lead">O royalty não é “dinheiro neutro”. Quem recebe tributa receita. Quem paga só deduz se a despesa for real, necessária e, entre ligadas com peça exterior, em valor de mercado. Holding no Lucro Presumido <strong>não é, por padrão, mais barata</strong>.</p>
+      <h3>A. Holding brasileira que recebe o royalty (cenário doméstico)</h3>
+      <table>
+        <thead>
+          <tr><th>Tributo</th><th>Como costuma entrar</th><th>Observação para o cliente</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>IRPJ / CSLL — Lucro Real</td><td>Royalty entra na receita; tributo sobre o lucro efetivo (15% + adicional 10% de IRPJ; 9% de CSLL, em regra)</td><td>Faz sentido se a holding tem despesa real (INPI, jurídico, gestão de marca).</td></tr>
+          <tr><td>IRPJ / CSLL — Lucro Presumido</td><td>Cessão de direitos em geral usa <strong>base de 32%</strong> (Lei 9.249/1995, art. 15)</td><td>32% × alíquotas ≈ carga relevante sobre o bruto. Não assumir “holding paga pouco”.</td></tr>
+          <tr><td>PIS / COFINS</td><td>Sobre a receita da holding (cumulativo 0,65%+3% no Presumido; não cumulativo 1,65%+7,6% no Real, com regras próprias)</td><td>Royalty recebido no Brasil é receita. Confirmar regime e eventuais exclusões com o contador.</td></tr>
+          <tr><td>ISS</td><td>Item 3.02 da LC 116/2003: “cessão de direito de uso de marcas e de sinais de propaganda”. Alíquota municipal típica 2% a 5%</td><td><strong>Controverso.</strong> STF Tema 1.210 (RE 1.348.288) discute a constitucionalidade. Municípios cobram; contribuintes contestam. Não prometer isenção nem incidência como verdade fechada.</td></tr>
+        </tbody>
+      </table>
+      <h3>B. Distribuidora brasileira que paga o royalty (mesmo grupo, tudo no Brasil)</h3>
+      <ul>
+        <li>No Lucro Real, a despesa só entra se for necessária à atividade e escriturada com contrato.</li>
+        <li>Royalty para holding sem substância: risco de glosa, multa e reclassificação (inclusive como distribuição disfarçada de lucros).</li>
+        <li>Lei 6.404/1976 (sociedades por ações) e a jurisprudência do CARF são usadas pela Fiscalização para atacar <strong>falta de propósito negocial</strong> — não só “falta de carimbo”.</li>
+        <li>Simples Nacional: enquadramento de holding que só recebe royalty e de distribuidora com marca de terceiro precisa ser visto caso a caso (muitas holdings de participação/royalty <strong>não</strong> cabem no Simples).</li>
+      </ul>
+      <h3>C. Distribuidora no Brasil que paga royalty a holding no exterior</h3>
+      <div class="keep">
+      <table>
+        <thead>
+          <tr><th>Tributo</th><th>Alíquota de referência</th><th>Quem arca</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>IRRF sobre royalty</td><td>Em regra 15%; 25% se paraíso fiscal / tributação favorecida</td><td>Retido de quem recebe; o pagador recolhe</td></tr>
+          <tr><td>CIDE (Lei 10.168/2000)</td><td>10% sobre royalties / assistência / marcas ao exterior</td><td>Custo de quem paga no Brasil (não é crédito do estrangeiro)</td></tr>
+          <tr><td>PIS/COFINS-Importação</td><td>Em regra <strong>não</strong> sobre royalty puro de marca (não é serviço); contratos mistos (marca + serviço) podem irradiar incidência na fatia de serviço</td><td>Quem paga, se o contrato for mal separado</td></tr>
+          <tr><td>IOF câmbio</td><td>Conforme a operação de remessa vigente</td><td>Quem remete</td></tr>
+          <tr><td>Preços de transferência</td><td>Lei 14.596/2023 — arm’s length; vedação se resultar em dupla não tributação, em certos casos</td><td>Ajuste de IRPJ/CSLL no Brasil</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Remessa ao exterior: IRRF + CIDE facilmente passam de 25% antes do imposto no destino. “Colocar a marca na Espanha para economizar” precisa de conta, não de slogan.</p>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="chapter">
+      <div class="page-header"><span>Holding IP · Distribuidor oficial</span><span>Capítulo 9</span></div>
+      <h2><span class="num">Capítulo 9</span>Tributação na Espanha (uso de marca)</h2>
+      <p class="lead">Se a holding (ou o distribuidor) for espanhola, o royalty de marca entra no Impuesto sobre Sociedades e, em regra, no IVA. O incentivo famoso de “patent box” <strong>não vale para marca comercial</strong>.</p>
+      <h3>Holding espanhola que recebe o canon (royalty)</h3>
+      <table>
+        <thead>
+          <tr><th>Peça</th><th>Regra de referência</th><th>Leitura para o cliente</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Impuesto sobre Sociedades</td><td>Tipo geral 25% (LIS — Lei 27/2014)</td><td>Royalty de marca é rendimento pleno, salvo ajustes de gastos da própria holding.</td></tr>
+          <tr><td>Patent box / art. 23 LIS</td><td>Redução de rendas de certos intangíveis (patentes, modelos, alguns know-how de I+D)</td><td><strong>Marcas estão expressamente excluídas.</strong> Não vender “IP box” para brand. Tipo efetivo de marca não cai para ~10% por esse artigo.</td></tr>
+          <tr><td>IVA</td><td>21% em regra na cessão/licença; localização da operação e reverse charge em B2B UE</td><td>Licença onerosa de marca é, em regra, prestação sujeita a IVA. Confirmar com asesor se o tomador está fora da UE (regras de utilização efetiva).</td></tr>
+          <tr><td>Operaciones vinculadas</td><td>Art. 18 LIS</td><td>Mesmo grupo: valor de mercado + documentação. Espelho do arm’s length brasileiro.</td></tr>
+        </tbody>
+      </table>
+      <div class="box warn">
+        <span class="label">O que a lei espanhola não dá</span>
+        A Agencia Tributaria descreve que em nenhum caso a redução do art. 23 LIS alcança rendas da cessão de <strong>marcas</strong>, obras literárias/artísticas, direitos de imagem ou software fora da lista fechada. Holding de marca na Espanha tributa o canon no IS normal.
+      </div>
+      <h3>Não residente que recebe royalty pago por empresa espanhola</h3>
+      <p>Incide o <strong>IRNR</strong> (Impuesto sobre la Renta de No Residentes), tipo interno frequente de 24% sobre cânones, reduzido se houver convênio. O pagador espanhol retém. O beneficiário precisa de certificado de residência fiscal para aplicar o CDI.</p>
+      <h3>Distribuidor espanhol</h3>
+      <p>Compra e revenda de mercadoria: IVA nas aquisições/vendas, IS sobre o lucro da distribuição. O royalty pago à holding é gasto dedutível se for oneroso, documentado e, entre vinculadas, a valor de mercado. Uso da marca sem contrato continua problema de Ley de Marcas, não só fiscal.</p>
+    </section>
+
+    <!-- 10 -->
+    <section class="chapter">
+      <div class="page-header"><span>Holding IP · Distribuidor oficial</span><span>Capítulo 10</span></div>
+      <h2><span class="num">Capítulo 10</span>Brasil × Espanha no mesmo grupo</h2>
+      <p class="lead">O convênio para evitar a dupla tributação Brasil–Espanha (assinado em 1974, Decreto nº 76.975/1976 no Brasil) trata royalties no <strong>artigo 12</strong> (cânones). Há tetos de retenção na fonte e regras de crédito no país de residência. Protocolo antigo também puxa certos serviços técnicos para o art. 12 — royalty de marca já nasce no art. 12.</p>
+      <table>
+        <thead>
+          <tr><th>Tipo de rendimento</th><th>Teto típico no CDI</th><th>Nota</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Royalties de direitos autorais</td><td>10%</td><td>Não é o caso padrão de marca comercial.</td></tr>
+          <tr><td>Royalties de marcas, patentes e demais</td><td>15%</td><td>Este é o teto de referência para uso de marca.</td></tr>
+          <tr><td>Serviços técnicos (protocolo)</td><td>Em regra 15% via art. 12</td><td>Não misturar no mesmo boleto que o royalty de marca.</td></tr>
+        </tbody>
+      </table>
+      <h3>Dois fluxos que o cliente pergunta</h3>
+      <div class="cols">
+        <div class="card">
+          <h3>Dist. Brasil → Holding Espanha</h3>
+          <p>Brasil retém IRRF (teto CDI 15% para marca) + CIDE 10% (custo brasileiro, em regra não creditável lá) + IOF. A holding espanhola declara o canon no IS 25% e pede crédito pelo imposto brasileiro, nos limites do convênio. A CIDE costuma sobrar como custo morto. Fluxo caro.</p>
+        </div>
+        <div class="card">
+          <h3>Dist. Espanha → Holding Brasil</h3>
+          <p>Espanha retém IRNR limitado pelo CDI (15% marca). A holding brasileira tributa a receita no IRPJ/CSLL e usa o crédito do imposto espanhol conforme regras domésticas + art. 23 do CDI. Ainda há substância, INPI e preços de transferência dos dois lados.</p>
+        </div>
+      </div>
+      <div class="box">
+        <span class="label">Papel sem o qual o convênio não aplica</span>
+        Certificado de residência fiscal da entidade que recebe, contrato de licença com objeto claro (“marca X, classes Y, território Z”) e, do lado brasileiro, enquadramento cambial da remessa. Sem certificado, o fisco da fonte aplica a alíquota interna cheia.
+      </div>
+      <p>Holding e distribuidora <strong>as duas no Brasil</strong> não usam o CDI. Aí o jogo é substância + dedutibilidade doméstica + ISS/PIS/COFINS, não retenção internacional.</p>
+    </section>
+
+    <!-- 11 -->
+    <section class="chapter">
+      <div class="page-header"><span>Holding IP · Distribuidor oficial</span><span>Capítulo 11</span></div>
+      <h2><span class="num">Capítulo 11</span>Riscos clássicos e exemplos públicos</h2>
+      <h3>O que a Receita e o CARF atacam</h3>
+      <table>
+        <thead>
+          <tr><th>Risco</th><th>Como aparece</th><th>O que costuma acontecer</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Holding sem substância</td><td>Sem gente, sem custo de marca, sem decisão</td><td>Glosa da despesa; multa; reclassificação</td></tr>
+          <tr><td>Royalty acima de mercado</td><td>Percentual só para esvaziar o lucro da operacional</td><td>Ajuste arm’s length / preço de transferência</td></tr>
+          <tr><td>Único motivo tributário</td><td>“Vamos alocar o resultado na holding porque o regime é melhor”</td><td>Falta de propósito negocial</td></tr>
+          <tr><td>Marca não registrada / contrato de gaveta</td><td>Uso de fato, papel depois</td><td>Fraqueza civil + ceticismo fiscal</td></tr>
+          <tr><td>Confusão com franquia</td><td>Padrão de loja + royalty sem COF</td><td>Nulidades e deveres da Lei 13.966/2019</td></tr>
+          <tr><td>Dizer “oficial” sem contrato</td><td>Site e cartão com logo</td><td>Uso indevido de marca + CDC</td></tr>
+        </tbody>
+      </table>
+      <div class="box warn">
+        <span class="label">Frase que não se deve usar na reunião</span>
+        “A vantagem é alocar o royalty na holding, que tem regime mais vantajoso.” Isso pode ser verdadeiro em um caso concreto depois da conta — e falso na maioria dos Presumidos com base 32% + ISS + PIS/COFINS. O motivo nobre do desenho é <strong>proteger e governar a marca</strong>. Economia de imposto, se houver, é consequência medida, não slogan.
+      </div>
+      <h3>Exemplos públicos (analogia, não alíquota de ninguém)</h3>
+      <ul>
+        <li><strong>AB InBev / Ambev.</strong> Marcas de cerveja em entidades de IP do grupo; operacionais pagam pelo uso. É o desenho “marca numa caixa, fábrica/distribuição em outra”. Ninguém neste estudo afirma o percentual interno.</li>
+        <li><strong>McDonald’s.</strong> A marca e o sistema ficam no grupo franqueador; o operador (restaurante) paga royalty sobre as vendas. É franquia, não só distribuição — mas a lógica “IP de um lado, operação do outro” é a mesma.</li>
+        <li><strong>Localiza.</strong> Grupos de locação no Brasil historicamente segregam holdings e operacionais; marca e royalty aparecem na estrutura de grupo. Analogia de segregação, não de contrato de distribuidor.</li>
+        <li><strong>IKEA.</strong> Inter IKEA Systems detém o conceito/marca; quem opera loja paga pelo direito de usar. Exemplo didático mundial de IP holding cobrando de quem opera.</li>
+        <li><strong>Coca-Cola.</strong> A companhia dona da marca e do concentrado; engarrafadores territoriais produzem, distribuem e usam a marca sob contrato. Distribuição + licença no mesmo relacionamento.</li>
+      </ul>
+      <p>Esses grupos têm substância: jurídico de marca, brand book, fiscalização de qualidade, registro multinacional. Copiar o organograma sem copiar a substância é o que vira autuação.</p>
+    </section>
+
+    <!-- 12 -->
+    <section class="chapter">
+      <div class="page-header"><span>Holding IP · Distribuidor oficial</span><span>Capítulo 12</span></div>
+      <h2><span class="num">Capítulo 12</span>O que levar ao advogado e ao contador</h2>
+      <p class="lead">Este estudo encerra na pauta. O próximo passo é parecer — não abrir CNPJ nesta reunião.</p>
+      <h3>Pasta mínima para o parecer</h3>
+      <ul class="check">
+        <li>Organograma atual (quem é dono de quem) e o organograma desejado.</li>
+        <li>Certidões INPI da marca (pedido/registro, classes, titular).</li>
+        <li>Se Espanha ou UE: extrato OEPM / EUIPO.</li>
+        <li>Contratos já existentes de distribuição, representação ou “parceria”.</li>
+        <li>DRE da operacional (para testar se o royalty cabe na margem).</li>
+        <li>Regime tributário atual de cada empresa (Real, Presumido, Simples).</li>
+        <li>Onde as pessoas-chave moram e trabalham (substância / estabelecimento).</li>
+        <li>Se já existe holding: contrato social e objeto social.</li>
+      </ul>
+      <h3>Perguntas que o parecer deve responder</h3>
+      <ol>
+        <li>A figura é distribuição, franquia ou as duas?</li>
+        <li>O royalty proposto é defensável em arm’s length?</li>
+        <li>A holding terá DEMPE de verdade, ou só conta corrente?</li>
+        <li>ISS no município da holding: provisionar ou litigar (Tema 1.210)?</li>
+        <li>Há peça na Espanha? Se sim, o CDI + CIDE ainda deixam o desenho de pé?</li>
+        <li>Quem registra a marca amanhã, se ainda estiver em nome de pessoa física?</li>
+      </ol>
+      <h3>Fontes normativas citadas neste estudo</h3>
+      <div class="sources">
+        <p>Brasil: Lei 9.279/1996 (LPI), em especial art. 211; Código Civil arts. 710–721; Lei 4.886/1965; Lei 13.966/2019; Lei 6.729/1979; Lei 12.529/2011; CDC; LC 116/2003 item 3.02; Lei 9.249/1995 art. 15; Lei 4.506/1964; Lei 14.596/2023; Lei 14.286/2021; Lei 10.168/2000 (CIDE); Decreto 76.975/1976 (CDI Brasil–Espanha); Portaria MF 436/1958 (histórica, tetos revogados no novo PT); Portarias INPI 26 e 27/2023; STF Tema 1.210.</p>
+        <p>Espanha: Ley 17/2001 de Marcas; Ley 12/1992 (agencia); Ley 27/2014 (LIS), arts. 18 e 23; IRNR; regras de IVA sobre cessão de intangíveis; Convenio de doble imposición España–Brasil (1974).</p>
+        <p>OCDE: princípio arm’s length; funções DEMPE para intangíveis (BEPS Ação 8–10).</p>
+      </div>
+      <footer class="colophon">
+        Estudo educacional — setembro de 2026. Não substitui parecer. Impressão A4. Arquivo-fonte: docs/estudo-holding-ip/estudo.html.
+      </footer>
+    </section>
+
+  </div>
+</body>
+</html>
