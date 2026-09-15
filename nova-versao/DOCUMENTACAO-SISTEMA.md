@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.6.5 — LANNIC movimento |
-| Última atualização | 09/09/2026 (LANNIC: Entradas/Saídas EXITO mai–ago/2026; merge PGDAS em agosto) |
+| Versão do sistema | 2.6.6 — LANNIC movimento |
+| Última atualização | 14/09/2026 (bloco de 4 KPIs do trimestre só no chip 1º/2º Trim) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.6.6 | LANNIC movimento | Faixa de 4 KPIs (vendas/compras/saldo/ICMS do trimestre) só no chip **1º Trim** / **2º Trim** (`qN-YYYY`). Chip de mês não mostra mais “Total — trimestre”. DRE continua sem a faixa. |
 | 2.6.5 | LANNIC movimento | Planilhas 144 Entradas/Saídas (`pasta temporaria/Nova pasta`) split mai–ago/2026 na unidade `lannic`; agosto faz merge com PGDAS (DAS 28.398,35). `receitaBruta` permanece a base 478.335,06; Compras/Vendas usam o Excel. Seed PGDAS não apaga NFs. |
 | 2.6.4 | JPG IPI credor | Demonstrativo IPI EXITO: se saldo devedor = 0 e “saldo credor de IPI para o mês seguinte” > 0 → `apuracao.ipi.aRecolher` negativo (Asa Sul 08/2026: **−1.914,98**). Tabela ICMS/IPI igual. KPI **Crédito IPI** na Visão Geral quando não há ICMS. Dashboard **JPG** não mostra textos/empty-states de APURAÇÃO 5005 (Baifer/Única seguem com 5005). Reimportar IPI já gravado com 0. |
 | 2.6.3 | JPG IRPJ/CSLL | Demonstrativo EXITO IRPJ+CSLL (2 abas CSOC + IRPJ-LP) na **Matriz Sede**: 1º tri em 03/2026 (IRPJ 143.211,70 / CSLL 74.476,66) e 2º tri em 06/2026 (IRPJ 137.737,02 / CSLL 77.617,99); merge no movimento; trimestre soma `irpj`/`csll` |
@@ -327,7 +328,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | UI Memória | `frontend/components/MemoriaLivro.tsx` |
 | UI DRE | `frontend/components/DreStatement.tsx` |
 | UI Balancete | `frontend/components/BalanceteTree.tsx` |
-| UI abas (Impostos / Indicadores / Recebimentos) | `frontend/app/dashboard/[empresa]/[aba]/page.tsx` |
+| UI abas (Impostos / Indicadores / Recebimentos) | `frontend/app/dashboard/[empresa]/[aba]/page.tsx` (`TrimestreBlock` só se `viewingTrimestre`) |
 | Estilos dashboard | `frontend/app/dashboard.css` |
 | UI import | `frontend/components/ImportTab.tsx` |
 | Catálogo de empresas | `backend/app/companies.py`, `backend/scripts/seed.py` |
@@ -359,6 +360,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 19. JPG IRPJ/CSLL EXITO (abas CSOC + IRPJ-LP): grava só no último mês do trimestre (`sede` 03 e 06/2026); merge no movimento; o chip de trimestre soma `apuracao.irpj`/`csll` sem espalhar pelos outros dois meses.
 20. IPI (demonstrativo EXITO ou tabela): se a recolher/saldo devedor ≈ 0 e há saldo credor (ou crédito > débito) → `aRecolher` negativo. KPI Visão Geral: DAS, senão ICMS com valor, senão IPI. JPG não exibe APURAÇÃO 5005 na UI.
 21. LANNIC (Simples): `memoriaSimples.baseMemoria` manda em `receitaBruta` após merge de saídas/import/seed. `cfopSaidasTotal` e `NfeLine` vêm do Excel. Reexecutar `seed_jpg_lannic.py` **não** zera movimento.
+22. Barra de competência: chip de mês mostra só o mês. Chip **1º Trim** / **2º Trim** (`qN-YYYY`) soma os meses importados do trimestre e exibe a faixa de 4 KPIs (`TrimestreBlock`). Aba **DRE** não usa essa faixa. A API ainda pode devolver `trimestre` no mês; a UI ignora.
 
 ## 6. Pendências de dados (Única)
 
@@ -380,7 +382,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 2. Abrir dashboard → **Importar planilhas**.
 3. Subir o `.xlsx` padrão (mesmo esqueleto todo mês). Se o arquivo já trouxer `ENTRADAS`/`SAÍDAS`, Compras e Vendas saem dele; senão, subir também o EXITO de Entradas **ou** o **Relatório de entrada por fornecedor**.
 4. Conferir preview (ok / vazia / ignorada) → **Gravar**.
-5. Selecionar mês no chip superior; conferir DRE, Balancete, **Memória** (livro linha a linha), Impostos, Compras, Vendas.
+5. Selecionar mês no chip superior; conferir DRE, Balancete, **Memória** (livro linha a linha), Impostos, Compras, Vendas. Para o **total somado do trimestre**, clique em **1º Trim** / **2º Trim** (não no mês): aí aparece a faixa de 4 KPIs (vendas, compras, saldo, imposto). No chip de mês essa faixa não aparece.
 
 **Única — DRE Análise Vertical (jan–jun/2026):** login `unica` → Importar → selecionar `Análise Vertical do D. R. E.xls` → preview deve listar **6** linhas `dre` (2026-01 … 2026-06) com `ok` → **Gravar** (sem “substituir mês” se o mês já tiver movimento/impostos) → conferir aba **DRE** em cada chip de mês. Em jan/2026 a planilha não traz lucro operacional → KPI de lucro líquido / ML fica N/D.
 

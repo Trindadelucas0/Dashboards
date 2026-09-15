@@ -209,17 +209,15 @@ function Kpi({ color, icon, value, label, sub, neg }: { color: string; icon: str
   );
 }
 
-function TrimestreBlock({ tri, asMain }: { tri: TrimestrePayload; asMain?: boolean }) {
+function TrimestreBlock({ tri }: { tri: TrimestrePayload }) {
   const tot = tri.totais;
   const sub = trimestreSub(tri);
   return (
-    <div className={`trim-block${asMain ? " trim-block-main" : ""}`}>
+    <div className="trim-block trim-block-main">
       <div className="trim-block-head">
-        <div className="trim-block-title">{asMain ? tri.label : `Total — ${tri.label}`}</div>
+        <div className="trim-block-title">{tri.label}</div>
         <div className="trim-block-sub">
-          {asMain
-            ? `Soma dos meses importados: ${tri.mesesLabel || "—"} (${tri.mesesPresentes?.length || 0} de 3)`
-            : `${sub} · use o chip “1º Trim” / “2º Trim” na barra para ver o total somado na aba`}
+          {`Soma dos meses importados: ${tri.mesesLabel || "—"} (${tri.mesesPresentes?.length || 0} de 3)`}
         </div>
       </div>
       <div className="kpi-grid kpi-grid-4">
@@ -416,7 +414,7 @@ export default function AbaPage() {
       {!loading && !error && payload?.empty && aba !== "impostos" && aba !== "recebimentos" ? (
         <div className="alert-box warn">{emptyMsg(aba, company?.id || params.empresa)}</div>
       ) : null}
-      {!loading && !error && tri && aba !== "dre" ? <TrimestreBlock tri={tri} asMain={viewingTrimestre} /> : null}
+      {!loading && !error && viewingTrimestre && tri && aba !== "dre" ? <TrimestreBlock tri={tri} /> : null}
 
       {aba === "finalidade" && !loading && !error ? (
         <>
