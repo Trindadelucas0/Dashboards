@@ -255,11 +255,11 @@ Um `.xls` só PIS ou só COFINS → `tipo` = `pis` ou `cofins` (fluxo normal aba
 
 `parse_pis_cofins_padrao`: blocos DÉBITO / CRÉDITO / RESUMO APURAÇÃO.
 
-- `aRecolher = débito − crédito` (**resultado do mês**).
-- A coluna `A RECOLHER` do RESUMO só é aceita se bater com essa conta (tolerância 0,02); senão vira `aRecolherPlanilha` + warning.
-- Motivo: nessas planilhas o RESUMO desconta o `SALDO CREDOR` **acumulado** (o saldo credor do mês N é o `aRecolher` do mês N−1) — somar isso em todo mês duplicaria o mesmo crédito.
-- Golden Baifer jan/2026: PIS `-2030.42`, COFINS `-9352.23` (planilha: `-18080.71` / `-83280.93`).
-- Golden Única jan/2026: PIS `-153.95`, COFINS `-709.09` (planilha: `-83936.33` / `-386579.45`).
+- `aRecolher` = coluna `A RECOLHER` do RESUMO (oficial, inclui saldo credor acumulado).
+- Débito − crédito do mês fica em `aRecolherCalculado` (UI: **Resultado do mês**).
+- `fonte: resumo`. Mesmo padrão do IPI da planilha padrão.
+- Golden Baifer jan/2026: PIS `-18080.71`, COFINS `-83280.93` (mês: `-2030.42` / `-9352.23`).
+- Golden Única jan/2026: PIS `-83936.33`, COFINS `-386579.45` (mês: `-153.95` / `-709.09`).
 
 ---
 

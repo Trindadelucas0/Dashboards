@@ -105,12 +105,14 @@ def test_janeiro_impostos_golden():
 
     pis = _part(result, "pis_cofins")
     ap = pis["pack_patch"]["apuracao"]
-    # aRecolher = débito − crédito do mês (a coluna A RECOLHER traz o saldo acumulado)
-    assert ap["pis"]["aRecolher"] == pytest.approx(-153.95, abs=0.02)
-    assert ap["cofins"]["aRecolher"] == pytest.approx(-709.09, abs=0.02)
+    # aRecolher = coluna A RECOLHER do RESUMO (inclui saldo credor acumulado)
+    assert ap["pis"]["aRecolher"] == pytest.approx(-83936.33, abs=0.02)
+    assert ap["cofins"]["aRecolher"] == pytest.approx(-386579.45, abs=0.02)
     resumo = pis["pack_patch"]["memoriaPisCofins"]["resumo"]
     assert resumo["pis"]["aRecolherPlanilha"] == pytest.approx(-83936.33, abs=0.02)
-    assert resumo["pis"]["fonte"] == "debito-credito"
+    assert resumo["pis"]["fonte"] == "resumo"
+    assert resumo["pis"]["aRecolherCalculado"] == pytest.approx(-153.95, abs=0.02)
+    assert resumo["cofins"]["aRecolherCalculado"] == pytest.approx(-709.09, abs=0.02)
 
 
 @pytest.mark.skipif(not JAN.exists(), reason="Fixture unica 012026 ausente")
@@ -222,8 +224,12 @@ def test_julho_parcial_sem_dre_bal_movimento_golden():
 
     pis = _part(result, "pis_cofins")
     ap = pis["pack_patch"]["apuracao"]
-    assert ap["pis"]["aRecolher"] == pytest.approx(3699.88, abs=0.02)
-    assert ap["cofins"]["aRecolher"] == pytest.approx(17041.86, abs=0.02)
+    resumo = pis["pack_patch"]["memoriaPisCofins"]["resumo"]
+    assert ap["pis"]["aRecolher"] == pytest.approx(resumo["pis"]["aRecolherPlanilha"], abs=0.02)
+    assert ap["cofins"]["aRecolher"] == pytest.approx(resumo["cofins"]["aRecolherPlanilha"], abs=0.02)
+    assert resumo["pis"]["fonte"] == "resumo"
+    assert resumo["pis"]["aRecolherCalculado"] == pytest.approx(3699.88, abs=0.02)
+    assert resumo["cofins"]["aRecolherCalculado"] == pytest.approx(17041.86, abs=0.02)
 
 
 @pytest.mark.skipif(_jun_path() is None, reason="Downloads Unica 062026 ausente")

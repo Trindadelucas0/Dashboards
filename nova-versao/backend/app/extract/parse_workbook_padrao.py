@@ -435,7 +435,8 @@ def extract_workbook_padrao(
                     meta_pc[tributo] = sub.get("aRecolher")
             if patch:
                 patch["memoriaPisCofins"] = {
-                    "formula": pis_parsed.get("formula") or "aRecolher = débito − crédito",
+                    "formula": pis_parsed.get("formula")
+                    or "aRecolher = coluna RESUMO (débito − crédito − saldo credor)",
                     "debito": pis_parsed.get("debito") or {},
                     "credito": pis_parsed.get("credito") or {},
                     "resumo": pis_parsed.get("resumo") or {},

@@ -23,6 +23,7 @@ type ResumoRow = {
   saldoCredor?: number;
   aRecolher: number;
   aRecolherPlanilha?: number;
+  aRecolherCalculado?: number;
 };
 type IrpjLine = { label: string; valor?: number | null; valores?: number[]; kind?: string };
 
@@ -471,6 +472,14 @@ export default function MemoriaLivro({
     rows.push({ label: "Débito", value: brl(debito), tone: "debit" });
     rows.push({ label: "Créditos", value: brl(credito), tone: "debit" });
     if (saldo != null) rows.push({ label: "Saldo credor (acum.)", value: brl(Number(saldo)), tone: "mute" });
+    const mesPis = Number(row?.aRecolherCalculado ?? debito - credito);
+    if (Math.abs(mesPis - aRec) >= 0.02) {
+      rows.push({
+        label: "Resultado do mês",
+        value: brl(mesPis),
+        tone: Math.abs(mesPis) < 0.005 ? "zero" : mesPis < 0 ? "result" : "debit",
+      });
+    }
     rows.push({
       label: "A recolher",
       value: brl(aRec),
@@ -509,6 +518,14 @@ export default function MemoriaLivro({
     rows.push({ label: "Débito", value: brl(debito), tone: "debit" });
     rows.push({ label: "Créditos", value: brl(credito), tone: "debit" });
     if (saldo != null) rows.push({ label: "Saldo credor (acum.)", value: brl(Number(saldo)), tone: "mute" });
+    const mesCof = Number(row?.aRecolherCalculado ?? debito - credito);
+    if (Math.abs(mesCof - aRec) >= 0.02) {
+      rows.push({
+        label: "Resultado do mês",
+        value: brl(mesCof),
+        tone: Math.abs(mesCof) < 0.005 ? "zero" : mesCof < 0 ? "result" : "debit",
+      });
+    }
     rows.push({
       label: "A recolher",
       value: brl(aRec),
@@ -861,7 +878,7 @@ export default function MemoriaLivro({
                 <div className="table-card" id="mem-pis">
                   <div className="table-head">
                     <div className="ttl">PIS / COFINS</div>
-                    <div className="sub">{livroPc?.formula || "a recolher = débito − crédito"}</div>
+                    <div className="sub">{livroPc?.formula || "a recolher = coluna RESUMO (débito − crédito − saldo credor)"}</div>
                   </div>
                   <BaseBlock title="Débito" lines={livroPc?.debito?.linhas || []} />
                   <BaseBlock title="Crédito" lines={livroPc?.credito?.linhas || []} />
@@ -1005,7 +1022,10 @@ function ResumoBlock({ rows, fallback }: { rows: ResumoRow[]; fallback?: Record<
           : null,
       ].filter(Boolean) as ResumoRow[]);
   if (!list.length) return null;
-  const showPlanilha = list.some((r) => r.aRecolherPlanilha != null);
+  const showMes = list.some((r) => {
+    const mes = r.aRecolherCalculado ?? r.debito - r.credito;
+    return Math.abs(mes - r.aRecolher) >= 0.02;
+  });
   return (
     <div className="tbl-scroll">
       <table className="dre-tbl">
@@ -1015,23 +1035,26 @@ function ResumoBlock({ rows, fallback }: { rows: ResumoRow[]; fallback?: Record<
             <th className="r">Débito</th>
             <th className="r">Crédito</th>
             <th className="r">Saldo credor</th>
-            <th className="r">A recolher (mês)</th>
-            {showPlanilha ? <th className="r">A recolher (planilha)</th> : null}
+            {showMes ? <th className="r">Resultado do mês</th> : null}
+            <th className="r">A recolher</th>
           </tr>
         </thead>
         <tbody>
-          {list.map((r) => (
-            <tr key={r.tributo} className="dre-total">
-              <td className="fw7">{r.tributo}</td>
-              <td className="r">{brl(r.debito)}</td>
-              <td className="r">{brl(r.credito)}</td>
-              <td className="r">{r.saldoCredor != null ? brl(r.saldoCredor) : "—"}</td>
-              <td className={`r td-val ${r.aRecolher < 0 ? "dre-num-neg" : ""}`}>{brl(r.aRecolher)}</td>
-              {showPlanilha ? (
-                <td className="r td-mute">{r.aRecolherPlanilha != null ? brl(r.aRecolherPlanilha) : "—"}</td>
-              ) : null}
-            </tr>
-          ))}
+          {list.map((r) => {
+            const mes = r.aRecolherCalculado ?? r.debito - r.credito;
+            return (
+              <tr key={r.tributo} className="dre-total">
+                <td className="fw7">{r.tributo}</td>
+                <td className="r">{brl(r.debito)}</td>
+                <td className="r">{brl(r.credito)}</td>
+                <td className="r">{r.saldoCredor != null ? brl(r.saldoCredor) : "—"}</td>
+                {showMes ? (
+                  <td className={`r td-mute ${mes < 0 ? "dre-num-neg" : ""}`}>{brl(mes)}</td>
+                ) : null}
+                <td className={`r td-val ${r.aRecolher < 0 ? "dre-num-neg" : ""}`}>{brl(r.aRecolher)}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

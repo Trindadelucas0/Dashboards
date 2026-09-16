@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.6.6 — LANNIC movimento |
-| Última atualização | 14/09/2026 (bloco de 4 KPIs do trimestre só no chip 1º/2º Trim) |
+| Versão do sistema | 2.6.7 — PIS/COFINS RESUMO |
+| Última atualização | 16/09/2026 (A recolher PIS/COFINS = coluna do RESUMO da planilha padrão) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.6.7 | PIS/COFINS RESUMO | Planilha padrão aba PIS COFINS: `aRecolher` = coluna A RECOLHER do RESUMO (inclui saldo credor acumulado), como o IPI. Débito − crédito fica em `aRecolherCalculado` (linha **Resultado do mês**). Packs já gravados: script `_fix_pis_cofins_arecolher_remote.py`. |
 | 2.6.6 | LANNIC movimento | Faixa de 4 KPIs (vendas/compras/saldo/ICMS do trimestre) só no chip **1º Trim** / **2º Trim** (`qN-YYYY`). Chip de mês não mostra mais “Total — trimestre”. DRE continua sem a faixa. |
 | 2.6.5 | LANNIC movimento | Planilhas 144 Entradas/Saídas (`pasta temporaria/Nova pasta`) split mai–ago/2026 na unidade `lannic`; agosto faz merge com PGDAS (DAS 28.398,35). `receitaBruta` permanece a base 478.335,06; Compras/Vendas usam o Excel. Seed PGDAS não apaga NFs. |
 | 2.6.4 | JPG IPI credor | Demonstrativo IPI EXITO: se saldo devedor = 0 e “saldo credor de IPI para o mês seguinte” > 0 → `apuracao.ipi.aRecolher` negativo (Asa Sul 08/2026: **−1.914,98**). Tabela ICMS/IPI igual. KPI **Crédito IPI** na Visão Geral quando não há ICMS. Dashboard **JPG** não mostra textos/empty-states de APURAÇÃO 5005 (Baifer/Única seguem com 5005). Reimportar IPI já gravado com 0. |
@@ -91,7 +92,7 @@ Sem as abas de movimento no workbook, Compras/Vendas/Finalidade continuam vindo 
 | Movimento: `Total Geral` sem valor na coluna Valor Contábil | Part `ok` com **aviso**; conferência pela soma das linhas |
 | Movimento: Δ soma × Total Geral ≥ 0,02 | **Erro** na part; não grava |
 | Movimento: aba sem coluna `Valor Contábil` | Part `vazia` + aviso; **não grava** (a coluna `Valor` é imposto, não faturamento) |
-| PIS/COFINS: coluna A RECOLHER do RESUMO ≠ débito − crédito | Grava `débito − crédito` e guarda o valor da planilha em `aRecolherPlanilha` + aviso |
+| PIS/COFINS: coluna A RECOLHER do RESUMO ≠ débito − crédito | Grava a coluna do RESUMO em `aRecolher`; débito − crédito em `aRecolherCalculado` |
 
 ### 3.1 Relatório de entrada por fornecedor (EXITO)
 
@@ -129,14 +130,14 @@ Regras de exibição:
 Fórmulas gravadas no pack (não calculadas na UI):
 
 - ICMS 5005: `Total 5005 + Total fora = ICMS a recolher`
-- PIS/COFINS: `a recolher = débito − crédito` (resultado do mês). A coluna `SALDO CREDOR` da planilha é o crédito **acumulado** de meses anteriores; o valor da planilha fica em `aRecolherPlanilha`, só como referência, para não somar o mesmo crédito em todos os meses. No livro técnico o resumo mostra **A recolher (mês)** e, quando existir, **A recolher (planilha)**.
+- PIS/COFINS: `a recolher` = coluna A RECOLHER do RESUMO (oficial da apuração, inclui saldo credor acumulado). Débito − crédito do mês fica em `aRecolherCalculado` e na linha **Resultado do mês** do card / livro técnico. `SALDO CREDOR` continua a coluna acumulada. No livro, se o resultado do mês diferir do oficial, as duas colunas aparecem.
 - IPI: `a recolher = débito − crédito − saldo credor`. Na tabela ICMS/IPI das filiais JPG, se **IPI a Recolher** vier 0 e crédito > débito, grava o saldo credor (negativo). Demonstrativo EXITO: **Saldo credor de IPI para o mês seguinte** vira `aRecolher` negativo (mesmo padrão do ICMS).
 
 Pack: `memoriaCalculo` (5005 + `linhas` + `formulaIcms`), `memoriaPisCofins`, `memoriaIpi`, `memoriaIrpj`, `memoriaCsll`, `porUfSt`, `porUfDifal`.
 
 Seção omitida quando a aba veio vazia ou IRPJ/CSLL com CNPJ de outra empresa. Pack antigo (só KPIs) continua mostrando o que existir; para o livro completo, **reimportar** a planilha padrão.
 
-Golden Baifer jan/2026: ICMS a recolher **−1.901,28**, subvenção **45.070,99**, PIS **−2.030,42**, COFINS **−9.352,23** (planilha: −18.080,71 / −83.280,93 com o saldo credor acumulado), ST DF **474,62**.
+Golden Baifer jan/2026: ICMS a recolher **−1.901,28**, subvenção **45.070,99**, PIS **−18.080,71**, COFINS **−83.280,93** (resultado do mês: −2.030,42 / −9.352,23), ST DF **474,62**.
 
 ### 3.2.1 Impostos (UI)
 
@@ -241,7 +242,7 @@ Ordem de import recomendada: 711 sede → 81 PR → 90 MG → 82 SP → 712 Asa 
 
 Julho em **dois arquivos** (mesmo nome, tamanhos diferentes):
 - ~61 KB — 9 abas fiscais, **sem** ENTRADAS/SAÍDAS → só impostos / memória.
-- ~370 KB — ENTRADAS/SAÍDAS + impostos, **sem** DRE/BALANCETE → workbook **parcial** (movimento + impostos). Goldens movimento: Entradas 2.119.642,66 (238 NFs, Δ0); Saídas 2.440.744,56. PIS 3.699,88 / COFINS 17.041,86 (débito − crédito).
+- ~370 KB — ENTRADAS/SAÍDAS + impostos, **sem** DRE/BALANCETE → workbook **parcial** (movimento + impostos). Goldens movimento: Entradas 2.119.642,66 (238 NFs, Δ0); Saídas 2.440.744,56. Resultado do mês PIS 3.699,88 / COFINS 17.041,86 (`aRecolherCalculado`); `aRecolher` oficial = coluna RESUMO.
 
 Importar **os dois** (ou o parcial + o de 9 abas) sem “substituir mês” para merge.
 
@@ -314,7 +315,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | Detecção + extração workbook | `backend/app/extract/parse_workbook_padrao.py` |
 | Classificação tipo (Entradas / por fornecedor) | `backend/app/extract/classify.py` → `detect_sheet_tipo` |
 | Parser 5005 | `backend/app/extract/parse_memoria_5005.py` |
-| Parser PIS/COFINS/IPI/IRPJ | `backend/app/extract/parse_impostos.py` (`parse_demonstrativo_ipi` saldo credor; `parse_demonstrativo_exito_irpj_csll`) |
+| Parser PIS/COFINS/IPI/IRPJ | `backend/app/extract/parse_impostos.py` (`parse_pis_cofins_padrao` coluna RESUMO; `parse_demonstrativo_ipi` saldo credor; `parse_demonstrativo_exito_irpj_csll`) |
 | Import IRPJ/CSLL JPG sede | `backend/scripts/import_jpg_irpj_csll.py` (merge 03/2026 e 06/2026) |
 | Parser movimento | `backend/app/extract/parse_movimento.py` |
 | Parser DRE / Análise Vertical | `backend/app/extract/parse_dre.py` (`extract_dre_vertical`, `parse_dre_padrao_column`) |
@@ -348,7 +349,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 6. Memória não calcula imposto: só exibe o livro importado.
 7. DRE/Balancete da planilha padrão só gravam a coluna do mês do próprio arquivo (`MMYYYY`); coluna vazia = nada gravado. Exceção: **Análise Vertical** grava uma part por coluna `MM/YYYY` preenchida.
 8. `Total Geral` só é aceito se houver número na coluna de valor da própria linha — nunca aproveitar número de outra coluna (Isentas/Outras/Base).
-9. PIS/COFINS gravam o resultado do mês (`débito − crédito`); saldo credor acumulado fica informativo.
+9. PIS/COFINS da planilha padrão gravam a coluna A RECOLHER do RESUMO em `aRecolher`; débito − crédito do mês fica em `aRecolherCalculado`.
 10. Percentuais na UI (Impostos `% s/ vendas`, Memória `% s/ RB` = max(aRecolher,0)/RB, DRE margens) só com numerador e denominador no pack; caso contrário `—` / `N/D` / “Em apuração”.
 11. Balancete multi-mês: coluna Total da grade = soma dos saldos mensais exibidos (layout wireframe); não interpreta patrimônio consolidado.
 12. Documento de cliente/fornecedor: 11 dígitos = CPF, 14 = CNPJ; demais = outros. Exportações de vendas/finalidade/CPF×CNPJ usam só pack e `NfeLine` da competência/unidade atuais.
@@ -390,7 +391,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 **Única — meses 01 a 07/2026 (workbook):** login `unica` → Importar → selecionar os arquivos `Planilha Padrão DASBORADS - UNICA MM2026.xlsx` (pode subir vários meses de uma vez) → conferir no preview: `entradas` com Δ 0,00, `saidas` com aviso de Total Geral, `dre`/`balancete` como `vazia` fora de janeiro (use a Análise Vertical para DRE real), `IRPJ`/`CSLL` como `ignorada` → **Gravar** (sem "substituir mês", para permitir merge) → conferir **Compras**, **Vendas**, **Impostos** e **Memória** em cada mês.
 
-**Única — julho 2026 (reimport):** subir **os dois** arquivos de Downloads (fiscais ~61 KB + movimento parcial ~370 KB). Preview do parcial deve listar `entradas`/`saidas` ok + impostos; aviso de workbook parcial sem DRE/BAL. Depois de gravar: **Recebimentos** com ~2,44M / 2,12M; **Impostos** PIS 3.699,88 e COFINS 17.041,86 (se o banco ainda tiver acumulado errado, reimporte o mês). **Finalidade** mostra o bloco Serviços Tomados (CFOPs 1-933 / 2-933 / 2-353 etc.).
+**Única — julho 2026 (reimport):** subir **os dois** arquivos de Downloads (fiscais ~61 KB + movimento parcial ~370 KB). Preview do parcial deve listar `entradas`/`saidas` ok + impostos; aviso de workbook parcial sem DRE/BAL. Depois de gravar: **Recebimentos** com ~2,44M / 2,12M. **Impostos/Memória:** A recolher PIS/COFINS é a coluna do RESUMO; o resultado do mês (débito − crédito) aparece como **Resultado do mês** (3.699,88 / 17.041,86). **Finalidade** mostra o bloco Serviços Tomados (CFOPs 1-933 / 2-933 / 2-353 etc.).
 
 **Recebimentos:** estimativa NF-e (não é caixa). Aba completa: 8 KPIs do mês + acumulado/MoM + barras Rec×Pag + doughnut + tabela mensal. Mês sem movimento → aviso e KPIs `—`; série deixa lacuna (null) nos meses sem `hasMovimentacao`.
 
@@ -398,7 +399,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 **Memória / Impostos — ST:** quando houver `porUfSt`, o card ICMS ST lista o detalhe por UF (BA, DF, GO, MG…). Na planilha padrão a aba `ST` é só UF/VALOR: o sistema mostra a soma como Importado/Apurado. Se o contador disser que **não é o valor pago**, pedir **Demonst. SUBTRI** / guia — não “corrigir” o número na mão.
 
-**Memória:** depois de gravar a planilha padrão, abra **Memória de Cálculo**. No topo: cards detalhados + **Resumo Consolidado**; abaixo, **Ver livro técnico** abre 5005 / PIS/COFINS / ST etc.
+**Memória:** depois de gravar a planilha padrão, abra **Memória de Cálculo**. No topo: cards detalhados + **Resumo Consolidado**; abaixo, **Ver livro técnico** abre 5005 / PIS/COFINS / ST etc. Nos cards PIS/COFINS, **A recolher** é a coluna do RESUMO; se houver saldo credor acumulado, **Resultado do mês** mostra só débito − crédito.
 
 **Impostos:** KPIs no topo mostram vendas, total de impostos e **% sobre vendas**; cada card de tributo repete `% s/ vendas` quando há aRecolher e faturamento.
 

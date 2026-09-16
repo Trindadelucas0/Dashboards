@@ -98,14 +98,15 @@ def test_baifer_pis_st_golden():
     pis_part = next((p for p in result["parts"] if p["tipo"] == "pis_cofins" and p.get("pack_patch")), None)
     assert pis_part is not None
     ap = pis_part["pack_patch"]["apuracao"]
-    # aRecolher é o resultado do mês (débito − crédito). A coluna A RECOLHER da planilha
-    # abate o saldo credor acumulado de meses anteriores e fica só como referência.
-    assert ap["pis"]["aRecolher"] == pytest.approx(-2030.42, abs=0.02)
-    assert ap["cofins"]["aRecolher"] == pytest.approx(-9352.23, abs=0.02)
+    # aRecolher = coluna A RECOLHER do RESUMO (inclui saldo credor acumulado).
+    assert ap["pis"]["aRecolher"] == pytest.approx(-18080.71, abs=0.5)
+    assert ap["cofins"]["aRecolher"] == pytest.approx(-83280.93, abs=0.5)
     livro = pis_part["pack_patch"]["memoriaPisCofins"]
     assert livro["resumo"]["pis"]["aRecolherPlanilha"] == pytest.approx(-18080.71, abs=0.5)
     assert livro["resumo"]["cofins"]["aRecolherPlanilha"] == pytest.approx(-83280.93, abs=0.5)
-    assert livro["resumo"]["pis"]["fonte"] == "debito-credito"
+    assert livro["resumo"]["pis"]["fonte"] == "resumo"
+    assert livro["resumo"]["pis"]["aRecolherCalculado"] == pytest.approx(-2030.42, abs=0.02)
+    assert livro["resumo"]["cofins"]["aRecolherCalculado"] == pytest.approx(-9352.23, abs=0.02)
     deb_pis = next(x for x in livro["debito"]["linhas"] if x["tributo"] == "PIS")
     assert deb_pis["valorImposto"] == pytest.approx(6568.32, abs=0.02)
     assert livro["resumo"]["cofins"]["saldoCredor"] == pytest.approx(73928.70, abs=0.02)
@@ -118,7 +119,7 @@ def test_baifer_pis_st_golden():
             pack = _deep_merge(pack, part["pack_patch"])
     mem = _slice("memoria", pack)
     assert mem["memoriaCalculo"]["icmsARecolher"] == pytest.approx(-1901.28, abs=0.02)
-    assert mem["memoriaPisCofins"]["resumo"]["pis"]["aRecolher"] == pytest.approx(-2030.42, abs=0.02)
+    assert mem["memoriaPisCofins"]["resumo"]["pis"]["aRecolher"] == pytest.approx(-18080.71, abs=0.5)
     assert mem["porUfSt"]["DF"] == pytest.approx(474.62, abs=0.02)
     assert not mem.get("memoriaIrpj")
 

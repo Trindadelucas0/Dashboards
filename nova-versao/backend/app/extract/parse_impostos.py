@@ -712,15 +712,13 @@ def _first_tax_label(row: list) -> str:
 def parse_pis_cofins_padrao(grid: WorkbookGrid) -> dict:
     """Planilha padrão — aba PIS COFINS: débito, crédito e RESUMO APURAÇÃO.
 
-    ``aRecolher`` é o resultado **do mês**: débito − crédito. A coluna A RECOLHER
-    do RESUMO só é aceita quando bate com essa conta; nas planilhas em que ela
-    desconta o saldo credor acumulado de meses anteriores o valor da coluna vira
-    apenas informativo (``aRecolherPlanilha``).
+    ``aRecolher`` é a coluna A RECOLHER do RESUMO (oficial da apuração, inclui
+    saldo credor acumulado). Débito − crédito do mês fica em ``aRecolherCalculado``.
     """
     out: dict[str, Any] = {
         "kind": "padrao_pis_cofins",
         "hasValores": False,
-        "formula": "aRecolher = débito − crédito",
+        "formula": "aRecolher = coluna RESUMO (débito − crédito − saldo credor)",
         "debito": {"linhas": []},
         "credito": {"linhas": []},
         "resumo": {},
@@ -762,8 +760,7 @@ def parse_pis_cofins_padrao(grid: WorkbookGrid) -> dict:
             continue
         calculado = round(deb - cred, 2)
         planilha = round(rec, 2)
-        confere = abs(planilha - calculado) < 0.02
-        a_recolher = planilha if confere else calculado
+        a_recolher = planilha
         resumo_row = {
             "tributo": tributo.upper(),
             "debito": round(deb, 2),
@@ -772,7 +769,7 @@ def parse_pis_cofins_padrao(grid: WorkbookGrid) -> dict:
             "aRecolher": a_recolher,
             "aRecolherPlanilha": planilha,
             "aRecolherCalculado": calculado,
-            "fonte": "resumo" if confere else "debito-credito",
+            "fonte": "resumo",
         }
         out["resumo"][tributo] = resumo_row
         out[tributo] = {
@@ -782,14 +779,10 @@ def parse_pis_cofins_padrao(grid: WorkbookGrid) -> dict:
             "saldoCredor": round(saldo, 2),
             "aRecolher": a_recolher,
             "aRecolherPlanilha": planilha,
+            "aRecolherCalculado": calculado,
             "apurado": round(deb, 2),
             "hasValores": True,
         }
-        if not confere:
-            out["warnings"].append(
-                f"{tributo.upper()}: coluna A RECOLHER do RESUMO ({planilha}) não bate com débito − crédito "
-                f"({calculado}) — usado o cálculo do mês; saldo credor acumulado {round(saldo, 2)} fica informativo"
-            )
         out["hasValores"] = True
     return out
 
