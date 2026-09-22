@@ -709,11 +709,71 @@ def _first_tax_label(row: list) -> str:
     return ""
 
 
+def _resumo_column_map(row: list) -> dict[str, int]:
+    """Cabeçalho do RESUMO: DEBITO, CREDITO, AJUSTE, A RECOLHER, SALDO CREDOR."""
+    mapping: dict[str, int] = {}
+    for i, cell in enumerate(row):
+        lab = _fold(str(cell or ""))
+        if not lab or lab == "imposto":
+            continue
+        if "a recolher" in lab:
+            mapping["aRecolher"] = i
+        elif "saldo credor" in lab:
+            mapping["saldoCredor"] = i
+        elif lab.startswith("ajuste"):
+            mapping["ajuste"] = i
+        elif lab in ("debito", "debitos"):
+            mapping["debito"] = i
+        elif lab in ("credito", "creditos"):
+            mapping["credito"] = i
+    return mapping
+
+
+def _cell_num(row: list, idx: int | None) -> float:
+    if idx is None or idx < 0 or idx >= len(row):
+        return 0.0
+    return _num(row[idx])
+
+
+def parse_icms_simples_padrao(grid: WorkbookGrid) -> dict:
+    """Aba ICMS da planilha padrão sem memória 5005.
+
+    Exige as três linhas Débito ICMS, Crédito ICMS e ICMS a recolher.
+    Não grava memória 5005 nem inventa zero quando uma linha falta.
+    """
+    debito = credito = recolher = None
+    for row in grid.rows or []:
+        label = _fold(_row_label(row))
+        if not label:
+            continue
+        val = _last_numeric(row)
+        if val is None:
+            continue
+        if label.startswith("debito icms"):
+            debito = val
+        elif label.startswith("credito icms"):
+            credito = val
+        elif "icms" in label and "a recolher" in label:
+            recolher = val
+    if debito is None or credito is None or recolher is None:
+        return {"kind": "planilha_padrao_icms", "hasValores": False}
+    return {
+        "kind": "planilha_padrao_icms",
+        "hasValores": True,
+        "apurado": debito,
+        "credito": credito,
+        "aRecolher": recolher,
+        "fonte": "planilha_padrao_icms",
+    }
+
+
 def parse_pis_cofins_padrao(grid: WorkbookGrid) -> dict:
     """Planilha padrão — aba PIS COFINS: débito, crédito e RESUMO APURAÇÃO.
 
-    ``aRecolher`` é a coluna A RECOLHER do RESUMO (oficial da apuração, inclui
-    saldo credor acumulado). Débito − crédito do mês fica em ``aRecolherCalculado``.
+    ``aRecolher`` é a coluna A RECOLHER / IMPOSTO A RECOLHER do RESUMO.
+    Coluna SALDO CREDOR (Baifer/Única) vai para ``saldoCredor``.
+    Coluna AJUSTE (ex. aluguel) não é saldo credor.
+    Débito − crédito do mês fica em ``aRecolherCalculado``.
     """
     out: dict[str, Any] = {
         "kind": "padrao_pis_cofins",
@@ -725,10 +785,14 @@ def parse_pis_cofins_padrao(grid: WorkbookGrid) -> dict:
         "warnings": [],
     }
     mode = ""
+    resumo_cols: dict[str, int] | None = None
     for row in grid.rows or []:
         cells = [str(c or "").strip() for c in row]
         joined = _fold(" ".join(cells))
         if not joined:
+            continue
+        if mode == "resumo" and "imposto" in joined and "debito" in joined and "credito" in joined:
+            resumo_cols = _resumo_column_map(row)
             continue
         if "valor produto" in joined or ("imposto" in joined and "debito" in joined and "credito" in joined):
             continue
@@ -752,38 +816,58 @@ def parse_pis_cofins_padrao(grid: WorkbookGrid) -> dict:
             continue
         if mode != "resumo":
             continue
-        deb = _num(row[2] if len(row) > 2 else 0)
-        cred = _num(row[3] if len(row) > 3 else 0)
-        saldo = _num(row[4] if len(row) > 4 else 0)
-        rec = _num(row[5] if len(row) > 5 else 0)
+        use_map = bool(resumo_cols and "debito" in resumo_cols and "aRecolher" in resumo_cols)
+        saldo: float | None
+        ajuste: float | None
+        if use_map and resumo_cols is not None:
+            deb = _cell_num(row, resumo_cols.get("debito"))
+            cred = _cell_num(row, resumo_cols.get("credito"))
+            rec = _cell_num(row, resumo_cols.get("aRecolher"))
+            saldo = _cell_num(row, resumo_cols["saldoCredor"]) if "saldoCredor" in resumo_cols else None
+            ajuste = _cell_num(row, resumo_cols["ajuste"]) if "ajuste" in resumo_cols else None
+        else:
+            deb = _num(row[2] if len(row) > 2 else 0)
+            cred = _num(row[3] if len(row) > 3 else 0)
+            saldo = _num(row[4] if len(row) > 4 else 0)
+            ajuste = None
+            rec = _num(row[5] if len(row) > 5 else 0)
         if abs(deb) + abs(cred) + abs(rec) < 0.009:
             continue
         calculado = round(deb - cred, 2)
         planilha = round(rec, 2)
         a_recolher = planilha
-        resumo_row = {
+        resumo_row: dict[str, Any] = {
             "tributo": tributo.upper(),
             "debito": round(deb, 2),
             "credito": round(cred, 2),
-            "saldoCredor": round(saldo, 2),
             "aRecolher": a_recolher,
             "aRecolherPlanilha": planilha,
             "aRecolherCalculado": calculado,
             "fonte": "resumo",
         }
-        out["resumo"][tributo] = resumo_row
-        out[tributo] = {
+        tax: dict[str, Any] = {
             "kind": f"padrao_{tributo}",
             "debitos": round(deb, 2),
             "credito": round(cred, 2),
-            "saldoCredor": round(saldo, 2),
             "aRecolher": a_recolher,
             "aRecolherPlanilha": planilha,
             "aRecolherCalculado": calculado,
             "apurado": round(deb, 2),
             "hasValores": True,
         }
+        if saldo is not None:
+            resumo_row["saldoCredor"] = round(saldo, 2)
+            tax["saldoCredor"] = round(saldo, 2)
+        if ajuste is not None:
+            resumo_row["ajuste"] = round(ajuste, 2)
+            tax["ajuste"] = round(ajuste, 2)
+        out["resumo"][tributo] = resumo_row
+        out[tributo] = tax
         out["hasValores"] = True
+    if out["resumo"] and any("ajuste" in row for row in out["resumo"].values()) and not any(
+        "saldoCredor" in row for row in out["resumo"].values()
+    ):
+        out["formula"] = "aRecolher = coluna IMPOSTO A RECOLHER do RESUMO"
     return out
 
 

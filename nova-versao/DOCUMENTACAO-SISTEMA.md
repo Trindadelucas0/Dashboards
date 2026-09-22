@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.6.7 — PIS/COFINS RESUMO |
-| Última atualização | 16/09/2026 (A recolher PIS/COFINS = coluna do RESUMO da planilha padrão) |
+| Versão do sistema | 2.6.9 — ICMS simples |
+| Última atualização | 22/09/2026 (aba ICMS sem 5005 grava apuracao.icms; coluna AJUSTE do PIS/COFINS não é saldo credor; DRE/Balancete só a coluna MMYYYY) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,8 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.6.9 | ICMS simples | Aba `ICMS` (sem `ICMS 5005-2012`) grava só `apuracao.icms` (`fonte: planilha_padrao_icms`). PIS/COFINS: cabeçalho `AJUSTE` não vira `saldoCredor`; `SALDO CREDOR` continua saldo credor. Aviso de workbook parcial lista só as abas do esqueleto que faltam. DRE/Balancete seguem só a coluna do mês do arquivo. |
+| 2.6.8 | Planilha padrão fiscal sem movimento | Arquivo com ≥3 abas fiscais do modelo é `workbook_padrao` mesmo sem ENTRADAS/SAÍDAS (ex. Baifer 08/2026). `MMYYYY` no nome ancora a competência; DRE/Balancete usam só a coluna desse mês (vazia não copia janeiro). ICMS a recolher só da linha homônima; PIS/COFINS `aRecolher` continua a coluna do RESUMO. |
 | 2.6.7 | PIS/COFINS RESUMO | Planilha padrão aba PIS COFINS: `aRecolher` = coluna A RECOLHER do RESUMO (inclui saldo credor acumulado), como o IPI. Débito − crédito fica em `aRecolherCalculado` (linha **Resultado do mês**). Packs já gravados: script `_fix_pis_cofins_arecolher_remote.py`. |
 | 2.6.6 | LANNIC movimento | Faixa de 4 KPIs (vendas/compras/saldo/ICMS do trimestre) só no chip **1º Trim** / **2º Trim** (`qN-YYYY`). Chip de mês não mostra mais “Total — trimestre”. DRE continua sem a faixa. |
 | 2.6.5 | LANNIC movimento | Planilhas 144 Entradas/Saídas (`pasta temporaria/Nova pasta`) split mai–ago/2026 na unidade `lannic`; agosto faz merge com PGDAS (DAS 28.398,35). `receitaBruta` permanece a base 478.335,06; Compras/Vendas usam o Excel. Seed PGDAS não apaga NFs. |
@@ -57,14 +59,21 @@ Opcionais (movimento do mês, no mesmo arquivo):
 
 `ENTRADAS` · `SAÍDAS` — sinônimos aceitos: `ENTRADA`, `SAIDA`, `SAIDAS`, `SAÍDA` (comparação sem acento e sem caixa).
 
-**Workbook parcial:** se o arquivo tiver **ENTRADAS e/ou SAÍDAS** e **pelo menos 3** abas fiscais do modelo (ex.: sem DRE/BALANCETE), ainda é tratado como `workbook_padrao` — extrai movimento + impostos presentes e avisa as abas faltantes. Não inventa DRE/Balancete.
+**Workbook parcial:** se o arquivo tiver **pelo menos 3** abas fiscais do modelo, é `workbook_padrao` — **com ou sem** ENTRADAS/SAÍDAS. Extrai as abas presentes e avisa as do esqueleto que faltam. Não inventa imposto, DRE, Balancete nem movimento. O caso com movimento e sem DRE/BALANCETE (ex. Única julho) segue o mesmo critério.
 
 - Nome do arquivo **não** define empresa nem tipo; detecção pelo conjunto de abas.
 - Empresa: CNPJ do cabeçalho das abas de movimento ou dashboard aberto.
-- `MMYYYY` no nome do arquivo ancora impostos, DRE e Balancete.
-- Competência das abas de movimento: `Período:` do cabeçalho da própria aba.
+- `MMYYYY` no nome (`082026`, `092026`, …) vira competência `YYYY-MM` e ancora DRE, Balancete e impostos. Outro mês no nome não muda o destino de cada aba. A empresa vem do dashboard aberto.
+- DRE e BALANCETE: só a coluna desse mês. Coluna vazia = part `vazia`. Nunca copia janeiro (nem outro mês preenchido) para a competência do arquivo.
+- ICMS 5005-2012: débito/crédito na memória. `apuracao.icms.aRecolher` só da linha **ICMS a recolher**, se ela existir. Se essa aba existir, o caminho continua sendo a memória 5005 (Baifer).
+- Aba `ICMS` (comparada sem acento como `icms`, sem 5005): grava só `apuracao.icms` com `apurado` = linha Débito ICMS, `credito` = Crédito ICMS, `aRecolher` = linha ICMS a recolher, `fonte: planilha_padrao_icms`. Não cria `memoriaCalculo`. Sem as três linhas, a aba não é gravada.
+- PIS COFINS: `aRecolher` é a coluna do RESUMO cujo cabeçalho é A RECOLHER ou IMPOSTO A RECOLHER. Débito − crédito do mês fica em `aRecolherCalculado`. Cabeçalho `SALDO CREDOR` grava `saldoCredor`. Cabeçalho `AJUSTE` (ex. aluguel) grava `ajuste` e não é saldo credor.
+- ST: soma UF/VALOR em `apuracao.icmsSt` só se houver valor. DIFAL e IPI só se a aba tiver valor no resumo/grade.
+- IRPJ/CSLL só se a aba existir e o CNPJ conferir com a empresa do dashboard.
+- ENTRADAS/SAÍDAS alimentam Compras/Vendas só quando essas abas existem.
+- Competência das abas de movimento: `Período:` do cabeçalho da própria aba, quando ENTRADAS/SAÍDAS existirem.
 - Abas vazias ou CNPJ divergente (IRPJ/CSLL): **aviso**, não erro — Gravar continua.
-- Arquivo só com parte das abas fiscais **e sem movimento**: aviso de incompleto no fluxo legado (lê a primeira aba).
+- Arquivo com pelo menos 3 abas fiscais e **sem** ENTRADAS/SAÍDAS continua `workbook_padrao`: lê cada aba presente. Não cai na leitura só da primeira aba.
 
 ### Mapa aba da planilha → aba do dashboard
 
@@ -75,6 +84,7 @@ Opcionais (movimento do mês, no mesmo arquivo):
 | ENTRADAS | `totalCompras`, `fornecedores`, `cfopDados`, `porUf`, `nfsEntradas`, linhas NF | **Compras**, Finalidade, Visão Geral, **Recebimentos** (pagamentos) |
 | SAÍDAS | `cfopSaidasTotal`, `receitaBruta`, `clientes`, `clientesTop10`, `cfopSaidas`, `porUfSaidas`, `nfsSaidas`, `vendasPorDoc`, linhas NF | **Vendas**, Visão Geral, **Recebimentos** (recebimentos) |
 | ICMS 5005-2012 | `memoriaCalculo`, `apuracao.icms`, `apuracao.subvencao` | **Memória**, KPI ICMS |
+| ICMS (sem 5005) | `apuracao.icms` (`fonte: planilha_padrao_icms`); sem `memoriaCalculo` | **Memória**, KPI ICMS |
 | PIS COFINS | `apuracao.pis`, `apuracao.cofins`, `memoriaPisCofins` | **Memória**, Impostos |
 | ST | `apuracao.icmsSt`, `porUfSt` (`fonte: st_mensal`) | **Memória**, Impostos — ver caveat §3.3 (soma UF ≠ necessariamente guia paga) |
 | DIFAL | `apuracao.difal` se houver valor | **Memória**, Impostos |
@@ -93,6 +103,10 @@ Sem as abas de movimento no workbook, Compras/Vendas/Finalidade continuam vindo 
 | Movimento: Δ soma × Total Geral ≥ 0,02 | **Erro** na part; não grava |
 | Movimento: aba sem coluna `Valor Contábil` | Part `vazia` + aviso; **não grava** (a coluna `Valor` é imposto, não faturamento) |
 | PIS/COFINS: coluna A RECOLHER do RESUMO ≠ débito − crédito | Grava a coluna do RESUMO em `aRecolher`; débito − crédito em `aRecolherCalculado` |
+| PIS/COFINS: cabeçalho `AJUSTE` | Não grava essa coluna em `saldoCredor` |
+| PIS/COFINS: cabeçalho `SALDO CREDOR` | Grava em `saldoCredor` (Baifer/Única) |
+| Aba `ICMS` sem `ICMS 5005-2012` | Part `icms`, só `apuracao.icms`; não é memória 5005 |
+| Workbook parcial | Aviso lista só os nomes das abas do esqueleto que faltam. Coluna do mês vazia em DRE/BAL não entra nesse aviso |
 
 ### 3.1 Relatório de entrada por fornecedor (EXITO)
 
@@ -130,7 +144,8 @@ Regras de exibição:
 Fórmulas gravadas no pack (não calculadas na UI):
 
 - ICMS 5005: `Total 5005 + Total fora = ICMS a recolher`
-- PIS/COFINS: `a recolher` = coluna A RECOLHER do RESUMO (oficial da apuração, inclui saldo credor acumulado). Débito − crédito do mês fica em `aRecolherCalculado` e na linha **Resultado do mês** do card / livro técnico. `SALDO CREDOR` continua a coluna acumulada. No livro, se o resultado do mês diferir do oficial, as duas colunas aparecem.
+- PIS/COFINS: `a recolher` = coluna A RECOLHER / IMPOSTO A RECOLHER do RESUMO. Débito − crédito do mês fica em `aRecolherCalculado` e na linha **Resultado do mês**. Se o cabeçalho for `SALDO CREDOR`, esse valor fica em `saldoCredor`. Se for `AJUSTE` (aluguel), fica em `ajuste` e o livro não chama isso de saldo credor. No livro, se o resultado do mês diferir do oficial, as duas colunas aparecem.
+- ICMS sem aba 5005: card **Apuração ICMS** (não Decreto 5005), com apurado, créditos e a recolher. Sem `memoriaCalculo` não abre o livro técnico da 5005.
 - IPI: `a recolher = débito − crédito − saldo credor`. Na tabela ICMS/IPI das filiais JPG, se **IPI a Recolher** vier 0 e crédito > débito, grava o saldo credor (negativo). Demonstrativo EXITO: **Saldo credor de IPI para o mês seguinte** vira `aRecolher` negativo (mesmo padrão do ICMS).
 
 Pack: `memoriaCalculo` (5005 + `linhas` + `formulaIcms`), `memoriaPisCofins`, `memoriaIpi`, `memoriaIrpj`, `memoriaCsll`, `porUfSt`, `porUfDifal`.
@@ -138,6 +153,8 @@ Pack: `memoriaCalculo` (5005 + `linhas` + `formulaIcms`), `memoriaPisCofins`, `m
 Seção omitida quando a aba veio vazia ou IRPJ/CSLL com CNPJ de outra empresa. Pack antigo (só KPIs) continua mostrando o que existir; para o livro completo, **reimportar** a planilha padrão.
 
 Golden Baifer jan/2026: ICMS a recolher **−1.901,28**, subvenção **45.070,99**, PIS **−18.080,71**, COFINS **−83.280,93** (resultado do mês: −2.030,42 / −9.352,23), ST DF **474,62**.
+
+Golden Loja das Máquinas ago/2026 (aba `ICMS`, sem 5005): débito **80.544,36**, crédito **55.937,66**, a recolher **24.606,70**. PIS a recolher **3.016,31** (ajuste aluguel 227,15). COFINS a recolher **13.893,28** (ajuste 1.046,27). DRE e Balancete de agosto ficam `vazia` — a coluna do mês está vazia; o janeiro do modelo não é importado. ST, DIFAL e IPI sem valor não são gravados. Fixture: `fixtures/loja-maquinas-padrao/planilha-padrao-082026.xlsx`.
 
 ### 3.2.1 Impostos (UI)
 
@@ -336,7 +353,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | JPG unidades / consolidado | `company_detail` + `tab_payload` (`unidade=todas`) em `backend/app/routers/companies.py`; `aggregate_fiscal_packs` soma `irpj`/`csll`; dropdown em `frontend/app/dashboard/[empresa]/layout-inner.tsx` |
 | LANNIC Simples | `Unit lannic` em `backend/app/companies.py`; pack `scripts/seed_jpg_lannic.py` (merge, não apaga NFs); `preserve_simples_receita` em `aggregate.py`; UI Impostos `page.tsx` + `MemoriaLivro.tsx` |
 | Split movimento acumulado | `backend/scripts/split_movimento_mensal.py` |
-| Testes golden | `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py` |
+| Testes golden | `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_loja_padrao_082026.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py` |
 | Fixtures | `fixtures/baifer-padrao/`, `fixtures/unica-padrao/`, `fixtures/egaplast-padrao/`, `fixtures/loja-maquinas-padrao/`, `fixtures/jpg-padrao/` |
 
 ## 5. Regras de negócio
@@ -349,11 +366,11 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 6. Memória não calcula imposto: só exibe o livro importado.
 7. DRE/Balancete da planilha padrão só gravam a coluna do mês do próprio arquivo (`MMYYYY`); coluna vazia = nada gravado. Exceção: **Análise Vertical** grava uma part por coluna `MM/YYYY` preenchida.
 8. `Total Geral` só é aceito se houver número na coluna de valor da própria linha — nunca aproveitar número de outra coluna (Isentas/Outras/Base).
-9. PIS/COFINS da planilha padrão gravam a coluna A RECOLHER do RESUMO em `aRecolher`; débito − crédito do mês fica em `aRecolherCalculado`.
+9. PIS/COFINS da planilha padrão gravam a coluna A RECOLHER / IMPOSTO A RECOLHER do RESUMO em `aRecolher`; débito − crédito do mês fica em `aRecolherCalculado`. `SALDO CREDOR` e `AJUSTE` são colunas distintas: só a primeira vira `saldoCredor`.
 10. Percentuais na UI (Impostos `% s/ vendas`, Memória `% s/ RB` = max(aRecolher,0)/RB, DRE margens) só com numerador e denominador no pack; caso contrário `—` / `N/D` / “Em apuração”.
 11. Balancete multi-mês: coluna Total da grade = soma dos saldos mensais exibidos (layout wireframe); não interpreta patrimônio consolidado.
 12. Documento de cliente/fornecedor: 11 dígitos = CPF, 14 = CNPJ; demais = outros. Exportações de vendas/finalidade/CPF×CNPJ usam só pack e `NfeLine` da competência/unidade atuais.
-13. Workbook parcial (movimento + ≥3 abas fiscais) é `workbook_padrao`; abas DRE/BAL ausentes geram aviso, não inventário.
+13. Workbook com ≥3 abas fiscais do modelo é `workbook_padrao`, com ou sem ENTRADAS/SAÍDAS. Abas do esqueleto ausentes geram aviso; coluna do mês vazia em DRE/BAL = part `vazia` (não copia outro mês). Sem abas de movimento, Compras/Vendas não são alteradas por esse arquivo.
 14. CFOPs de serviço (1-933/2-933 ISSQN; 1-353/2-353 transporte; faixa SINIEF `.300` comunicação) entram no macro `servicos` e no painel `servicosTomados` da Finalidade.
 15. DRE Análise Vertical sem CNPJ herda a empresa do dashboard (como 5005/ST); não inventa `lucLiq` se a linha de resultado operacional estiver vazia.
 16. Balancete EXITO mensal (Única e demais): totais Ativo/Passivo/Resultado vêm do Saldo Atual das contas `1`/`2`/`3`; um arquivo = uma competência.
@@ -409,7 +426,9 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 **Finalidade — exportar:** **Exportar PDF** / **Exportar Excel** do quadro macro e da lista completa de CFOPs (o Excel inclui fornecedores por CFOP). O botão **Por Fornecedor** segue gerando o relatório filtrado no modal.
 
-**Baifer — entradas ago/2026:** login `baifer` → dashboard Baifer → Importar → `Relatorio de entrada por fornecedor 082026 BAIFER.xls` → preview `entradas` / `2026-08` / Δ 0 → Gravar → aba **Compras** total R$ 377.506,76.
+**Baifer — planilha padrão do mês (todo mês):** login `baifer` → dashboard Baifer → **Importar** → arquivo cujo nome termina em `MMYYYY` (ex. `Planilha Padrão DASBORADS - BAIFER 082026.xlsx` = agosto/2026; no mês seguinte, `092026`). A empresa é a do dashboard aberto. No preview: DRE e Balancete ficam `ok` só se a coluna daquele mês tiver número; coluna vazia fica `vazia` e o janeiro do modelo não entra. ICMS 5005, PIS/COFINS, ST, DIFAL e IPI aparecem só quando a aba tem valor. IRPJ/CSLL só se a aba existir e o CNPJ for o da Baifer. Sem ENTRADAS/SAÍDAS, Compras e Vendas não mudam. **Gravar** sem marcar substituir o mês, salvo quando for reimportar o mês inteiro.
+
+**Baifer — entradas ago/2026:** login `baifer` → dashboard Baifer → Importar → `Relatorio de entrada por fornecedor 082026 BAIFER.xls` → preview `entradas` / `2026-08` / Δ 0 → Gravar → aba **Compras** total R$ 377.506,76. Use este arquivo quando a planilha padrão do mês não trouxer a aba ENTRADAS.
 
 Login seed: `admin`, `baifer`, `egaplast`, `loja-maquinas`, `unica`, `jpg` (senhas no `.env`).
 

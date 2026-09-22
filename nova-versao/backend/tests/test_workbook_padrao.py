@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from app.extract.classify import detect_sheet_tipo
 from app.extract.parse_workbook_padrao import expand_workbook_parts, is_workbook_padrao
 from app.extract.pipeline import classify_and_extract
 from app.extract.workbook import load_all_sheets
@@ -15,6 +16,7 @@ from app.routers.imports import _deep_merge
 FIXTURES = Path(__file__).resolve().parents[2] / "fixtures" / "baifer-padrao"
 MODELO = FIXTURES / "planilha-padrao-modelo.xlsx"
 BAIFER = FIXTURES / "planilha-padrao-012026.xlsx"
+BAIFER_082026 = FIXTURES / "planilha-padrao-baifer-082026.xlsx"
 
 BAIFER_CNPJ = "52005382000140"
 
@@ -138,3 +140,94 @@ def test_expand_workbook_parts():
     assert len(items) == 2
     assert items[1].get("skipped") is True
     assert items[0]["file_hash"] != items[1]["file_hash"]
+
+
+def _part(result: dict, tipo: str) -> dict:
+    return next(p for p in result["parts"] if p["tipo"] == tipo)
+
+
+@pytest.mark.skipif(not BAIFER_082026.exists(), reason="Fixture Baifer 082026 ausente")
+def test_baifer_082026_fiscal_sem_movimento_e_workbook_padrao():
+    """≥3 abas fiscais sem ENTRADAS/SAÍDAS continua planilha padrão (não lê só a 1ª aba)."""
+    sheets = load_all_sheets(BAIFER_082026)
+    assert is_workbook_padrao(sheets)
+    nomes = {_fold_sheet(s.sheet_name) for s in sheets}
+    assert "entradas" not in nomes and "saidas" not in nomes
+    dre = next(s for s in sheets if s.sheet_name == "DRE")
+    bal = next(s for s in sheets if s.sheet_name == "BALANCETE")
+    assert detect_sheet_tipo(dre, BAIFER_082026.name) == "dre"
+    assert detect_sheet_tipo(bal, BAIFER_082026.name) == "balancete"
+
+    result = classify_and_extract(BAIFER_082026, company_cnpj=BAIFER_CNPJ)
+    assert result["tipo"] == "workbook_padrao"
+    assert result["competencia"] == "2026-08"
+    assert not result["errors"]
+    tipos = {p["tipo"] for p in result["parts"]}
+    assert "entradas" not in tipos and "saidas" not in tipos
+    assert "irpj" not in tipos and "csll" not in tipos
+    assert "difal" not in tipos and "ipi" not in tipos
+
+    p5005 = _part(result, "apuracao_5005")
+    assert p5005["status"] == "ok"
+    assert p5005["competencia"] == "2026-08"
+    mem = p5005["pack_patch"]["memoriaCalculo"]
+    assert mem["debitoOriginal"] == pytest.approx(98781.85, abs=0.02)
+    assert mem["creditoOriginal"] == pytest.approx(24639.16, abs=0.02)
+    assert mem["totalOriginal"] == pytest.approx(74142.69, abs=0.02)
+    assert mem["debitos5005"] == pytest.approx(62031.58, abs=0.02)
+    assert mem["creditos5005"] == pytest.approx(37243.28, abs=0.02)
+    # Linha "ICMS A RECOLHER" existe na aba — não é o TOTAL original.
+    assert mem["icmsARecolher"] == pytest.approx(26810.38, abs=0.02)
+    assert p5005["pack_patch"]["apuracao"]["icms"]["aRecolher"] == pytest.approx(26810.38, abs=0.02)
+
+    pis = _part(result, "pis_cofins")
+    assert pis["status"] == "ok"
+    livro = pis["pack_patch"]["memoriaPisCofins"]
+    deb_pis = next(x for x in livro["debito"]["linhas"] if x["tributo"] == "PIS")
+    deb_cof = next(x for x in livro["debito"]["linhas"] if x["tributo"] == "COFINS")
+    assert deb_pis["valorImposto"] == pytest.approx(7271.075625, abs=0.02)
+    assert deb_cof["valorImposto"] == pytest.approx(33491.015, abs=0.02)
+    assert livro["resumo"]["pis"]["fonte"] == "resumo"
+    assert livro["resumo"]["pis"]["aRecolher"] == pytest.approx(-10222.32, abs=0.02)
+    assert livro["resumo"]["cofins"]["aRecolher"] == pytest.approx(-47084.73, abs=0.02)
+    assert livro["resumo"]["pis"]["aRecolherCalculado"] == pytest.approx(1823.86, abs=0.02)
+    assert abs(livro["resumo"]["pis"]["aRecolher"] - deb_pis["valorImposto"]) > 1
+
+    dre_part = _part(result, "dre")
+    assert dre_part["status"] == "vazia"
+    assert dre_part["competencia"] == "2026-08"
+    assert not dre_part.get("pack_patch")
+    bal_part = _part(result, "balancete")
+    assert bal_part["status"] == "vazia"
+    assert bal_part["competencia"] == "2026-08"
+    assert not bal_part.get("pack_patch")
+
+    st = _part(result, "icms_st")
+    assert st["pack_patch"]["apuracao"]["icmsSt"]["aRecolher"] == pytest.approx(52.33, abs=0.02)
+
+
+@pytest.mark.skipif(not BAIFER_082026.exists(), reason="Fixture Baifer 082026 ausente")
+def test_baifer_082026_mmYYYY_so_muda_competencia():
+    """Outro MMYYYY no nome muda a competência; o destino de cada aba permanece."""
+    agosto = classify_and_extract(BAIFER_082026, company_cnpj=BAIFER_CNPJ)
+    setembro = classify_and_extract(
+        BAIFER_082026,
+        company_cnpj=BAIFER_CNPJ,
+        original_filename="Planilha Padrão DASBORADS - BAIFER 092026.xlsx",
+    )
+    assert setembro["tipo"] == "workbook_padrao"
+    assert setembro["competencia"] == "2026-09"
+    assert {p["tipo"] for p in setembro["parts"]} == {p["tipo"] for p in agosto["parts"]}
+    assert all(p["competencia"] == "2026-09" for p in setembro["parts"])
+    mem = _part(setembro, "apuracao_5005")["pack_patch"]["memoriaCalculo"]
+    assert mem["debitoOriginal"] == pytest.approx(98781.85, abs=0.02)
+    assert _part(setembro, "dre")["status"] == "vazia"
+    assert not _part(setembro, "dre").get("pack_patch")
+
+
+def _fold_sheet(name: str) -> str:
+    import unicodedata
+
+    nfkd = unicodedata.normalize("NFKD", name or "")
+    ascii_txt = "".join(ch for ch in nfkd if not unicodedata.combining(ch)).lower()
+    return ascii_txt.strip()

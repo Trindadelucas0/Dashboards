@@ -19,6 +19,7 @@ from app.extract.parse_movimento import parse_movimento
 from app.extract.parse_impostos import (
     apuracao_patch_from_demo,
     parse_difal_padrao,
+    parse_icms_simples_padrao,
     parse_ipi_padrao,
     parse_irpj_csll_padrao,
     parse_pis_cofins_padrao,
@@ -63,19 +64,17 @@ def _sheet_map(sheets: list[WorkbookGrid]) -> dict[str, WorkbookGrid]:
 
 
 def is_workbook_padrao(sheets: list[WorkbookGrid]) -> bool:
-    """True para o esqueleto completo OU workbook parcial com movimento + abas fiscais.
+    """True quando há pelo menos 3 abas fiscais do modelo, com ou sem ENTRADAS/SAÍDAS.
 
-    Parcial (ex. Unica jul B ~370 KB): ENTRADAS/SAÍDAS sem DRE/BALANCETE, mas com
-    ICMS 5005 / PIS COFINS / ST / etc. — ainda extrai movimento e impostos presentes.
+    Esqueleto completo (9 abas) continua True. Parcial fiscal sem movimento
+    (ex. Baifer 082026: DRE/BAL/5005/PIS/ST/DIFAL/IPI, sem IRPJ/CSLL nem movimento)
+    também é workbook_padrao — não cai no fluxo de aba única.
+    Parcial com movimento e sem DRE/BAL (ex. Unica jul) segue True se tiver ≥3 abas fiscais.
     """
     if not sheets:
         return False
     names = {_fold_name(s.sheet_name) for s in sheets}
-    if _PADRAO_SHEETS.issubset(names):
-        return True
-    has_mov = bool(names & set(_MOVIMENTO_SHEETS))
-    padrao_n = len(_PADRAO_SHEETS & names)
-    return has_mov and padrao_n >= 3
+    return len(_PADRAO_SHEETS & names) >= 3
 
 
 def padrao_missing_sheets(sheets: list[WorkbookGrid]) -> list[str]:
@@ -312,11 +311,7 @@ def extract_workbook_padrao(
 
     missing = padrao_missing_sheets(sheets)
     if missing:
-        warnings.append(
-            "Workbook parcial (faltam "
-            + ", ".join(missing)
-            + "): extraindo movimento e impostos presentes; DRE/Balancete ausentes não são inventados"
-        )
+        warnings.append("Faltam as abas: " + ", ".join(missing))
 
     bal_grid = smap.get("balancete")
     tax_comp = anchor or (dre_months[0][0] if dre_months else "")
@@ -421,6 +416,37 @@ def extract_workbook_padrao(
             )
         else:
             warnings.append("ICMS 5005: aba sem valores reconhecidos")
+    elif tax_comp:
+        icms_simples = smap.get("icms")
+        if icms_simples:
+            parsed_icms = parse_icms_simples_padrao(icms_simples)
+            if parsed_icms.get("hasValores"):
+                parts.append(
+                    _make_part(
+                        filename,
+                        parser_kind,
+                        tipo="icms",
+                        sheet="ICMS",
+                        competencia=tax_comp,
+                        pack_patch={
+                            "apuracao": {
+                                "icms": {
+                                    "apurado": parsed_icms["apurado"],
+                                    "credito": parsed_icms["credito"],
+                                    "aRecolher": parsed_icms["aRecolher"],
+                                    "pctRb": 0.0,
+                                    "fonte": "planilha_padrao_icms",
+                                },
+                                "fonte": "planilha_padrao_icms",
+                            }
+                        },
+                        meta={
+                            "icmsARecolher": parsed_icms.get("aRecolher"),
+                            "apurado": parsed_icms.get("apurado"),
+                            "credito": parsed_icms.get("credito"),
+                        },
+                    )
+                )
 
     pis_grid = smap.get("pis cofins")
     if pis_grid and tax_comp:

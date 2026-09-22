@@ -240,6 +240,13 @@ def detect_sheet_tipo(grid: WorkbookGrid, filename: str) -> str:
         return "impostos"
     if "demonstrativo do ipi" in head or ("ipi" in file_l and "demonst" in file_l):
         return "ipi"
+    # Nome da aba ganha do texto do cabeçalho: DRE/BALANCETE citam "substituição
+    # tributária" numa linha de dedução e não podem virar icms_st.
+    sheet_compact = re.sub(r"[^a-z0-9]+", "", _fold_text(name))
+    if sheet_compact == "dre":
+        return "dre"
+    if sheet_compact == "balancete":
+        return "balancete"
     # ICMS ST antes do ICMS genérico — filename "Apuração icms st" e aba Demonst. SUBTRI
     head_fold = _fold_text(head)
     name_fold_dots = name.replace(".", " ")

@@ -21,6 +21,7 @@ type ResumoRow = {
   debito: number;
   credito: number;
   saldoCredor?: number;
+  ajuste?: number;
   aRecolher: number;
   aRecolherPlanilha?: number;
   aRecolherCalculado?: number;
@@ -364,7 +365,8 @@ export default function MemoriaLivro({
           : null;
     const st = statusFromValor(aRec);
     const rows: DetailRow[] = [];
-    if (hide5005) {
+    const icmsSimples = hide5005 || !hasMem;
+    if (icmsSimples) {
       rows.push(
         { label: "Apurado", value: moneyOrDash(apurado), tone: "bold" },
         { label: "Créditos", value: moneyOrDash(creditos), tone: "credit" },
@@ -407,7 +409,7 @@ export default function MemoriaLivro({
     cards.push({
       id: "icms",
       nome: "ICMS",
-      subtitle: hide5005 ? "Apuração ICMS" : "Decreto 5005",
+      subtitle: icmsSimples ? "Apuração ICMS" : "Decreto 5005",
       tone: "icms",
       apurado,
       creditos,
@@ -416,7 +418,7 @@ export default function MemoriaLivro({
       vencimento: null,
       ...st,
       rows,
-      resumoNome: hide5005 ? "ICMS" : "ICMS (Decreto 5005)",
+      resumoNome: icmsSimples ? "ICMS" : "ICMS (Decreto 5005)",
     });
   }
 
@@ -472,6 +474,7 @@ export default function MemoriaLivro({
     rows.push({ label: "Débito", value: brl(debito), tone: "debit" });
     rows.push({ label: "Créditos", value: brl(credito), tone: "debit" });
     if (saldo != null) rows.push({ label: "Saldo credor (acum.)", value: brl(Number(saldo)), tone: "mute" });
+    if (row?.ajuste != null) rows.push({ label: "Ajuste (aluguel)", value: brl(Number(row.ajuste)), tone: "mute" });
     const mesPis = Number(row?.aRecolherCalculado ?? debito - credito);
     if (Math.abs(mesPis - aRec) >= 0.02) {
       rows.push({
@@ -518,6 +521,7 @@ export default function MemoriaLivro({
     rows.push({ label: "Débito", value: brl(debito), tone: "debit" });
     rows.push({ label: "Créditos", value: brl(credito), tone: "debit" });
     if (saldo != null) rows.push({ label: "Saldo credor (acum.)", value: brl(Number(saldo)), tone: "mute" });
+    if (row?.ajuste != null) rows.push({ label: "Ajuste (aluguel)", value: brl(Number(row.ajuste)), tone: "mute" });
     const mesCof = Number(row?.aRecolherCalculado ?? debito - credito);
     if (Math.abs(mesCof - aRec) >= 0.02) {
       rows.push({
@@ -787,7 +791,7 @@ export default function MemoriaLivro({
               {livroOpen ? "Ocultar" : "Ver"} livro técnico
               {hasSimples && !hasMem
                 ? " (PGDAS / Simples Nacional)"
-                : hide5005
+                : hide5005 || !hasMem
                   ? " (ICMS, IPI, PIS/COFINS…)"
                   : " (5005, PIS/COFINS, ST…)"}
             </span>
@@ -1026,6 +1030,7 @@ function ResumoBlock({ rows, fallback }: { rows: ResumoRow[]; fallback?: Record<
     const mes = r.aRecolherCalculado ?? r.debito - r.credito;
     return Math.abs(mes - r.aRecolher) >= 0.02;
   });
+  const showAjuste = list.some((r) => r.ajuste != null) && list.every((r) => r.saldoCredor == null);
   return (
     <div className="tbl-scroll">
       <table className="dre-tbl">
@@ -1034,7 +1039,7 @@ function ResumoBlock({ rows, fallback }: { rows: ResumoRow[]; fallback?: Record<
             <th>Resumo apuração</th>
             <th className="r">Débito</th>
             <th className="r">Crédito</th>
-            <th className="r">Saldo credor</th>
+            <th className="r">{showAjuste ? "Ajuste (aluguel)" : "Saldo credor"}</th>
             {showMes ? <th className="r">Resultado do mês</th> : null}
             <th className="r">A recolher</th>
           </tr>
@@ -1047,7 +1052,15 @@ function ResumoBlock({ rows, fallback }: { rows: ResumoRow[]; fallback?: Record<
                 <td className="fw7">{r.tributo}</td>
                 <td className="r">{brl(r.debito)}</td>
                 <td className="r">{brl(r.credito)}</td>
-                <td className="r">{r.saldoCredor != null ? brl(r.saldoCredor) : "—"}</td>
+                <td className="r">
+                  {showAjuste
+                    ? r.ajuste != null
+                      ? brl(r.ajuste)
+                      : "—"
+                    : r.saldoCredor != null
+                      ? brl(r.saldoCredor)
+                      : "—"}
+                </td>
                 {showMes ? (
                   <td className={`r td-mute ${mes < 0 ? "dre-num-neg" : ""}`}>{brl(mes)}</td>
                 ) : null}
