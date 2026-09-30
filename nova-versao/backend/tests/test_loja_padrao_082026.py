@@ -70,3 +70,24 @@ def test_loja_082026_workbook_icms_pis_dre_vazia():
 
     gravados = {p["tipo"] for p in result["parts"] if p.get("pack_patch")}
     assert gravados == {"icms", "pis_cofins"}
+
+
+FIXTURE_092026_SO_ICMS = FIXTURE.with_name("planilha-padrao-092026-so-icms.xlsx")
+
+
+@pytest.mark.skipif(not FIXTURE_092026_SO_ICMS.exists(), reason="Fixture Loja 092026 ausente")
+def test_loja_092026_so_aba_icms_vira_workbook_padrao():
+    result = classify_and_extract(FIXTURE_092026_SO_ICMS)
+    assert result["tipo"] == "workbook_padrao"
+    assert result["competencia"] == "2026-09"
+    assert not result["errors"]
+
+    assert [p["tipo"] for p in result["parts"]] == ["icms"]
+    icms = _part(result, "icms")
+    assert icms["status"] == "ok"
+    assert icms["competencia"] == "2026-09"
+    tax = icms["pack_patch"]["apuracao"]["icms"]
+    assert tax["apurado"] == pytest.approx(69407.76, abs=0.02)
+    assert tax["credito"] == pytest.approx(56208.94, abs=0.02)
+    assert tax["aRecolher"] == pytest.approx(13198.82, abs=0.02)
+    assert tax["fonte"] == "planilha_padrao_icms"

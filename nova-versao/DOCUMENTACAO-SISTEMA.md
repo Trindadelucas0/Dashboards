@@ -169,6 +169,8 @@ Golden Baifer jan/2026: ICMS a recolher **−1.901,28**, subvenção **45.070,99
 
 Golden Loja das Máquinas ago/2026 (aba `ICMS`, sem 5005): débito **80.544,36**, crédito **55.937,66**, a recolher **24.606,70**. PIS a recolher **3.016,31** (ajuste aluguel 227,15). COFINS a recolher **13.893,28** (ajuste 1.046,27). DRE e Balancete de agosto ficam `vazia` — a coluna do mês está vazia; o janeiro do modelo não é importado. ST, DIFAL e IPI sem valor não são gravados. Fixture: `fixtures/loja-maquinas-padrao/planilha-padrao-082026.xlsx`.
 
+Golden Loja das Máquinas set/2026 (arquivo com **só** a aba `ICMS`): débito **69.407,76**, crédito **56.208,94**, a recolher **13.198,82**. Entra como `workbook_padrao` com uma part `icms`; nada de PIS/COFINS, DRE ou Balancete é gravado por esse arquivo. Fixture: `fixtures/loja-maquinas-padrao/planilha-padrao-092026-so-icms.xlsx`.
+
 ### 3.2.1 Impostos (UI)
 
 Topo da aba: KPIs **Vendas do mês**, **Total impostos**, **Total impostos / Vendas %**, **Carga tributária**.
@@ -384,7 +386,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 10. Percentuais na UI (Impostos `% s/ vendas`, Memória `% s/ RB` = max(aRecolher,0)/RB, DRE margens) só com numerador e denominador no pack; caso contrário `—` / `N/D` / “Em apuração”.
 11. Balancete multi-mês: coluna Total da grade = soma dos saldos mensais exibidos (layout wireframe); não interpreta patrimônio consolidado.
 12. Documento de cliente/fornecedor: 11 dígitos = CPF, 14 = CNPJ; demais = outros. Exportações de vendas/finalidade/CPF×CNPJ usam só pack e `NfeLine` da competência/unidade atuais.
-13. Workbook com ≥3 abas fiscais do modelo é `workbook_padrao`, com ou sem ENTRADAS/SAÍDAS. Abas do esqueleto ausentes geram aviso; coluna do mês vazia em DRE/BAL = part `vazia` (não copia outro mês). Sem abas de movimento, Compras/Vendas não são alteradas por esse arquivo. Empresa nova usa o mesmo contrato: só mudam números e `MMYYYY`; `company_id` vem do dashboard.
+13. Workbook com ≥3 abas fiscais do modelo é `workbook_padrao`, com ou sem ENTRADAS/SAÍDAS. Também é `workbook_padrao` o arquivo que tem a aba `ICMS` com as três linhas Débito ICMS / Crédito ICMS / ICMS a recolher, mesmo sem as outras abas (antes caía em “Tipo de planilha não reconhecido”). Abas do esqueleto ausentes geram aviso; coluna do mês vazia em DRE/BAL = part `vazia` (não copia outro mês). Sem abas de movimento, Compras/Vendas não são alteradas por esse arquivo. Empresa nova usa o mesmo contrato: só mudam números e `MMYYYY`; `company_id` vem do dashboard.
 14. CFOPs de serviço (1-933/2-933 ISSQN; 1-353/2-353 transporte; faixa SINIEF `.300` comunicação) entram no macro `servicos` e no painel `servicosTomados` da Finalidade.
 15. DRE Análise Vertical sem CNPJ herda a empresa do dashboard (como 5005/ST); não inventa `lucLiq` se a linha de resultado operacional estiver vazia.
 16. Balancete EXITO mensal (Única e demais): totais Ativo/Passivo/Resultado vêm do Saldo Atual das contas `1`/`2`/`3`; um arquivo = uma competência.

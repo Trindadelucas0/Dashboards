@@ -70,11 +70,16 @@ def is_workbook_padrao(sheets: list[WorkbookGrid]) -> bool:
     (ex. Baifer 082026: DRE/BAL/5005/PIS/ST/DIFAL/IPI, sem IRPJ/CSLL nem movimento)
     também é workbook_padrao — não cai no fluxo de aba única.
     Parcial com movimento e sem DRE/BAL (ex. Unica jul) segue True se tiver ≥3 abas fiscais.
+    Arquivo só com a aba ICMS do modelo (Débito ICMS / Crédito ICMS / ICMS a recolher,
+    ex. Loja 092026) também é padrão — nenhum outro detector reconhece esse layout.
     """
     if not sheets:
         return False
     names = {_fold_name(s.sheet_name) for s in sheets}
-    return len(_PADRAO_SHEETS & names) >= 3
+    if len(_PADRAO_SHEETS & names) >= 3:
+        return True
+    icms = _sheet_map(sheets).get("icms")
+    return bool(icms and parse_icms_simples_padrao(icms).get("hasValores"))
 
 
 def padrao_missing_sheets(sheets: list[WorkbookGrid]) -> list[str]:
