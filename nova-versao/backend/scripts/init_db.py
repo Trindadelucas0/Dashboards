@@ -38,6 +38,11 @@ def main() -> None:
         conn.execute(text("ALTER TABLE companies ADD COLUMN IF NOT EXISTS name_re VARCHAR(200) DEFAULT ''"))
         conn.execute(text("ALTER TABLE companies ADD COLUMN IF NOT EXISTS description VARCHAR(255) DEFAULT ''"))
         conn.execute(text("ALTER TABLE user_companies ADD COLUMN IF NOT EXISTS tabs JSONB DEFAULT '[]'::jsonb"))
+        conn.execute(text("ALTER TABLE imports ADD COLUMN IF NOT EXISTS source_file_hash VARCHAR(64)"))
+        conn.execute(text("ALTER TABLE imports ADD COLUMN IF NOT EXISTS pack_patch JSONB"))
+        conn.execute(
+            text("ALTER TABLE nfe_lines ADD COLUMN IF NOT EXISTS import_id INTEGER REFERENCES imports(id)")
+        )
         # Legado sem abas: libera todas as abas de viewer para não cortar acesso.
         conn.execute(
             text(

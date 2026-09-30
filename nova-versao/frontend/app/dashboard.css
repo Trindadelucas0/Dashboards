@@ -198,6 +198,27 @@ tr.row-cur td { background: color-mix(in srgb, var(--accent) 10%, transparent); 
 .import-item.ok { border-color: rgba(16,185,129,0.4); }
 .import-item.warn { border-color: rgba(245,158,11,0.45); }
 .import-item.err { border-color: rgba(239,68,68,0.4); }
+.import-saved { margin-top: 28px; }
+.import-saved h2 { margin: 0 0 4px; font-size: 16px; }
+.import-saved-list { display: grid; gap: 10px; margin-top: 12px; }
+.import-saved-card {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 13px;
+}
+.import-saved-card.is-confirming { flex-direction: column; align-items: stretch; }
+.import-saved-slots { margin: 8px 0 0; padding-left: 18px; color: var(--text-sec); }
+.import-confirm {
+  margin-top: 4px; padding: 12px 14px; border-radius: 10px;
+  border: 1px solid rgba(239,68,68,0.45); background: rgba(239,68,68,0.08);
+}
+.import-confirm-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.btn-export.danger { border-color: rgba(239,68,68,0.55); color: #fca5a5; }
+.btn-export.danger:hover { background: rgba(239,68,68,0.12); }
+@media (max-width: 640px) {
+  .import-saved-card { flex-direction: column; }
+  .import-saved-card .btn-export,
+  .import-confirm-actions .btn-export { width: 100%; }
+}
 .overlay { display: none; }
 .sidebar.mob-open + .overlay { display: block; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 90; }
 .tax-card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px; }

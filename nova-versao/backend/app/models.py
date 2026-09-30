@@ -101,6 +101,8 @@ class ImportRecord(Base):
     file_name: Mapped[str] = mapped_column(String(255), default="")
     status: Mapped[str] = mapped_column(String(20), default="ok")
     meta: Mapped[dict] = mapped_column(JSONB, default=dict)
+    source_file_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    pack_patch: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 
@@ -132,3 +134,4 @@ class NfeLine(Base):
     nome: Mapped[str] = mapped_column(Text, default="")
     doc: Mapped[str] = mapped_column(String(20), default="")
     uf: Mapped[str] = mapped_column(String(4), default="")
+    import_id: Mapped[int | None] = mapped_column(ForeignKey("imports.id"), nullable=True)

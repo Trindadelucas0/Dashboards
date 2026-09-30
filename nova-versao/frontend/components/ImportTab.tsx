@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api";
 import { useDash } from "@/components/DashContext";
 
@@ -32,6 +32,32 @@ type Saved = {
   warnings?: string[];
 };
 
+type SavedSlot = {
+  competencia: string;
+  unidade: string;
+  tipos: string[];
+};
+
+type SavedImport = {
+  id: number;
+  fileName: string;
+  createdAt: string | null;
+  reversible: boolean;
+  slots: SavedSlot[];
+};
+
+function formatImportedAt(iso: string | null) {
+  if (!iso) return "Data não informada";
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+  return date.toLocaleString("pt-BR");
+}
+
+function slotLabel(slot: SavedSlot) {
+  const tipos = (slot.tipos || []).filter(Boolean).join(", ");
+  return `${slot.competencia || "mês ?"} · ${slot.unidade || "matriz"}${tipos ? ` · ${tipos}` : ""}`;
+}
+
 export default function ImportTab() {
   const { company, goToSlot, reloadCompany } = useDash();
   const [items, setItems] = useState<Item[]>([]);
@@ -39,6 +65,55 @@ export default function ImportTab() {
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [savedImports, setSavedImports] = useState<SavedImport[]>([]);
+  const [listLoading, setListLoading] = useState(false);
+  const [listReady, setListReady] = useState(false);
+  const [listError, setListError] = useState("");
+  const [listTick, setListTick] = useState(0);
+  const [pendingDelete, setPendingDelete] = useState<SavedImport | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+  const [deleteMsg, setDeleteMsg] = useState("");
+  const confirmRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!pendingDelete) return;
+    confirmRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [pendingDelete]);
+
+  useEffect(() => {
+    if (!company?.id) {
+      setSavedImports([]);
+      setListLoading(false);
+      setListReady(false);
+      return;
+    }
+    let cancelled = false;
+    setListLoading(true);
+    setListReady(false);
+    setListError("");
+    setPendingDelete(null);
+    setSavedImports([]);
+    api<{ items: SavedImport[] }>(`/api/imports?companyId=${encodeURIComponent(company.id)}`)
+      .then((data) => {
+        if (!cancelled) setSavedImports(data.items || []);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setSavedImports([]);
+          setListError(err instanceof Error ? err.message : "Não foi possível listar as planilhas.");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setListLoading(false);
+          setListReady(true);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [company?.id, listTick]);
 
   const canSave = items.some((it) => it.ok);
   const hasDuplicate = items.some((it) => it.ok && (it.duplicateHash || it.slotExists));
@@ -89,6 +164,7 @@ export default function ImportTab() {
           success += ` · Avisos (sem gravar): ${avisos}`;
         }
         setMsg(success);
+        setListTick((tick) => tick + 1);
         await reloadCompany();
         if (last.competencia) goToSlot(last.competencia, last.unidade || "matriz");
       } else if (ignored.length) {
@@ -113,6 +189,24 @@ export default function ImportTab() {
       setError(err instanceof Error ? err.message : "Erro ao gravar");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function removeSaved() {
+    if (!pendingDelete) return;
+    setDeleting(true);
+    setDeleteError("");
+    setDeleteMsg("");
+    try {
+      await api(`/api/imports/${pendingDelete.id}`, { method: "DELETE" });
+      setDeleteMsg("Planilha excluída. Os dados dela saíram do mês.");
+      setPendingDelete(null);
+      setListTick((tick) => tick + 1);
+      await reloadCompany();
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : "Não foi possível excluir a planilha.");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -183,6 +277,68 @@ export default function ImportTab() {
             : " Extraia de novo depois de corrigir o arquivo."}
         </p>
       ) : null}
+
+      <div className="import-saved">
+        <h2 className="sec-title">Planilhas importadas</h2>
+        <p className="muted">Arquivos já gravados nesta empresa. Excluir tira só os dados daquela planilha.</p>
+        {listLoading ? <p className="muted">Carregando planilhas…</p> : null}
+        {listError ? <div className="error-banner" role="alert">{listError}</div> : null}
+        {deleteMsg ? <div className="notice" role="status">{deleteMsg}</div> : null}
+        {!listLoading && listReady && !listError && savedImports.length === 0 ? (
+          <p className="empty-state">Nenhuma planilha importada nesta empresa.</p>
+        ) : null}
+        <div className="import-saved-list">
+          {savedImports.map((row) => {
+            const confirming = pendingDelete?.id === row.id;
+            return (
+              <article key={row.id} className={`import-saved-card${confirming ? " is-confirming" : ""}`}>
+                <div>
+                  <strong>{row.fileName || "Planilha"}</strong>
+                  <div className="muted">{formatImportedAt(row.createdAt)}</div>
+                  <ul className="import-saved-slots">
+                    {(row.slots || []).map((slot) => (
+                      <li key={`${row.id}-${slot.competencia}-${slot.unidade}`}>{slotLabel(slot)}</li>
+                    ))}
+                  </ul>
+                  {row.reversible ? null : (
+                    <p className="muted">Planilha antiga. Se houver outra do mesmo tipo no mês, a exclusão é recusada.</p>
+                  )}
+                </div>
+                {confirming ? (
+                  <div ref={confirmRef} className="import-confirm" role="region" aria-label="Confirmar exclusão">
+                    <p>
+                      Excluir <strong>{row.fileName || "Planilha"}</strong>? Sai o que esta planilha gravou.
+                      O que veio de outros arquivos no mesmo mês permanece.
+                    </p>
+                    {deleteError ? <div className="error-banner" role="alert">{deleteError}</div> : null}
+                    <div className="import-confirm-actions">
+                      <button type="button" className="btn-export" onClick={() => setPendingDelete(null)} disabled={deleting}>
+                        Cancelar
+                      </button>
+                      <button type="button" className="btn-export danger" onClick={removeSaved} disabled={deleting}>
+                        {deleting ? "Excluindo…" : "Excluir planilha"}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn-export danger"
+                    onClick={() => {
+                      setDeleteError("");
+                      setDeleteMsg("");
+                      setPendingDelete(row);
+                    }}
+                    disabled={deleting}
+                  >
+                    Excluir
+                  </button>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      </div>
     </section>
   );
 }

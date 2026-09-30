@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.6.9 — ICMS simples |
-| Última atualização | 22/09/2026 (aba ICMS sem 5005 grava apuracao.icms; coluna AJUSTE do PIS/COFINS não é saldo credor; DRE/Balancete só a coluna MMYYYY) |
+| Versão do sistema | 2.7.1 — Confirmação de exclusão no card |
+| Última atualização | 30/09/2026 (Excluir abre Cancelar / Excluir planilha dentro do card da planilha) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,9 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.7.1 | Confirmação de exclusão no card | Em **Planilhas importadas**, **Excluir** troca o botão do card pela confirmação (Cancelar / **Excluir planilha**) no próprio card, que rola para a vista. Antes a caixa ficava depois da lista inteira e o clique parecia não fazer nada. API e regra de exclusão não mudaram. |
+| 2.7.0 | Excluir planilha | Aba **Importar** (admin) lista as planilhas `ok` da empresa e permite **Excluir**. A exclusão apaga o registro e os dados daquele arquivo no mês; o que veio de outro arquivo permanece. Com `pack_patch`, o mês é reconstruído. Import antigo sem patch: tipo repetido no mesmo mês responde 409 e não altera nada. |
+| 2.6.10 | Planilha padrão qualquer empresa | O parser não depende de Baifer/Loja. Empresa nova (catálogo ou só Postgres) usa o mesmo modelo: `MMYYYY` no nome → competência; abas → mesmos campos; `company_id` do dashboard aberto. Guia §8 e teste `test_padrao_qualquer_empresa.py`. |
 | 2.6.9 | ICMS simples | Aba `ICMS` (sem `ICMS 5005-2012`) grava só `apuracao.icms` (`fonte: planilha_padrao_icms`). PIS/COFINS: cabeçalho `AJUSTE` não vira `saldoCredor`; `SALDO CREDOR` continua saldo credor. Aviso de workbook parcial lista só as abas do esqueleto que faltam. DRE/Balancete seguem só a coluna do mês do arquivo. |
 | 2.6.8 | Planilha padrão fiscal sem movimento | Arquivo com ≥3 abas fiscais do modelo é `workbook_padrao` mesmo sem ENTRADAS/SAÍDAS (ex. Baifer 08/2026). `MMYYYY` no nome ancora a competência; DRE/Balancete usam só a coluna desse mês (vazia não copia janeiro). ICMS a recolher só da linha homônima; PIS/COFINS `aRecolher` continua a coluna do RESUMO. |
 | 2.6.7 | PIS/COFINS RESUMO | Planilha padrão aba PIS COFINS: `aRecolher` = coluna A RECOLHER do RESUMO (inclui saldo credor acumulado), como o IPI. Débito − crédito fica em `aRecolherCalculado` (linha **Resultado do mês**). Packs já gravados: script `_fix_pis_cofins_arecolher_remote.py`. |
@@ -61,11 +64,21 @@ Opcionais (movimento do mês, no mesmo arquivo):
 
 **Workbook parcial:** se o arquivo tiver **pelo menos 3** abas fiscais do modelo, é `workbook_padrao` — **com ou sem** ENTRADAS/SAÍDAS. Extrai as abas presentes e avisa as do esqueleto que faltam. Não inventa imposto, DRE, Balancete nem movimento. O caso com movimento e sem DRE/BALANCETE (ex. Única julho) segue o mesmo critério.
 
+### Qualquer empresa (incluindo cadastrada depois)
+
+O mesmo arquivo modelo serve para Baifer, Loja, Única e **empresa nova**. Só mudam os números e o `MMYYYY` no nome. Não nasce parser por empresa.
+
+1. Cadastrar a empresa (catálogo estático ou `/empresas/nova` no Postgres) e entrar no **dashboard dela**.
+2. Importar `Planilha Padrão … MMYYYY.xlsx` (ex. `092026` = setembro/2026). A empresa gravada é a do dashboard aberto (`_apply_session_company`), não o texto do nome do arquivo.
+3. Cada aba com valor cai no mesmo campo do mapa abaixo. Aba vazia ou ausente não inventa número.
+4. Relatório EXITO de Entradas/Saídas (ou abas ENTRADAS/SAÍDAS no workbook): o CNPJ do cabeçalho tem que ser o da empresa cadastrada. IRPJ/CSLL com CNPJ de outra empresa continua **ignorado**.
+5. **Gravar** sem marcar substituir o mês se for juntar impostos da planilha padrão com movimento já importado.
+
 - Nome do arquivo **não** define empresa nem tipo; detecção pelo conjunto de abas.
-- Empresa: CNPJ do cabeçalho das abas de movimento ou dashboard aberto.
+- Empresa: CNPJ do cabeçalho das abas de movimento ou dashboard aberto (empresa só no Postgres também herda o dashboard).
 - `MMYYYY` no nome (`082026`, `092026`, …) vira competência `YYYY-MM` e ancora DRE, Balancete e impostos. Outro mês no nome não muda o destino de cada aba. A empresa vem do dashboard aberto.
 - DRE e BALANCETE: só a coluna desse mês. Coluna vazia = part `vazia`. Nunca copia janeiro (nem outro mês preenchido) para a competência do arquivo.
-- ICMS 5005-2012: débito/crédito na memória. `apuracao.icms.aRecolher` só da linha **ICMS a recolher**, se ela existir. Se essa aba existir, o caminho continua sendo a memória 5005 (Baifer).
+- ICMS 5005-2012: débito/crédito na memória. `apuracao.icms.aRecolher` só da linha **ICMS a recolher**, se ela existir. Se essa aba existir, o caminho é a memória 5005 (ex. Baifer).
 - Aba `ICMS` (comparada sem acento como `icms`, sem 5005): grava só `apuracao.icms` com `apurado` = linha Débito ICMS, `credito` = Crédito ICMS, `aRecolher` = linha ICMS a recolher, `fonte: planilha_padrao_icms`. Não cria `memoriaCalculo`. Sem as três linhas, a aba não é gravada.
 - PIS COFINS: `aRecolher` é a coluna do RESUMO cujo cabeçalho é A RECOLHER ou IMPOSTO A RECOLHER. Débito − crédito do mês fica em `aRecolherCalculado`. Cabeçalho `SALDO CREDOR` grava `saldoCredor`. Cabeçalho `AJUSTE` (ex. aluguel) grava `ajuste` e não é saldo credor.
 - ST: soma UF/VALOR em `apuracao.icmsSt` só se houver valor. DIFAL e IPI só se a aba tiver valor no resumo/grade.
@@ -338,7 +351,8 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | Parser DRE / Análise Vertical | `backend/app/extract/parse_dre.py` (`extract_dre_vertical`, `parse_dre_padrao_column`) |
 | Parser Balancete EXITO / padrão | `backend/app/extract/parse_balancete.py` |
 | Pipeline | `backend/app/extract/pipeline.py` |
-| Preview/commit | `backend/app/routers/imports.py` (`expand_workbook_parts` também expande `dre_vertical`) |
+| Preview/commit | `backend/app/routers/imports.py` (`expand_workbook_parts` também expande `dre_vertical`). Cada item gravado guarda `source_file_hash` e `pack_patch`; cada `NfeLine` nova aponta `import_id`. **Substituir mês** marca os `ImportRecord` `ok` daquele slot como `replaced` antes de gravar o novo. |
+| Lista e exclusão | `GET /api/imports?companyId=` e `DELETE /api/imports/{id}` em `backend/app/routers/imports.py` (admin + empresa do registro). Reconstrução do mês: `backend/app/imports_revert.py` (`rebuild_pack`). |
 | Fatia por aba UI | `backend/app/routers/companies.py` → `_slice`, `_is_empty`, `build_dre_por_mes`, `build_balancete_por_mes` |
 | CFOP / Finalidade / Serviços | `backend/app/extract/cfop.py` (`CFOP_INFO`, `aggregate_macro`, `aggregate_servicos`) |
 | Linhas NF (export) | `GET .../nfe-lines` em `backend/app/routers/companies.py`; classificação `tipo_doc` / `vendas_por_doc` em `backend/app/extract/aggregate.py` |
@@ -348,12 +362,12 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | UI Balancete | `frontend/components/BalanceteTree.tsx` |
 | UI abas (Impostos / Indicadores / Recebimentos) | `frontend/app/dashboard/[empresa]/[aba]/page.tsx` (`TrimestreBlock` só se `viewingTrimestre`) |
 | Estilos dashboard | `frontend/app/dashboard.css` |
-| UI import | `frontend/components/ImportTab.tsx` |
+| UI import | `frontend/components/ImportTab.tsx` (upload, lista **Planilhas importadas**, confirmação de exclusão dentro do card clicado) |
 | Catálogo de empresas | `backend/app/companies.py`, `backend/scripts/seed.py` |
 | JPG unidades / consolidado | `company_detail` + `tab_payload` (`unidade=todas`) em `backend/app/routers/companies.py`; `aggregate_fiscal_packs` soma `irpj`/`csll`; dropdown em `frontend/app/dashboard/[empresa]/layout-inner.tsx` |
 | LANNIC Simples | `Unit lannic` em `backend/app/companies.py`; pack `scripts/seed_jpg_lannic.py` (merge, não apaga NFs); `preserve_simples_receita` em `aggregate.py`; UI Impostos `page.tsx` + `MemoriaLivro.tsx` |
 | Split movimento acumulado | `backend/scripts/split_movimento_mensal.py` |
-| Testes golden | `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_loja_padrao_082026.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py` |
+| Testes golden | `backend/tests/test_import_revert.py`, `backend/tests/test_padrao_qualquer_empresa.py` (sintético, sem empresa fixa), `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_loja_padrao_082026.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py` |
 | Fixtures | `fixtures/baifer-padrao/`, `fixtures/unica-padrao/`, `fixtures/egaplast-padrao/`, `fixtures/loja-maquinas-padrao/`, `fixtures/jpg-padrao/` |
 
 ## 5. Regras de negócio
@@ -370,7 +384,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 10. Percentuais na UI (Impostos `% s/ vendas`, Memória `% s/ RB` = max(aRecolher,0)/RB, DRE margens) só com numerador e denominador no pack; caso contrário `—` / `N/D` / “Em apuração”.
 11. Balancete multi-mês: coluna Total da grade = soma dos saldos mensais exibidos (layout wireframe); não interpreta patrimônio consolidado.
 12. Documento de cliente/fornecedor: 11 dígitos = CPF, 14 = CNPJ; demais = outros. Exportações de vendas/finalidade/CPF×CNPJ usam só pack e `NfeLine` da competência/unidade atuais.
-13. Workbook com ≥3 abas fiscais do modelo é `workbook_padrao`, com ou sem ENTRADAS/SAÍDAS. Abas do esqueleto ausentes geram aviso; coluna do mês vazia em DRE/BAL = part `vazia` (não copia outro mês). Sem abas de movimento, Compras/Vendas não são alteradas por esse arquivo.
+13. Workbook com ≥3 abas fiscais do modelo é `workbook_padrao`, com ou sem ENTRADAS/SAÍDAS. Abas do esqueleto ausentes geram aviso; coluna do mês vazia em DRE/BAL = part `vazia` (não copia outro mês). Sem abas de movimento, Compras/Vendas não são alteradas por esse arquivo. Empresa nova usa o mesmo contrato: só mudam números e `MMYYYY`; `company_id` vem do dashboard.
 14. CFOPs de serviço (1-933/2-933 ISSQN; 1-353/2-353 transporte; faixa SINIEF `.300` comunicação) entram no macro `servicos` e no painel `servicosTomados` da Finalidade.
 15. DRE Análise Vertical sem CNPJ herda a empresa do dashboard (como 5005/ST); não inventa `lucLiq` se a linha de resultado operacional estiver vazia.
 16. Balancete EXITO mensal (Única e demais): totais Ativo/Passivo/Resultado vêm do Saldo Atual das contas `1`/`2`/`3`; um arquivo = uma competência.
@@ -379,6 +393,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 20. IPI (demonstrativo EXITO ou tabela): se a recolher/saldo devedor ≈ 0 e há saldo credor (ou crédito > débito) → `aRecolher` negativo. KPI Visão Geral: DAS, senão ICMS com valor, senão IPI. JPG não exibe APURAÇÃO 5005 na UI.
 21. LANNIC (Simples): `memoriaSimples.baseMemoria` manda em `receitaBruta` após merge de saídas/import/seed. `cfopSaidasTotal` e `NfeLine` vêm do Excel. Reexecutar `seed_jpg_lannic.py` **não** zera movimento.
 22. Barra de competência: chip de mês mostra só o mês. Chip **1º Trim** / **2º Trim** (`qN-YYYY`) soma os meses importados do trimestre e exibe a faixa de 4 KPIs (`TrimestreBlock`). Aba **DRE** não usa essa faixa. A API ainda pode devolver `trimestre` no mês; a UI ignora.
+23. Excluir planilha (só administrador, aba **Importar**): a lista mostra só registros `status=ok` da empresa aberta. Várias abas do mesmo arquivo compartilham `source_file_hash` e saem juntas; o id do card é o menor id do grupo. `DELETE /api/imports/{id}` apaga esses registros e as `NfeLine` com `import_id` neles. Se todo registro do slot (os que saem e os que ficam `ok`) tem `pack_patch`, o pack do mês é remontado só com os arquivos que permanecem, na ordem de gravação; chave que nenhum desses arquivos gravou (ex. `memoriaSimples` do seed) fica, e `receitaBruta` continua a base PGDAS. Import antigo sem `pack_patch`: se era o único arquivo daquele mês/unidade, o slot zera; se o tipo não se repete entre os que ficam, só as chaves daquele tipo saem; se há outro arquivo do mesmo tipo, a API responde 409 e não grava nada — use **Substituir mês** ao reimportar o pacote certo. **Substituir mês** marca como `replaced` todos os `ImportRecord` `ok` daquele mês/unidade antes de gravar o novo.
 
 ## 6. Pendências de dados (Única)
 
@@ -400,7 +415,8 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 2. Abrir dashboard → **Importar planilhas**.
 3. Subir o `.xlsx` padrão (mesmo esqueleto todo mês). Se o arquivo já trouxer `ENTRADAS`/`SAÍDAS`, Compras e Vendas saem dele; senão, subir também o EXITO de Entradas **ou** o **Relatório de entrada por fornecedor**.
 4. Conferir preview (ok / vazia / ignorada) → **Gravar**.
-5. Selecionar mês no chip superior; conferir DRE, Balancete, **Memória** (livro linha a linha), Impostos, Compras, Vendas. Para o **total somado do trimestre**, clique em **1º Trim** / **2º Trim** (não no mês): aí aparece a faixa de 4 KPIs (vendas, compras, saldo, imposto). No chip de mês essa faixa não aparece.
+5. Em **Planilhas importadas** (mesma aba, só administrador), cada arquivo gravado mostra data, mês, unidade e tipos. **Excluir** abre a confirmação dentro do próprio card daquela planilha (Cancelar / **Excluir planilha**); Cancelar devolve o botão Excluir. Sai só o que aquela planilha entrou; outro arquivo do mesmo mês permanece. Se aparecer que não dá para separar duas planilhas do mesmo tipo, nada é apagado: reimporte o pacote certo com **Substituir mês**.
+6. Selecionar mês no chip superior; conferir DRE, Balancete, **Memória** (livro linha a linha), Impostos, Compras, Vendas. Para o **total somado do trimestre**, clique em **1º Trim** / **2º Trim** (não no mês): aí aparece a faixa de 4 KPIs (vendas, compras, saldo, imposto). No chip de mês essa faixa não aparece.
 
 **Única — DRE Análise Vertical (jan–jun/2026):** login `unica` → Importar → selecionar `Análise Vertical do D. R. E.xls` → preview deve listar **6** linhas `dre` (2026-01 … 2026-06) com `ok` → **Gravar** (sem “substituir mês” se o mês já tiver movimento/impostos) → conferir aba **DRE** em cada chip de mês. Em jan/2026 a planilha não traz lucro operacional → KPI de lucro líquido / ML fica N/D.
 
@@ -426,9 +442,13 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 **Finalidade — exportar:** **Exportar PDF** / **Exportar Excel** do quadro macro e da lista completa de CFOPs (o Excel inclui fornecedores por CFOP). O botão **Por Fornecedor** segue gerando o relatório filtrado no modal.
 
-**Baifer — planilha padrão do mês (todo mês):** login `baifer` → dashboard Baifer → **Importar** → arquivo cujo nome termina em `MMYYYY` (ex. `Planilha Padrão DASBORADS - BAIFER 082026.xlsx` = agosto/2026; no mês seguinte, `092026`). A empresa é a do dashboard aberto. No preview: DRE e Balancete ficam `ok` só se a coluna daquele mês tiver número; coluna vazia fica `vazia` e o janeiro do modelo não entra. ICMS 5005, PIS/COFINS, ST, DIFAL e IPI aparecem só quando a aba tem valor. IRPJ/CSLL só se a aba existir e o CNPJ for o da Baifer. Sem ENTRADAS/SAÍDAS, Compras e Vendas não mudam. **Gravar** sem marcar substituir o mês, salvo quando for reimportar o mês inteiro.
+**Qualquer empresa — planilha padrão do mês:** cadastrar a empresa (se ainda não existir) → login dela → dashboard aberto → **Importar** → arquivo cujo nome termina em `MMYYYY` (ex. `… 082026.xlsx` = agosto/2026; no mês seguinte, `092026`). A empresa gravada é a do dashboard, não o texto do nome. No preview: DRE e Balancete ficam `ok` só se a coluna daquele mês tiver número; coluna vazia fica `vazia` e o janeiro do modelo não entra. ICMS 5005 **ou** ICMS simples, PIS/COFINS, ST, DIFAL e IPI aparecem só quando a aba tem valor. IRPJ/CSLL só se a aba existir e o CNPJ for o da empresa aberta. Sem ENTRADAS/SAÍDAS, Compras e Vendas não mudam com esse arquivo (use o relatório EXITO de entradas/saídas com o CNPJ dela). **Gravar** sem marcar substituir o mês, salvo quando for reimportar o mês inteiro.
+
+**Baifer — planilha padrão (exemplo):** mesmo fluxo acima com login `baifer` e arquivo `Planilha Padrão DASBORADS - BAIFER MMYYYY.xlsx`.
 
 **Baifer — entradas ago/2026:** login `baifer` → dashboard Baifer → Importar → `Relatorio de entrada por fornecedor 082026 BAIFER.xls` → preview `entradas` / `2026-08` / Δ 0 → Gravar → aba **Compras** total R$ 377.506,76. Use este arquivo quando a planilha padrão do mês não trouxer a aba ENTRADAS.
+
+**Loja das Máquinas — planilha padrão (exemplo):** login `loja-maquinas` → Importar o `… LOJA DAS MAQUINAS MMYYYY.xlsx` (aba `ICMS` sem 5005) + entradas/saídas EXITO do mês, se houver.
 
 Login seed: `admin`, `baifer`, `egaplast`, `loja-maquinas`, `unica`, `jpg` (senhas no `.env`).
 

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import copy
 import tempfile
+from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
+from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy.orm import Session
@@ -17,6 +20,14 @@ from app.extract.aggregate import preserve_simples_receita
 from app.extract.pipeline import classify_and_extract
 from app.extract.parse_workbook_padrao import expand_workbook_parts
 from app.extract.workbook import safe_unlink
+from app.imports_revert import (
+    CONFLICT_DETAIL,
+    apply_legacy_key_removal,
+    deep_merge,
+    pack_has_useful_data,
+    rebuild_pack,
+    slot_revert_mode,
+)
 from app.models import Company, FiscalMonth, ImportRecord, NfeLine, User
 from app.security import sha256_bytes
 
@@ -32,13 +43,7 @@ class CommitIn(BaseModel):
 
 
 def _deep_merge(base: dict, patch: dict) -> dict:
-    out = dict(base or {})
-    for key, val in (patch or {}).items():
-        if isinstance(val, dict) and isinstance(out.get(key), dict):
-            out[key] = _deep_merge(out[key], val)
-        else:
-            out[key] = val
-    return out
+    return deep_merge(base, patch)
 
 
 def _pack_has_tipo(pack: dict | None, tipo: str) -> bool:
@@ -285,6 +290,59 @@ def _get_or_create_month(
     return row
 
 
+def _bind_import_record(
+    db: Session,
+    pending_by_hash: dict[str, ImportRecord],
+    item: dict,
+    *,
+    company_id: str,
+    competencia: str,
+    unidade: str,
+    tipo: str,
+    file_hash: str | None,
+    patch: dict,
+) -> ImportRecord | None:
+    """Grava ou atualiza o ImportRecord do item e devolve o id usado nas NFs."""
+    if not file_hash:
+        return None
+    source_hash = item.get("source_file_hash") or file_hash
+    stored_patch = copy.deepcopy(patch)
+    existing = pending_by_hash.get(file_hash)
+    if existing is None:
+        existing = db.query(ImportRecord).filter(ImportRecord.file_hash == file_hash).first()
+    if existing:
+        existing.status = "ok"
+        existing.meta = item.get("meta") or {}
+        existing.pack_patch = stored_patch
+        existing.source_file_hash = source_hash
+        existing.file_name = item.get("file") or existing.file_name
+        existing.company_id = company_id
+        existing.competencia = competencia
+        existing.unidade = unidade
+        existing.tipo = tipo or existing.tipo
+        flag_modified(existing, "pack_patch")
+        flag_modified(existing, "meta")
+        pending_by_hash[file_hash] = existing
+        db.flush()
+        return existing
+    record = ImportRecord(
+        company_id=company_id,
+        competencia=competencia,
+        unidade=unidade,
+        tipo=tipo,
+        file_hash=file_hash,
+        file_name=item.get("file") or "",
+        status="ok",
+        meta=item.get("meta") or {},
+        source_file_hash=source_hash,
+        pack_patch=stored_patch,
+    )
+    db.add(record)
+    db.flush()
+    pending_by_hash[file_hash] = record
+    return record
+
+
 @router.post("/commit")
 def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = Depends(get_db)):
     preview = _PREVIEWS.get(body.previewId)
@@ -293,7 +351,7 @@ def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = De
     saved = []
     cleared_slots: set[tuple[str, str, str]] = set()
     slot_rows: dict[tuple[str, str, str], FiscalMonth] = {}
-    pending_hashes: set[str] = set()
+    pending_by_hash: dict[str, ImportRecord] = {}
     try:
         for item in preview["items"]:
             if item.get("skipped") or not item.get("pack_patch"):
@@ -344,30 +402,26 @@ def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = De
                     NfeLine.competencia == competencia,
                     NfeLine.unidade == unidade,
                 ).delete(synchronize_session=False)
+                db.query(ImportRecord).filter(
+                    ImportRecord.company_id == company_id,
+                    ImportRecord.competencia == competencia,
+                    ImportRecord.unidade == unidade,
+                    ImportRecord.status == "ok",
+                ).update({ImportRecord.status: "replaced"}, synchronize_session="fetch")
                 cleared_slots.add(slot_key)
             patch = item.get("pack_patch") or {}
             _assign_pack(row, _deep_merge(row.pack or {}, patch))
-            if file_hash:
-                existing_imp = db.query(ImportRecord).filter(ImportRecord.file_hash == file_hash).first()
-                if existing_imp and not body.replace:
-                    pass
-                elif existing_imp and body.replace:
-                    existing_imp.status = "replaced"
-                    existing_imp.meta = item.get("meta") or {}
-                elif file_hash not in pending_hashes:
-                    db.add(
-                        ImportRecord(
-                            company_id=company_id,
-                            competencia=competencia,
-                            unidade=unidade,
-                            tipo=tipo,
-                            file_hash=file_hash,
-                            file_name=item.get("file") or "",
-                            status="ok",
-                            meta=item.get("meta") or {},
-                        )
-                    )
-                    pending_hashes.add(file_hash)
+            record = _bind_import_record(
+                db,
+                pending_by_hash,
+                item,
+                company_id=company_id,
+                competencia=competencia,
+                unidade=unidade,
+                tipo=tipo,
+                file_hash=file_hash,
+                patch=patch,
+            )
             for line in item.get("lines") or []:
                 try:
                     with db.begin_nested():
@@ -384,6 +438,7 @@ def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = De
                                 nome=line.get("nome") or "",
                                 doc=line.get("doc") or "",
                                 uf=line.get("uf") or "",
+                                import_id=record.id if record else None,
                             )
                         )
                 except IntegrityError:
@@ -404,3 +459,198 @@ def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = De
         raise
     _PREVIEWS.pop(body.previewId, None)
     return {"saved": saved}
+
+
+def _import_views(rows: list[ImportRecord]) -> list[dict]:
+    return [{"tipo": row.tipo, "pack_patch": row.pack_patch} for row in rows]
+
+
+def _display_file_name(rows: list[ImportRecord]) -> str:
+    bases: list[str] = []
+    for row in rows:
+        name = (row.file_name or "").strip()
+        if " · " in name:
+            name = name.split(" · ", 1)[0].strip()
+        if name:
+            bases.append(name)
+    unique = list(dict.fromkeys(bases))
+    if len(unique) == 1:
+        return unique[0]
+    return unique[0] if unique else "Planilha"
+
+
+def _group_payload(rows: list[ImportRecord]) -> dict:
+    ordered = sorted(rows, key=lambda row: row.id)
+    head = ordered[0]
+    slot_tipos: dict[tuple[str, str], list[str]] = {}
+    for row in sorted(ordered, key=lambda item: (item.competencia, item.unidade or "", item.id)):
+        key = (row.competencia, row.unidade or "matriz")
+        bucket = slot_tipos.setdefault(key, [])
+        if row.tipo and row.tipo not in bucket:
+            bucket.append(row.tipo)
+    created = min((row.created_at for row in ordered if row.created_at), default=None)
+    return {
+        "id": head.id,
+        "fileName": _display_file_name(ordered),
+        "createdAt": created.isoformat() if created else None,
+        "reversible": all(row.pack_patch is not None for row in ordered),
+        "slots": [
+            {"competencia": comp, "unidade": unidade, "tipos": tipos}
+            for (comp, unidade), tipos in slot_tipos.items()
+        ],
+    }
+
+
+def _drop_month_if_empty(db: Session, row: FiscalMonth | None, company_id: str, competencia: str, unidade: str) -> None:
+    if row is None:
+        return
+    left = (
+        db.query(NfeLine)
+        .filter(
+            NfeLine.company_id == company_id,
+            NfeLine.competencia == competencia,
+            NfeLine.unidade == unidade,
+        )
+        .count()
+    )
+    if left == 0 and not pack_has_useful_data(row.pack or {}):
+        db.delete(row)
+
+
+def _apply_slot_revert(
+    db: Session,
+    slot_key: tuple[str, str, str],
+    deleting: list[ImportRecord],
+    remaining: list[ImportRecord],
+    mode: str,
+    deleted_ids: list[int],
+) -> None:
+    company_id, competencia, unidade = slot_key
+    row = (
+        db.query(FiscalMonth)
+        .filter(
+            FiscalMonth.company_id == company_id,
+            FiscalMonth.competencia == competencia,
+            FiscalMonth.unidade == unidade,
+        )
+        .first()
+    )
+    if mode == "rebuild" and row is not None:
+        remaining_sorted = sorted(remaining, key=lambda item: (item.created_at or datetime.min, item.id))
+        pack = rebuild_pack(
+            row.pack or {},
+            [item.pack_patch or {} for item in deleting],
+            [item.pack_patch or {} for item in remaining_sorted],
+        )
+        _assign_pack(row, pack)
+    elif mode == "legacy_only":
+        if row is not None:
+            _assign_pack(row, {})
+        db.query(NfeLine).filter(
+            NfeLine.company_id == company_id,
+            NfeLine.competencia == competencia,
+            NfeLine.unidade == unidade,
+        ).delete(synchronize_session=False)
+    elif mode == "legacy_strip":
+        deleted_tipos = {item.tipo for item in deleting if item.tipo}
+        remaining_tipos = {item.tipo for item in remaining if item.tipo}
+        if row is not None:
+            _assign_pack(row, apply_legacy_key_removal(row.pack or {}, deleted_tipos, remaining_tipos))
+        if deleted_tipos:
+            db.query(NfeLine).filter(
+                NfeLine.company_id == company_id,
+                NfeLine.competencia == competencia,
+                NfeLine.unidade == unidade,
+                NfeLine.tipo.in_(list(deleted_tipos)),
+                or_(NfeLine.import_id.is_(None), NfeLine.import_id.in_(deleted_ids)),
+            ).delete(synchronize_session=False)
+    _drop_month_if_empty(db, row, company_id, competencia, unidade)
+
+
+@router.get("")
+def list_imports(companyId: str, user: User = Depends(require_admin), db: Session = Depends(get_db)):
+    require_company(companyId, user, db)
+    rows = (
+        db.query(ImportRecord)
+        .filter(ImportRecord.company_id == companyId, ImportRecord.status == "ok")
+        .order_by(ImportRecord.created_at.desc(), ImportRecord.id.desc())
+        .all()
+    )
+    groups: dict[tuple, list[ImportRecord]] = {}
+    for row in rows:
+        if row.source_file_hash:
+            key = ("hash", row.company_id, row.source_file_hash)
+        else:
+            key = ("id", row.id)
+        groups.setdefault(key, []).append(row)
+    items = [_group_payload(group) for group in groups.values()]
+    items.sort(key=lambda item: item.get("createdAt") or "", reverse=True)
+    return {"items": items}
+
+
+@router.delete("/{import_id}")
+def delete_import(import_id: int, user: User = Depends(require_admin), db: Session = Depends(get_db)):
+    record = db.query(ImportRecord).filter(ImportRecord.id == import_id).first()
+    if not record or record.status != "ok":
+        raise HTTPException(status_code=404, detail="Planilha não encontrada.")
+    require_company(record.company_id, user, db)
+    if record.source_file_hash:
+        group = (
+            db.query(ImportRecord)
+            .filter(
+                ImportRecord.company_id == record.company_id,
+                ImportRecord.source_file_hash == record.source_file_hash,
+                ImportRecord.status == "ok",
+            )
+            .all()
+        )
+    else:
+        group = [record]
+    if not group:
+        raise HTTPException(status_code=404, detail="Planilha não encontrada.")
+
+    by_slot: dict[tuple[str, str, str], list[ImportRecord]] = {}
+    for row in group:
+        slot_key = (row.company_id, row.competencia, row.unidade or "matriz")
+        by_slot.setdefault(slot_key, []).append(row)
+
+    plans: list[tuple[tuple[str, str, str], list[ImportRecord], list[ImportRecord], str]] = []
+    for slot_key, deleting in by_slot.items():
+        company_id, competencia, unidade = slot_key
+        deleting_ids = [row.id for row in deleting]
+        remaining = (
+            db.query(ImportRecord)
+            .filter(
+                ImportRecord.company_id == company_id,
+                ImportRecord.competencia == competencia,
+                ImportRecord.unidade == unidade,
+                ImportRecord.status == "ok",
+                ImportRecord.id.notin_(deleting_ids),
+            )
+            .all()
+        )
+        mode = slot_revert_mode(_import_views(deleting), _import_views(remaining))
+        if mode == "conflict":
+            raise HTTPException(status_code=409, detail=CONFLICT_DETAIL)
+        plans.append((slot_key, deleting, remaining, mode))
+
+    deleted_ids = [row.id for row in group]
+    try:
+        db.query(NfeLine).filter(NfeLine.import_id.in_(deleted_ids)).delete(synchronize_session=False)
+        for slot_key, deleting, remaining, mode in plans:
+            _apply_slot_revert(db, slot_key, deleting, remaining, mode, deleted_ids)
+        db.query(ImportRecord).filter(ImportRecord.id.in_(deleted_ids)).delete(synchronize_session=False)
+        db.commit()
+    except HTTPException:
+        db.rollback()
+        raise
+    except Exception:
+        db.rollback()
+        raise
+    return {
+        "deleted": True,
+        "slots": [
+            {"competencia": comp, "unidade": unidade}
+            for (_company, comp, unidade) in by_slot
+        ],
+    }
