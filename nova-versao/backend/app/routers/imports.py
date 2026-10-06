@@ -73,6 +73,9 @@ def _pack_has_tipo(pack: dict | None, tipo: str) -> bool:
         return bool(ap.get("difal"))
     if tipo == "icms":
         return bool(ap.get("icms"))
+    if tipo == "venda_produto":
+        vp = pack.get("vendaProduto")
+        return isinstance(vp, dict) and bool(vp.get("resumo") or vp.get("produtos"))
     return False
 
 

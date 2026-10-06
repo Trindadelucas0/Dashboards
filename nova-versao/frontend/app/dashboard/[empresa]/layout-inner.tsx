@@ -13,6 +13,7 @@ const TITLES: Record<string, [string, string]> = {
   compras: ["Compras", "Aquisições"],
   finalidade: ["Finalidade de Compras", "Por CFOP"],
   vendas: ["Vendas", "Saídas por cliente"],
+  "vendas-produto": ["Vendas por produto", "Margem por item — mês selecionado"],
   impostos: ["Impostos", "Apuração"],
     memoria: ["Memória de Cálculo", "Livro da planilha padrão — ICMS 5005, PIS/COFINS e demais tributos"],
   recebimentos: ["Recebimentos/Pagamentos", "Estimativa NF-e — KPIs, gráficos e série"],
@@ -113,26 +114,36 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
     router.replace(`${pathname}?${q.toString()}`);
   }
 
-  const tabs = (company?.tabs || NAV.flatMap((s) => s.items.map((i) => i.id))).filter(
+  const tabs = (company?.tabs || []).filter(
     (id) => isAdmin || id !== "importar",
   );
+  const consolidadoSchumacher = empresa === "schumacher" && (aba === "dre" || aba === "balancete");
   const [title, sub] = (empresa === "jpg"
     ? { ...TITLES, memoria: ["Memória de Cálculo", "Livro da apuração importada — ICMS, IPI e demais tributos"] as [string, string] }
-    : TITLES)[aba] || [aba, ""];
+    : empresa === "schumacher"
+      ? {
+          ...TITLES,
+          memoria: ["Memória de Cálculo", "Livro fiscal — ICMS, IPI, PIS e COFINS"] as [string, string],
+          balancete: ["Balanço Patrimonial", "Posição ao fim do mês"] as [string, string],
+        }
+      : TITLES)[aba] || [aba, ""];
   const months = useMemo(() => {
     if (!company) return [];
-    if (!unidade || unidade === "todas") {
+    const source = consolidadoSchumacher
+      ? company.months.filter((m) => m.unidade === "matriz")
+      : company.months;
+    if (consolidadoSchumacher || !unidade || unidade === "todas") {
       const seen = new Set<string>();
       const out: CompanyDetail["months"] = [];
-      for (const m of company.months) {
+      for (const m of source) {
         if (seen.has(m.competencia)) continue;
         seen.add(m.competencia);
-        out.push({ ...m, unidade: unidade || m.unidade });
+        out.push({ ...m, unidade: consolidadoSchumacher ? "matriz" : (unidade || m.unidade) });
       }
       return out;
     }
-    return company.months.filter((m) => m.unidade === unidade);
-  }, [company, unidade]);
+    return source.filter((m) => m.unidade === unidade);
+  }, [company, unidade, consolidadoSchumacher]);
 
   const ctx: DashCtx = {
     company,
@@ -180,7 +191,7 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
                       onClick={() => setMobileOpen(false)}
                     >
                       <div className="nav-ico"><i className={`fas ${item.icon}`} /></div>
-                      <span className="nav-label">{item.label}</span>
+                      <span className="nav-label">{item.id === "balancete" && empresa === "schumacher" ? "Balanço Patrimonial" : item.label}</span>
                     </Link>
                   ))}
                 </div>
@@ -208,7 +219,7 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
             </div>
             <div className="header-actions">
               <Link href="/seletor" className="btn-export">Voltar</Link>
-              {company && company.units.length > 1 ? (
+              {company && company.units.length > 1 && !consolidadoSchumacher ? (
                 <select className="period-sel" value={unidade} onChange={(e) => ctx.setUnidade(e.target.value)} aria-label="Unidade">
                   {company.units.map((u) => {
                     const key = typeof u === "string" ? u : u.key;

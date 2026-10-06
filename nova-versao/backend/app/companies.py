@@ -18,7 +18,7 @@ ALL_TABS = [
 ]
 
 # Abas que um viewer pode receber (nunca inclui importar).
-VIEWER_TABS = [t for t in ALL_TABS if t != "importar"]
+VIEWER_TABS = [t for t in ALL_TABS if t != "importar"] + ["vendas-produto"]
 
 
 @dataclass(frozen=True)
@@ -81,6 +81,19 @@ COMPANIES: tuple[CompanyReg, ...] = (
         units=(Unit("matriz", "Matriz", "36517206000130", r"UNICA"),),
     ),
     CompanyReg(
+        id="schumacher",
+        label="Indústria Schumacher",
+        cnpj="04589817000106",
+        name_re=r"SCHUMACHER",
+        username="schumacher",
+        theme="green",
+        tabs=("visao-geral", "vendas-produto", "impostos", "memoria", "dre", "balancete", "importar"),
+        units=(
+            Unit("matriz", "Matriz", "04589817000106", r"SCHUMACHER"),
+            Unit("filial", "Schumacher Serviços", ""),
+        ),
+    ),
+    CompanyReg(
         id="jpg",
         label="JPG",
         cnpj="21051983000165",
@@ -100,7 +113,7 @@ COMPANIES: tuple[CompanyReg, ...] = (
 
 COMPANY_BY_ID = {c.id: c for c in COMPANIES}
 KEEP_COMPANY_IDS = frozenset(COMPANY_BY_ID)
-KEEP_USERNAMES = frozenset({"admin", "egaplast", "baifer", "loja-maquinas", "unica", "jpg"})
+KEEP_USERNAMES = frozenset({"admin", "egaplast", "baifer", "loja-maquinas", "unica", "jpg", "schumacher"})
 
 
 def only_digits(value: str | None) -> str:

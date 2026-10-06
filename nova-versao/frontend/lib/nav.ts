@@ -7,6 +7,10 @@ export const CARD_META: Record<string, { desc: string; icon: string }> = {
     desc: "JPG Produtos Funcionais — sede e filiais",
     icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4",
   },
+  schumacher: {
+    desc: "Indústria Schumacher — Matriz e Schumacher Serviços",
+    icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4",
+  },
 };
 
 export const NAV = [
@@ -17,6 +21,7 @@ export const NAV = [
       { id: "compras", label: "Compras", icon: "fa-cart-shopping" },
       { id: "finalidade", label: "Finalidade de Compras", icon: "fa-tags" },
       { id: "vendas", label: "Vendas", icon: "fa-store" },
+      { id: "vendas-produto", label: "Vendas por produto", icon: "fa-boxes-stacked" },
     ],
   },
   {

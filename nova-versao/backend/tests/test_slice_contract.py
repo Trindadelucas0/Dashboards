@@ -511,3 +511,13 @@ def test_balancete_por_mes_year_filter():
     assert por[0]["totais"]["ativo"] == 100
     assert por[0]["shortLabel"] == "Jan"
     assert build_balancete_por_mes(months, "2024") == []
+
+    sch = {
+        "kind": "schumacher_bp",
+        "linhas": [{"key": "7:ATIVO", "descricao": "ATIVO", "valor": 10, "lado": "ativo"}],
+        "totais": {"ativo": 10, "passivo": 8, "diferenca": 2},
+        "hasValores": True,
+    }
+    por_s = build_balancete_por_mes([M("2026-08", {"hasBalancete": True, "balancete": sch})], "2026")
+    assert por_s[0]["totais"]["diferenca"] == 2
+    assert por_s[0]["balancete"]["linhas"][0]["descricao"] == "ATIVO"

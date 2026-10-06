@@ -32,6 +32,10 @@ from app.extract.parse_impostos import (
     impostos_table_parts,
 )
 from app.extract.parse_memoria_5005 import apuracao_patch_from_5005, is_apuracao_5005, parse_apuracao_5005
+from app.extract.parse_livro_apuracao import extract_livro_apuracao, is_livro_apuracao
+from app.extract.parse_venda_produto import extract_venda_produto, is_venda_produto
+from app.extract.parse_dre_schumacher import extract_dre_schumacher, is_dre_schumacher
+from app.extract.parse_balanco_schumacher import extract_balanco_schumacher, is_balanco_schumacher
 from app.extract.parse_workbook_padrao import (
     extract_workbook_padrao,
     is_workbook_padrao,
@@ -267,6 +271,18 @@ def classify_and_extract(
             tipo,
             {"errors": [f"Não foi possível ler o arquivo: {exc}"], "parser": "fail"},
         )
+
+    if is_livro_apuracao(sheets):
+        return extract_livro_apuracao(sheets, filename)
+
+    if is_venda_produto(sheets):
+        return extract_venda_produto(sheets, filename)
+
+    if is_dre_schumacher(sheets):
+        return extract_dre_schumacher(sheets, filename)
+
+    if is_balanco_schumacher(sheets):
+        return extract_balanco_schumacher(sheets, filename)
 
     if is_workbook_padrao(sheets):
         return extract_workbook_padrao(sheets, filename, company_cnpj=company_cnpj or "")

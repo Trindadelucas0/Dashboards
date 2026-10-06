@@ -278,7 +278,7 @@ def normalize_dre_deducoes(dre: dict) -> dict:
     e o total somava o valor — líquida maior que a bruta e lucro bruto inflado.
     Não altera `(-) OUTRAS RECEITAS OPERACIONAIS` (fora deste bloco).
     """
-    if not isinstance(dre, dict) or dre.get("kind") == "resultado":
+    if not isinstance(dre, dict) or dre.get("kind") in ("resultado", "schumacher_comparativo"):
         return dre
     linhas = dre.get("linhas")
     if not isinstance(linhas, list) or not linhas:

@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.7.1 — Confirmação de exclusão no card |
-| Última atualização | 30/09/2026 (Excluir abre Cancelar / Excluir planilha dentro do card da planilha) |
+| Versão do sistema | 2.9.4 — Cards na Memória Schumacher |
+| Última atualização | 01/10/2026 (Schumacher Memória: cards + Resumo Consolidado; CFOP em Ver livro técnico) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,12 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.9.4 | Cards na Memória Schumacher | Aba **Memória de Cálculo** da Indústria Schumacher (`MemoriaApuracao`) abre com os mesmos cards (`TaxDetailCard`) e **Resumo Consolidado** da Única. Linhas de cada card = campos do livro (débitos, outros débitos, saldo devedor, créditos, saldo anterior, outros créditos, saldo credor, a recolher, a transportar). IPI entra com os números do livro. ICMS ST, IRPJ e CSLL ficam **Em apuração**. Chip do card: a recolher > 0 → **A recolher**; a recolher ~ 0 e a transportar > 0 → **Saldo credor**. `% s/ RB` e vencimento ficam `—` (o pack do livro não tem `receitaBruta` nem guia). O livro por CFOP (Resumo / Entradas / Saídas / Conferência) abre em **Ver livro técnico**. Única, Baifer e JPG em `MemoriaLivro` não mudam. Impostos (`ApuracaoDashboard`) não muda. |
+| 2.9.3 | DRE e Balanço Patrimonial Schumacher | Indústria Schumacher ganha abas **DRE** e **Balanço Patrimonial** (id `balancete`, rótulo só nesta empresa). Excel Comparativo jan–ago/2026 (CNPJ 04.589.817/0001-06, consolidado) vira 8 parts na Matriz (`dre.kind=schumacher_comparativo`, `balancete.kind=schumacher_bp`). DRE: KPIs em R$ + Conta × meses + coluna Acumulado Jan–Ago do arquivo. Balanço: duas colunas Ativo \| Passivo do mês; trimestre usa o último mês e uma faixa dos fins. Seletor de unidade some nessas abas. Única/Baifer continuam com `DreStatement` e `BalanceteTree`. Janeiro da DRE entra como no Excel (RB 65.256.171,15). |
+| 2.9.2 | Cores pelo sinal na lista de produtos | Na aba **Vendas por produto**, colunas Total, Lucro líq. e Marg. líq. (tabela, TOTAL GERAL e card mobile) ficam verdes se o valor for positivo e vermelhas se for negativo. Zero, código, nome, quantidade e custo não mudam de cor. KPIs e Maiores vendas intactos. |
+| 2.9.1 | Sem faixa de trimestre na Schumacher | Chip **1º Trim** / **2º Trim** da Indústria Schumacher não renderiza `TrimestreBlock` (Vendas/Compras/Saldo/ICMS do trimestre). Cabeçalho “· Soma …”, chips e cards do livro (`ApuracaoDashboard`) continuam. Única, Baifer, JPG, Egaplast e Loja das Máquinas mantêm a faixa. |
+| 2.9.0 | Vendas por produto Schumacher | Aba **Vendas por produto** só na Indústria Schumacher (`vendas-produto`). Excel Matriz 01–08 + Filial 01–08 vira `venda_produto` (16 parts). Pack `vendaProduto` (margem como razão; tela × 100). Unidade `filial` = Schumacher Serviços, sem CNPJ. Todas/trimestre somam quantidade e dinheiro, recalculam margem e PMP ponderado pelo total. A Vendas de nota (`vendas`) de Única, Baifer, JPG, Egaplast e Loja das Máquinas **não muda**. |
+| 2.8.0 | Livro fiscal Schumacher | Empresa **Indústria Schumacher** (login `schumacher`, CNPJ 04589817000106, abas Visão Geral, Impostos, Memória e Importar). Planilha com abas Resumo + ICMS_Entradas vira `livro_apuracao` (uma part por mês). Impostos e Memória usam o layout do livro **somente** quando o pack tem `livroApuracao`. Única, Baifer, JPG, Egaplast e Loja das Máquinas continuam com os 4 KPIs de vendas/% e `MemoriaLivro`. ICMS ST, IRPJ e CSLL ficam **Em apuração** (não entram no pack). |
 | 2.7.1 | Confirmação de exclusão no card | Em **Planilhas importadas**, **Excluir** troca o botão do card pela confirmação (Cancelar / **Excluir planilha**) no próprio card, que rola para a vista. Antes a caixa ficava depois da lista inteira e o clique parecia não fazer nada. API e regra de exclusão não mudaram. |
 | 2.7.0 | Excluir planilha | Aba **Importar** (admin) lista as planilhas `ok` da empresa e permite **Excluir**. A exclusão apaga o registro e os dados daquele arquivo no mês; o que veio de outro arquivo permanece. Com `pack_patch`, o mês é reconstruído. Import antigo sem patch: tipo repetido no mesmo mês responde 409 e não altera nada. |
 | 2.6.10 | Planilha padrão qualquer empresa | O parser não depende de Baifer/Loja. Empresa nova (catálogo ou só Postgres) usa o mesmo modelo: `MMYYYY` no nome → competência; abas → mesmos campos; `company_id` do dashboard aberto. Guia §8 e teste `test_padrao_qualquer_empresa.py`. |
@@ -153,6 +159,7 @@ Regras de exibição:
 - `% s/ RB` = max(aRecolher, 0) / `receitaBruta` do pack (carga a recolher); sem RB → `—`.
 - Ordem do resumo: Simples Nacional (se houver) → ICMS 5005 → ICMS ST → PIS → COFINS → IRPJ → CSLL → TOTAL.
 - **Simples Nacional (LANNIC):** card/tabela PGDAS com saídas e devoluções (sem linha “Base memória”); partilha IRPJ/CSLL/PIS/COFINS/INSS/ICMS **só no livro**. Sem APURAÇÃO 5005 não aparece empty-state de 5005. Pack: `memoriaSimples` + `apuracao.das` (`fonte: pgdas_simples_nacional`). Partilha **não** vai para `apuracao.icms` / `irpj` / `csll`.
+- **Indústria Schumacher** (`livroApuracao`): os mesmos cards e Resumo Consolidado; cada tributo do livro lista as 9 linhas do resumo (não Decreto 5005, não base/alíquota, não UF). IPI entra nessa grade. ICMS ST, IRPJ e CSLL são cards **Em apuração**. **Ver livro técnico** abre ICMS/IPI/PIS/COFINS com Resumo, Entradas/créditos, Saídas/débitos e Conferência. `% s/ RB` = `—`.
 
 Fórmulas gravadas no pack (não calculadas na UI):
 
@@ -226,8 +233,60 @@ Slice: `_slice("recebimentos")` devolve `saldo`, `ticketMedio`, `comprasSobreVen
 | Loja das Máquinas | `loja-maquinas` | 13983066000190 | verde | EXITO legado |
 | Única (UNICA COMERCIO ATACADISTA DE TINTAS) | `unica` | 36517206000130 | azul | Planilha padrão v2 (01–07/2026) |
 | JPG | `jpg` | 21051983000165 (Sede) | verde | EXITO por filial (`unidade`); um dashboard |
+| Indústria Schumacher | `schumacher` | 04589817000106 | verde | Livro de apuração (Matriz) + venda por produto (Matriz e Schumacher Serviços) + DRE e Balanço consolidado (Matriz), jan–ago/2026. Sem NF |
 
 Cadastro estático: `backend/app/companies.py` (+ `KEEP_USERNAMES`) e `backend/scripts/seed.py`.
+
+### Indústria Schumacher — livro de apuração
+
+Login `schumacher` → um card → abas **Visão Geral**, **Vendas por produto**, **Impostos**, **Memória de Cálculo**, **DRE**, **Balanço Patrimonial** e **Importar** (Importar só para administrador). Não há Compras nem a Vendas de nota. Unidade **Matriz** (CNPJ 04.589.817/0001-06) e **Schumacher Serviços** (sem CNPJ no pack/`CompanyCnpj`). Nas abas DRE e Balanço o seletor de unidade some: os números são consolidado gravado na Matriz.
+
+Fonte: `fixtures/schumacher-padrao/SHUMACKER_MATRIZ_APURACOES_2026.xlsx` (CNPJ 04.589.817/0001-06). O parser reconhece o arquivo quando as abas dobradas incluem `resumo` e `icms_entradas`. A planilha padrão (DRE / BALANCETE / ICMS 5005) **não** entra nesse tipo.
+
+Fórmula gravada a partir das colunas do Resumo (não é débito − crédito):
+
+- saldo devedor = débitos por saídas + outros débitos
+- saldo credor = créditos por entradas + saldo anterior + outros créditos
+- a recolher = saldo devedor − saldo credor, quando o devedor é maior
+- a transportar = saldo credor − saldo devedor, quando o credor é maior
+
+Jan/2026 ICMS: débitos 202.756,31 · créditos 140.400,70 · outros créditos 16.331,63 · saldo credor 156.732,33 · a recolher **46.023,98** · a transportar 0. IPI a recolher 3.561,24. Abr/2026 ICMS outros débitos 180.694,92 (subtítulo do card Débitos).
+
+ICMS ST, IRPJ e CSLL **não** são gravados. Na tela aparecem como **Em apuração** com traços.
+
+O layout novo (cards do livro na Memória, tabela por tributo em Impostos) só renderiza se `data.livroApuracao` existe. Na Memória: `TaxDetailCard` + Resumo Consolidado no topo; o CFOP fica em **Ver livro técnico**. Única, Baifer, JPG, Egaplast e Loja das Máquinas seguem Impostos com os 4 KPIs (Vendas do mês, total, % ) e `MemoriaLivro`.
+
+Carga local: `python scripts/seed.py`, `python scripts/import_schumacher_livro.py` (merge no pack da Matriz), `python scripts/import_schumacher_venda_produto.py` (merge `vendaProduto`; cria os slots da Filial), `python scripts/import_schumacher_dre.py` e `python scripts/import_schumacher_balanco.py` (merge na Matriz; não apaga livro nem venda por produto).
+
+### Indústria Schumacher — venda por produto
+
+Fonte: `fixtures/schumacher-padrao/VENDA_POR_PRODUTO_SHUMACHER_01_A_08_2026_MATRIZ_E_FILIAL.xlsx`. O parser reconhece o arquivo quando existem as abas dobradas `matriz 01` e `filial 01`. Livro (`icms_entradas`) e planilha padrão **não** entram nesse tipo.
+
+Cada aba `Matriz MM` / `Filial MM` vira uma part `venda_produto` com competência `2026-MM` e unidade `matriz` ou `filial`. Hash `tipo:competencia:unidade` para Matriz e Filial do mesmo mês não colidirem. O Resumo só confere o total; a lista vem da aba do mês. Se a soma da coluna Total e o TOTAL GERAL diferirem em 0,02 ou mais, a part volta com erro e não grava como ok.
+
+Pack `vendaProduto.resumo` e `vendaProduto.produtos[]`: `codigo`, `produto`, `qtde`, `qtdeUn`, `aVista`, `aPrazo`, `total`, `custo`, `lucroBruto`, `lucroLiquido`, `margBruta`, `margLiquida`, `pmp`. Margem **gravada como razão** (`0,5862` = 58,62% na tela). PMP do mês é o da linha TOTAL, não média simples. Filial fevereiro lucro bruto **−187.636,43** é o card, não erro de parse. Quantidade zero mostra o PMP da planilha.
+
+**Todas** e **1º Trimestre**: somam quantidade, à vista, a prazo, total, custo e lucros; margem = lucro ÷ total (total zero não divide); PMP = soma(PMP × total) ÷ soma(total); produtos com o mesmo código somam. Não há opção “Jan–Ago” no seletor; os oito meses aparecem no gráfico.
+
+API: `GET /api/companies/schumacher/months/2026-01/vendas-produto?unidade=matriz` (sem rota nova). Golden: Matriz jan/2026 total **2.124.363,70** / 244 itens / produto 10001 qtde 603 total 17.529,33; Filial jan **731.003,59** / 53 itens; Todas jan ≈ **2.855.367,29**.
+
+A aba **Vendas** (`vendas`) das outras empresas continua nota por cliente/UF/ticket.
+
+### Indústria Schumacher — DRE e Balanço Patrimonial
+
+Fontes: `fixtures/schumacher-padrao/DRE_SCHUMACHER_2026.xlsx` e `BALANCO_PATRIMONIAL_SCHUMACHER_2026.xlsx`. O parser usa a aba **Comparativo** (cabeçalho `Jan/26`…`Ago/26`). CNPJ 04.589.817/0001-06; DRE `Filial: CONSOLIDADO`; BP `Unidade: TODOS (0)`. As abas mensais `Jan-26`… são ignoradas (mesmo número). Análise Vertical (`01/2026`), livro e venda por produto **não** entram nesses tipos.
+
+Cada coluna de mês vira uma part na **Matriz** (`2026-01`…`2026-08`). Hash `tipo:competencia`. Merge no pack existente (`hasDre` + `dre.kind=schumacher_comparativo`; `hasBalancete` + `balancete.kind=schumacher_bp` com `linhas` e `totais`, sem código de conta). `hasMovimentacao` permanece false.
+
+**DRE (UI `DreSchumacher`):** KPIs em R$ do chip (Receita bruta = RECEITA OPERACIONAL BRUTA, Receita líquida, Lucro bruto, Lucro líquido). Tabela Conta × meses; chip de mês destaca a coluna; **1º/2º Trim** mostra só esses três meses e **soma** os KPIs (fluxo). Coluna **Acumulado Jan–Ago** sempre vem do arquivo (não é soma do trimestre). Grupos L1 recolhíveis. Janeiro RB **65.256.171,15** entra como no Excel.
+
+Golden DRE: jan LL **3.286.063,34** · RL **64.810.440,98** · Lucro bruto **21.588.039,86**; ago RB **5.448.307,61** · LL **−60.274,01**; Acumulado Jan–Ago RB **101.951.997,02** · LL **−4.771.004,58**.
+
+**Balanço (UI `BalancoSchumacher`, rota `balancete`):** duas colunas Ativo | Passivo+PL da posição do mês. KPIs Ativo, Passivo (c/ PL), Patrimônio líquido, Diferença (linha do Excel). Trimestre: corpo = último mês importado do trimestre; faixa com Ativo/Passivo/Diferença de cada fim. Sem coluna TOTAL somando meses. Estoque negativo permanece.
+
+Golden BP jan: Ativo **78.939.887,50** · Passivo **75.653.824,16** · PL **24.427.195,97** · Diferença **3.286.063,34** (= LL da DRE de janeiro). Ago: Ativo **75.570.991,22** · Passivo **80.341.995,80** · Diferença **−4.771.004,58** (= LL acumulado Jan–Ago da DRE, posição de estoque).
+
+Única, Baifer, JPG, Egaplast e Loja das Máquinas continuam com `DreStatement` (MB/MO/ML/Carga) e `BalanceteTree`. Sem aba Indicadores na Schumacher.
 
 ### JPG — um dashboard, várias unidades
 
@@ -351,7 +410,9 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | Import IRPJ/CSLL JPG sede | `backend/scripts/import_jpg_irpj_csll.py` (merge 03/2026 e 06/2026) |
 | Parser movimento | `backend/app/extract/parse_movimento.py` |
 | Parser DRE / Análise Vertical | `backend/app/extract/parse_dre.py` (`extract_dre_vertical`, `parse_dre_padrao_column`) |
+| Parser DRE Schumacher | `backend/app/extract/parse_dre_schumacher.py` |
 | Parser Balancete EXITO / padrão | `backend/app/extract/parse_balancete.py` |
+| Parser Balanço Schumacher | `backend/app/extract/parse_balanco_schumacher.py` |
 | Pipeline | `backend/app/extract/pipeline.py` |
 | Preview/commit | `backend/app/routers/imports.py` (`expand_workbook_parts` também expande `dre_vertical`). Cada item gravado guarda `source_file_hash` e `pack_patch`; cada `NfeLine` nova aponta `import_id`. **Substituir mês** marca os `ImportRecord` `ok` daquele slot como `replaced` antes de gravar o novo. |
 | Lista e exclusão | `GET /api/imports?companyId=` e `DELETE /api/imports/{id}` em `backend/app/routers/imports.py` (admin + empresa do registro). Reconstrução do mês: `backend/app/imports_revert.py` (`rebuild_pack`). |
@@ -359,18 +420,20 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | CFOP / Finalidade / Serviços | `backend/app/extract/cfop.py` (`CFOP_INFO`, `aggregate_macro`, `aggregate_servicos`) |
 | Linhas NF (export) | `GET .../nfe-lines` em `backend/app/routers/companies.py`; classificação `tipo_doc` / `vendas_por_doc` em `backend/app/extract/aggregate.py` |
 | Export PDF/Excel | `frontend/lib/exportLibs.ts`, `vendasExport.ts`, `finalidadeExport.ts`, `cpfCnpjExport.ts`, `supplierExport.ts` |
-| UI Memória | `frontend/components/MemoriaLivro.tsx` |
-| UI DRE | `frontend/components/DreStatement.tsx` |
-| UI Balancete | `frontend/components/BalanceteTree.tsx` |
-| UI abas (Impostos / Indicadores / Recebimentos) | `frontend/app/dashboard/[empresa]/[aba]/page.tsx` (`TrimestreBlock` só se `viewingTrimestre`) |
+| UI Memória | `frontend/components/MemoriaLivro.tsx` (padrão). Schumacher com `livroApuracao`: `frontend/components/MemoriaApuracao.tsx` |
+| UI livro Schumacher | `frontend/components/ApuracaoDashboard.tsx` (Impostos e Visão Geral sem movimento). Parser `backend/app/extract/parse_livro_apuracao.py`. Carga `backend/scripts/import_schumacher_livro.py` (merge no pack) |
+| UI venda por produto | `frontend/components/VendasProduto.tsx`. Parser `backend/app/extract/parse_venda_produto.py`. Carga `backend/scripts/import_schumacher_venda_produto.py`. Fatia `_slice` / `aggregate_fiscal_packs` / `TAB_KEYS` em `backend/app/routers/companies.py` |
+| UI DRE | `frontend/components/DreStatement.tsx` (Única e demais). Schumacher: `frontend/components/DreSchumacher.tsx` |
+| UI Balancete | `frontend/components/BalanceteTree.tsx` (Única e demais). Schumacher: `frontend/components/BalancoSchumacher.tsx` (rótulo Balanço Patrimonial) |
+| UI abas (Impostos / Indicadores / Recebimentos) | `frontend/app/dashboard/[empresa]/[aba]/page.tsx` (`TrimestreBlock` só se `viewingTrimestre`; Schumacher não monta) |
 | Estilos dashboard | `frontend/app/dashboard.css` |
 | UI import | `frontend/components/ImportTab.tsx` (upload, lista **Planilhas importadas**, confirmação de exclusão dentro do card clicado) |
 | Catálogo de empresas | `backend/app/companies.py`, `backend/scripts/seed.py` |
 | JPG unidades / consolidado | `company_detail` + `tab_payload` (`unidade=todas`) em `backend/app/routers/companies.py`; `aggregate_fiscal_packs` soma `irpj`/`csll`; dropdown em `frontend/app/dashboard/[empresa]/layout-inner.tsx` |
 | LANNIC Simples | `Unit lannic` em `backend/app/companies.py`; pack `scripts/seed_jpg_lannic.py` (merge, não apaga NFs); `preserve_simples_receita` em `aggregate.py`; UI Impostos `page.tsx` + `MemoriaLivro.tsx` |
 | Split movimento acumulado | `backend/scripts/split_movimento_mensal.py` |
-| Testes golden | `backend/tests/test_import_revert.py`, `backend/tests/test_padrao_qualquer_empresa.py` (sintético, sem empresa fixa), `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_loja_padrao_082026.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py` |
-| Fixtures | `fixtures/baifer-padrao/`, `fixtures/unica-padrao/`, `fixtures/egaplast-padrao/`, `fixtures/loja-maquinas-padrao/`, `fixtures/jpg-padrao/` |
+| Testes golden | `backend/tests/test_import_revert.py`, `backend/tests/test_padrao_qualquer_empresa.py` (sintético, sem empresa fixa), `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_loja_padrao_082026.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py`, `backend/tests/test_livro_apuracao_schumacher.py`, `backend/tests/test_venda_produto_schumacher.py`, `backend/tests/test_dre_schumacher.py`, `backend/tests/test_balanco_schumacher.py` |
+| Fixtures | `fixtures/baifer-padrao/`, `fixtures/unica-padrao/`, `fixtures/egaplast-padrao/`, `fixtures/loja-maquinas-padrao/`, `fixtures/jpg-padrao/`, `fixtures/schumacher-padrao/` |
 
 ## 5. Regras de negócio
 
@@ -394,8 +457,11 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 19. JPG IRPJ/CSLL EXITO (abas CSOC + IRPJ-LP): grava só no último mês do trimestre (`sede` 03 e 06/2026); merge no movimento; o chip de trimestre soma `apuracao.irpj`/`csll` sem espalhar pelos outros dois meses.
 20. IPI (demonstrativo EXITO ou tabela): se a recolher/saldo devedor ≈ 0 e há saldo credor (ou crédito > débito) → `aRecolher` negativo. KPI Visão Geral: DAS, senão ICMS com valor, senão IPI. JPG não exibe APURAÇÃO 5005 na UI.
 21. LANNIC (Simples): `memoriaSimples.baseMemoria` manda em `receitaBruta` após merge de saídas/import/seed. `cfopSaidasTotal` e `NfeLine` vêm do Excel. Reexecutar `seed_jpg_lannic.py` **não** zera movimento.
-22. Barra de competência: chip de mês mostra só o mês. Chip **1º Trim** / **2º Trim** (`qN-YYYY`) soma os meses importados do trimestre e exibe a faixa de 4 KPIs (`TrimestreBlock`). Aba **DRE** não usa essa faixa. A API ainda pode devolver `trimestre` no mês; a UI ignora.
+22. Barra de competência: chip de mês mostra só o mês. Chip **1º Trim** / **2º Trim** (`qN-YYYY`) soma os meses importados do trimestre e, nas empresas com movimento, exibe a faixa de 4 KPIs (`TrimestreBlock`). Aba **DRE**, aba **Vendas por produto** e a empresa **Indústria Schumacher** (`schumacher`) não usam essa faixa. A API ainda pode devolver `trimestre` no mês; a UI ignora.
 23. Excluir planilha (só administrador, aba **Importar**): a lista mostra só registros `status=ok` da empresa aberta. Várias abas do mesmo arquivo compartilham `source_file_hash` e saem juntas; o id do card é o menor id do grupo. `DELETE /api/imports/{id}` apaga esses registros e as `NfeLine` com `import_id` neles. Se todo registro do slot (os que saem e os que ficam `ok`) tem `pack_patch`, o pack do mês é remontado só com os arquivos que permanecem, na ordem de gravação; chave que nenhum desses arquivos gravou (ex. `memoriaSimples` do seed) fica, e `receitaBruta` continua a base PGDAS. Import antigo sem `pack_patch`: se era o único arquivo daquele mês/unidade, o slot zera; se o tipo não se repete entre os que ficam, só as chaves daquele tipo saem; se há outro arquivo do mesmo tipo, a API responde 409 e não grava nada — use **Substituir mês** ao reimportar o pacote certo. **Substituir mês** marca como `replaced` todos os `ImportRecord` `ok` daquele mês/unidade antes de gravar o novo.
+24. Livro de apuração (Schumacher): `tipo` `livro_apuracao` antes da planilha padrão. Pack `apuracao.{icms,ipi,pis,cofins}` traz débitos, créditos, saldo credor (pool), a recolher, a transportar e `fonte: livro_apuracao`. `livroApuracao.tributos` traz entradas, saídas, subtotais e ajustes. PIS/COFINS gravam a última coluna em `outros` e `colunaOutrosLabel = "Imune/Susp."`. Trimestre soma os números do resumo e concatena as linhas; conferência do período fica OK só se todos os meses estão OK. A UI nova só aparece com `livroApuracao`. Sem essa chave, Impostos continua com os 4 KPIs de vendas/% e Memória continua em `MemoriaLivro`. Com a chave, Memória (`MemoriaApuracao`) abre nos cards + Resumo Consolidado; o CFOP só depois de **Ver livro técnico**. Reimportar o livro faz **merge** no pack (não apaga `vendaProduto`).
+25. Venda por produto (Schumacher): `tipo` `venda_produto` depois do livro e antes da planilha padrão. Exige abas `matriz 01` e `filial 01`. Pack `vendaProduto` no mesmo `FiscalMonth` da Matriz (ao lado do livro) e em slots novos da Filial. Margem = razão; a tela multiplica por 100. PMP do mês = linha TOTAL; PMP de Todas/trimestre = ponderado pelo total. Produtos iguais somam pelo código. Aba só no `company.tabs` da Schumacher (`vendas-produto`); `ALL_TABS` das outras empresas não inclui essa aba. Sem a chave, alerta “não inventamos valor”. Na lista, Total / Lucro líq. / Marg. líq. usam `td-val pos` (verde) se > 0 e `td-val neg` (vermelho) se < 0.
+26. DRE / Balanço Schumacher: `tipo` `dre_schumacher` / `balanco_schumacher` depois de venda por produto e antes da planilha padrão. Só aba Comparativo; 8 parts na Matriz. DRE não passa por `normalize_dre_deducoes` (`kind=schumacher_comparativo`). Acumulado Jan–Ago da DRE é o da planilha. Balanço não tem códigos nem TOTAL somando meses; `build_balancete_por_mes` aceita `kind=schumacher_bp` com `linhas`. Diferença Ativo−Passivo de janeiro = lucro líquido da DRE do mês; em agosto a diferença de posição = lucro acumulado Jan–Ago. Seletor de unidade oculto nessas duas abas. Reimportar faz merge (não apaga livro nem `vendaProduto`). Sem Indicadores nesta empresa.
 
 ## 6. Pendências de dados (Única)
 
@@ -418,7 +484,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 3. Subir o `.xlsx` padrão (mesmo esqueleto todo mês). Se o arquivo já trouxer `ENTRADAS`/`SAÍDAS`, Compras e Vendas saem dele; senão, subir também o EXITO de Entradas **ou** o **Relatório de entrada por fornecedor**.
 4. Conferir preview (ok / vazia / ignorada) → **Gravar**.
 5. Em **Planilhas importadas** (mesma aba, só administrador), cada arquivo gravado mostra data, mês, unidade e tipos. **Excluir** abre a confirmação dentro do próprio card daquela planilha (Cancelar / **Excluir planilha**); Cancelar devolve o botão Excluir. Sai só o que aquela planilha entrou; outro arquivo do mesmo mês permanece. Se aparecer que não dá para separar duas planilhas do mesmo tipo, nada é apagado: reimporte o pacote certo com **Substituir mês**.
-6. Selecionar mês no chip superior; conferir DRE, Balancete, **Memória** (livro linha a linha), Impostos, Compras, Vendas. Para o **total somado do trimestre**, clique em **1º Trim** / **2º Trim** (não no mês): aí aparece a faixa de 4 KPIs (vendas, compras, saldo, imposto). No chip de mês essa faixa não aparece.
+6. Selecionar mês no chip superior; conferir DRE, Balancete, **Memória** (livro linha a linha), Impostos, Compras, Vendas. Para o **total somado do trimestre**, clique em **1º Trim** / **2º Trim** (não no mês): aí aparece a faixa de 4 KPIs (vendas, compras, saldo, imposto), **exceto** na Indústria Schumacher, onde a faixa não é montada. No chip de mês essa faixa não aparece.
 
 **Única — DRE Análise Vertical (jan–jun/2026):** login `unica` → Importar → selecionar `Análise Vertical do D. R. E.xls` → preview deve listar **6** linhas `dre` (2026-01 … 2026-06) com `ok` → **Gravar** (sem “substituir mês” se o mês já tiver movimento/impostos) → conferir aba **DRE** em cada chip de mês. Em jan/2026 a planilha não traz lucro operacional → KPI de lucro líquido / ML fica N/D.
 
@@ -436,7 +502,9 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 **Memória:** depois de gravar a planilha padrão, abra **Memória de Cálculo**. No topo: cards detalhados + **Resumo Consolidado**; abaixo, **Ver livro técnico** abre 5005 / PIS/COFINS / ST etc. Nos cards PIS/COFINS, **A recolher** é a coluna do RESUMO; se houver saldo credor acumulado, **Resultado do mês** mostra só débito − crédito.
 
-**Impostos:** KPIs no topo mostram vendas, total de impostos e **% sobre vendas**; cada card de tributo repete `% s/ vendas` quando há aRecolher e faturamento.
+**Impostos:** KPIs no topo mostram vendas, total de impostos e **% sobre vendas**; cada card de tributo repete `% s/ vendas` quando há aRecolher e faturamento. Isso vale para Única, Baifer, JPG, Egaplast e Loja das Máquinas. A Indústria Schumacher, quando o mês tem livro de apuração, mostra os cards de débitos/créditos/a recolher/saldo credor/a transportar em vez desses 4 KPIs.
+
+**Indústria Schumacher:** login `schumacher` → Visão Geral (cards + tabela, sem gráfico) → **Vendas por produto** (mês no seletor já usado em Impostos; unidade Matriz, Schumacher Serviços ou Todas) → Impostos (cards do livro, evolução e rosca) → **Ver memória de cálculo**. **DRE:** chip de mês destaca a coluna; 1º/2º Trim recorta os três meses e soma os KPIs em R$; a coluna Acumulado Jan–Ago continua a do arquivo. **Balanço Patrimonial:** Ativo à esquerda e Passivo+PL à direita no mês do chip; no trimestre, o corpo é o último mês e a faixa mostra os três fins. Nestas duas abas o seletor de unidade some. Em **Memória:** cards no topo (ICMS, IPI, PIS, COFINS com as linhas do livro; ICMS ST, IRPJ e CSLL **Em apuração**) + **Resumo Consolidado**; **Ver livro técnico** abre ICMS/IPI/PIS/COFINS com Resumo, Entradas/créditos, Saídas/débitos e Conferência. Abr/2026 mostra outros débitos de ICMS no card. O menu **não** tem Compras nem a Vendas de nota. O chip **1º Trim** / **2º Trim** soma o livro e o cabeçalho mostra “· Soma …”, mas **não** exibe a faixa `TrimestreBlock` (Vendas/Compras/Saldo/ICMS). Em Vendas por produto: cards do mês, maiores vendas, gráfico Jan–Ago, **Ver todos os produtos** (busca, filtros, detalhe na linha). Margem na tela = razão × 100. Na lista, Total / Lucro líq. / Marg. líq. ficam verdes se positivos e vermelhos se negativos (zero, código, nome, qtde e custo sem cor de sinal). Filial em Impostos continua sem planilha.
 
 **Balancete / DRE / Indicadores:** use o chip de mês do header. No **Balancete**, os chips dentro do card destacam a coluna do mês; Expandir/Recolher controla a árvore; busca e filtro de grupo restringem as contas. Indicadores patrimoniais ficam N/D sem Balancete.
 
@@ -452,7 +520,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 **Loja das Máquinas — planilha padrão (exemplo):** login `loja-maquinas` → Importar o `… LOJA DAS MAQUINAS MMYYYY.xlsx` (aba `ICMS` sem 5005) + entradas/saídas EXITO do mês, se houver.
 
-Login seed: `admin`, `baifer`, `egaplast`, `loja-maquinas`, `unica`, `jpg` (senhas no `.env`).
+Login seed: `admin`, `baifer`, `egaplast`, `loja-maquinas`, `unica`, `jpg`, `schumacher` (senhas no `.env`).
 
 **JPG — filiais:** login `jpg` → seletor mostra **um** card JPG → `/dashboard/jpg/visao-geral`. No header, o dropdown lista Matriz Sede, Filial PR/SP/MG, Filial Asa Sul DF, **LANNIC Dermocosméticos** e **Todas as unidades**. Movimento acumulado (`01-2026 a 08-2026`) precisa ser separado por mês (`split_movimento_mensal.py`) antes de Importar; impostos de filial (demonstrativo ICMS/IPI com uma aba por mês) podem ir inteiros — o sistema grava cada mês na unidade do CNPJ/arquivo. Conferir Compras/Vendas/Impostos **da unidade escolhida**; Todas só soma leitura. A JPG **não** importa planilha 5005: textos da Memória/Importar falam só de ICMS/IPI EXITO.
 

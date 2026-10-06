@@ -15,6 +15,7 @@ from app.db import get_db
 from app.deps import allowed_company_ids, current_user, require_admin, require_company, tabs_for_user
 from app.extract.cfop import aggregate_macro, aggregate_servicos, cfop_meta, top_grupos
 from app.extract.parse_dre import normalize_dre_deducoes
+from app.extract.parse_venda_produto import merge_venda_produto
 from app.extract.aggregate import tipo_doc, vendas_por_doc
 from app.models import Company, CompanyCnpj, FiscalMonth, NfeLine, User, UserCompany
 
@@ -25,6 +26,7 @@ TAB_KEYS = (
     "compras",
     "finalidade",
     "vendas",
+    "vendas-produto",
     "impostos",
     "memoria",
     "recebimentos",
@@ -331,9 +333,14 @@ def build_balancete_por_mes(months: list, year: str) -> list[dict]:
         if not (pack.get("hasBalancete") or bal):
             continue
         contas = bal.get("contas") if isinstance(bal.get("contas"), list) else []
-        if not contas:
-            continue
+        linhas = bal.get("linhas") if isinstance(bal.get("linhas"), list) else []
         totais = bal.get("totais") if isinstance(bal.get("totais"), dict) else {}
+        kind = bal.get("kind") or ""
+        if kind == "schumacher_bp":
+            if not linhas:
+                continue
+        elif not contas:
+            continue
         out.append(
             {
                 "competencia": comp,
@@ -341,9 +348,10 @@ def build_balancete_por_mes(months: list, year: str) -> list[dict]:
                 "shortLabel": _month_short(comp),
                 "hasBalancete": True,
                 "balancete": {
-                    "kind": bal.get("kind"),
+                    "kind": kind,
                     "source": bal.get("source") or pack.get("balanceteSource"),
                     "contas": contas,
+                    "linhas": linhas,
                     "totais": totais,
                     "hasValores": bal.get("hasValores"),
                 },
@@ -472,16 +480,30 @@ def aggregate_fiscal_packs(packs: list[dict], competencia_label: str) -> dict:
     ap_keys = ("das", "icms", "icmsSt", "pis", "cofins", "ipi", "irpj", "csll")
     apuracao: dict = {}
     for k in ap_keys:
-        bucket: dict[str, float] = {}
+        bucket: dict = {}
+        conferencias: list[str] = []
+        fontes: list[str] = []
         for p in packs:
             ap = p.get("apuracao") or {}
             item = ap.get(k) if isinstance(ap, dict) else None
             if not isinstance(item, dict):
                 continue
             for f, v in item.items():
+                if isinstance(v, bool):
+                    continue
                 if isinstance(v, (int, float)):
                     bucket[f] = round(float(bucket.get(f, 0)) + float(v), 2)
-        if bucket:
+                elif f == "conferencia" and v not in (None, ""):
+                    conferencias.append(str(v))
+                elif f == "fonte" and v:
+                    fontes.append(str(v))
+        if bucket or conferencias:
+            if conferencias:
+                bucket["conferencia"] = (
+                    "OK" if all(c.strip().upper() == "OK" for c in conferencias) else "DIVERGENTE"
+                )
+            if fontes and all(f == "livro_apuracao" for f in fontes):
+                bucket["fonte"] = "livro_apuracao"
             apuracao[k] = bucket
     subv = round(sum(float((p.get("apuracao") or {}).get("subvencao") or p.get("subvencao") or 0) for p in packs), 2)
     if subv:
@@ -502,6 +524,8 @@ def aggregate_fiscal_packs(packs: list[dict], competencia_label: str) -> dict:
     top10 = clientes[:10]
     top_sum = round(sum(float(c.get("total") or 0) for c in top10), 2)
 
+    livro = _merge_livro_apuracao(packs)
+    venda = merge_venda_produto(packs)
     pack = {
         "hasMovimentacao": any(p.get("hasMovimentacao") for p in packs),
         "hasDre": any(p.get("hasDre") for p in packs),
@@ -525,7 +549,49 @@ def aggregate_fiscal_packs(packs: list[dict], competencia_label: str) -> dict:
         "isTrimestre": True,
         **memoria_extra,
     }
+    if livro is not None:
+        pack["livroApuracao"] = livro
+    if venda is not None:
+        pack["vendaProduto"] = venda
     return _enrich_fiscal(pack)
+
+
+def _merge_livro_apuracao(packs: list[dict]) -> dict | None:
+    """Concatena linhas do livro e preserva a chave quando algum mês trouxe livroApuracao."""
+    livros = [p.get("livroApuracao") for p in packs if isinstance(p.get("livroApuracao"), dict)]
+    if not livros:
+        return None
+    tributos: dict = {}
+    for key in ("icms", "ipi", "pis", "cofins"):
+        entradas: list = []
+        saidas: list = []
+        subtotais: list = []
+        ajustes: list = []
+        label = ""
+        present = False
+        for liv in livros:
+            tri = (liv.get("tributos") or {}).get(key)
+            if not isinstance(tri, dict):
+                continue
+            present = True
+            entradas.extend(tri.get("entradas") or [])
+            saidas.extend(tri.get("saidas") or [])
+            subtotais.extend(tri.get("subtotais") or [])
+            ajustes.extend(tri.get("ajustes") or [])
+            if tri.get("colunaOutrosLabel"):
+                label = str(tri["colunaOutrosLabel"])
+        if not present:
+            continue
+        item: dict = {
+            "entradas": entradas,
+            "saidas": saidas,
+            "subtotais": subtotais,
+            "ajustes": ajustes,
+        }
+        if label:
+            item["colunaOutrosLabel"] = label
+        tributos[key] = item
+    return {"tributos": tributos}
 
 
 def _meses_label_presentes(presentes: list[str]) -> str:
@@ -797,14 +863,19 @@ def _is_empty(tab: str, pack: dict, row) -> bool:
     if row is None and not pack:
         return True
     if tab in ("visao-geral", "indicadores", "recebimentos"):
-        if pack.get("hasDre") or pack.get("apuracao") or pack.get("receitaBruta"):
+        if pack.get("hasDre") or pack.get("apuracao") or pack.get("receitaBruta") or pack.get("livroApuracao"):
             return False
         if pack.get("memoriaCalculo") or pack.get("memoriaSimples"):
             return False
     if tab == "dre":
         return not (pack.get("hasDre") or pack.get("dre"))
     if tab == "impostos":
-        return not (pack.get("apuracao") or pack.get("impostos") or pack.get("memoriaSimples"))
+        return not (
+            pack.get("apuracao")
+            or pack.get("impostos")
+            or pack.get("memoriaSimples")
+            or pack.get("livroApuracao")
+        )
     if tab == "balancete":
         return not (pack.get("hasBalancete") or pack.get("balancete"))
     if tab == "memoria":
@@ -820,7 +891,11 @@ def _is_empty(tab: str, pack: dict, row) -> bool:
             or pack.get("memoriaCsll")
             or pack.get("porUfSt")
             or pack.get("porUfDifal")
+            or pack.get("livroApuracao")
         )
+    if tab == "vendas-produto":
+        vp = pack.get("vendaProduto")
+        return not (isinstance(vp, dict) and (vp.get("resumo") or vp.get("produtos")))
     if tab == "importar":
         return False
     return not pack.get("hasMovimentacao")
@@ -899,6 +974,7 @@ def _slice(tab: str, pack: dict) -> dict:
             "dedPct": pack.get("dedPct"),
             "composicao": pack.get("composicao") or [],
             "subvencao": (ap or {}).get("subvencao") if ap else pack.get("subvencao"),
+            "livroApuracao": pack.get("livroApuracao"),
             "ufEntradas": _uf_list(pack.get("porUf") or {}, compras) or _uf_from_parties(pack.get("fornecedores") or [], compras),
             "ufSaidas": _uf_list(pack.get("porUfSaidas") or {}, vendas) or _uf_from_parties(pack.get("clientes") or pack.get("clientesTop10") or [], vendas),
         }
@@ -990,6 +1066,7 @@ def _slice(tab: str, pack: dict) -> dict:
             "dedPct": pack.get("dedPct"),
             "porUfSt": pack.get("porUfSt") or {},
             "memoriaSimples": pack.get("memoriaSimples"),
+            "livroApuracao": pack.get("livroApuracao"),
         }
     if tab == "memoria":
         return {
@@ -1006,6 +1083,7 @@ def _slice(tab: str, pack: dict) -> dict:
             "porUfDifal": pack.get("porUfDifal") or {},
             "subvencao": pack.get("subvencao") or (pack.get("apuracao") or {}).get("subvencao"),
             "receitaBruta": receita,
+            "livroApuracao": pack.get("livroApuracao"),
         }
     if tab == "recebimentos":
         nfs_e = int(pack.get("nfsEntradas") or 0)
@@ -1025,6 +1103,8 @@ def _slice(tab: str, pack: dict) -> dict:
             "comprasSobreVendasPct": pct_cv,
             "cobertura": cobertura,
         }
+    if tab == "vendas-produto":
+        return {"vendaProduto": pack.get("vendaProduto")}
     if tab == "balancete":
         return {
             "balancete": pack.get("balancete"),
@@ -1143,6 +1223,8 @@ def tab_payload(
         label = f"{q}º Trimestre {year}"
         pack = aggregate_fiscal_packs(packs, label)
         empty = not presentes
+        if tab == "vendas-produto":
+            empty = not presentes or _is_empty(tab, pack, None)
     elif _is_todas(unidade):
         same = [m for m in raw_months if m.competencia == competencia]
         packs = [m.pack or {} for m in same]
@@ -1243,6 +1325,31 @@ def tab_payload(
             "dedPct": ded_pct_s,
             "margMb": marg_mb_s,
             "margMl": marg_ml_s,
+        }
+        if tab == "impostos":
+            def _icms_serie(m, field: str):
+                ap_m = (m.pack or {}).get("apuracao") or {}
+                icms = ap_m.get("icms") if isinstance(ap_m, dict) else None
+                if not isinstance(icms, dict) or icms.get(field) is None:
+                    return None
+                return float(icms.get(field) or 0)
+
+            data["serie"]["debitosIcms"] = [_icms_serie(m, "debitos") for m in months]
+            data["serie"]["creditosIcms"] = [_icms_serie(m, "creditos") for m in months]
+            data["serie"]["aRecolherIcms"] = [_icms_serie(m, "aRecolher") for m in months]
+    if tab == "vendas-produto":
+        def _vp_field(m, field: str):
+            vp = (m.pack or {}).get("vendaProduto") or {}
+            res = vp.get("resumo") if isinstance(vp, dict) else None
+            if not isinstance(res, dict) or res.get(field) is None:
+                return None
+            return float(res.get(field) or 0)
+
+        data["serie"] = {
+            "labels": [_month_label(m.competencia) for m in months],
+            "competencias": [m.competencia for m in months],
+            "total": [_vp_field(m, "total") for m in months],
+            "lucroBruto": [_vp_field(m, "lucroBruto") for m in months],
         }
     if tab == "vendas" and kind == "month":
         data["variacaoVendas"] = variacao_vendas_mom(competencia, months)

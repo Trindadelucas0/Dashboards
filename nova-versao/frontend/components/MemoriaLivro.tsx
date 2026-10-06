@@ -37,7 +37,7 @@ type DetailRow = {
   emphasis?: boolean;
 };
 
-type TaxCardModel = {
+export type TaxCardModel = {
   id: string;
   nome: string;
   subtitle?: string;
@@ -122,7 +122,7 @@ function findBaseLine(lines: TaxBaseLine[] | undefined, name: string) {
   return (lines || []).find((ln) => String(ln.tributo || "").toUpperCase() === up);
 }
 
-function statusFromValor(v: number | null | undefined): Pick<TaxCardModel, "status" | "statusLabel"> {
+export function statusFromValor(v: number | null | undefined): Pick<TaxCardModel, "status" | "statusLabel"> {
   if (v == null) return { status: "apuracao", statusLabel: "Em apuração" };
   if (Math.abs(v) < 0.005) return { status: "zero", statusLabel: "Zero recolher" };
   if (v < 0) return { status: "credor", statusLabel: "Saldo credor" };
@@ -134,7 +134,7 @@ function toneClass(tone?: ValTone) {
   return `mem-val-${tone}`;
 }
 
-function TaxDetailCard({ card }: { card: TaxCardModel }) {
+export function TaxDetailCard({ card }: { card: TaxCardModel }) {
   return (
     <article className={`tax-detail tax-${card.tone}${card.pending ? " tax-pending" : ""}`} id={`card-${card.id}`}>
       <div className="tax-detail-head">
@@ -157,7 +157,7 @@ function TaxDetailCard({ card }: { card: TaxCardModel }) {
   );
 }
 
-function ResumoConsolidado({
+export function ResumoConsolidado({
   cards,
   rb,
   mesLabel,

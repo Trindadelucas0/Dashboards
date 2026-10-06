@@ -618,7 +618,15 @@ def _deep_merge_patch(base: dict, patch: dict) -> dict:
 def expand_workbook_parts(extracted: dict) -> list[dict]:
     """Expande parts do workbook padrão / DRE Análise Vertical em itens de preview/commit."""
     tipo = extracted.get("tipo")
-    if tipo not in ("workbook_padrao", "dre_vertical", "impostos_mensal"):
+    if tipo not in (
+        "workbook_padrao",
+        "dre_vertical",
+        "dre_schumacher",
+        "balanco_schumacher",
+        "impostos_mensal",
+        "livro_apuracao",
+        "venda_produto",
+    ):
         return [extracted]
     base = {k: v for k, v in extracted.items() if k not in ("parts", "pack_patch")}
     file_hash = extracted.get("file_hash")
@@ -629,10 +637,14 @@ def expand_workbook_parts(extracted: dict) -> list[dict]:
         if file_hash:
             part_tipo = part.get("tipo") or "part"
             # dre_vertical: várias parts `dre` — incluir competência no hash
-            if tipo == "dre_vertical":
+            if tipo in ("dre_vertical", "dre_schumacher", "balanco_schumacher"):
                 key = f"{part_tipo}:{part.get('competencia') or ''}"
             elif tipo == "impostos_mensal":
                 key = f"{part_tipo}:{part.get('competencia') or ''}:{part.get('unidade') or ''}"
+            elif tipo == "venda_produto":
+                key = f"{part_tipo}:{part.get('competencia') or ''}:{part.get('unidade') or ''}"
+            elif tipo == "livro_apuracao":
+                key = f"{part_tipo}:{part.get('competencia') or ''}"
             else:
                 key = part_tipo
             item["file_hash"] = sha256_bytes(f"{file_hash}:{key}".encode())

@@ -20,8 +20,13 @@ import { useDash } from "@/components/DashContext";
 import ImportTab from "@/components/ImportTab";
 import SupplierReportModal from "@/components/SupplierReportModal";
 import DreStatement from "@/components/DreStatement";
+import DreSchumacher from "@/components/DreSchumacher";
 import MemoriaLivro from "@/components/MemoriaLivro";
+import ApuracaoDashboard from "@/components/ApuracaoDashboard";
+import MemoriaApuracao from "@/components/MemoriaApuracao";
+import VendasProduto from "@/components/VendasProduto";
 import BalanceteTree from "@/components/BalanceteTree";
+import BalancoSchumacher from "@/components/BalancoSchumacher";
 import { exportVendasExcel, exportVendasPdf, type VendasExportInput } from "@/lib/vendasExport";
 import { exportFinalidadeExcel, exportFinalidadePdf } from "@/lib/finalidadeExport";
 import { exportCpfCnpjExcel } from "@/lib/cpfCnpjExport";
@@ -137,7 +142,18 @@ function quartersFromMonths(months: { competencia: string }[]) {
 
 function MesBar() {
   const { company, month, unidade, setMonth } = useDash();
-  const months = (company?.months || []).filter((m) => !unidade || m.unidade === unidade);
+  const params = useParams<{ empresa: string; aba: string }>();
+  const forceMatriz = params.empresa === "schumacher" && (params.aba === "dre" || params.aba === "balancete");
+  const raw = (company?.months || []).filter((m) => {
+    if (forceMatriz) return m.unidade === "matriz";
+    return !unidade || unidade === "todas" || m.unidade === unidade;
+  });
+  const seen = new Set<string>();
+  const months = raw.filter((m) => {
+    if (seen.has(m.competencia)) return false;
+    seen.add(m.competencia);
+    return true;
+  });
   if (!months.length) return null;
   const quarters = quartersFromMonths(months);
   const activeTrim = isTrimestreKey(month) ? month.toLowerCase() : trimestreKeyFromMonth(month);
@@ -276,9 +292,19 @@ function darkBar(opts?: { horizontal?: boolean }) {
 }
 
 function emptyMsg(aba: string, companyId?: string) {
-  if (aba === "dre") return "Importe a planilha RESULTADO para preencher a DRE. CMV e margens não são estimados.";
+  if (aba === "dre") {
+    if (companyId === "schumacher") {
+      return "Importe a DRE Schumacher 2026 (aba Comparativo). Não inventamos resultado.";
+    }
+    return "Importe a planilha RESULTADO para preencher a DRE. CMV e margens não são estimados.";
+  }
   if (aba === "impostos") return "Impostos só aparecem depois de importar a planilha de apuração. Não inventamos valor.";
-  if (aba === "balancete") return "Balancete ainda não importado. Não inventamos saldo contábil.";
+  if (aba === "balancete") {
+    if (companyId === "schumacher") {
+      return "Importe o Balanço Patrimonial Schumacher 2026 (aba Comparativo). Não inventamos saldo.";
+    }
+    return "Balancete ainda não importado. Não inventamos saldo contábil.";
+  }
   if (aba === "memoria") {
     if (companyId === "jpg") {
       return "Importe o demonstrativo de ICMS/IPI (ou a tabela da filial) para ver a memória linha a linha.";
@@ -287,6 +313,9 @@ function emptyMsg(aba: string, companyId?: string) {
   }
   if (aba === "recebimentos") {
     return "Sem movimento neste mês. Importe ENTRADAS/SAÍDAS (workbook parcial com movimento ou planilha EXITO).";
+  }
+  if (aba === "vendas-produto") {
+    return "Venda por produto só aparece depois de importar a planilha de margem. Não inventamos valor.";
   }
   return "Sem movimento neste mês. Importe as planilhas na aba Importar.";
 }
@@ -311,7 +340,11 @@ export default function AbaPage() {
     setError("");
     setDrillCfop(null);
     setExportMsg("");
-    api<TabResp>(`/api/companies/${params.empresa}/months/${month}/${aba}?unidade=${encodeURIComponent(unidade || "matriz")}`)
+    const fetchUnidade =
+      params.empresa === "schumacher" && (aba === "dre" || aba === "balancete")
+        ? "matriz"
+        : unidade || "matriz";
+    api<TabResp>(`/api/companies/${params.empresa}/months/${month}/${aba}?unidade=${encodeURIComponent(fetchUnidade)}`)
       .then(setPayload)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
@@ -341,16 +374,22 @@ export default function AbaPage() {
     compras: ["Compras", "Aquisições de mercadorias e insumos"],
     finalidade: ["Finalidade de Compras", "Por CFOP — clique para expandir fornecedores"],
     vendas: ["Vendas", "Faturamento de saídas por cliente e UF"],
+    "vendas-produto": ["Vendas por produto", "Margem por item — mês selecionado"],
     impostos: ["Impostos", "Apuração — só entra o que foi importado"],
     memoria: (company?.id || params.empresa) === "jpg"
       ? ["Memória de Cálculo", "Livro da apuração importada — ICMS, IPI e demais tributos"]
-      : ["Memória de Cálculo", "Livro da planilha padrão — ICMS 5005, PIS/COFINS e demais tributos"],
+      : (company?.id || params.empresa) === "schumacher"
+        ? ["Memória de Cálculo", "Livro de apuração — cards no topo; o detalhe por CFOP abre em Ver livro técnico"]
+        : ["Memória de Cálculo", "Livro da planilha padrão — ICMS 5005, PIS/COFINS e demais tributos"],
     recebimentos: ["Recebimentos/Pagamentos", "Estimativa pelo movimento fiscal"],
-    balancete: ["Balancete", "Contábil"],
+    balancete: (company?.id || params.empresa) === "schumacher"
+      ? ["Balanço Patrimonial", "Posição ao fim do mês"]
+      : ["Balancete", "Contábil"],
     dre: ["DRE", "Demonstração do resultado"],
     indicadores: ["Indicadores", "Margens a partir do movimento"],
   };
   const title = (titles[aba] || [aba, ""])[0];
+  const consolidadoSchumacher = params.empresa === "schumacher" && (aba === "dre" || aba === "balancete");
   const cnpj = company?.cnpj ? formatCnpj(company.cnpj) : "";
   const forn = (d.fornecedores || []) as { nome: string; uf: string; total: number; qtd?: number }[];
   const topCli = ((d.clientesTop10 || d.clientes || []) as { nome: string; uf: string; total: number; qtd?: number }[]).slice(0, 10);
@@ -404,7 +443,7 @@ export default function AbaPage() {
     <section>
       <div className="sec-header">
         <div>
-          <div className="sec-title">{title} <small>{periodLabel}{unidade ? ` · ${unidade}` : ""}</small></div>
+          <div className="sec-title">{title} <small>{periodLabel}{!consolidadoSchumacher && unidade ? ` · ${unidade}` : ""}</small></div>
           <div className="sec-sub">{company?.label}{cnpj ? ` — CNPJ ${cnpj}` : ""}{viewingTrimestre && tri ? ` · Soma ${tri.mesesLabel || ""}` : ""}</div>
         </div>
       </div>
@@ -414,7 +453,7 @@ export default function AbaPage() {
       {!loading && !error && payload?.empty && aba !== "impostos" && aba !== "recebimentos" ? (
         <div className="alert-box warn">{emptyMsg(aba, company?.id || params.empresa)}</div>
       ) : null}
-      {!loading && !error && viewingTrimestre && tri && aba !== "dre" ? <TrimestreBlock tri={tri} /> : null}
+      {!loading && !error && viewingTrimestre && tri && aba !== "dre" && aba !== "vendas-produto" && params.empresa !== "schumacher" ? <TrimestreBlock tri={tri} /> : null}
 
       {aba === "finalidade" && !loading && !error ? (
         <>
@@ -474,7 +513,11 @@ export default function AbaPage() {
         </>
       ) : null}
 
-      {showBody && aba === "visao-geral" && (
+      {showBody && aba === "visao-geral" && d.livroApuracao && !d.hasMovimentacao ? (
+        <ApuracaoDashboard mode="resumo" d={d} empresa={params.empresa} month={month} unidade={unidade || "matriz"} />
+      ) : null}
+
+      {showBody && aba === "visao-geral" && !(d.livroApuracao && !d.hasMovimentacao) && (
         <>
           {(() => {
             const receita = Number(d.receitaBruta ?? totalVend);
@@ -947,6 +990,17 @@ export default function AbaPage() {
         </>
       )}
 
+      {showBody && aba === "vendas-produto" && (
+        <VendasProduto
+          d={d}
+          periodLabel={periodLabel}
+          unidadeLabel={
+            (company?.units || []).map((u) => (typeof u === "string" ? { key: u, label: u } : u)).find((u) => u.key === unidade)?.label
+            || unidade
+          }
+        />
+      )}
+
       {showBody && aba === "vendas" && (
         <>
           <div className="export-bar">
@@ -1142,7 +1196,11 @@ export default function AbaPage() {
         </>
       )}
 
-      {showImpostosLayout && (
+      {showImpostosLayout && d.livroApuracao ? (
+        <ApuracaoDashboard mode="full" d={d} serie={serie} empresa={params.empresa} month={month} unidade={unidade || "matriz"} />
+      ) : null}
+
+      {showImpostosLayout && !d.livroApuracao && (
         (() => {
           const vendas = Number(d.receitaBruta || d.cfopSaidasTotal || totalVend || 0);
           const taxKeys = ["das", "icms", "icmsSt", "pis", "cofins", "ipi", "difal", "irpj", "csll"] as const;
@@ -1344,7 +1402,11 @@ export default function AbaPage() {
         })()
       )}
 
-      {showBody && aba === "memoria" && (
+      {showBody && aba === "memoria" && d.livroApuracao ? (
+        <MemoriaApuracao d={d} month={month} monthLabel={periodLabel} />
+      ) : null}
+
+      {showBody && aba === "memoria" && !d.livroApuracao && (
         <MemoriaLivro d={d} ap={ap} month={month} monthLabel={periodLabel} />
       )}
 
@@ -1608,7 +1670,15 @@ export default function AbaPage() {
         })()
       )}
 
-      {showBody && aba === "balancete" && (
+      {showBody && aba === "balancete" && params.empresa === "schumacher" && (
+        <BalancoSchumacher
+          porMes={d.porMes || []}
+          selectedCompetencia={month}
+          source={d.balanceteSource || d.balancete?.source}
+        />
+      )}
+
+      {showBody && aba === "balancete" && params.empresa !== "schumacher" && (
         <BalanceteTree
           porMes={d.porMes || []}
           selectedCompetencia={month}
@@ -1617,7 +1687,15 @@ export default function AbaPage() {
         />
       )}
 
-      {showBody && aba === "dre" && (
+      {showBody && aba === "dre" && params.empresa === "schumacher" && (
+          <DreSchumacher
+            porMes={d.porMes || []}
+            selectedCompetencia={month}
+            source={d.dreSource || d.dre?.source}
+          />
+      )}
+
+      {showBody && aba === "dre" && params.empresa !== "schumacher" && (
           <DreStatement
             porMes={d.porMes || []}
             selectedCompetencia={month}

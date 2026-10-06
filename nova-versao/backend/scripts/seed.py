@@ -18,6 +18,7 @@ COMPANY_DESCRIPTIONS = {
     "loja-maquinas": "Loja das Máquinas e Ferramentas",
     "unica": "Comércio atacadista de tintas",
     "jpg": "JPG Produtos Funcionais — sede, filiais e LANNIC (Simples Nacional)",
+    "schumacher": "Indústria Schumacher — Matriz e Schumacher Serviços, livro fiscal, venda por produto, DRE e Balanço",
 }
 
 
@@ -83,10 +84,16 @@ def seed_users(db) -> None:
             .filter(UserCompany.user_id == user.id, UserCompany.company_id == reg.id)
             .first()
         )
+        company_viewer = [t for t in reg.tabs if t != "importar"] or list(VIEWER_TABS)
         if not link:
-            db.add(UserCompany(user_id=user.id, company_id=reg.id, tabs=list(VIEWER_TABS)))
+            db.add(UserCompany(user_id=user.id, company_id=reg.id, tabs=list(company_viewer)))
         elif not link.tabs:
-            link.tabs = list(VIEWER_TABS)
+            link.tabs = list(company_viewer)
+        else:
+            current = list(link.tabs)
+            extra = [t for t in company_viewer if t not in current]
+            if extra:
+                link.tabs = current + extra
 
 
 def main() -> None:
