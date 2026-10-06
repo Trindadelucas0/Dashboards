@@ -291,7 +291,11 @@ function livroRows(res: Resumo) {
     { label: "Outros créditos", value: brl(res.outrosCreditos), tone: "credit" as const },
     { label: "Saldo credor", value: brl(res.saldoCredor), tone: "credit" as const },
     { label: "A recolher", value: brl(res.aRecolher), tone: recTone(aRec), emphasis: true },
-    { label: "A transportar", value: brl(res.saldoCredorSeguinte), tone: (tr > 0.005 ? "carry" : "plain") as const },
+    {
+      label: "A transportar",
+      value: brl(res.saldoCredorSeguinte),
+      tone: tr > 0.005 ? ("carry" as const) : ("plain" as const),
+    },
   ];
 }
 
