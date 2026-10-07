@@ -21,6 +21,13 @@ export const NAV = [
       { id: "compras", label: "Compras", icon: "fa-cart-shopping" },
       { id: "finalidade", label: "Finalidade de Compras", icon: "fa-tags" },
       { id: "vendas", label: "Vendas", icon: "fa-store" },
+    ],
+  },
+  {
+    section: "Vendas",
+    items: [
+      { id: "margens-mes", label: "Margens por mês", icon: "fa-calendar-days" },
+      { id: "margens-cidade", label: "Margens por cidade", icon: "fa-city" },
       { id: "vendas-produto", label: "Vendas por produto", icon: "fa-boxes-stacked" },
     ],
   },
@@ -42,6 +49,34 @@ export const NAV = [
   },
   { section: "Dados", items: [{ id: "importar", label: "Importar planilhas", icon: "fa-file-arrow-up" }] },
 ];
+
+export type NavSection = (typeof NAV)[number];
+export type NavItem = NavSection["items"][number];
+
+const INDICADORES_NAV_ITEM: NavItem = {
+  id: "indicadores",
+  label: "Indicadores",
+  icon: "fa-circle-nodes",
+};
+
+/** Schumacher: Indicadores fora de Financeiro, em seção própria. Demais empresas: NAV padrão. */
+export function navSectionsForCompany(companyId: string): NavSection[] {
+  if (companyId !== "schumacher") return NAV;
+
+  const out: NavSection[] = [];
+  for (const sec of NAV) {
+    if (sec.section === "Financeiro") {
+      out.push({
+        section: sec.section,
+        items: sec.items.filter((i) => i.id !== "indicadores"),
+      });
+      out.push({ section: "Indicadores", items: [INDICADORES_NAV_ITEM] });
+      continue;
+    }
+    out.push(sec);
+  }
+  return out;
+}
 
 /** Abas liberáveis para viewer (nunca inclui importar). */
 export const VIEWER_TAB_OPTIONS = NAV.flatMap((s) => s.items).filter((i) => i.id !== "importar");

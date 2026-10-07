@@ -24,8 +24,11 @@ import DreSchumacher from "@/components/DreSchumacher";
 import MemoriaLivro from "@/components/MemoriaLivro";
 import ApuracaoDashboard from "@/components/ApuracaoDashboard";
 import MemoriaApuracao from "@/components/MemoriaApuracao";
+import MargensCidade from "@/components/MargensCidade";
+import MargensMes from "@/components/MargensMes";
 import VendasProduto from "@/components/VendasProduto";
 import BalanceteTree from "@/components/BalanceteTree";
+import IndicadoresSchumacher from "@/components/IndicadoresSchumacher";
 import BalancoSchumacher from "@/components/BalancoSchumacher";
 import { exportVendasExcel, exportVendasPdf, type VendasExportInput } from "@/lib/vendasExport";
 import { exportFinalidadeExcel, exportFinalidadePdf } from "@/lib/finalidadeExport";
@@ -120,10 +123,17 @@ function trimestreKeyFromMonth(competencia: string): string {
   return `q${q}-${year}`;
 }
 
-function trimestreChipLabel(key: string) {
+function trimestreSortKey(key: string) {
   const m = /^q([1-4])-(\d{4})$/i.exec(key || "");
   if (!m) return key;
-  return `${m[1]}º Trim`;
+  return `${m[2]}-${m[1]}`;
+}
+
+function trimestreChipLabel(key: string, showYear: boolean) {
+  const m = /^q([1-4])-(\d{4})$/i.exec(key || "");
+  if (!m) return key;
+  const base = `${m[1]}º Trim`;
+  return showYear ? `${base} ${m[2]}` : base;
 }
 
 function quartersFromMonths(months: { competencia: string }[]) {
@@ -135,15 +145,26 @@ function quartersFromMonths(months: { competencia: string }[]) {
     list.push(m.competencia);
     map.set(k, list);
   }
-  return Array.from(map.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, comps]) => ({ key, comps, label: trimestreChipLabel(key) }));
+  const entries = Array.from(map.entries()).sort(([a], [b]) => trimestreSortKey(a).localeCompare(trimestreSortKey(b)));
+  const years = new Set<string>();
+  for (const [k] of entries) {
+    const ym = /^q[1-4]-(\d{4})$/i.exec(k);
+    if (ym) years.add(ym[1]);
+  }
+  const showYear = years.size > 1;
+  return entries.map(([key, comps]) => ({ key, comps, label: trimestreChipLabel(key, showYear) }));
 }
 
 function MesBar() {
   const { company, month, unidade, setMonth } = useDash();
   const params = useParams<{ empresa: string; aba: string }>();
-  const forceMatriz = params.empresa === "schumacher" && (params.aba === "dre" || params.aba === "balancete");
+  const forceMatriz =
+    params.empresa === "schumacher" &&
+    (params.aba === "dre" ||
+      params.aba === "balancete" ||
+      params.aba === "indicadores" ||
+      params.aba === "margens-mes" ||
+      params.aba === "margens-cidade");
   const raw = (company?.months || []).filter((m) => {
     if (forceMatriz) return m.unidade === "matriz";
     return !unidade || unidade === "todas" || m.unidade === unidade;
@@ -317,6 +338,17 @@ function emptyMsg(aba: string, companyId?: string) {
   if (aba === "vendas-produto") {
     return "Venda por produto só aparece depois de importar a planilha de margem. Não inventamos valor.";
   }
+  if (aba === "margens-mes") {
+    return "Importe o demonstrativo de margens por mês (ODS .xls). Não inventamos valor.";
+  }
+  if (aba === "margens-cidade") {
+    return "Importe o demonstrativo de margens por cidade (acumulado). Não inventamos valor.";
+  }
+  if (aba === "indicadores") {
+    if (companyId === "schumacher") {
+      return "Importe a DRE e o Balanço Schumacher 2026 (aba Comparativo). Indicadores só aparecem com planilha — não inventamos número.";
+    }
+  }
   return "Sem movimento neste mês. Importe as planilhas na aba Importar.";
 }
 
@@ -341,7 +373,12 @@ export default function AbaPage() {
     setDrillCfop(null);
     setExportMsg("");
     const fetchUnidade =
-      params.empresa === "schumacher" && (aba === "dre" || aba === "balancete")
+      params.empresa === "schumacher" &&
+      (aba === "dre" ||
+        aba === "balancete" ||
+        aba === "indicadores" ||
+        aba === "margens-mes" ||
+        aba === "margens-cidade")
         ? "matriz"
         : unidade || "matriz";
     api<TabResp>(`/api/companies/${params.empresa}/months/${month}/${aba}?unidade=${encodeURIComponent(fetchUnidade)}`)
@@ -374,6 +411,8 @@ export default function AbaPage() {
     compras: ["Compras", "Aquisições de mercadorias e insumos"],
     finalidade: ["Finalidade de Compras", "Por CFOP — clique para expandir fornecedores"],
     vendas: ["Vendas", "Faturamento de saídas por cliente e UF"],
+    "margens-mes": ["Margens por mês", "Demonstrativo gerencial — matriz"],
+    "margens-cidade": ["Margens por cidade", "Acumulado jan–set/2026"],
     "vendas-produto": ["Vendas por produto", "Margem por item — mês selecionado"],
     impostos: ["Impostos", "Apuração — só entra o que foi importado"],
     memoria: (company?.id || params.empresa) === "jpg"
@@ -386,10 +425,19 @@ export default function AbaPage() {
       ? ["Balanço Patrimonial", "Posição ao fim do mês"]
       : ["Balancete", "Contábil"],
     dre: ["DRE", "Demonstração do resultado"],
-    indicadores: ["Indicadores", "Margens a partir do movimento"],
+    indicadores:
+      (company?.id || params.empresa) === "schumacher"
+        ? ["Indicadores", "Margens e liquidez — mês selecionado"]
+        : ["Indicadores", "Margens a partir do movimento"],
   };
   const title = (titles[aba] || [aba, ""])[0];
-  const consolidadoSchumacher = params.empresa === "schumacher" && (aba === "dre" || aba === "balancete");
+  const consolidadoSchumacher =
+    params.empresa === "schumacher" &&
+    (aba === "dre" ||
+      aba === "balancete" ||
+      aba === "indicadores" ||
+      aba === "margens-mes" ||
+      aba === "margens-cidade");
   const cnpj = company?.cnpj ? formatCnpj(company.cnpj) : "";
   const forn = (d.fornecedores || []) as { nome: string; uf: string; total: number; qtd?: number }[];
   const topCli = ((d.clientesTop10 || d.clientes || []) as { nome: string; uf: string; total: number; qtd?: number }[]).slice(0, 10);
@@ -447,13 +495,13 @@ export default function AbaPage() {
           <div className="sec-sub">{company?.label}{cnpj ? ` — CNPJ ${cnpj}` : ""}{viewingTrimestre && tri ? ` · Soma ${tri.mesesLabel || ""}` : ""}</div>
         </div>
       </div>
-      <MesBar />
+      {aba !== "margens-cidade" ? <MesBar /> : null}
       {loading ? <div className="notice">Carregando…</div> : null}
       {error ? <div className="error-banner" role="alert">{error}</div> : null}
       {!loading && !error && payload?.empty && aba !== "impostos" && aba !== "recebimentos" ? (
         <div className="alert-box warn">{emptyMsg(aba, company?.id || params.empresa)}</div>
       ) : null}
-      {!loading && !error && viewingTrimestre && tri && aba !== "dre" && aba !== "vendas-produto" && params.empresa !== "schumacher" ? <TrimestreBlock tri={tri} /> : null}
+      {!loading && !error && viewingTrimestre && tri && aba !== "dre" && aba !== "vendas-produto" && aba !== "margens-mes" && params.empresa !== "schumacher" ? <TrimestreBlock tri={tri} /> : null}
 
       {aba === "finalidade" && !loading && !error ? (
         <>
@@ -989,6 +1037,10 @@ export default function AbaPage() {
           })()}
         </>
       )}
+
+      {showBody && aba === "margens-mes" && <MargensMes d={d} periodLabel={periodLabel} />}
+
+      {showBody && aba === "margens-cidade" && <MargensCidade d={d} />}
 
       {showBody && aba === "vendas-produto" && (
         <VendasProduto
@@ -1703,7 +1755,17 @@ export default function AbaPage() {
           />
       )}
 
-      {showBody && aba === "indicadores" && (
+      {showBody && aba === "indicadores" && params.empresa === "schumacher" && (
+        <IndicadoresSchumacher
+          indicadores={d.indicadoresSchumacher}
+          porMes={d.porMes}
+          periodLabel={d.periodoLabel || periodLabel}
+          hasDre={!!d.hasDre}
+          hasBp={!!(d.hasBalancete || d.balanceteTotais)}
+        />
+      )}
+
+      {showBody && aba === "indicadores" && params.empresa !== "schumacher" && (
         (() => {
           const mb = d.margMb != null ? d.margMb : d.margemBruta != null ? +(100 * d.margemBruta).toFixed(2) : null;
           const ml = d.margMl != null ? d.margMl : null;

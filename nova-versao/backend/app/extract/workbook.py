@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import time
+import zipfile
 from dataclasses import dataclass, field
 from io import BytesIO
 from pathlib import Path
@@ -40,6 +41,16 @@ def is_placeholder_bytes(data: bytes) -> bool:
     return not any(data[:2048])
 
 
+def _zip_mimetype(data: bytes) -> str | None:
+    try:
+        with zipfile.ZipFile(BytesIO(data)) as z:
+            if "mimetype" in z.namelist():
+                return z.read("mimetype").decode("ascii", errors="ignore").strip()
+    except Exception:  # noqa: BLE001
+        return None
+    return None
+
+
 def sniff(data: bytes) -> str:
     if is_placeholder_bytes(data):
         return "empty"
@@ -47,6 +58,9 @@ def sniff(data: bytes) -> str:
     if head.startswith(OLE_MAGIC):
         return "xls"
     if head.startswith(ZIP_MAGIC):
+        mt = _zip_mimetype(data)
+        if mt == "application/vnd.oasis.opendocument.spreadsheet":
+            return "ods"
         return "xlsx"
     sample = data[:4000].lstrip().lower()
     if sample.startswith(b"<html") or sample.startswith(b"<!doctype") or b"<table" in sample:
@@ -272,6 +286,38 @@ def _calamine_sheet_rows(raw_rows: list) -> list[list[str]]:
     return [[_cell_to_str(c) for c in (row or [])] for row in raw_rows]
 
 
+def _ods_cell_text(cell) -> str:
+    parts = [p.get_text(strip=True) for p in cell.find_all("text:p")]
+    return " ".join(x for x in parts if x).strip()
+
+
+def _ods_rows_from_table(table) -> list[list[str]]:
+    rows: list[list[str]] = []
+    for tr in table.find_all("table:table-row"):
+        cells: list[str] = []
+        for tc in tr.find_all("table:table-cell"):
+            rep = int(tc.get("table:number-columns-repeated") or 1)
+            val = _ods_cell_text(tc)
+            cells.extend([val] * rep)
+        rows.append(cells)
+    return rows
+
+
+def _ods_all_grids(path: Path, data: bytes | None = None) -> list[tuple[str, list[list[str]]]]:
+    raw = data if data is not None else path.read_bytes()
+    with zipfile.ZipFile(BytesIO(raw)) as z:
+        xml = z.read("content.xml")
+    soup = BeautifulSoup(xml, "lxml-xml")
+    tables = soup.find_all("table:table")
+    if not tables:
+        return [("Planilha", [])]
+    out: list[tuple[str, list[list[str]]]] = []
+    for idx, table in enumerate(tables):
+        name = table.get("table:name") or f"Planilha{idx + 1}"
+        out.append((str(name), _ods_rows_from_table(table)))
+    return out
+
+
 def _calamine_all_grids(path: Path) -> list[tuple[str, list[list[str]]]]:
     """Fallback Linux/Docker: lê .xls OLE que o xlrd rejeita (sem Excel COM)."""
     from python_calamine import CalamineWorkbook
@@ -298,6 +344,13 @@ def load_all_sheets(path: str | Path, data: bytes | None = None) -> list[Workboo
 
     if kind == "html":
         return [_load_html_grid(path, data)]
+
+    if kind == "ods":
+        try:
+            pairs = _ods_all_grids(path, data)
+            return [WorkbookGrid(str(path), name, rows, "ods") for name, rows in pairs]
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"ods:{exc}")
 
     if kind == "xlsx":
         try:

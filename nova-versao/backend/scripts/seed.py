@@ -18,7 +18,7 @@ COMPANY_DESCRIPTIONS = {
     "loja-maquinas": "Loja das Máquinas e Ferramentas",
     "unica": "Comércio atacadista de tintas",
     "jpg": "JPG Produtos Funcionais — sede, filiais e LANNIC (Simples Nacional)",
-    "schumacher": "Indústria Schumacher — Matriz e Schumacher Serviços, livro fiscal, venda por produto, DRE e Balanço",
+    "schumacher": "Indústria Schumacher — margens por mês/cidade, venda por produto, livro fiscal, DRE, Balanço e Indicadores",
 }
 
 

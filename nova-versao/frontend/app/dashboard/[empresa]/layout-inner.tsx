@@ -5,7 +5,7 @@ import { useParams, usePathname, useRouter, useSearchParams } from "next/navigat
 import { useEffect, useMemo, useState } from "react";
 import { DashContext, type CompanyDetail, type DashCtx } from "@/components/DashContext";
 import { api } from "@/lib/api";
-import { firstAllowedTab, NAV } from "@/lib/nav";
+import { firstAllowedTab, navSectionsForCompany } from "@/lib/nav";
 import "../../dashboard.css";
 
 const TITLES: Record<string, [string, string]> = {
@@ -13,6 +13,8 @@ const TITLES: Record<string, [string, string]> = {
   compras: ["Compras", "Aquisições"],
   finalidade: ["Finalidade de Compras", "Por CFOP"],
   vendas: ["Vendas", "Saídas por cliente"],
+  "margens-mes": ["Margens por mês", "Demonstrativo gerencial — matriz"],
+  "margens-cidade": ["Margens por cidade", "Acumulado jan–set/2026"],
   "vendas-produto": ["Vendas por produto", "Margem por item — mês selecionado"],
   impostos: ["Impostos", "Apuração"],
     memoria: ["Memória de Cálculo", "Livro da planilha padrão — ICMS 5005, PIS/COFINS e demais tributos"],
@@ -117,7 +119,14 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
   const tabs = (company?.tabs || []).filter(
     (id) => isAdmin || id !== "importar",
   );
-  const consolidadoSchumacher = empresa === "schumacher" && (aba === "dre" || aba === "balancete");
+  const consolidadoSchumacher =
+    empresa === "schumacher" &&
+    (aba === "dre" ||
+      aba === "balancete" ||
+      aba === "indicadores" ||
+      aba === "margens-mes" ||
+      aba === "margens-cidade");
+  const hidePeriodSelect = aba === "margens-cidade";
   const [title, sub] = (empresa === "jpg"
     ? { ...TITLES, memoria: ["Memória de Cálculo", "Livro da apuração importada — ICMS, IPI e demais tributos"] as [string, string] }
     : empresa === "schumacher"
@@ -125,6 +134,10 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
           ...TITLES,
           memoria: ["Memória de Cálculo", "Livro fiscal — ICMS, IPI, PIS e COFINS"] as [string, string],
           balancete: ["Balanço Patrimonial", "Posição ao fim do mês"] as [string, string],
+          indicadores: [
+            "Indicadores",
+            "Resultado, liquidez e evolução — consolidado Matriz",
+          ] as [string, string],
         }
       : TITLES)[aba] || [aba, ""];
   const months = useMemo(() => {
@@ -177,7 +190,7 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
             </div>
           </div>
           <nav className="sidebar-nav">
-            {NAV.map((sec) => {
+            {navSectionsForCompany(empresa).map((sec) => {
               const items = sec.items.filter((i) => tabs.includes(i.id));
               if (!items.length) return null;
               return (
@@ -228,26 +241,28 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
                   })}
                 </select>
               ) : null}
-              <select className="period-sel" value={month} onChange={(e) => ctx.setMonth(e.target.value)} aria-label="Período">
-                {(() => {
-                  const qs = new Map<string, string>();
-                  for (const m of months) {
-                    const mm = Number(String(m.competencia).split("-")[1] || 0);
-                    const q = Math.floor((mm - 1) / 3) + 1;
-                    const year = String(m.competencia).slice(0, 4);
-                    const k = `q${q}-${year}`;
-                    if (!qs.has(k)) qs.set(k, `${q}º Trimestre ${year}`);
-                  }
-                  return (
-                    <>
-                      {Array.from(qs.entries()).map(([k, lbl]) => (
-                        <option key={k} value={k}>{lbl}</option>
-                      ))}
-                      {months.map((m) => <option key={m.competencia} value={m.competencia}>{m.label}</option>)}
-                    </>
-                  );
-                })()}
-              </select>
+              {!hidePeriodSelect ? (
+                <select className="period-sel" value={month} onChange={(e) => ctx.setMonth(e.target.value)} aria-label="Período">
+                  {(() => {
+                    const qs = new Map<string, string>();
+                    for (const m of months) {
+                      const mm = Number(String(m.competencia).split("-")[1] || 0);
+                      const q = Math.floor((mm - 1) / 3) + 1;
+                      const year = String(m.competencia).slice(0, 4);
+                      const k = `q${q}-${year}`;
+                      if (!qs.has(k)) qs.set(k, `${q}º Trimestre ${year}`);
+                    }
+                    return (
+                      <>
+                        {Array.from(qs.entries()).map(([k, lbl]) => (
+                          <option key={k} value={k}>{lbl}</option>
+                        ))}
+                        {months.map((m) => <option key={m.competencia} value={m.competencia}>{m.label}</option>)}
+                      </>
+                    );
+                  })()}
+                </select>
+              ) : null}
               <div className="regime-badge">Nova versão</div>
             </div>
           </header>

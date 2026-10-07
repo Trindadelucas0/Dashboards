@@ -18,7 +18,7 @@ ALL_TABS = [
 ]
 
 # Abas que um viewer pode receber (nunca inclui importar).
-VIEWER_TABS = [t for t in ALL_TABS if t != "importar"] + ["vendas-produto"]
+VIEWER_TABS = [t for t in ALL_TABS if t != "importar"] + ["vendas-produto", "margens-mes", "margens-cidade"]
 
 
 @dataclass(frozen=True)
@@ -87,7 +87,18 @@ COMPANIES: tuple[CompanyReg, ...] = (
         name_re=r"SCHUMACHER",
         username="schumacher",
         theme="green",
-        tabs=("visao-geral", "vendas-produto", "impostos", "memoria", "dre", "balancete", "importar"),
+        tabs=(
+            "visao-geral",
+            "margens-mes",
+            "margens-cidade",
+            "vendas-produto",
+            "impostos",
+            "memoria",
+            "dre",
+            "balancete",
+            "indicadores",
+            "importar",
+        ),
         units=(
             Unit("matriz", "Matriz", "04589817000106", r"SCHUMACHER"),
             Unit("filial", "Schumacher Serviços", ""),

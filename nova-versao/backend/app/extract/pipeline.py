@@ -36,6 +36,8 @@ from app.extract.parse_livro_apuracao import extract_livro_apuracao, is_livro_ap
 from app.extract.parse_venda_produto import extract_venda_produto, is_venda_produto
 from app.extract.parse_dre_schumacher import extract_dre_schumacher, is_dre_schumacher
 from app.extract.parse_balanco_schumacher import extract_balanco_schumacher, is_balanco_schumacher
+from app.extract.parse_margem_cidade import extract_margem_cidade, is_margem_cidade
+from app.extract.parse_margem_mes import extract_margem_mes, is_margem_mes
 from app.extract.parse_workbook_padrao import (
     extract_workbook_padrao,
     is_workbook_padrao,
@@ -283,6 +285,12 @@ def classify_and_extract(
 
     if is_balanco_schumacher(sheets):
         return extract_balanco_schumacher(sheets, filename)
+
+    if is_margem_mes(sheets):
+        return extract_margem_mes(sheets, filename)
+
+    if is_margem_cidade(sheets):
+        return extract_margem_cidade(sheets, filename)
 
     if is_workbook_padrao(sheets):
         return extract_workbook_padrao(sheets, filename, company_cnpj=company_cnpj or "")

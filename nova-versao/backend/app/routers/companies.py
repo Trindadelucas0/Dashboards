@@ -15,8 +15,15 @@ from app.db import get_db
 from app.deps import allowed_company_ids, current_user, require_admin, require_company, tabs_for_user
 from app.extract.cfop import aggregate_macro, aggregate_servicos, cfop_meta, top_grupos
 from app.extract.parse_dre import normalize_dre_deducoes
+from app.extract.parse_margem_mes import merge_margem_mes
 from app.extract.parse_venda_produto import merge_venda_produto
 from app.extract.aggregate import tipo_doc, vendas_por_doc
+from app.indicadores_schumacher import (
+    _is_schumacher_pack,
+    aggregate_indicadores_schumacher,
+    compute_indicadores_schumacher,
+    indicadores_tem_valor,
+)
 from app.models import Company, CompanyCnpj, FiscalMonth, NfeLine, User, UserCompany
 
 router = APIRouter(prefix="/api/companies", tags=["companies"])
@@ -27,6 +34,8 @@ TAB_KEYS = (
     "finalidade",
     "vendas",
     "vendas-produto",
+    "margens-mes",
+    "margens-cidade",
     "impostos",
     "memoria",
     "recebimentos",
@@ -319,6 +328,44 @@ def build_dre_por_mes(months: list, year: str) -> list[dict]:
     return out
 
 
+def build_margem_por_mes(months: list, year: str) -> list[dict]:
+    """Meses do ano com margem gerencial por mês."""
+    out: list[dict] = []
+    if not year:
+        return out
+    for row in months or []:
+        comp = str(getattr(row, "competencia", "") or "")
+        if not comp.startswith(year):
+            continue
+        pack = getattr(row, "pack", None) or {}
+        mm = pack.get("margemMes") if isinstance(pack.get("margemMes"), dict) else {}
+        resumo = mm.get("resumo") if isinstance(mm.get("resumo"), dict) else {}
+        if not resumo:
+            continue
+        out.append(
+            {
+                "competencia": comp,
+                "label": _month_label(comp),
+                "resumo": resumo,
+            }
+        )
+    return out
+
+
+def _find_margem_cidade_pack(months: list) -> dict | None:
+    preferred = "2026-09"
+    by_comp = {str(getattr(m, "competencia", "") or ""): m for m in months or []}
+    if preferred in by_comp:
+        mc = ((by_comp[preferred].pack or {}).get("margemCidade") or {})
+        if isinstance(mc, dict) and (mc.get("cidades") or mc.get("resumo")):
+            return mc
+    for m in months or []:
+        mc = ((getattr(m, "pack", None) or {}).get("margemCidade") or {})
+        if isinstance(mc, dict) and (mc.get("cidades") or mc.get("resumo")):
+            return mc
+    return None
+
+
 def build_balancete_por_mes(months: list, year: str) -> list[dict]:
     """Meses do ano com balancete importado, em ordem cronológica."""
     out: list[dict] = []
@@ -357,6 +404,33 @@ def build_balancete_por_mes(months: list, year: str) -> list[dict]:
                 },
                 "totais": totais,
                 "source": bal.get("source") or pack.get("balanceteSource"),
+            }
+        )
+    return out
+
+
+def build_indicadores_schumacher_por_mes(months: list, year: str) -> list[dict]:
+    """Meses do ano com indicadores Schumacher (DRE e/ou BP comparativo)."""
+    out: list[dict] = []
+    if not year:
+        return out
+    for row in months or []:
+        comp = str(getattr(row, "competencia", "") or "")
+        if not comp.startswith(year):
+            continue
+        pack = getattr(row, "pack", None) or {}
+        if not _is_schumacher_pack(pack):
+            continue
+        ind = compute_indicadores_schumacher(pack)
+        if not indicadores_tem_valor(ind):
+            continue
+        out.append(
+            {
+                "competencia": comp,
+                "label": _month_label(comp),
+                "hasDre": bool(pack.get("hasDre")),
+                "hasBalancete": bool(pack.get("hasBalancete") or pack.get("balancete")),
+                "indicadoresSchumacher": ind,
             }
         )
     return out
@@ -553,6 +627,9 @@ def aggregate_fiscal_packs(packs: list[dict], competencia_label: str) -> dict:
         pack["livroApuracao"] = livro
     if venda is not None:
         pack["vendaProduto"] = venda
+    margem = merge_margem_mes(packs)
+    if margem is not None:
+        pack["margemMes"] = margem
     return _enrich_fiscal(pack)
 
 
@@ -865,6 +942,8 @@ def _is_empty(tab: str, pack: dict, row) -> bool:
     if tab in ("visao-geral", "indicadores", "recebimentos"):
         if pack.get("hasDre") or pack.get("apuracao") or pack.get("receitaBruta") or pack.get("livroApuracao"):
             return False
+        if pack.get("hasBalancete") or pack.get("balancete"):
+            return False
         if pack.get("memoriaCalculo") or pack.get("memoriaSimples"):
             return False
     if tab == "dre":
@@ -896,6 +975,12 @@ def _is_empty(tab: str, pack: dict, row) -> bool:
     if tab == "vendas-produto":
         vp = pack.get("vendaProduto")
         return not (isinstance(vp, dict) and (vp.get("resumo") or vp.get("produtos")))
+    if tab == "margens-mes":
+        mm = pack.get("margemMes")
+        return not (isinstance(mm, dict) and isinstance(mm.get("resumo"), dict))
+    if tab == "margens-cidade":
+        mc = pack.get("margemCidade")
+        return not (isinstance(mc, dict) and (mc.get("cidades") or mc.get("resumo")))
     if tab == "importar":
         return False
     return not pack.get("hasMovimentacao")
@@ -1105,6 +1190,10 @@ def _slice(tab: str, pack: dict) -> dict:
         }
     if tab == "vendas-produto":
         return {"vendaProduto": pack.get("vendaProduto")}
+    if tab == "margens-mes":
+        return {"margemMes": pack.get("margemMes")}
+    if tab == "margens-cidade":
+        return {"margemCidade": pack.get("margemCidade")}
     if tab == "balancete":
         return {
             "balancete": pack.get("balancete"),
@@ -1118,7 +1207,7 @@ def _slice(tab: str, pack: dict) -> dict:
             margem_estimada = True
         dre_view = pack.get("dre") if isinstance(pack.get("dre"), dict) else {}
         marg_mo, luc_op = _marg_mo_from_dre(dre_view, receita or vendas)
-        return {
+        base = {
             "receitaBruta": receita or vendas,
             "totalCompras": compras,
             "margemBruta": (vendas - compras) / vendas if vendas else None,
@@ -1140,6 +1229,9 @@ def _slice(tab: str, pack: dict) -> dict:
             if isinstance(pack.get("balancete"), dict)
             else None,
         }
+        if _is_schumacher_pack(pack):
+            base["indicadoresSchumacher"] = compute_indicadores_schumacher(pack)
+        return base
     return pack
 
 
@@ -1208,6 +1300,20 @@ def tab_payload(
     require_company(company_id, user, db)
     if tab not in TAB_KEYS:
         raise HTTPException(400, "Aba inválida")
+    if tab == "margens-cidade":
+        matriz_months = _query_fiscal_months(db, company_id, "matriz")
+        mc = _find_margem_cidade_pack(matriz_months)
+        empty = mc is None
+        return {
+            "companyId": company_id,
+            "competencia": competencia,
+            "unidade": "matriz",
+            "tab": tab,
+            "empty": empty,
+            "data": {"margemCidade": mc},
+            "trimestre": build_trimestre_totais(competencia, matriz_months),
+            "periodKind": parse_period_key(competencia)[0],
+        }
     raw_months = _query_fiscal_months(db, company_id, unidade)
     months = _virtual_months_by_competencia(raw_months) if _is_todas(unidade) else raw_months
     kind, period_key = parse_period_key(competencia)
@@ -1223,7 +1329,7 @@ def tab_payload(
         label = f"{q}º Trimestre {year}"
         pack = aggregate_fiscal_packs(packs, label)
         empty = not presentes
-        if tab == "vendas-produto":
+        if tab in ("vendas-produto", "margens-mes"):
             empty = not presentes or _is_empty(tab, pack, None)
     elif _is_todas(unidade):
         same = [m for m in raw_months if m.competencia == competencia]
@@ -1270,6 +1376,29 @@ def tab_payload(
         if comps:
             data["periodoLabel"] = dre_period_label(comps)
             empty = False
+    if tab == "margens-mes":
+        year = year_from_period(competencia)
+        matriz_months = [m for m in months if getattr(m, "unidade", "matriz") == "matriz"] or list(months)
+        por_mes = build_margem_por_mes(matriz_months, year)
+        data["porMes"] = por_mes
+        comps = [m["competencia"] for m in por_mes]
+        if comps:
+            data["periodoLabel"] = dre_period_label(comps)
+            empty = False
+
+        def _mm_field(m, field: str):
+            mm = (m.pack or {}).get("margemMes") or {}
+            res = mm.get("resumo") if isinstance(mm, dict) else None
+            if not isinstance(res, dict) or res.get(field) is None:
+                return None
+            return float(res.get(field) or 0)
+
+        data["serie"] = {
+            "labels": [_month_label(m.competencia) for m in matriz_months],
+            "competencias": [m.competencia for m in matriz_months],
+            "total": [_mm_field(m, "total") for m in matriz_months],
+            "lucroBruto": [_mm_field(m, "lucroBruto") for m in matriz_months],
+        }
     if tab in ("visao-geral", "recebimentos", "impostos", "indicadores"):
         labels = [_month_label(m.competencia) for m in months]
         competencias = [m.competencia for m in months]
@@ -1337,6 +1466,24 @@ def tab_payload(
             data["serie"]["debitosIcms"] = [_icms_serie(m, "debitos") for m in months]
             data["serie"]["creditosIcms"] = [_icms_serie(m, "creditos") for m in months]
             data["serie"]["aRecolherIcms"] = [_icms_serie(m, "aRecolher") for m in months]
+    if tab == "indicadores" and company_id == "schumacher":
+        year = year_from_period(competencia)
+        matriz_months = [m for m in months if getattr(m, "unidade", "matriz") == "matriz"] or list(months)
+        por_mes_ind = build_indicadores_schumacher_por_mes(matriz_months, year)
+        data["porMes"] = por_mes_ind
+        comps = [m["competencia"] for m in por_mes_ind]
+        if comps:
+            data["periodoLabel"] = dre_period_label(comps)
+        if kind == "trimestre" and period_key and presentes:
+            tri_label = (pack or {}).get("competenciaLabel") or competencia
+            month_packs = [getattr(by_comp[c], "pack", None) or {} for c in presentes if c in by_comp]
+            data["indicadoresSchumacher"] = aggregate_indicadores_schumacher(month_packs, tri_label)
+        elif not data.get("indicadoresSchumacher"):
+            data["indicadoresSchumacher"] = compute_indicadores_schumacher(pack or {})
+        if indicadores_tem_valor(data.get("indicadoresSchumacher") or {}):
+            empty = False
+        elif por_mes_ind:
+            empty = False
     if tab == "vendas-produto":
         def _vp_field(m, field: str):
             vp = (m.pack or {}).get("vendaProduto") or {}

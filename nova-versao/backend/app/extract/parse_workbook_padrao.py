@@ -626,6 +626,8 @@ def expand_workbook_parts(extracted: dict) -> list[dict]:
         "impostos_mensal",
         "livro_apuracao",
         "venda_produto",
+        "margem_mes",
+        "margem_cidade",
     ):
         return [extracted]
     base = {k: v for k, v in extracted.items() if k not in ("parts", "pack_patch")}
@@ -644,6 +646,8 @@ def expand_workbook_parts(extracted: dict) -> list[dict]:
             elif tipo == "venda_produto":
                 key = f"{part_tipo}:{part.get('competencia') or ''}:{part.get('unidade') or ''}"
             elif tipo == "livro_apuracao":
+                key = f"{part_tipo}:{part.get('competencia') or ''}"
+            elif tipo in ("margem_mes", "margem_cidade"):
                 key = f"{part_tipo}:{part.get('competencia') or ''}"
             else:
                 key = part_tipo
