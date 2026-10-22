@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.routers import auth, companies, imports, users
+from app.routers import auth, bank_statements, companies, imports, users
 
 settings = get_settings()
 app = FastAPI(title="Dashboards Nova Versão", version="0.1.0")
@@ -32,6 +32,7 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
+app.include_router(bank_statements.router)
 app.include_router(companies.router)
 app.include_router(imports.router)
 app.include_router(users.router)

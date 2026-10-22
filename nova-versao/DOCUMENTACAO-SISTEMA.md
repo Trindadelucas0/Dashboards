@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.9.12 — Menu Indicadores Schumacher em seção própria |
-| Última atualização | 07/10/2026 (sidebar Schumacher: Indicadores fora de Financeiro) |
+| Versão do sistema | 2.10.0 — Conciliação bancária em Recebimentos/Pagamentos |
+| Última atualização | 22/10/2026 (importação bancária por banco e competência) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.10.0 | Conciliação bancária | **Recebimentos/Pagamentos** deixa de ser estimativa por NF-e e passa a importar `.xlsx` bancário por empresa, unidade, banco e competência. Administrador valida e grava/substitui; viewers autorizados consultam. Persistência própria (`BankStatementImport`/`BankTransaction`), APIs `/api/bank-statements/*`, tela `BankReconciliation`, indicadores, Classificação Êxito, busca, datas e paginação. Só A:G é armazenado; Situação/Verificação/Observação são ignoradas. |
 | 2.9.12 | Menu Indicadores Schumacher | Só na **Indústria Schumacher**, o link **Indicadores** sai da seção **Financeiro** (que fica só **Balanço Patrimonial** + **DRE**) e passa para a seção lateral **Indicadores** (`navSectionsForCompany` em `frontend/lib/nav.ts`; `layout-inner.tsx`). Rota `/dashboard/schumacher/indicadores`, API e `IndicadoresSchumacher` inalterados. Cabeçalho da aba: subtítulo “Resultado, liquidez e evolução — consolidado Matriz”. Demais empresas: Indicadores continua em Financeiro. |
 | 2.9.11 | Ordem trimestres na barra | Barra `MesBar` (`page.tsx`, `quartersFromMonths`): grupos **1º–4º Trim** em ordem de calendário (ano, depois trimestre), não intercalando 2025/2026. Com meses de **dois anos** na barra, o chip do trimestre mostra o ano (**1º Trim 2025**); com um só ano, continua **1º Trim**. API e packs inalterados. |
 | 2.9.10 | Indicadores card expandível | **Indicadores Schumacher:** clique no card (KPI) expande inline a tabela **Como calculamos** (`detalhe.passos[]`, mesma do modal). Um card aberto por vez; hint “Clique no card para ver o cálculo”. Botão **!** vermelho continua abrindo modal em tela cheia (`stopPropagation`). Teclado: Enter/Espaço no card alterna expandir. CSS `.ind-card-clickable`, `.ind-card-open`, `.ind-card-expand`. API inalterada. |
@@ -109,7 +110,7 @@ O mesmo arquivo modelo serve para Baifer, Loja, Única e **empresa nova**. Só m
 | DRE | `dre`, `receitaBruta`, `cmv`, `lucBruto`, `lucLiq`, `margMb`, `margMl` | DRE, Visão Geral (RB), Indicadores |
 | BALANCETE | `balancete` | Balancete |
 | ENTRADAS | `totalCompras`, `fornecedores`, `cfopDados`, `porUf`, `nfsEntradas`, linhas NF | **Compras**, Finalidade, Visão Geral, **Recebimentos** (pagamentos) |
-| SAÍDAS | `cfopSaidasTotal`, `receitaBruta`, `clientes`, `clientesTop10`, `cfopSaidas`, `porUfSaidas`, `nfsSaidas`, `vendasPorDoc`, linhas NF | **Vendas**, Visão Geral, **Recebimentos** (recebimentos) |
+| SAÍDAS | `cfopSaidasTotal`, `receitaBruta`, `clientes`, `clientesTop10`, `cfopSaidas`, `porUfSaidas`, `nfsSaidas`, `vendasPorDoc`, linhas NF | **Vendas**, Visão Geral |
 | ICMS 5005-2012 | `memoriaCalculo`, `apuracao.icms`, `apuracao.subvencao` | **Memória**, KPI ICMS |
 | ICMS (sem 5005) | `apuracao.icms` (`fonte: planilha_padrao_icms`); sem `memoriaCalculo` | **Memória**, KPI ICMS |
 | PIS COFINS | `apuracao.pis`, `apuracao.cofins`, `memoriaPisCofins` | **Memória**, Impostos |
@@ -221,16 +222,25 @@ Endpoint autenticado: `GET /api/companies/{id}/months/{competencia}/nfe-lines?un
 
 ### 3.2.4 Recebimentos / Pagamentos (layout)
 
-Estimativa **NF-e**, não financeiro real: recebimentos = `cfopSaidasTotal` (saídas); pagamentos = `totalCompras` (entradas). Sem extrato/caixa/contas a receber.
+Central de **conciliação bancária real**, independente dos packs fiscais e do seletor global de trimestre. A tela usa seletores próprios de **Banco** e **Competência**, sincronizados em `bank` e `bankMonth` na URL.
+
+**Contrato do arquivo:** `.xlsx`, uma aba, um banco e um mês. O cabeçalho precisa informar `Banco:` e `Competência: MM/AAAA`; o parser localiza as colunas `Data`, `Débito`, `Crédito`, `Valor`, `Histórico`, `Nº Nota` e `Classificação Êxito`. Somente A:G é persistido. Colunas posteriores — inclusive Situação, Verificação do cliente e Observação — não são lidas nem expostas.
 
 | Bloco | O que mostra |
-|-------|----------------|
-| 8 KPIs do mês | Recebimentos; Pagamentos; Saldo (receb − pag); Compras/Vendas %; NFs saída; NFs entrada; Ticket médio (receb / NFs saída); Cobertura V/C (receb / pag) |
-| 4 KPIs secundários | Receb. acumulados; Pag. acumulados; Saldo acumulado (soma só dos meses com valor na série); Δ Receb. vs mês anterior (MoM %; `—` no 1º mês ou no chip de trimestre) |
-| Gráficos | Barras Rec × Pag (série anual, lacuna se sem movimento); doughnut composição do mês |
-| Tabela | Mês · Rec · Pag · Saldo · Comp./Vend. · NFs s/e; linha do mês atual destacada |
+|-------|---------------|
+| Seleção | Banco, competência mensal e data da importação ativa |
+| Indicadores | Entradas (valores positivos), saídas (módulo dos negativos), saldo assinado e quantidade de lançamentos |
+| Classificação Êxito | Quantidade e valor líquido por classificação; classificação vazia aparece como **Sem classificação** |
+| Conferência | Banco/mês reconhecidos, linhas válidas, sem classificação e arquivo ativo |
+| Lançamentos | Data, débito, crédito, valor, histórico, nota e classificação; busca, classificação, intervalo de datas e paginação de 20 linhas |
 
-Slice: `_slice("recebimentos")` devolve `saldo`, `ticketMedio`, `comprasSobreVendasPct`, `cobertura`, nfs. Série: `vendas`, `compras`, `nfsEntradas`, `nfsSaidas`, `competencias`. Sem movimento no mês → aviso + KPIs `—` (não inventa zero).
+**Validações bloqueantes:** banco ou competência ausentes, cabeçalho diferente, valor ilegível, data inválida, data fora da competência, arquivo não `.xlsx`, mais de uma aba e arquivo acima de 10 MB. Classificação vazia não bloqueia. Valores brasileiros com `R$`, milhar, vírgula decimal, sinal negativo ou parênteses são aceitos.
+
+**Persistência e substituição:** `BankStatementImport` guarda metadados/totais e `BankTransaction` guarda A:G. A chave ativa é empresa + unidade específica + banco normalizado + competência. Arquivo idêntico ativo é duplicado e não grava. Arquivo diferente no mesmo slot exige confirmação; a operação marca o anterior como `replaced`, limpa sua chave ativa e grava a nova versão e suas linhas na mesma transação. O histórico anterior não entra nas consultas.
+
+**Permissões:** `preview` e `commit` dependem de administrador. `options`, `summary` e `transactions` exigem acesso à empresa e à aba `recebimentos`; a API também valida se a unidade pertence à empresa. A opção consolidada `todas` não pode ser usada para importar ou consultar conciliação.
+
+Endpoints: `POST /api/bank-statements/preview`, `POST /api/bank-statements/commit`, `GET /api/companies/{id}/bank-statements/options`, `/summary` e `/transactions`.
 
 ## 3.3 Empresas cadastradas
 
@@ -265,6 +275,8 @@ ICMS ST, IRPJ e CSLL **não** são gravados. Na tela aparecem como **Em apuraç�
 O layout novo (cards do livro na Memória, tabela por tributo em Impostos) só renderiza se `data.livroApuracao` existe. Na Memória: `TaxDetailCard` + Resumo Consolidado no topo; o CFOP fica em **Ver livro técnico**. Única, Baifer, JPG, Egaplast e Loja das Máquinas seguem Impostos com os 4 KPIs (Vendas do mês, total, % ) e `MemoriaLivro`.
 
 Carga local: `python scripts/seed.py`, `python scripts/import_schumacher_livro.py` (merge no pack da Matriz), `python scripts/import_schumacher_venda_produto.py` (merge `vendaProduto`; cria os slots da Filial), `python scripts/import_schumacher_margem.py` (margens mês + cidade; atualiza abas), `python scripts/import_schumacher_dre.py` e `python scripts/import_schumacher_balanco.py` (merge na Matriz; não apaga livro nem venda por produto).
+
+**Produção (VPS):** `git pull` + build do frontend **não** grava margens no Postgres. Depois do deploy, rodar no container da API: `python scripts/seed.py` (abas novas no usuário Schumacher) e `python scripts/import_schumacher_margem.py` (fixtures em `fixtures/schumacher-padrao/`). Script completo: [`scripts/vps-root-deploy-nova.txt`](../../scripts/vps-root-deploy-nova.txt) (PM2 `exito-dashboard`, caminho `/root/PROJETOS/exito/Dashboards`).
 
 ### Indústria Schumacher — margens por mês e por cidade
 
@@ -436,6 +448,9 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | Menu lateral (Schumacher: seção Indicadores) | `frontend/lib/nav.ts` (`navSectionsForCompany`), `frontend/app/dashboard/[empresa]/layout-inner.tsx` |
 | Pipeline | `backend/app/extract/pipeline.py` |
 | Preview/commit | `backend/app/routers/imports.py` (`expand_workbook_parts` também expande `dre_vertical`). Cada item gravado guarda `source_file_hash` e `pack_patch`; cada `NfeLine` nova aponta `import_id`. **Substituir mês** marca os `ImportRecord` `ok` daquele slot como `replaced` antes de gravar o novo. |
+| Conciliação — parser e armazenamento | `backend/app/extract/parse_bank_statement.py`; modelos `BankStatementImport` e `BankTransaction` em `backend/app/models.py` |
+| Conciliação — API | `backend/app/routers/bank_statements.py` (preview/commit de admin; options/summary/transactions com empresa, aba e unidade validadas no servidor) |
+| Conciliação — UI | `frontend/components/BankReconciliation.tsx`; montagem dedicada em `frontend/app/dashboard/[empresa]/[aba]/page.tsx`; estilos `.bank-*` em `frontend/app/dashboard.css` |
 | Lista e exclusão | `GET /api/imports?companyId=` e `DELETE /api/imports/{id}` em `backend/app/routers/imports.py` (admin + empresa do registro). Reconstrução do mês: `backend/app/imports_revert.py` (`rebuild_pack`). |
 | Fatia por aba UI | `backend/app/routers/companies.py` → `_slice`, `_is_empty`, `build_dre_por_mes`, `build_balancete_por_mes` |
 | CFOP / Finalidade / Serviços | `backend/app/extract/cfop.py` (`CFOP_INFO`, `aggregate_macro`, `aggregate_servicos`) |
@@ -446,14 +461,14 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | UI venda por produto | `frontend/components/VendasProduto.tsx`. Parser `backend/app/extract/parse_venda_produto.py`. Carga `backend/scripts/import_schumacher_venda_produto.py`. Fatia `_slice` / `aggregate_fiscal_packs` / `TAB_KEYS` em `backend/app/routers/companies.py` |
 | UI DRE | `frontend/components/DreStatement.tsx` (Única e demais). Schumacher: `frontend/components/DreSchumacher.tsx` |
 | UI Balancete | `frontend/components/BalanceteTree.tsx` (Única e demais). Schumacher: `frontend/components/BalancoSchumacher.tsx` (rótulo Balanço Patrimonial) |
-| UI abas (Impostos / Indicadores / Recebimentos) | `frontend/app/dashboard/[empresa]/[aba]/page.tsx` (`TrimestreBlock` só se `viewingTrimestre`; Schumacher não monta) |
+| UI abas (Impostos / Indicadores) | `frontend/app/dashboard/[empresa]/[aba]/page.tsx` (`TrimestreBlock` só se `viewingTrimestre`; Schumacher não monta) |
 | Estilos dashboard | `frontend/app/dashboard.css` |
 | UI import | `frontend/components/ImportTab.tsx` (upload, lista **Planilhas importadas**, confirmação de exclusão dentro do card clicado) |
 | Catálogo de empresas | `backend/app/companies.py`, `backend/scripts/seed.py` |
 | JPG unidades / consolidado | `company_detail` + `tab_payload` (`unidade=todas`) em `backend/app/routers/companies.py`; `aggregate_fiscal_packs` soma `irpj`/`csll`; dropdown em `frontend/app/dashboard/[empresa]/layout-inner.tsx` |
 | LANNIC Simples | `Unit lannic` em `backend/app/companies.py`; pack `scripts/seed_jpg_lannic.py` (merge, não apaga NFs); `preserve_simples_receita` em `aggregate.py`; UI Impostos `page.tsx` + `MemoriaLivro.tsx` |
 | Split movimento acumulado | `backend/scripts/split_movimento_mensal.py` |
-| Testes golden | `backend/tests/test_import_revert.py`, `backend/tests/test_padrao_qualquer_empresa.py` (sintético, sem empresa fixa), `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_loja_padrao_082026.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py`, `backend/tests/test_livro_apuracao_schumacher.py`, `backend/tests/test_venda_produto_schumacher.py`, `backend/tests/test_dre_schumacher.py`, `backend/tests/test_balanco_schumacher.py`, `backend/tests/test_indicadores_schumacher.py` |
+| Testes golden | `backend/tests/test_bank_statements.py` (parser sintético, colunas ignoradas, datas, dinheiro, duplicidade e substituição), `backend/tests/test_import_revert.py`, `backend/tests/test_padrao_qualquer_empresa.py` (sintético, sem empresa fixa), `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_loja_padrao_082026.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py`, `backend/tests/test_livro_apuracao_schumacher.py`, `backend/tests/test_venda_produto_schumacher.py`, `backend/tests/test_dre_schumacher.py`, `backend/tests/test_balanco_schumacher.py`, `backend/tests/test_indicadores_schumacher.py` |
 | Fixtures | `fixtures/baifer-padrao/`, `fixtures/unica-padrao/`, `fixtures/egaplast-padrao/`, `fixtures/loja-maquinas-padrao/`, `fixtures/jpg-padrao/`, `fixtures/schumacher-padrao/` |
 
 ## 5. Regras de negócio
@@ -485,6 +500,8 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 25. Venda por produto (Schumacher): `tipo` `venda_produto` depois do livro e antes da planilha padrão. Exige abas `matriz 01` e `filial 01`. Pack `vendaProduto` no mesmo `FiscalMonth` da Matriz (ao lado do livro) e em slots novos da Filial. Margem = razão; a tela multiplica por 100. PMP do mês = linha TOTAL; PMP de Todas/trimestre = ponderado pelo total. Produtos iguais somam pelo código. Aba só no `company.tabs` da Schumacher (`vendas-produto`); `ALL_TABS` das outras empresas não inclui essa aba. Sem a chave, alerta “não inventamos valor”. Na lista, Total / Lucro líq. / Marg. líq. usam `td-val pos` (verde) se > 0 e `td-val neg` (vermelho) se < 0.
 26. DRE / Balanço / Indicadores Schumacher: `tipo` `dre_schumacher` / `balanco_schumacher` depois de venda por produto e antes da planilha padrão. Só aba Comparativo; 8 parts na Matriz. DRE não passa por `normalize_dre_deducoes` (`kind=schumacher_comparativo`). Acumulado Jan–Ago da DRE é o da planilha. Balanço não tem códigos nem TOTAL somando meses; `build_balancete_por_mes` aceita `kind=schumacher_bp` com `linhas`. Indicadores: `backend/app/indicadores_schumacher.py` + `_slice`/`tab_payload` em `companies.py`; tela `IndicadoresSchumacher.tsx`. Denominador zero → N/D com aviso no modal. Diferença Ativo−Passivo de janeiro = lucro líquido da DRE do mês; em agosto a diferença de posição = lucro acumulado Jan–Ago. Seletor de unidade oculto em DRE, Balanço e Indicadores. Reimportar faz merge (não apaga livro nem `vendaProduto`).
+27. Conciliação bancária não usa nem altera `FiscalMonth`, `ImportRecord`, `NfeLine`, Compras ou Vendas. A origem é exclusivamente o `.xlsx` bancário A:G ligado à empresa/unidade abertas.
+28. Somente administrador cria prévia e confirma importação/substituição. Viewer com acesso à empresa e à aba consulta; outra empresa ou aba não autorizada recebe 403. Toda consulta fica restrita à versão `active` do slot empresa + unidade + banco + competência.
 
 ## 6. Pendências de dados (Única)
 
@@ -515,9 +532,9 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 **Única — meses 01 a 07/2026 (workbook):** login `unica` → Importar → selecionar os arquivos `Planilha Padrão DASBORADS - UNICA MM2026.xlsx` (pode subir vários meses de uma vez) → conferir no preview: `entradas` com Δ 0,00, `saidas` com aviso de Total Geral, `dre`/`balancete` como `vazia` fora de janeiro (use a Análise Vertical para DRE real), `IRPJ`/`CSLL` como `ignorada` → **Gravar** (sem "substituir mês", para permitir merge) → conferir **Compras**, **Vendas**, **Impostos** e **Memória** em cada mês.
 
-**Única — julho 2026 (reimport):** subir **os dois** arquivos de Downloads (fiscais ~61 KB + movimento parcial ~370 KB). Preview do parcial deve listar `entradas`/`saidas` ok + impostos; aviso de workbook parcial sem DRE/BAL. Depois de gravar: **Recebimentos** com ~2,44M / 2,12M. **Impostos/Memória:** A recolher PIS/COFINS é a coluna do RESUMO; o resultado do mês (débito − crédito) aparece como **Resultado do mês** (3.699,88 / 17.041,86). **Finalidade** mostra o bloco Serviços Tomados (CFOPs 1-933 / 2-933 / 2-353 etc.).
+**Única — julho 2026 (reimport):** subir **os dois** arquivos de Downloads (fiscais ~61 KB + movimento parcial ~370 KB). Preview do parcial deve listar `entradas`/`saidas` ok + impostos; aviso de workbook parcial sem DRE/BAL. Depois de gravar, conferir **Compras** e **Vendas**. **Impostos/Memória:** A recolher PIS/COFINS é a coluna do RESUMO; o resultado do mês (débito − crédito) aparece como **Resultado do mês** (3.699,88 / 17.041,86). **Finalidade** mostra o bloco Serviços Tomados (CFOPs 1-933 / 2-933 / 2-353 etc.).
 
-**Recebimentos:** estimativa NF-e (não é caixa). Aba completa: 8 KPIs do mês + acumulado/MoM + barras Rec×Pag + doughnut + tabela mensal. Mês sem movimento → aviso e KPIs `—`; série deixa lacuna (null) nos meses sem `hasMovimentacao`.
+**Recebimentos/Pagamentos — conciliação bancária:** selecione uma unidade específica e abra a aba. Administrador: **Importar planilha** → escolher `.xlsx` → **Validar e gerar prévia** → conferir banco, competência, totais e linhas → **Gravar importação**. Se o banco/mês já existir, marque a confirmação e use **Substituir banco/mês**. Todos os usuários autorizados podem escolher banco/mês, clicar em uma Classificação Êxito para filtrar, buscar histórico/nota, filtrar datas e paginar. O seletor global de trimestre não controla esta aba.
 
 **Finalidade — Serviços Tomados:** após os KPIs/gráficos gerais, painel com total de serviços, ISSQN, transporte e comunicação; empty state se não houver CFOP de serviço. Macro doughnut inclui fatia **Serviços** (separada de Outros).
 

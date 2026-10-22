@@ -1,0 +1,41 @@
+# Deploy nova-versao na VPS (root, caminho real em 179.199.149.12)
+#   sed -i 's/\r$//' vps-root-deploy-nova.txt && bash vps-root-deploy-nova.txt
+
+set -euo pipefail
+ROOT=/root/PROJETOS/exito/Dashboards
+cd "$ROOT"
+
+git fetch origin main
+git reset --hard origin/main
+git pull origin main
+
+pm2 stop exito-dashboard || true
+
+cd nova-versao/frontend
+rm -rf node_modules .next
+npm ci
+npm run build
+
+pm2 restart exito-dashboard --update-env
+pm2 save
+
+docker restart dashboards-nova-api
+
+echo "== dados Schumacher (abas + margens no Postgres) =="
+docker exec -w /app/backend dashboards-nova-api python scripts/seed.py
+docker exec -w /app/backend dashboards-nova-api python scripts/import_schumacher_margem.py
+
+echo "esperando API..."
+for i in $(seq 1 20); do
+  if curl -sf http://127.0.0.1:8001/api/health >/dev/null 2>&1; then
+    break
+  fi
+  sleep 3
+done
+
+echo "== health =="
+curl -s http://127.0.0.1:8001/api/health
+echo
+curl -s -o /dev/null -w "web:%{http_code}\n" http://127.0.0.1:9527/
+git log -1 --oneline
+echo pronto

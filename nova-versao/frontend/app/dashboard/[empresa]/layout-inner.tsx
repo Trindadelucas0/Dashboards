@@ -18,7 +18,7 @@ const TITLES: Record<string, [string, string]> = {
   "vendas-produto": ["Vendas por produto", "Margem por item — mês selecionado"],
   impostos: ["Impostos", "Apuração"],
     memoria: ["Memória de Cálculo", "Livro da planilha padrão — ICMS 5005, PIS/COFINS e demais tributos"],
-  recebimentos: ["Recebimentos/Pagamentos", "Estimativa NF-e — KPIs, gráficos e série"],
+  recebimentos: ["Recebimentos/Pagamentos", "Conciliação bancária por banco e competência"],
   balancete: ["Balancete", "Contábil"],
   dre: ["DRE", "Demonstração do resultado"],
   indicadores: ["Indicadores", "Margens e giro"],
@@ -60,7 +60,8 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
         const qUn = search.get("unidade") || "";
         const units = (c.units || []).map((u) => (typeof u === "string" ? u : u.key));
         const months = c.months || [];
-        const un = qUn && units.includes(qUn) ? qUn : units[0] || "matriz";
+        const allowedUnits = aba === "recebimentos" ? units.filter((unit) => unit !== "todas") : units;
+        const un = qUn && allowedUnits.includes(qUn) ? qUn : allowedUnits[0] || "matriz";
         const monthsUn =
           un === "todas" ? months : months.filter((m) => m.unidade === un);
         const last = monthsUn.at(-1) || months.at(-1);
@@ -85,6 +86,16 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
       .catch(() => setCompany(null));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- reidrata só na troca de empresa
   }, [empresa]);
+
+  useEffect(() => {
+    if (aba !== "recebimentos" || unidade !== "todas" || !company) return;
+    const next = company.units
+      .map((unit) => (typeof unit === "string" ? unit : unit.key))
+      .find((unit) => unit !== "todas") || "matriz";
+    setUnidadeState(next);
+    pushQuery(month, next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- corrige o seletor ao entrar na conciliação
+  }, [aba, company, unidade]);
 
   useEffect(() => {
     if (!authReady || !company) return;
@@ -126,7 +137,7 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
       aba === "indicadores" ||
       aba === "margens-mes" ||
       aba === "margens-cidade");
-  const hidePeriodSelect = aba === "margens-cidade";
+  const hidePeriodSelect = aba === "margens-cidade" || aba === "recebimentos";
   const [title, sub] = (empresa === "jpg"
     ? { ...TITLES, memoria: ["Memória de Cálculo", "Livro da apuração importada — ICMS, IPI e demais tributos"] as [string, string] }
     : empresa === "schumacher"
@@ -160,6 +171,7 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
 
   const ctx: DashCtx = {
     company,
+    isAdmin,
     month,
     unidade,
     setMonth: (m) => {
@@ -228,13 +240,13 @@ export default function DashboardLayoutInner({ children }: { children: React.Rea
               <i className="fas fa-bars" />
             </button>
             <div className="header-title">
-              {title} <span>{sub}{month ? ` – ${/^q[1-4]-\d{4}$/i.test(month) ? `${month.slice(1, 2)}º Trimestre ${month.slice(3)}` : month}` : ""}</span>
+              {title} <span>{sub}{aba !== "recebimentos" && month ? ` – ${/^q[1-4]-\d{4}$/i.test(month) ? `${month.slice(1, 2)}º Trimestre ${month.slice(3)}` : month}` : ""}</span>
             </div>
             <div className="header-actions">
               <Link href="/seletor" className="btn-export">Voltar</Link>
               {company && company.units.length > 1 && !consolidadoSchumacher ? (
                 <select className="period-sel" value={unidade} onChange={(e) => ctx.setUnidade(e.target.value)} aria-label="Unidade">
-                  {company.units.map((u) => {
+                  {company.units.filter((u) => aba !== "recebimentos" || (typeof u === "string" ? u : u.key) !== "todas").map((u) => {
                     const key = typeof u === "string" ? u : u.key;
                     const label = typeof u === "string" ? u : u.label;
                     return <option key={key} value={key}>{label}</option>;

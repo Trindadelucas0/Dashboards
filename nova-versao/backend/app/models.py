@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 
 from sqlalchemy import (
     Boolean,
+    Date,
     DateTime,
     ForeignKey,
     Integer,
@@ -135,3 +136,53 @@ class NfeLine(Base):
     doc: Mapped[str] = mapped_column(String(20), default="")
     uf: Mapped[str] = mapped_column(String(4), default="")
     import_id: Mapped[int | None] = mapped_column(ForeignKey("imports.id"), nullable=True)
+
+
+class BankStatementImport(Base):
+    __tablename__ = "bank_statement_imports"
+    __table_args__ = (
+        UniqueConstraint("active_key", name="uq_bank_statement_active_key"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    company_id: Mapped[str] = mapped_column(ForeignKey("companies.id"), nullable=False, index=True)
+    unidade: Mapped[str] = mapped_column(String(40), default="matriz", nullable=False)
+    competencia: Mapped[str] = mapped_column(String(7), nullable=False, index=True)
+    bank_key: Mapped[str] = mapped_column(String(180), nullable=False)
+    bank_name: Mapped[str] = mapped_column(String(200), nullable=False)
+    active_key: Mapped[str | None] = mapped_column(String(300), nullable=True)
+    file_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    file_name: Mapped[str] = mapped_column(String(255), default="")
+    status: Mapped[str] = mapped_column(String(20), default="active", nullable=False, index=True)
+    row_count: Mapped[int] = mapped_column(Integer, default=0)
+    unclassified_count: Mapped[int] = mapped_column(Integer, default=0)
+    total_in: Mapped[float] = mapped_column(Numeric(18, 2), default=0)
+    total_out: Mapped[float] = mapped_column(Numeric(18, 2), default=0)
+    balance: Mapped[float] = mapped_column(Numeric(18, 2), default=0)
+    created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    transactions: Mapped[list["BankTransaction"]] = relationship(
+        back_populates="statement_import",
+        cascade="all, delete-orphan",
+    )
+
+
+class BankTransaction(Base):
+    __tablename__ = "bank_transactions"
+    __table_args__ = (
+        UniqueConstraint("import_id", "row_number", name="uq_bank_transaction_import_row"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    import_id: Mapped[int] = mapped_column(ForeignKey("bank_statement_imports.id"), nullable=False, index=True)
+    row_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    transaction_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    debit_account: Mapped[str] = mapped_column(String(80), default="")
+    credit_account: Mapped[str] = mapped_column(String(80), default="")
+    amount: Mapped[float] = mapped_column(Numeric(18, 2), nullable=False)
+    history: Mapped[str] = mapped_column(Text, default="")
+    note_number: Mapped[str] = mapped_column(String(80), default="")
+    exito_classification: Mapped[str] = mapped_column(String(160), default="", index=True)
+
+    statement_import: Mapped[BankStatementImport] = relationship(back_populates="transactions")

@@ -16,6 +16,7 @@ export type CompanyDetail = {
 
 export type DashCtx = {
   company: CompanyDetail | null;
+  isAdmin: boolean;
   month: string;
   unidade: string;
   setMonth: (m: string) => void;

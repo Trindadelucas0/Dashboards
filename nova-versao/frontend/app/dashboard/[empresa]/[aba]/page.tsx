@@ -30,6 +30,7 @@ import VendasProduto from "@/components/VendasProduto";
 import BalanceteTree from "@/components/BalanceteTree";
 import IndicadoresSchumacher from "@/components/IndicadoresSchumacher";
 import BalancoSchumacher from "@/components/BalancoSchumacher";
+import BankReconciliation from "@/components/BankReconciliation";
 import { exportVendasExcel, exportVendasPdf, type VendasExportInput } from "@/lib/vendasExport";
 import { exportFinalidadeExcel, exportFinalidadePdf } from "@/lib/finalidadeExport";
 import { exportCpfCnpjExcel } from "@/lib/cpfCnpjExport";
@@ -332,9 +333,6 @@ function emptyMsg(aba: string, companyId?: string) {
     }
     return "Importe a planilha padrão (ou APURAÇÃO 5005 / PIS/COFINS) para ver a memória linha a linha.";
   }
-  if (aba === "recebimentos") {
-    return "Sem movimento neste mês. Importe ENTRADAS/SAÍDAS (workbook parcial com movimento ou planilha EXITO).";
-  }
   if (aba === "vendas-produto") {
     return "Venda por produto só aparece depois de importar a planilha de margem. Não inventamos valor.";
   }
@@ -364,7 +362,7 @@ export default function AbaPage() {
   const aba = params.aba;
 
   useEffect(() => {
-    if (!month || aba === "importar") {
+    if (!month || aba === "importar" || aba === "recebimentos") {
       setLoading(false);
       return;
     }
@@ -405,6 +403,7 @@ export default function AbaPage() {
   const drill = useMemo(() => cfopDadosAll.find((c) => c.cfop === drillCfop) || null, [cfopDadosAll, drillCfop]);
 
   if (aba === "importar") return <ImportTab />;
+  if (aba === "recebimentos") return <BankReconciliation />;
 
   const titles: Record<string, [string, string]> = {
     "visao-geral": ["Visão Geral", "Resumo executivo da competência"],
@@ -420,7 +419,7 @@ export default function AbaPage() {
       : (company?.id || params.empresa) === "schumacher"
         ? ["Memória de Cálculo", "Livro de apuração — cards no topo; o detalhe por CFOP abre em Ver livro técnico"]
         : ["Memória de Cálculo", "Livro da planilha padrão — ICMS 5005, PIS/COFINS e demais tributos"],
-    recebimentos: ["Recebimentos/Pagamentos", "Estimativa pelo movimento fiscal"],
+    recebimentos: ["Recebimentos/Pagamentos", "Conciliação bancária por banco e competência"],
     balancete: (company?.id || params.empresa) === "schumacher"
       ? ["Balanço Patrimonial", "Posição ao fim do mês"]
       : ["Balancete", "Contábil"],
@@ -456,7 +455,6 @@ export default function AbaPage() {
   const cfopDados = cfopDadosAll;
   const showBody = !loading && !error && !(payload?.empty);
   const showImpostosLayout = !loading && !error && (aba === "impostos");
-  const showRecebimentos = !loading && !error && aba === "recebimentos";
 
   function vendasExportInput(): VendasExportInput {
     return {
@@ -1460,266 +1458,6 @@ export default function AbaPage() {
 
       {showBody && aba === "memoria" && !d.livroApuracao && (
         <MemoriaLivro d={d} ap={ap} month={month} monthLabel={periodLabel} />
-      )}
-
-      {showRecebimentos && (
-        (() => {
-          const hasRecMov = Boolean(d.hasMovimentacao) && (totalVend > 0 || totalComp > 0);
-          const saldo = d.saldo != null ? Number(d.saldo) : totalVend - totalComp;
-          const pctCv = d.comprasSobreVendasPct != null ? Number(d.comprasSobreVendasPct) : null;
-          const ticket = d.ticketMedio != null ? Number(d.ticketMedio) : null;
-          const cobertura = d.cobertura != null ? Number(d.cobertura) : null;
-          const nfsS = Number(d.nfsSaidas || 0);
-          const nfsE = Number(d.nfsEntradas || 0);
-          const vendasSerie = (serie.vendas || []) as (number | null)[];
-          const comprasSerie = (serie.compras || []) as (number | null)[];
-          const nfsSSerie = (serie.nfsSaidas || []) as (number | null)[];
-          const nfsESerie = (serie.nfsEntradas || []) as (number | null)[];
-          const labels = (serie.labels?.length ? serie.labels : [month || "—"]) as string[];
-          const comps = (serie.competencias || []) as string[];
-          const sumFilled = (arr: (number | null)[]) =>
-            arr.reduce<number>((s, v) => (v == null ? s : s + Number(v)), 0);
-          const acumRec = sumFilled(vendasSerie);
-          const acumPag = sumFilled(comprasSerie);
-          const idx = comps.indexOf(month);
-          let momPct: number | null = null;
-          if (!viewingTrimestre && idx > 0) {
-            const prev = vendasSerie[idx - 1];
-            const cur = vendasSerie[idx];
-            if (prev != null && prev > 0 && cur != null) {
-              momPct = Math.round((10000 * (cur - prev)) / prev) / 100;
-            }
-          }
-          const dashOr = (ok: boolean, value: string) => (ok ? value : "—");
-          const fmtPctNum = (n: number | null | undefined) =>
-            n == null ? "—" : `${n.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}%`;
-          const doughnutHas = hasRecMov && (totalVend > 0 || totalComp > 0);
-          return (
-            <>
-              {!hasRecMov ? (
-                <div className="alert-box warn">
-                  Sem movimento neste mês. Importe o workbook com ENTRADAS/SAÍDAS (aceita parcial sem DRE/BAL) ou as planilhas EXITO.
-                </div>
-              ) : null}
-              <div className="alert-box">
-                <i className="fas fa-info-circle" style={{ marginRight: 8 }} />
-                Estimativa pelo faturamento e entradas NF-e — não substitui o financeiro (caixa/contas a receber).
-              </div>
-              <div className="kpi-grid kpi-grid-4">
-                <Kpi
-                  color="green"
-                  icon="arrow-down"
-                  value={dashOr(hasRecMov, brl(totalVend))}
-                  label="Recebimentos estimados"
-                  sub="Faturamento (saídas NF-e)"
-                />
-                <Kpi
-                  color="red"
-                  icon="arrow-up"
-                  value={dashOr(hasRecMov, brl(totalComp))}
-                  label="Pagamentos estimados"
-                  sub="Compras (entradas NF-e)"
-                />
-                <Kpi
-                  color={hasRecMov && saldo < 0 ? "orange" : "blue"}
-                  icon="wallet"
-                  value={dashOr(hasRecMov, brl(saldo))}
-                  label="Saldo estimado"
-                  sub="Recebimentos − pagamentos"
-                  neg={hasRecMov && saldo < 0}
-                />
-                <Kpi
-                  color="cyan"
-                  icon="percent"
-                  value={dashOr(hasRecMov, fmtPctNum(pctCv))}
-                  label="Compras / Vendas"
-                  sub="Pressão de caixa estimada"
-                />
-              </div>
-              <div className="kpi-grid kpi-grid-4">
-                <Kpi
-                  color="green"
-                  icon="file-invoice"
-                  value={dashOr(hasRecMov && nfsS > 0, String(nfsS))}
-                  label="NFs de saída"
-                  sub="Volume de recebimentos"
-                />
-                <Kpi
-                  color="orange"
-                  icon="file-import"
-                  value={dashOr(hasRecMov && nfsE > 0, String(nfsE))}
-                  label="NFs de entrada"
-                  sub="Volume de pagamentos"
-                />
-                <Kpi
-                  color="purple"
-                  icon="receipt"
-                  value={dashOr(hasRecMov && ticket != null, ticket != null ? brl(ticket) : "—")}
-                  label="Ticket médio"
-                  sub="Recebimentos / NFs saída"
-                />
-                <Kpi
-                  color="cyan"
-                  icon="scale-balanced"
-                  value={dashOr(
-                    hasRecMov && cobertura != null,
-                    cobertura != null ? `${cobertura.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}×` : "—",
-                  )}
-                  label="Cobertura (V/C)"
-                  sub="Vendas ÷ compras do mês"
-                />
-              </div>
-              <div className="kpi-grid kpi-grid-4">
-                <Kpi
-                  color="green"
-                  icon="chart-line"
-                  value={acumRec ? brlCompact(acumRec) : "—"}
-                  label="Receb. acumulados"
-                  sub="Soma dos meses com movimento"
-                />
-                <Kpi
-                  color="red"
-                  icon="chart-line"
-                  value={acumPag ? brlCompact(acumPag) : "—"}
-                  label="Pag. acumulados"
-                  sub="Soma dos meses com movimento"
-                />
-                <Kpi
-                  color={acumRec - acumPag < 0 ? "orange" : "blue"}
-                  icon="scale-balanced"
-                  value={acumRec || acumPag ? brlCompact(acumRec - acumPag) : "—"}
-                  label="Saldo acumulado"
-                  sub="Acumulado do ano na série"
-                  neg={acumRec - acumPag < 0}
-                />
-                <Kpi
-                  color={momPct != null && momPct < 0 ? "red" : "green"}
-                  icon="arrow-trend-up"
-                  value={fmtPctNum(momPct)}
-                  label="Δ Receb. vs mês anterior"
-                  sub={idx > 0 && labels[idx - 1] ? `vs ${labels[idx - 1]}` : "Sem mês anterior"}
-                  neg={momPct != null && momPct < 0}
-                />
-              </div>
-              <div className="charts-row cr-2col">
-                <div className="chart-card">
-                  <div className="chart-ttl">Recebimentos × Pagamentos (série mensal)</div>
-                  <div className="chart-sub">Meses sem movimento aparecem como lacuna (sem zero inventado)</div>
-                  <div className="chart-wrap h260">
-                    <Bar
-                      data={{
-                        labels,
-                        datasets: [
-                          {
-                            label: "Recebimentos",
-                            data: (vendasSerie.length ? vendasSerie : [hasRecMov ? totalVend : null]).map((v: number | null) =>
-                              v == null ? null : +(Number(v) / 1000).toFixed(1),
-                            ),
-                            backgroundColor: "#22a329",
-                            borderRadius: 5,
-                          },
-                          {
-                            label: "Pagamentos",
-                            data: (comprasSerie.length ? comprasSerie : [hasRecMov ? totalComp : null]).map((v: number | null) =>
-                              v == null ? null : +(Number(v) / 1000).toFixed(1),
-                            ),
-                            backgroundColor: "#3b82f6",
-                            borderRadius: 5,
-                          },
-                        ],
-                      }}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { position: "bottom" } },
-                        scales: { y: { ticks: { callback: (v) => `R$ ${v}K` } } },
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="chart-card">
-                  <div className="chart-ttl">Composição do mês</div>
-                  <div className="chart-sub">Recebimentos vs pagamentos (R$ do mês)</div>
-                  <div className="chart-wrap h260">
-                    <Doughnut
-                      data={{
-                        labels: doughnutHas ? ["Recebimentos", "Pagamentos"] : ["Sem dados"],
-                        datasets: [
-                          {
-                            data: doughnutHas ? [totalVend, totalComp] : [1],
-                            backgroundColor: doughnutHas ? ["#22a329", "#3b82f6"] : ["#64748b"],
-                            borderWidth: 0,
-                          },
-                        ],
-                      }}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        cutout: "58%",
-                        plugins: {
-                          legend: { position: "right" },
-                          tooltip: {
-                            callbacks: {
-                              label: (c) => {
-                                if (!doughnutHas) return String(c.label || "");
-                                const val = Number(c.parsed || 0);
-                                return `${c.label}: ${brl(val)}`;
-                              },
-                            },
-                          },
-                        },
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="table-card">
-                <div className="table-head">
-                  <div className="ttl">Evolução mensal estimada</div>
-                  <div className="sub">Recebimentos e pagamentos por competência — lacuna quando não há movimento</div>
-                </div>
-                <div className="tbl-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Mês</th>
-                        <th className="r">Recebimentos</th>
-                        <th className="r">Pagamentos</th>
-                        <th className="r">Saldo</th>
-                        <th className="r">Comp./Vend.</th>
-                        <th className="r">NFs saída</th>
-                        <th className="r">NFs entrada</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {labels.map((lab, i) => {
-                        const rec = vendasSerie[i];
-                        const pag = comprasSerie[i];
-                        const filled = rec != null || pag != null;
-                        const recN = rec == null ? 0 : Number(rec);
-                        const pagN = pag == null ? 0 : Number(pag);
-                        const sal = filled ? recN - pagN : null;
-                        const ratio = filled && recN > 0 ? Math.round((10000 * pagN) / recN) / 100 : null;
-                        const isCur = comps[i] ? comps[i] === month : false;
-                        return (
-                          <tr key={`${lab}-${i}`} className={isCur ? "row-cur" : undefined}>
-                            <td className="fw7">{lab}{isCur ? " · atual" : ""}</td>
-                            <td className="r td-val">{rec == null ? "—" : brl(recN)}</td>
-                            <td className="r td-val">{pag == null ? "—" : brl(pagN)}</td>
-                            <td className={`r td-val${sal != null && sal < 0 ? " neg" : ""}`}>{sal == null ? "—" : brl(sal)}</td>
-                            <td className="r">{fmtPctNum(ratio)}</td>
-                            <td className="r">{nfsSSerie[i] == null ? "—" : nfsSSerie[i]}</td>
-                            <td className="r">{nfsESerie[i] == null ? "—" : nfsESerie[i]}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          );
-        })()
       )}
 
       {showBody && aba === "balancete" && params.empresa === "schumacher" && (
