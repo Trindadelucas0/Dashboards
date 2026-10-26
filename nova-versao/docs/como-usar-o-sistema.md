@@ -45,4 +45,13 @@ Classificação Êxito vazia não impede a gravação: o lançamento aparece com
 
 ## Outras rotinas
 
+### Consultar o Balancete por período
+
+1. Abra a empresa e acesse **Financeiro → Balancete**.
+2. Escolha um mês no seletor superior para ver somente aquela competência.
+3. Escolha um trimestre para comparar somente os meses importados daquele trimestre.
+4. Clique em **Geral**, dentro do card **Balancete de Verificação**, para ver todos os meses importados do ano consultado. Clique novamente para voltar ao período selecionado.
+
+Quando houver mais de um mês visível, a coluna TOTAL soma somente essas colunas. Se o mês ou trimestre escolhido não tiver Balancete importado, a tela informa a ausência e não mostra dados de outro período. Essa regra não altera o **Balanço Patrimonial** da Indústria Schumacher.
+
 Para importação fiscal, exclusão de arquivos, DRE, Balancete, Impostos, Memória e particularidades por empresa, consulte a seção **8. Como usar o sistema** da documentação oficial.

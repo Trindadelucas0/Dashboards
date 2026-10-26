@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { brl } from "@/lib/api";
+import { isTrimestreCompetencia, mesesDoTrimestre, trimestreLabel } from "@/lib/dreStatement";
 
 export type BalConta = {
   codigo: string;
@@ -202,19 +203,28 @@ export default function BalanceteTree({
   source?: string;
   periodoLabel?: string;
 }) {
-  const months = porMes || [];
+  const allMonths = porMes || [];
   const selected = selectedCompetencia || "";
+  const isTrim = isTrimestreCompetencia(selected);
+  const [generalFor, setGeneralFor] = useState<string | null>(null);
+  const showAll = generalFor === selected;
+  const months = useMemo(() => {
+    if (showAll) return allMonths;
+    if (isTrim) {
+      const allowed = new Set(mesesDoTrimestre(selected));
+      return allMonths.filter((m) => allowed.has(m.competencia));
+    }
+    if (/^\d{4}-\d{2}$/.test(selected)) {
+      return allMonths.filter((m) => m.competencia === selected);
+    }
+    return allMonths;
+  }, [allMonths, isTrim, selected, showAll]);
   const comps = months.map((m) => m.competencia);
   const tree = useMemo(() => buildTree(months), [months]);
 
   const [query, setQuery] = useState("");
   const [grupo, setGrupo] = useState("");
-  const [activeCol, setActiveCol] = useState(selected);
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
-
-  useEffect(() => {
-    setActiveCol(selected);
-  }, [selected]);
 
   useEffect(() => {
     const s = new Set<string>();
@@ -225,10 +235,9 @@ export default function BalanceteTree({
   const filtered = useMemo(() => filterTree(tree, query.trim().toLowerCase(), grupo), [tree, query, grupo]);
   const rows = useMemo(() => flattenVisible(filtered, expanded), [filtered, expanded]);
 
-  const highlight = /^\d{4}-\d{2}$/.test(activeCol) ? activeCol : selected;
+  const highlight = !showAll && /^\d{4}-\d{2}$/.test(selected) ? selected : "";
   const kpiMonth =
-    months.find((m) => m.competencia === selected) ||
-    months.find((m) => m.competencia === highlight) ||
+    (!showAll && !isTrim ? months.find((m) => m.competencia === selected) : null) ||
     months[months.length - 1] ||
     null;
   const totais = kpiMonth?.totais || kpiMonth?.balancete?.totais || {};
@@ -246,14 +255,14 @@ export default function BalanceteTree({
     return leaves.length || contas.length;
   }, [kpiMonth]);
 
-  const fonte = source || kpiMonth?.source || kpiMonth?.balancete?.source || "CONTABIL";
-  const titleMes = kpiMonth?.label || selected || periodoLabel || "—";
+  const fonte = kpiMonth?.source || kpiMonth?.balancete?.source || source || "CONTABIL";
   const firstLbl = months[0] ? shortMonthLabel(months[0]).replace(/\/\d{4}/, "").toUpperCase() : "";
   const lastLbl = months.length
     ? shortMonthLabel(months[months.length - 1]).replace(/\/\d{4}/, "").toUpperCase()
     : "";
   const totalColLabel =
     months.length > 1 && firstLbl && lastLbl ? `TOTAL ${firstLbl}–${lastLbl}` : "TOTAL";
+  const showTotal = months.length > 1;
 
   const rangeLabel = useMemo(() => {
     if (!months.length) return "";
@@ -261,6 +270,12 @@ export default function BalanceteTree({
     const b = months[months.length - 1].label || months[months.length - 1].shortLabel || months[months.length - 1].competencia;
     return a === b ? a : `${a} a ${b}`;
   }, [months]);
+
+  const titleMes = showAll
+    ? `Geral${rangeLabel ? ` · ${rangeLabel}` : ""}`
+    : isTrim
+      ? trimestreLabel(selected)
+      : kpiMonth?.label || selected || periodoLabel || "—";
 
   const expandAll = () => {
     const s = new Set<string>();
@@ -281,13 +296,23 @@ export default function BalanceteTree({
     });
   };
 
-  if (!months.length) {
+  if (!allMonths.length) {
     return <div className="alert-box warn">Balancete ainda não importado neste ano. Não inventamos saldo contábil.</div>;
+  }
+
+  if (!months.length) {
+    return (
+      <div className="alert-box warn">
+        {isTrim
+          ? "Sem Balancete importado nos meses deste trimestre."
+          : "Sem Balancete importado para o mês selecionado."}
+      </div>
+    );
   }
 
   const grupos = Array.from(
     new Set(
-      (kpiMonth?.balancete?.contas || [])
+      months.flatMap((m) => m.balancete?.contas || [])
         .map((c) => c.grupo || c.codigo?.split(".")[0] || "")
         .filter(Boolean),
     ),
@@ -304,8 +329,11 @@ export default function BalanceteTree({
       </div>
 
       <div className="alert-box warn bal-banner">
-        Dados contábeis disponíveis para {rangeLabel}
-        {months.length < 12 ? ". Meses sem importação aparecem como — na grade." : "."}
+        {showAll
+          ? `Visão geral dos Balancetes importados: ${rangeLabel}.`
+          : isTrim
+            ? `Competências importadas neste trimestre: ${rangeLabel}.${months.length < 3 ? " Meses sem Balancete não são exibidos." : ""}`
+            : `Exibindo somente ${rangeLabel}.`}
       </div>
 
       <div className="bal-kpi-grid">
@@ -356,22 +384,26 @@ export default function BalanceteTree({
         <div className="table-head bal-card-head">
           <div>
             <div className="ttl">Balancete de Verificação</div>
-            <div className="sub">Árvore Conta × meses · TOTAL = soma dos saldos mensais da grade (wireframe)</div>
+            <div className="sub">
+              {showTotal
+                ? "Árvore Conta × meses · TOTAL = soma dos saldos mensais da grade (wireframe)"
+                : "Árvore de contas da competência selecionada"}
+            </div>
           </div>
         </div>
 
         <div className="bal-toolbar">
-          <div className="bal-mes-bar" role="tablist" aria-label="Coluna de mês">
-            {months.map((m) => (
-              <button
-                key={m.competencia}
-                type="button"
-                className={`vd-mes-chip${highlight === m.competencia ? " active" : ""}`}
-                onClick={() => setActiveCol(m.competencia)}
-              >
-                {shortMonthLabel(m)}
-              </button>
-            ))}
+          <div className="bal-mes-bar" role="group" aria-label="Visualização do Balancete">
+            <button
+              type="button"
+              className={`vd-mes-chip${showAll ? " active" : ""}`}
+              onClick={() => setGeneralFor((current) => current === selected ? null : selected)}
+              aria-pressed={showAll}
+              title={showAll ? "Voltar ao período selecionado" : "Mostrar todos os meses importados"}
+            >
+              Geral
+            </button>
+            <span className="td-mute">{showAll ? "Todos os meses disponíveis" : titleMes}</span>
           </div>
           <div className="bal-controls">
             <input
@@ -413,7 +445,7 @@ export default function BalanceteTree({
                     {shortMonthLabel(m)}
                   </th>
                 ))}
-                <th className="r bal-total-col">{totalColLabel}</th>
+                {showTotal ? <th className="r bal-total-col">{totalColLabel}</th> : null}
               </tr>
             </thead>
             <tbody>
@@ -457,15 +489,17 @@ export default function BalanceteTree({
                         </td>
                       );
                     })}
-                    <td className="r td-val bal-total-cell">
-                      <BalCell codigo={n.codigo} valor={total} />
-                    </td>
+                    {showTotal ? (
+                      <td className="r td-val bal-total-cell">
+                        <BalCell codigo={n.codigo} valor={total} />
+                      </td>
+                    ) : null}
                   </tr>
                 );
               })}
               {!rows.length ? (
                 <tr>
-                  <td colSpan={months.length + 3} className="td-mute">
+                  <td colSpan={months.length + 2 + (showTotal ? 1 : 0)} className="td-mute">
                     Nenhuma conta neste filtro.
                   </td>
                 </tr>
