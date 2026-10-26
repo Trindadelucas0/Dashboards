@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.10.1 — Conciliação bancária em Recebimentos/Pagamentos |
-| Última atualização | 26/10/2026 (recorte mensal, trimestral e Geral do Balancete) |
+| Versão do sistema | 2.10.2 — Conciliação bancária em Recebimentos/Pagamentos |
+| Última atualização | 26/10/2026 (deploy automático da nova versão na VPS) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.10.2 | Conciliação bancária | **Deploy:** o workflow `.github/workflows/deploy.yml` usa o runner exclusivo `exito-vps-Dashboards`, atualiza a instalação real em `/root/PROJETOS/exito/Dashboards` e executa `scripts/vps-root-deploy-nova.txt`. O script compila o frontend, reinicia `exito-dashboard` e `dashboards-nova-api`, executa as cargas documentadas da Schumacher e valida a saúde da API e da aplicação web. |
 | 2.10.1 | Conciliação bancária | **Balancete comum** (`BalanceteTree`): mês mostra só a competência escolhida; trimestre mostra somente os Balancetes importados nos três meses civis; **Geral** mostra todas as competências importadas do ano consultado. TOTAL aparece apenas com mais de uma coluna e soma somente o recorte visível. KPIs usam o mês escolhido ou a última competência visível no trimestre/Geral. Mês ou trimestre sem Balancete mostra aviso e não reaproveita outra competência. Balanço Patrimonial Schumacher, API e packs inalterados. |
 | 2.10.0 | Conciliação bancária | **Recebimentos/Pagamentos** deixa de ser estimativa por NF-e e passa a importar `.xlsx` bancário por empresa, unidade, banco e competência. Administrador valida e grava/substitui; viewers autorizados consultam. Persistência própria (`BankStatementImport`/`BankTransaction`), APIs `/api/bank-statements/*`, tela `BankReconciliation`, indicadores, Classificação Êxito, busca, datas e paginação. Só A:G é armazenado; Situação/Verificação/Observação são ignoradas. |
 | 2.9.12 | Menu Indicadores Schumacher | Só na **Indústria Schumacher**, o link **Indicadores** sai da seção **Financeiro** (que fica só **Balanço Patrimonial** + **DRE**) e passa para a seção lateral **Indicadores** (`navSectionsForCompany` em `frontend/lib/nav.ts`; `layout-inner.tsx`). Rota `/dashboard/schumacher/indicadores`, API e `IndicadoresSchumacher` inalterados. Cabeçalho da aba: subtítulo “Resultado, liquidez e evolução — consolidado Matriz”. Demais empresas: Indicadores continua em Financeiro. |
@@ -277,7 +278,7 @@ O layout novo (cards do livro na Memória, tabela por tributo em Impostos) só r
 
 Carga local: `python scripts/seed.py`, `python scripts/import_schumacher_livro.py` (merge no pack da Matriz), `python scripts/import_schumacher_venda_produto.py` (merge `vendaProduto`; cria os slots da Filial), `python scripts/import_schumacher_margem.py` (margens mês + cidade; atualiza abas), `python scripts/import_schumacher_dre.py` e `python scripts/import_schumacher_balanco.py` (merge na Matriz; não apaga livro nem venda por produto).
 
-**Produção (VPS):** `git pull` + build do frontend **não** grava margens no Postgres. Depois do deploy, rodar no container da API: `python scripts/seed.py` (abas novas no usuário Schumacher) e `python scripts/import_schumacher_margem.py` (fixtures em `fixtures/schumacher-padrao/`). Script completo: [`scripts/vps-root-deploy-nova.txt`](../../scripts/vps-root-deploy-nova.txt) (PM2 `exito-dashboard`, caminho `/root/PROJETOS/exito/Dashboards`).
+**Produção (VPS):** um push na branch `main` dispara `.github/workflows/deploy.yml`. O job é recebido pelo runner exclusivo `exito-vps-Dashboards` na própria VPS e executa [`scripts/vps-root-deploy-nova.txt`](../../scripts/vps-root-deploy-nova.txt) no caminho `/root/PROJETOS/exito/Dashboards`. O script atualiza a cópia de produção, compila `nova-versao/frontend`, reinicia o PM2 `exito-dashboard` e o container `dashboards-nova-api`, executa `seed.py` e `import_schumacher_margem.py` e confere os endereços locais de saúde. O serviço do runner é restrito ao repositório `Trindadelucas0/Dashboards`; credenciais e tokens não ficam na documentação nem no repositório.
 
 ### Indústria Schumacher — margens por mês e por cidade
 

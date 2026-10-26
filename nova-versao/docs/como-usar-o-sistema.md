@@ -54,4 +54,12 @@ Classificação Êxito vazia não impede a gravação: o lançamento aparece com
 
 Quando houver mais de um mês visível, a coluna TOTAL soma somente essas colunas. Se o mês ou trimestre escolhido não tiver Balancete importado, a tela informa a ausência e não mostra dados de outro período. Essa regra não altera o **Balanço Patrimonial** da Indústria Schumacher.
 
+### Publicar uma atualização em produção
+
+1. Integre a alteração na branch `main` do repositório `Dashboards`.
+2. Abra **GitHub → Actions → Deploy** e acompanhe o job **Deploy no servidor**.
+3. Considere a publicação concluída somente quando o job terminar em verde; o próprio deploy valida a API e a aplicação web.
+
+Se o job permanecer em **Waiting for a runner**, confira na VPS o serviço do runner exclusivo `exito-vps-Dashboards`. Não coloque senha, token de registro ou chave SSH em commits, documentação ou logs do chamado.
+
 Para importação fiscal, exclusão de arquivos, DRE, Balancete, Impostos, Memória e particularidades por empresa, consulte a seção **8. Como usar o sistema** da documentação oficial.
