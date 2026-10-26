@@ -45,6 +45,17 @@ Classificação Êxito vazia não impede a gravação: o lançamento aparece com
 
 ## Outras rotinas
 
+### Importar e corrigir planilhas fiscais
+
+1. Abra a empresa correta e acesse **Importar**.
+2. Selecione as planilhas e use **Extrair e validar**.
+3. Confira empresa, competência, unidade e tipo em cada linha da prévia.
+4. Use **Gravar** para mesclar dados novos ao mês.
+5. Use **Substituir tipos enviados** quando estiver corrigindo uma planilha já importada. Somente os tipos exibidos na prévia serão trocados; movimento, impostos, DRE ou Balancete de outras planilhas do mesmo mês permanecem.
+6. Confira o mês nas abas Visão Geral, Compras, Vendas, Impostos, Memória, DRE e Balancete conforme os tipos importados.
+
+Não use a substituição para acrescentar um tipo ausente: nesse caso, **Gravar** é suficiente.
+
 ### Consultar a DRE detalhada
 
 1. Abra a empresa e acesse **Financeiro → DRE**.

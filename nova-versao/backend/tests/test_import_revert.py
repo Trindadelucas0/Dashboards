@@ -4,6 +4,7 @@ from app.imports_revert import (
     rebuild_pack,
     slot_revert_mode,
 )
+from app.routers.imports import _replacement_types_by_slot
 
 
 def test_two_patches_delete_one_leaves_the_other():
@@ -92,3 +93,81 @@ def test_legacy_entradas_keys_do_not_remove_saidas():
     assert out["porUfSaidas"] == [{"uf": "RJ"}]
     assert out["saidasMeta"] == {"nfs": 2}
     assert out["hasMovimentacao"] is True
+
+
+def test_replace_dre_keeps_movement_taxes_and_balancete():
+    pack = {
+        "totalCompras": 10,
+        "cfopSaidasTotal": 20,
+        "hasMovimentacao": True,
+        "apuracao": {"icms": {"aRecolher": 3}},
+        "hasBalancete": True,
+        "balancete": {"contas": [{"codigo": "1"}]},
+        "hasDre": True,
+        "dre": {"linhas": [{"label": "Receita"}]},
+        "receitaBruta": 30,
+        "lucLiq": 4,
+    }
+    out = apply_legacy_key_removal(
+        pack,
+        {"dre"},
+        {"entradas", "saidas", "icms", "balancete"},
+    )
+    assert out["totalCompras"] == 10
+    assert out["cfopSaidasTotal"] == 20
+    assert out["apuracao"]["icms"]["aRecolher"] == 3
+    assert out["balancete"]["contas"] == [{"codigo": "1"}]
+    assert "dre" not in out
+    assert "receitaBruta" not in out
+
+
+def test_replace_5005_removes_only_its_memory_and_icms_values():
+    pack = {
+        "memoriaCalculo": {"icmsARecolher": 10},
+        "subvencao": 7,
+        "apuracao": {
+            "icms": {"aRecolher": 10},
+            "subvencao": 7,
+            "pis": {"aRecolher": 2},
+            "cofins": {"aRecolher": 9},
+        },
+    }
+    out = apply_legacy_key_removal(pack, {"apuracao_5005"}, {"pis_cofins"})
+    assert "memoriaCalculo" not in out
+    assert "subvencao" not in out
+    assert "icms" not in out["apuracao"]
+    assert "subvencao" not in out["apuracao"]
+    assert out["apuracao"]["pis"]["aRecolher"] == 2
+    assert out["apuracao"]["cofins"]["aRecolher"] == 9
+
+
+def test_replacement_types_group_only_valid_items():
+    items = [
+        {
+            "ok": True,
+            "pack_patch": {"dre": {}},
+            "company_id": "baifer",
+            "competencia": "2026-07",
+            "unidade": "matriz",
+            "tipo": "dre",
+        },
+        {
+            "ok": True,
+            "pack_patch": {"balancete": {}},
+            "company_id": "baifer",
+            "competencia": "2026-07",
+            "unidade": "matriz",
+            "tipo": "balancete",
+        },
+        {
+            "ok": False,
+            "errors": ["inválido"],
+            "pack_patch": {"apuracao": {}},
+            "company_id": "baifer",
+            "competencia": "2026-07",
+            "tipo": "icms",
+        },
+    ]
+    assert _replacement_types_by_slot(items) == {
+        ("baifer", "2026-07", "matriz"): {"dre", "balancete"}
+    }

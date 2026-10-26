@@ -251,7 +251,7 @@ export default function ImportTab() {
             <div>{it.company_label || "empresa ?"} · {it.competencia || "mês ?"} · {it.unidade} · {it.tipo}{it.status ? ` · ${it.status}` : ""}{it.skipped ? " · ignorada" : ""}</div>
             {it.meta ? <div>Soma {it.meta.soma} · Δ {it.meta.delta} · NFs {it.meta.nfs}</div> : null}
             {it.duplicateHash ? <div>Arquivo já importado (hash).</div> : null}
-            {it.slotExists ? <div>Este mês já tem dados. Use substituir para sobrescrever.</div> : null}
+            {it.slotExists ? <div>Este mês já tem dados. Gravar mescla; substituir troca somente os tipos enviados.</div> : null}
             {(it.warnings || []).map((e) => <div key={e}>{e}</div>)}
             {(it.errors || []).map((e) => <div key={e}>{e}</div>)}
           </article>
@@ -264,7 +264,7 @@ export default function ImportTab() {
           </button>
           {hasDuplicate ? (
             <button type="button" className="btn-export" onClick={() => commit(true)} disabled={loading}>
-              Substituir mês
+              Substituir tipos enviados
             </button>
           ) : null}
         </div>

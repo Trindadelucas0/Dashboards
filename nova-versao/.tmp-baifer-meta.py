@@ -22,7 +22,7 @@ try:
                     "status": row.status,
                     "file_name": row.file_name,
                     "meta": row.meta,
-                    "pack_patch": row.pack_patch,
+                    "pack_keys": sorted((row.pack_patch or {}).keys()),
                 },
                 ensure_ascii=False,
                 default=str,
@@ -30,3 +30,4 @@ try:
         )
 finally:
     db.close()
+

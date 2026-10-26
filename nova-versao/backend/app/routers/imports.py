@@ -84,6 +84,29 @@ def _assign_pack(row: FiscalMonth, pack: dict) -> None:
     flag_modified(row, "pack")
 
 
+def _replacement_types_by_slot(
+    items: list[dict], company_id_override: str | None = None
+) -> dict[tuple[str, str, str], set[str]]:
+    """Agrupa somente os tipos válidos que o commit realmente substituirá."""
+    grouped: dict[tuple[str, str, str], set[str]] = {}
+    for item in items:
+        if (
+            item.get("skipped")
+            or item.get("errors")
+            or not item.get("ok")
+            or not item.get("pack_patch")
+        ):
+            continue
+        company_id = company_id_override or item.get("company_id")
+        competencia = item.get("competencia")
+        tipo = item.get("tipo")
+        if not company_id or not competencia or not tipo:
+            continue
+        key = (company_id, competencia, item.get("unidade") or "matriz")
+        grouped.setdefault(key, set()).add(tipo)
+    return grouped
+
+
 def _apply_session_company(extracted: dict, company_id: str | None, db: Session) -> None:
     if not company_id:
         return
@@ -352,7 +375,10 @@ def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = De
     if not preview or preview["user_id"] != user.id:
         raise HTTPException(400, "Preview expirado. Envie os arquivos de novo.")
     saved = []
-    cleared_slots: set[tuple[str, str, str]] = set()
+    prepared_slots: set[tuple[str, str, str]] = set()
+    replacement_types = (
+        _replacement_types_by_slot(preview["items"], body.companyId) if body.replace else {}
+    )
     slot_rows: dict[tuple[str, str, str], FiscalMonth] = {}
     pending_by_hash: dict[str, ImportRecord] = {}
     try:
@@ -398,20 +424,37 @@ def commit(body: CommitIn, user: User = Depends(require_admin), db: Session = De
                 if _pack_has_tipo(row.pack, tipo):
                     saved.append({"file": item.get("file"), "status": "duplicata", "companyId": company_id})
                     continue
-            if body.replace and slot_key not in cleared_slots:
-                _assign_pack(row, {})
+            if body.replace and slot_key not in prepared_slots:
+                replacing = replacement_types.get(slot_key, set())
+                active_rows = (
+                    db.query(ImportRecord)
+                    .filter(
+                        ImportRecord.company_id == company_id,
+                        ImportRecord.competencia == competencia,
+                        ImportRecord.unidade == unidade,
+                        ImportRecord.status == "ok",
+                    )
+                    .all()
+                )
+                remaining_types = {record.tipo for record in active_rows if record.tipo not in replacing}
+                _assign_pack(
+                    row,
+                    apply_legacy_key_removal(row.pack or {}, replacing, remaining_types),
+                )
                 db.query(NfeLine).filter(
                     NfeLine.company_id == company_id,
                     NfeLine.competencia == competencia,
                     NfeLine.unidade == unidade,
+                    NfeLine.tipo.in_(replacing),
                 ).delete(synchronize_session=False)
                 db.query(ImportRecord).filter(
                     ImportRecord.company_id == company_id,
                     ImportRecord.competencia == competencia,
                     ImportRecord.unidade == unidade,
                     ImportRecord.status == "ok",
+                    ImportRecord.tipo.in_(replacing),
                 ).update({ImportRecord.status: "replaced"}, synchronize_session="fetch")
-                cleared_slots.add(slot_key)
+                prepared_slots.add(slot_key)
             patch = item.get("pack_patch") or {}
             _assign_pack(row, _deep_merge(row.pack or {}, patch))
             record = _bind_import_record(

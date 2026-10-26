@@ -53,7 +53,7 @@ APURACAO_KEYS_BY_TIPO: dict[str, tuple[str, ...]] = {
 
 CONFLICT_DETAIL = (
     "Não dá para separar esta planilha de outra do mesmo tipo neste mês; "
-    "use Substituir mês ao reimportar o pacote certo."
+    "reimporte o pacote correto com Substituir tipos enviados."
 )
 
 
@@ -133,6 +133,11 @@ def apply_legacy_key_removal(pack: dict, deleted_tipos: set[str], remaining_tipo
     for tipo in deleted_tipos:
         if tipo == "apuracao_5005":
             out.pop("memoriaCalculo", None)
+            out.pop("subvencao", None)
+            if ap_work is not None:
+                ap_work.pop("subvencao", None)
+                ap_work.pop("icms", None)
+                ap_touched = True
         if ap_work is None:
             continue
         for sub in APURACAO_KEYS_BY_TIPO.get(tipo, ()):
