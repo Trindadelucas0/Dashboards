@@ -25,4 +25,6 @@ jobs:
           set -euo pipefail
 
           cd "$DEPLOY_PATH"
+          git fetch origin main
+          git reset --hard origin/main
           sed 's/\r$//' scripts/vps-root-deploy-nova.txt | bash
