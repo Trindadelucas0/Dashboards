@@ -48,11 +48,12 @@ Classificação Êxito vazia não impede a gravação: o lançamento aparece com
 ### Importar e corrigir planilhas fiscais
 
 1. Abra a empresa correta e acesse **Importar**.
-2. Selecione as planilhas e use **Extrair e validar**.
-3. Confira empresa, competência, unidade e tipo em cada linha da prévia.
-4. Use **Gravar** para mesclar dados novos ao mês.
-5. Use **Substituir tipos enviados** quando estiver corrigindo uma planilha já importada. Somente os tipos exibidos na prévia serão trocados; movimento, impostos, DRE ou Balancete de outras planilhas do mesmo mês permanecem.
-6. Confira o mês nas abas Visão Geral, Compras, Vendas, Impostos, Memória, DRE e Balancete conforme os tipos importados.
+2. Confirme que o nome da planilha padrão contém a competência em `MMYYYY` (ex.: `Planilha Padrao 102026.xlsx`). O texto `5005-2012` da aba de ICMS não representa o mês.
+3. Selecione as planilhas e use **Extrair e validar**.
+4. Confira empresa, competência, unidade e tipo em cada linha da prévia. Um recorte com `ICMS 5005-2012` + `ST` deve mostrar os dois tipos.
+5. Use **Gravar** para mesclar dados novos ao mês.
+6. Use **Substituir tipos enviados** quando estiver corrigindo uma planilha já importada. Somente os tipos exibidos na prévia serão trocados; movimento, impostos, DRE ou Balancete de outras planilhas do mesmo mês permanecem.
+7. Confira o mês nas abas Visão Geral, Compras, Vendas, Impostos, Memória, DRE e Balancete conforme os tipos importados.
 
 Não use a substituição para acrescentar um tipo ausente: nesse caso, **Gravar** é suficiente.
 

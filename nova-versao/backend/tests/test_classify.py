@@ -26,6 +26,8 @@ def test_competencia_from_filename():
     assert competencia_from_filename("resultadojaneiro.xls") == "2026-01"
     assert competencia_from_filename("Demostrativo IRPJ e CSLL 1º Trimestre de 2026.xls") == "2026-03"
     assert competencia_from_filename("Demonst. CSOC 03-2026 (1 T)") == "2026-03"
+    assert competencia_from_filename("ICMS 5005-2012") == ""
+    assert competencia_from_filename("ICMS 5005-2012 102026.xlsx") == "2026-10"
 
 
 def test_detect_sheet_tipo_ignores_misleading_filename():

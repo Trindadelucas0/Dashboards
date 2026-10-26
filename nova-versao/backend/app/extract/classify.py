@@ -151,14 +151,19 @@ def is_multi_month_movimento(grid: WorkbookGrid, filename: str) -> bool:
 
 
 def competencia_from_filename(name: str) -> str:
-    m = TRIMESTRE_RE.search(name)
+    # "5005-2012" é o número/norma da apuração de ICMS no nome da aba
+    # oficial, não a competência maio/2012. Remova apenas esse token antes
+    # de procurar MM-YYYY; uma competência real presente no restante do nome
+    # continua sendo reconhecida normalmente.
+    searchable_name = re.sub(r"(?i)\b5005\s*[-_/]\s*2012\b", "", name or "")
+    m = TRIMESTRE_RE.search(searchable_name)
     if m:
         quarter = int(m.group(1))
         return f"{m.group(2)}-{quarter * 3:02d}"
-    m = MMYYYY_RE.search(name.replace(" ", ""))
+    m = MMYYYY_RE.search(searchable_name.replace(" ", ""))
     if m:
         return f"{m.group(2)}-{m.group(1)}"
-    m = MM_SEP_YYYY_RE.search(name)
+    m = MM_SEP_YYYY_RE.search(searchable_name)
     if m:
         return f"{m.group(2)}-{m.group(1)}"
     months = {
@@ -180,10 +185,10 @@ def competencia_from_filename(name: str) -> str:
         "agosto": "08",
         "ago": "08",
     }
-    low = name.lower()
+    low = searchable_name.lower()
     for key, mm in months.items():
         if key in low:
-            year_m = re.search(r"20\d{2}", name)
+            year_m = re.search(r"20\d{2}", searchable_name)
             year = year_m.group(0) if year_m else str(datetime.now().year)
             return f"{year}-{mm}"
     return ""

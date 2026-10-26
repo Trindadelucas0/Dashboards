@@ -226,6 +226,24 @@ def test_is_workbook_padrao_sem_movimento_com_tres_fiscais():
     assert is_workbook_padrao(sheets)
 
 
+def test_recorte_5005_e_st_e_workbook_padrao():
+    sheets = [_icms_5005(), _st_df()]
+    assert is_workbook_padrao(sheets)
+
+    result = extract_workbook_padrao(sheets, "Planilha Padrao 102026.xlsx")
+    assert result["competencia"] == "2026-10"
+    assert _part(result, "apuracao_5005")["meta"]["icmsARecolher"] == pytest.approx(450.0, abs=0.02)
+    assert _part(result, "icms_st")["meta"]["aRecolher"] == pytest.approx(12.5, abs=0.02)
+    assert any("Faltam as abas" in warning for warning in result["warnings"])
+
+
+def test_recorte_5005_e_st_sem_competencia_nao_usa_numero_da_norma():
+    result = extract_workbook_padrao([_icms_5005(), _st_df()], "aaaaaa.xlsx")
+    assert result["competencia"] == ""
+    assert result["parts"] == []
+    assert any("inclua MMYYYY" in warning for warning in result["warnings"])
+
+
 def test_icms_5005_e_competencia_do_nome():
     sheets = [_dre_jan_only(), _bal_jan_only(), _icms_5005(), _pis_saldo_credor(), _st_df()]
     r08 = extract_workbook_padrao(sheets, "Planilha Padrao EMPRESA-NOVA 082026.xlsx")

@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.10.5 — substituição segura por tipo de planilha |
-| Última atualização | 26/10/2026 (proteção contra perda cruzada na reimportação) |
+| Versão do sistema | 2.10.6 — recorte fiscal ICMS 5005 + ST |
+| Última atualização | 26/10/2026 (recorte fiscal ICMS 5005 + ST e competência segura) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.10.6 | Recorte fiscal ICMS 5005 + ST | A planilha padrão parcial com somente `ICMS 5005-2012` e outra aba fiscal oficial (por exemplo `ST`) é tratada como um único workbook: cada tributo presente é extraído para a aba Impostos/Memória. O identificador fixo `5005-2012` não é mais confundido com a competência maio/2012. A competência real continua vindo de `MMYYYY` no nome do arquivo; se estiver ausente, a prévia bloqueia a gravação e pede correção do nome. |
 | 2.10.5 | Substituição segura de importações | **“Substituir tipos enviados” não limpa mais o mês inteiro:** a API remove e marca como `replaced` somente os tipos presentes na nova prévia, preservando movimento, impostos, DRE e Balancete vindos de outras planilhas. As `NfeLine` também são removidas somente para os tipos substituídos. A interface explica a diferença entre **Gravar** (mesclar) e **Substituir tipos enviados**. Incidentes Baifer e Loja das Máquinas 07–09/2026 recompostos a partir do histórico de `pack_patch`, snapshots, fixtures validadas e metadados do banco; detalhes linha a linha só foram recriados quando havia fonte preservada. |
 | 2.10.4 | Conciliação bancária | **DRE em árvore expansível:** a DRE comum organiza grupos, subtotais e contas detalhadas no mesmo padrão visual do Balancete. Grupos iniciam abertos, subtotais iniciam fechados, resultados permanecem visíveis e os botões **Expandir** / **Recolher** controlam toda a estrutura. Nome e chevron são clicáveis por mouse ou teclado. A hierarquia é derivada no frontend, inclusive para packs antigos sem `nivel`; API, banco, valores, KPIs e DRE Schumacher permanecem inalterados. |
 | 2.10.3 | Conciliação bancária | **DRE EXITO detalhada:** o parser preserva o nível original (`total` / `detalhe`) de cada linha e a tabela comum mostra todas as linhas contábeis na ordem da planilha, inclusive Salários, INSS, FGTS, Energia, Água, Seguros, Honorários, Serviços de terceiros e o detalhamento do CMV. Subtotais ficam destacados e detalhes recuados. Packs antigos sem `nivel` usam a ordem e o último grupo reconhecido, sem exigir reimportação. KPIs, margens e DRE Schumacher inalterados. |
@@ -82,7 +83,7 @@ Opcionais (movimento do mês, no mesmo arquivo):
 
 `ENTRADAS` · `SAÍDAS` — sinônimos aceitos: `ENTRADA`, `SAIDA`, `SAIDAS`, `SAÍDA` (comparação sem acento e sem caixa).
 
-**Workbook parcial:** se o arquivo tiver **pelo menos 3** abas fiscais do modelo, é `workbook_padrao` — **com ou sem** ENTRADAS/SAÍDAS. Extrai as abas presentes e avisa as do esqueleto que faltam. Não inventa imposto, DRE, Balancete nem movimento. O caso com movimento e sem DRE/BALANCETE (ex. Única julho) segue o mesmo critério.
+**Workbook parcial:** se o arquivo tiver **pelo menos 3** abas fiscais do modelo, é `workbook_padrao` — **com ou sem** ENTRADAS/SAÍDAS. O recorte com `ICMS 5005-2012` + pelo menos outra aba fiscal oficial (por exemplo `ST`) também é reconhecido. Extrai as abas presentes e avisa as do esqueleto que faltam. Não inventa imposto, DRE, Balancete nem movimento. O caso com movimento e sem DRE/BALANCETE (ex. Única julho) segue o mesmo critério.
 
 ### Qualquer empresa (incluindo cadastrada depois)
 
@@ -96,7 +97,7 @@ O mesmo arquivo modelo serve para Baifer, Loja, Única e **empresa nova**. Só m
 
 - Nome do arquivo **não** define empresa nem tipo; detecção pelo conjunto de abas.
 - Empresa: CNPJ do cabeçalho das abas de movimento ou dashboard aberto (empresa só no Postgres também herda o dashboard).
-- `MMYYYY` no nome (`082026`, `092026`, …) vira competência `YYYY-MM` e ancora DRE, Balancete e impostos. Outro mês no nome não muda o destino de cada aba. A empresa vem do dashboard aberto.
+- `MMYYYY` no nome (`082026`, `092026`, …) vira competência `YYYY-MM` e ancora DRE, Balancete e impostos. O texto fixo da aba `ICMS 5005-2012` é norma/modelo, não maio/2012. Sem uma competência real no nome ou cabeçalho, a prévia bloqueia a gravação. A empresa vem do dashboard aberto.
 - DRE e BALANCETE: só a coluna desse mês. Coluna vazia = part `vazia`. Nunca copia janeiro (nem outro mês preenchido) para a competência do arquivo.
 - ICMS 5005-2012: débito/crédito na memória. `apuracao.icms.aRecolher` só da linha **ICMS a recolher**, se ela existir. Se essa aba existir, o caminho é a memória 5005 (ex. Baifer).
 - Aba `ICMS` (comparada sem acento como `icms`, sem 5005): grava só `apuracao.icms` com `apurado` = linha Débito ICMS, `credito` = Crédito ICMS, `aRecolher` = linha ICMS a recolher, `fonte: planilha_padrao_icms`. Não cria `memoriaCalculo`. Sem as três linhas, a aba não é gravada.

@@ -64,19 +64,22 @@ def _sheet_map(sheets: list[WorkbookGrid]) -> dict[str, WorkbookGrid]:
 
 
 def is_workbook_padrao(sheets: list[WorkbookGrid]) -> bool:
-    """True quando há pelo menos 3 abas fiscais do modelo, com ou sem ENTRADAS/SAÍDAS.
+    """True para o modelo completo e para recortes fiscais inequívocos.
 
     Esqueleto completo (9 abas) continua True. Parcial fiscal sem movimento
     (ex. Baifer 082026: DRE/BAL/5005/PIS/ST/DIFAL/IPI, sem IRPJ/CSLL nem movimento)
     também é workbook_padrao — não cai no fluxo de aba única.
     Parcial com movimento e sem DRE/BAL (ex. Unica jul) segue True se tiver ≥3 abas fiscais.
+    Recorte com ICMS 5005-2012 + outra aba fiscal oficial também segue True. Esse caso
+    ocorre quando o escritório envia somente a apuração de ICMS e ST do mês.
     Arquivo só com a aba ICMS do modelo (Débito ICMS / Crédito ICMS / ICMS a recolher,
     ex. Loja 092026) também é padrão — nenhum outro detector reconhece esse layout.
     """
     if not sheets:
         return False
     names = {_fold_name(s.sheet_name) for s in sheets}
-    if len(_PADRAO_SHEETS & names) >= 3:
+    presentes = _PADRAO_SHEETS & names
+    if len(presentes) >= 3 or ("icms 5005-2012" in presentes and len(presentes) >= 2):
         return True
     icms = _sheet_map(sheets).get("icms")
     return bool(icms and parse_icms_simples_padrao(icms).get("hasValores"))
@@ -86,7 +89,8 @@ def padrao_missing_sheets(sheets: list[WorkbookGrid]) -> list[str]:
     """Abas do esqueleto que faltam num arquivo que claramente tenta ser a planilha padrão."""
     names = {_fold_name(s.sheet_name) for s in sheets}
     presentes = _PADRAO_SHEETS & names
-    if len(presentes) < 3 or len(presentes) == len(_PADRAO_SHEETS):
+    partial_5005 = "icms 5005-2012" in presentes and len(presentes) >= 2
+    if (len(presentes) < 3 and not partial_5005) or len(presentes) == len(_PADRAO_SHEETS):
         return []
     return sorted(n.upper() for n in _PADRAO_SHEETS - names)
 
@@ -320,6 +324,11 @@ def extract_workbook_padrao(
 
     bal_grid = smap.get("balancete")
     tax_comp = anchor or (dre_months[0][0] if dre_months else "")
+    if not tax_comp:
+        warnings.append(
+            "Competência não identificada: inclua MMYYYY no nome do arquivo "
+            "(ex.: Planilha Padrao 102026.xlsx)"
+        )
 
     # DRE e BALANCETE: só a coluna do mês do arquivo. Coluna vazia → part "vazia"
     # (o modelo vem com janeiro preenchido; sem esse recorte todo mês importaria janeiro).
