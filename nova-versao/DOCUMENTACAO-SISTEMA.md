@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.10.6 — recorte fiscal ICMS 5005 + ST |
-| Última atualização | 26/10/2026 (recorte fiscal ICMS 5005 + ST e competência segura) |
+| Versão do sistema | 2.10.7 — alias PIS E COFINS na planilha padrão |
+| Última atualização | 26/10/2026 (importação da aba PIS E COFINS) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.10.7 | Alias PIS E COFINS | A planilha padrão aceita as abas `PIS COFINS` e `PIS E COFINS` como o mesmo tributo. A variação com a conjunção passa a gerar a part `pis_cofins`, preencher a Memória e os cards de PIS/COFINS em Impostos sem alterar o ICMS do mês. |
 | 2.10.6 | Recorte fiscal ICMS 5005 + ST | A planilha padrão parcial com somente `ICMS 5005-2012` e outra aba fiscal oficial (por exemplo `ST`) é tratada como um único workbook: cada tributo presente é extraído para a aba Impostos/Memória. O identificador fixo `5005-2012` não é mais confundido com a competência maio/2012. A competência real continua vindo de `MMYYYY` no nome do arquivo; se estiver ausente, a prévia bloqueia a gravação e pede correção do nome. |
 | 2.10.5 | Substituição segura de importações | **“Substituir tipos enviados” não limpa mais o mês inteiro:** a API remove e marca como `replaced` somente os tipos presentes na nova prévia, preservando movimento, impostos, DRE e Balancete vindos de outras planilhas. As `NfeLine` também são removidas somente para os tipos substituídos. A interface explica a diferença entre **Gravar** (mesclar) e **Substituir tipos enviados**. Incidentes Baifer e Loja das Máquinas 07–09/2026 recompostos a partir do histórico de `pack_patch`, snapshots, fixtures validadas e metadados do banco; detalhes linha a linha só foram recriados quando havia fonte preservada. |
 | 2.10.4 | Conciliação bancária | **DRE em árvore expansível:** a DRE comum organiza grupos, subtotais e contas detalhadas no mesmo padrão visual do Balancete. Grupos iniciam abertos, subtotais iniciam fechados, resultados permanecem visíveis e os botões **Expandir** / **Recolher** controlam toda a estrutura. Nome e chevron são clicáveis por mouse ou teclado. A hierarquia é derivada no frontend, inclusive para packs antigos sem `nivel`; API, banco, valores, KPIs e DRE Schumacher permanecem inalterados. |
@@ -77,7 +78,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 Esqueleto completo (preferido):
 
-`DRE` · `BALANCETE` · `ICMS 5005-2012` · `PIS COFINS` · `IRPJ` · `CSLL` · `ST` · `DIFAL` · `IPI`
+`DRE` · `BALANCETE` · `ICMS 5005-2012` · `PIS COFINS` (também `PIS E COFINS`) · `IRPJ` · `CSLL` · `ST` · `DIFAL` · `IPI`
 
 Opcionais (movimento do mês, no mesmo arquivo):
 
@@ -101,7 +102,7 @@ O mesmo arquivo modelo serve para Baifer, Loja, Única e **empresa nova**. Só m
 - DRE e BALANCETE: só a coluna desse mês. Coluna vazia = part `vazia`. Nunca copia janeiro (nem outro mês preenchido) para a competência do arquivo.
 - ICMS 5005-2012: débito/crédito na memória. `apuracao.icms.aRecolher` só da linha **ICMS a recolher**, se ela existir. Se essa aba existir, o caminho é a memória 5005 (ex. Baifer).
 - Aba `ICMS` (comparada sem acento como `icms`, sem 5005): grava só `apuracao.icms` com `apurado` = linha Débito ICMS, `credito` = Crédito ICMS, `aRecolher` = linha ICMS a recolher, `fonte: planilha_padrao_icms`. Não cria `memoriaCalculo`. Sem as três linhas, a aba não é gravada.
-- PIS COFINS: `aRecolher` é a coluna do RESUMO cujo cabeçalho é A RECOLHER ou IMPOSTO A RECOLHER. Débito − crédito do mês fica em `aRecolherCalculado`. Cabeçalho `SALDO CREDOR` grava `saldoCredor`. Cabeçalho `AJUSTE` (ex. aluguel) grava `ajuste` e não é saldo credor.
+- PIS COFINS / PIS E COFINS: os dois nomes de aba são equivalentes. `aRecolher` é a coluna do RESUMO cujo cabeçalho é A RECOLHER ou IMPOSTO A RECOLHER. Débito − crédito do mês fica em `aRecolherCalculado`. Cabeçalho `SALDO CREDOR` grava `saldoCredor`. Cabeçalho `AJUSTE` (ex. aluguel) grava `ajuste` e não é saldo credor.
 - ST: soma UF/VALOR em `apuracao.icmsSt` só se houver valor. DIFAL e IPI só se a aba tiver valor no resumo/grade.
 - IRPJ/CSLL só se a aba existir e o CNPJ conferir com a empresa do dashboard.
 - ENTRADAS/SAÍDAS alimentam Compras/Vendas só quando essas abas existem.

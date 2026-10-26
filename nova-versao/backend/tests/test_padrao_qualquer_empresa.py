@@ -306,6 +306,21 @@ def test_icms_simples_e_pis_ajuste():
     assert _part(result, "balancete")["status"] == "vazia"
 
 
+def test_aceita_aba_pis_e_cofins_com_conjuncao():
+    pis = _pis_ajuste()
+    pis.sheet_name = "PIS E COFINS"
+
+    result = extract_workbook_padrao(
+        [_icms_simples(), pis],
+        "Planilha Padrao LOJA DAS MAQUINAS 092026.xlsx",
+    )
+
+    part = _part(result, "pis_cofins")
+    assert part["competencia"] == "2026-09"
+    assert part["pack_patch"]["apuracao"]["pis"]["aRecolher"] == pytest.approx(5.0, abs=0.02)
+    assert part["pack_patch"]["apuracao"]["cofins"]["aRecolher"] == pytest.approx(10.0, abs=0.02)
+
+
 def test_empresa_do_dashboard_mesmo_fora_do_catalogo_estatico():
     """Empresa só no Postgres herda o dashboard aberto (não o nome do arquivo)."""
     extracted = {

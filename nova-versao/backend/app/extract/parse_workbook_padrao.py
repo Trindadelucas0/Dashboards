@@ -59,8 +59,15 @@ def _fold_name(name: str) -> str:
     return re.sub(r"\s+", " ", ascii_txt).strip()
 
 
+def _canonical_sheet_name(name: str) -> str:
+    folded = _fold_name(name)
+    if folded == "pis e cofins":
+        return "pis cofins"
+    return folded
+
+
 def _sheet_map(sheets: list[WorkbookGrid]) -> dict[str, WorkbookGrid]:
-    return {_fold_name(s.sheet_name): s for s in sheets}
+    return {_canonical_sheet_name(s.sheet_name): s for s in sheets}
 
 
 def is_workbook_padrao(sheets: list[WorkbookGrid]) -> bool:
@@ -77,7 +84,7 @@ def is_workbook_padrao(sheets: list[WorkbookGrid]) -> bool:
     """
     if not sheets:
         return False
-    names = {_fold_name(s.sheet_name) for s in sheets}
+    names = set(_sheet_map(sheets))
     presentes = _PADRAO_SHEETS & names
     if len(presentes) >= 3 or ("icms 5005-2012" in presentes and len(presentes) >= 2):
         return True
@@ -87,7 +94,7 @@ def is_workbook_padrao(sheets: list[WorkbookGrid]) -> bool:
 
 def padrao_missing_sheets(sheets: list[WorkbookGrid]) -> list[str]:
     """Abas do esqueleto que faltam num arquivo que claramente tenta ser a planilha padrão."""
-    names = {_fold_name(s.sheet_name) for s in sheets}
+    names = set(_sheet_map(sheets))
     presentes = _PADRAO_SHEETS & names
     partial_5005 = "icms 5005-2012" in presentes and len(presentes) >= 2
     if (len(presentes) < 3 and not partial_5005) or len(presentes) == len(_PADRAO_SHEETS):
