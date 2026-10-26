@@ -1,8 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
+  allDreExpandedKeys,
+  buildDreTreeRows,
   collapseTrimestre,
+  compactDreExpandedKeys,
   dreCellNegative,
   filterDrePorMes,
   formatDreInt,
@@ -10,8 +13,10 @@ import {
   margemPct,
   pivotDreMonths,
   trimestreLabel,
+  visibleDreTreeRows,
   type DreMonth,
   type DrePivotedRow,
+  type DreTreeRow,
 } from "@/lib/dreStatement";
 
 function rowClass(row: DrePivotedRow) {
@@ -23,6 +28,51 @@ function rowClass(row: DrePivotedRow) {
   if (row.deduction) parts.push("dre-neg");
   if (row.group === "Outros Resultados") parts.push("dre-subv");
   return parts.join(" ");
+}
+
+function DreTreeLabel({
+  node,
+  open,
+  onToggle,
+}: {
+  node: DreTreeRow;
+  open: boolean;
+  onToggle: (key: string) => void;
+}) {
+  const hasChildren = node.children.length > 0;
+  const content = (
+    <>
+      {hasChildren ? (
+        <i className={`fas fa-chevron-${open ? "down" : "right"} dre-tree-chevron`} aria-hidden />
+      ) : (
+        <span className="dre-tree-chevron-spacer" />
+      )}
+      <i className={`fas ${hasChildren ? "fa-folder" : "fa-file-lines"} dre-tree-node-ico`} aria-hidden />
+      {node.row.number ? <span className="dre-num">{node.row.number}</span> : null}
+      <span className="dre-tree-label-text">{node.row.display}</span>
+    </>
+  );
+
+  if (!hasChildren) {
+    return (
+      <div className="dre-tree-label" style={{ paddingLeft: `${node.depth * 14}px` }}>
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className="dre-tree-toggle"
+      style={{ paddingLeft: `${node.depth * 14}px` }}
+      onClick={() => onToggle(node.row.key)}
+      aria-expanded={open}
+      aria-label={`${open ? "Recolher" : "Expandir"} ${node.row.display}`}
+    >
+      {content}
+    </button>
+  );
 }
 
 function DreValue({
@@ -103,6 +153,27 @@ export default function DreStatement({
     [tableMonths, selected],
   );
   const rows = useMemo(() => pivotDreMonths(tableMonths), [tableMonths]);
+  const treeRows = useMemo(() => buildDreTreeRows(rows), [rows]);
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
+
+  useEffect(() => {
+    setExpanded(compactDreExpandedKeys(treeRows));
+  }, [treeRows]);
+
+  const visibleRows = useMemo(
+    () => visibleDreTreeRows(treeRows, expanded),
+    [treeRows, expanded],
+  );
+  const toggle = (key: string) => {
+    setExpanded((current) => {
+      const next = new Set(current);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+  const expandAll = () => setExpanded(allDreExpandedKeys(treeRows));
+  const collapseToGroups = () => setExpanded(compactDreExpandedKeys(treeRows));
   const showResumo = isTrim && tableMonths.length > 1;
   const colSpan = tableMonths.length + 1 + (showResumo ? 2 : 0);
   const pendingMonths = tableMonths.filter((m) => m.cmvPendente);
@@ -176,8 +247,19 @@ export default function DreStatement({
               : ""}
           </div>
         </div>
+        <div className="bal-toolbar dre-tree-toolbar">
+          <div className="td-mute dre-tree-hint">Clique em um grupo ou subtotal para ver as contas.</div>
+          <div className="bal-controls">
+            <button type="button" className="btn-export bal-tool-btn" onClick={expandAll} title="Expandir toda a DRE">
+              <i className="fas fa-angles-down" aria-hidden /> Expandir
+            </button>
+            <button type="button" className="btn-export bal-tool-btn" onClick={collapseToGroups} title="Recolher detalhes da DRE">
+              <i className="fas fa-angles-up" aria-hidden /> Recolher
+            </button>
+          </div>
+        </div>
         <div className="tbl-scroll">
-          <table className="dre-tbl dre-tbl-year">
+          <table className="dre-tbl dre-tbl-year dre-tree">
             <thead>
               <tr>
                 <th className="dre-desc">Descrição</th>
@@ -199,20 +281,26 @@ export default function DreStatement({
               </tr>
             </thead>
             <tbody>
-              {rows.map((row) => {
+              {visibleRows.map((node) => {
+                const row = node.row;
+                const open = expanded.has(row.key);
                 if (row.kind === "group") {
                   return (
-                    <tr key={row.key} className="dre-group">
-                      <td colSpan={colSpan}>{row.display}</td>
+                    <tr key={row.key} className="dre-group dre-tree-row dre-tree-row-clickable">
+                      <td colSpan={colSpan}>
+                        <DreTreeLabel node={node} open={open} onToggle={toggle} />
+                      </td>
                     </tr>
                   );
                 }
                 const starKind = row.kind === "subtotal" || row.kind === "total" || row.kind === "lucro";
                 return (
-                  <tr key={row.key} className={rowClass(row)}>
+                  <tr
+                    key={row.key}
+                    className={`${rowClass(row)} dre-tree-row${node.children.length ? " dre-tree-row-clickable" : ""}`}
+                  >
                     <td>
-                      {row.number ? <span className="dre-num">{row.number} </span> : null}
-                      {row.display}
+                      <DreTreeLabel node={node} open={open} onToggle={toggle} />
                     </td>
                     {tableMonths.map((m) => {
                       const pending = Boolean(row.cmv && m.cmvPendente && row.valores[m.competencia] == null);
@@ -245,7 +333,7 @@ export default function DreStatement({
                   </tr>
                 );
               })}
-              {!rows.length ? (
+              {!visibleRows.length ? (
                 <tr>
                   <td colSpan={colSpan} className="td-mute">
                     Sem linhas com valor neste período.

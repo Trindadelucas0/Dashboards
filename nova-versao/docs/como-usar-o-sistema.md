@@ -49,9 +49,10 @@ Classificação Êxito vazia não impede a gravação: o lançamento aparece com
 
 1. Abra a empresa e acesse **Financeiro → DRE**.
 2. Escolha a competência no seletor superior.
-3. Confira cada subtotal em destaque e as contas detalhadas recuadas logo abaixo, na mesma ordem da planilha EXITO.
+3. Clique no nome ou no chevron de um grupo ou subtotal para mostrar ou ocultar suas contas.
+4. Use **Expandir** para abrir todos os níveis ou **Recolher** para voltar ao estado inicial: grupos abertos e subtotais fechados.
 
-Linhas como Salários e Ordenados, INSS, FGTS, Energia Elétrica, Água e Esgoto, Seguros, Honorários Contábeis e Serviços Prestados por Terceiros ficam sempre visíveis. Meses importados antes desta correção também passam a mostrar os detalhes, sem nova importação.
+Resultados como Receita Líquida, Lucro Bruto e Lucro Líquido permanecem sempre visíveis. Ao abrir **Despesas Administrativas**, aparecem linhas como Salários e Ordenados, INSS, FGTS, Energia Elétrica, Água e Esgoto, Seguros, Honorários Contábeis e Serviços Prestados por Terceiros. Meses importados antes desta correção também recebem a árvore, sem nova importação.
 
 ### Consultar o Balancete por período
 

@@ -38,6 +38,13 @@ export type DrePivotedRow = {
   acumulado: number | null;
 };
 
+export type DreTreeRow = {
+  row: DrePivotedRow;
+  parentKey: string | null;
+  depth: 0 | 1 | 2;
+  children: string[];
+};
+
 const GROUP_RECEITAS = "Receitas";
 const GROUP_DEDUCOES = "Deduções da Receita Bruta";
 const GROUP_CUSTOS = "Custos";
@@ -276,7 +283,12 @@ export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
         deduction: [GROUP_DEDUCOES, GROUP_CUSTOS, GROUP_DESPESAS].includes(lastGroup),
       };
     }
-    if (ln.nivel === "total" && meta.kind === "line") {
+    const sourceTotal =
+      ln.nivel === "total" ||
+      (ln.grupo || "").toLowerCase() === "total" ||
+      key === "receita bruta" ||
+      key === "cmv";
+    if (sourceTotal && meta.kind === "line") {
       meta = { ...meta, kind: "subtotal" };
     }
     if (meta.kind === "line" && meta.group == null) {
@@ -342,6 +354,66 @@ export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
     });
   }
   return rows;
+}
+
+export function buildDreTreeRows(rows: DrePivotedRow[]): DreTreeRow[] {
+  const tree: DreTreeRow[] = [];
+  let groupKey: string | null = null;
+  let subtotalKey: string | null = null;
+
+  for (const row of rows) {
+    let parentKey: string | null = null;
+    let depth: 0 | 1 | 2 = 0;
+
+    if (row.kind === "group") {
+      groupKey = row.key;
+      subtotalKey = null;
+    } else if (row.kind === "subtotal") {
+      parentKey = groupKey;
+      depth = groupKey ? 1 : 0;
+      subtotalKey = row.key;
+    } else if (row.kind === "line") {
+      parentKey = subtotalKey || groupKey;
+      depth = subtotalKey ? 2 : groupKey ? 1 : 0;
+    } else {
+      // Totais de resultado são marcos da DRE e ficam sempre visíveis.
+      groupKey = null;
+      subtotalKey = null;
+    }
+
+    tree.push({ row, parentKey, depth, children: [] });
+  }
+
+  const byKey = new Map(tree.map((node) => [node.row.key, node]));
+  for (const node of tree) {
+    if (!node.parentKey) continue;
+    byKey.get(node.parentKey)?.children.push(node.row.key);
+  }
+  return tree;
+}
+
+export function compactDreExpandedKeys(tree: DreTreeRow[]): Set<string> {
+  return new Set(
+    tree
+      .filter((node) => node.row.kind === "group" && node.children.length > 0)
+      .map((node) => node.row.key),
+  );
+}
+
+export function allDreExpandedKeys(tree: DreTreeRow[]): Set<string> {
+  return new Set(tree.filter((node) => node.children.length > 0).map((node) => node.row.key));
+}
+
+export function visibleDreTreeRows(tree: DreTreeRow[], expanded: Set<string>): DreTreeRow[] {
+  const byKey = new Map(tree.map((node) => [node.row.key, node]));
+  return tree.filter((node) => {
+    let parentKey = node.parentKey;
+    while (parentKey) {
+      if (!expanded.has(parentKey)) return false;
+      parentKey = byKey.get(parentKey)?.parentKey || null;
+    }
+    return true;
+  });
 }
 
 export function formatDreInt(n: number | null | undefined, _deduction = false) {

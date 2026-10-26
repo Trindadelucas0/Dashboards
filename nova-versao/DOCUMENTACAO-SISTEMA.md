@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.10.3 — Conciliação bancária em Recebimentos/Pagamentos |
-| Última atualização | 26/10/2026 (DRE EXITO com todos os detalhamentos visíveis) |
+| Versão do sistema | 2.10.4 — Conciliação bancária em Recebimentos/Pagamentos |
+| Última atualização | 26/10/2026 (DRE em árvore expansível) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.10.4 | Conciliação bancária | **DRE em árvore expansível:** a DRE comum organiza grupos, subtotais e contas detalhadas no mesmo padrão visual do Balancete. Grupos iniciam abertos, subtotais iniciam fechados, resultados permanecem visíveis e os botões **Expandir** / **Recolher** controlam toda a estrutura. Nome e chevron são clicáveis por mouse ou teclado. A hierarquia é derivada no frontend, inclusive para packs antigos sem `nivel`; API, banco, valores, KPIs e DRE Schumacher permanecem inalterados. |
 | 2.10.3 | Conciliação bancária | **DRE EXITO detalhada:** o parser preserva o nível original (`total` / `detalhe`) de cada linha e a tabela comum mostra todas as linhas contábeis na ordem da planilha, inclusive Salários, INSS, FGTS, Energia, Água, Seguros, Honorários, Serviços de terceiros e o detalhamento do CMV. Subtotais ficam destacados e detalhes recuados. Packs antigos sem `nivel` usam a ordem e o último grupo reconhecido, sem exigir reimportação. KPIs, margens e DRE Schumacher inalterados. |
 | 2.10.2 | Conciliação bancária | **Deploy:** o workflow `.github/workflows/deploy.yml` usa o runner exclusivo `exito-vps-Dashboards`, atualiza a instalação real em `/root/PROJETOS/exito/Dashboards` e executa `scripts/vps-root-deploy-nova.txt`. O script compila o frontend, reinicia `exito-dashboard` e `dashboards-nova-api`, executa as cargas documentadas da Schumacher e valida a saúde da API e da aplicação web. |
 | 2.10.1 | Conciliação bancária | **Balancete comum** (`BalanceteTree`): mês mostra só a competência escolhida; trimestre mostra somente os Balancetes importados nos três meses civis; **Geral** mostra todas as competências importadas do ano consultado. TOTAL aparece apenas com mais de uma coluna e soma somente o recorte visível. KPIs usam o mês escolhido ou a última competência visível no trimestre/Geral. Mês ou trimestre sem Balancete mostra aviso e não reaproveita outra competência. Balanço Patrimonial Schumacher, API e packs inalterados. |
@@ -203,7 +204,7 @@ Topo da aba: KPIs **Vendas do mês**, **Total impostos**, **Total impostos / Ven
 
 | Aba | Layout |
 |-----|--------|
-| **DRE** | KPIs MB / MO / ML / Carga % do mês selecionado + tabela multi-mês (CMV Pendente, deduções em vermelho). Na DRE EXITO, totais, subtotais e todos os detalhes aparecem na ordem da planilha; subtotais ficam destacados e detalhes recuados. Packs antigos também exibem os detalhes sem reimportação. MO só se a DRE tiver linha de lucro/resultado operacional. |
+| **DRE** | KPIs MB / MO / ML / Carga % do mês selecionado + tabela multi-mês (CMV Pendente, deduções em vermelho). Na DRE EXITO, a tabela é uma árvore na ordem da planilha: grupos iniciam abertos, subtotais fechados e detalhes aparecem ao clicar; **Expandir** / **Recolher** controlam toda a estrutura e resultados permanecem visíveis. Packs antigos recebem a mesma hierarquia sem reimportação. MO só se a DRE tiver linha de lucro/resultado operacional. |
 | **Indicadores** | A Margens · B Carga · C Patrimoniais **N/D** sem Balancete (banner) · D gráfico deduções % / MB % / ML % |
 | **Balancete** | Título + banner do recorte; 4 KPIs (Ativo D / Passivo C / Resultado R / analíticas); mês = uma coluna, trimestre = Balancetes importados daquele trimestre, botão **Geral** = todas as competências importadas do ano consultado; busca/filtro/Expandir·Recolher; árvore Conta×Descrição×meses com pasta/chevron, faixa lateral Ativo(verde)/Passivo·Resultado(roxo), coluna mensal ativa com borda verde vertical e badges **D**/**C**. TOTAL só aparece com mais de um mês e soma os saldos das colunas visíveis (wireframe — não é patrimônio consolidado). |
 
@@ -506,6 +507,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 27. Conciliação bancária não usa nem altera `FiscalMonth`, `ImportRecord`, `NfeLine`, Compras ou Vendas. A origem é exclusivamente o `.xlsx` bancário A:G ligado à empresa/unidade abertas.
 28. Somente administrador cria prévia e confirma importação/substituição. Viewer com acesso à empresa e à aba consulta; outra empresa ou aba não autorizada recebe 403. Toda consulta fica restrita à versão `active` do slot empresa + unidade + banco + competência.
 29. DRE EXITO mensal: `dre.linhas[].nivel` preserva a posição estrutural da planilha (`total` na primeira coluna; `detalhe` nas linhas recuadas). A UI comum não descarta linha por ausência de palavra-chave nem elimina o detalhamento que acompanha CMV ou subtotais. Para packs gravados antes de 2.10.3, a hierarquia é inferida pela ordem e pelo último grupo contábil reconhecido. Não exige reimportação e não altera os cálculos dos KPIs.
+30. Árvore da DRE comum: a hierarquia `grupo → subtotal → detalhe` é derivada somente no frontend. Grupos iniciam expandidos e subtotais recolhidos; **Expandir** abre todos os níveis e **Recolher** restaura esse estado compacto. Receita Líquida, Lucro Bruto, resultados operacionais e Lucro Líquido permanecem como raízes sempre visíveis. Linhas sem filhos não recebem chevron. A interação usa botão semântico com `aria-expanded`, clique, Enter e Espaço. Não altera API, banco nem cálculos.
 
 ## 6. Pendências de dados (Única)
 
@@ -530,7 +532,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 5. Em **Planilhas importadas** (mesma aba, só administrador), cada arquivo gravado mostra data, mês, unidade e tipos. **Excluir** abre a confirmação dentro do próprio card daquela planilha (Cancelar / **Excluir planilha**); Cancelar devolve o botão Excluir. Sai só o que aquela planilha entrou; outro arquivo do mesmo mês permanece. Se aparecer que não dá para separar duas planilhas do mesmo tipo, nada é apagado: reimporte o pacote certo com **Substituir mês**.
 6. Selecionar mês no chip superior; conferir DRE, Balancete, **Memória** (livro linha a linha), Impostos, Compras, Vendas. A barra lista os trimestres em ordem de calendário (ex.: 1º–4º de 2025, depois 1º–3º de 2026); com dois anos importados, o chip do trimestre traz o ano (**1º Trim 2025**). Para o **total somado do trimestre**, clique no chip do trimestre (não no mês): aí aparece a faixa de 4 KPIs (vendas, compras, saldo, imposto), **exceto** na Indústria Schumacher, onde a faixa não é montada. No chip de mês essa faixa não aparece.
 
-**DRE EXITO detalhada:** abra **Financeiro → DRE** e escolha a competência no seletor superior. Os subtotais (por exemplo, **Despesas Administrativas**) aparecem em destaque e todas as contas detalhadas ficam logo abaixo, recuadas, na mesma ordem da planilha. Meses já importados passam a mostrar os detalhes automaticamente; não é necessário reimportar o arquivo apenas para essa correção visual.
+**DRE EXITO em árvore:** abra **Financeiro → DRE** e escolha a competência no seletor superior. Os grupos principais já aparecem abertos; clique no nome ou no chevron de um subtotal, como **Despesas Administrativas**, para mostrar as contas detalhadas. Use **Expandir** para abrir todos os níveis e **Recolher** para voltar ao estado compacto. Resultados como Receita Líquida, Lucro Bruto e Lucro Líquido permanecem visíveis. Meses já importados recebem a mesma organização automaticamente, sem nova importação.
 
 **Única — DRE Análise Vertical (jan–jun/2026):** login `unica` → Importar → selecionar `Análise Vertical do D. R. E.xls` → preview deve listar **6** linhas `dre` (2026-01 … 2026-06) com `ok` → **Gravar** (sem “substituir mês” se o mês já tiver movimento/impostos) → conferir aba **DRE** em cada chip de mês. Em jan/2026 a planilha não traz lucro operacional → KPI de lucro líquido / ML fica N/D.
 
