@@ -131,7 +131,17 @@ def _parse_exito_dre(grid: WorkbookGrid) -> dict:
         if _skip_exito_row(label):
             continue
         key = _norm_label(label)
-        row = {"codigo": "", "descricao": label, "valor": valor, "grupo": "linha"}
+        row = {
+            "codigo": "",
+            "descricao": label,
+            "valor": valor,
+            "grupo": "linha",
+            # O EXITO posiciona títulos/totais na primeira coluna e os
+            # detalhamentos recuados a partir da terceira. Preservar essa
+            # informação permite que a UI reproduza a hierarquia original sem
+            # depender de uma lista incompleta de palavras-chave.
+            "nivel": nivel,
+        }
         if key == "receita bruta":
             totals["receitaBruta"] = valor
             row["grupo"] = "receita"

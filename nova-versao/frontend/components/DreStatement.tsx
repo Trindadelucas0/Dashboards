@@ -17,6 +17,7 @@ import {
 function rowClass(row: DrePivotedRow) {
   if (row.kind === "group") return "dre-group";
   const parts = ["dre-indent"];
+  if (row.kind === "subtotal") return "dre-subtotal";
   if (row.kind === "total") return "dre-total";
   if (row.kind === "lucro") return "dre-lucro";
   if (row.deduction) parts.push("dre-neg");
@@ -206,7 +207,7 @@ export default function DreStatement({
                     </tr>
                   );
                 }
-                const starKind = row.kind === "total" || row.kind === "lucro";
+                const starKind = row.kind === "subtotal" || row.kind === "total" || row.kind === "lucro";
                 return (
                   <tr key={row.key} className={rowClass(row)}>
                     <td>

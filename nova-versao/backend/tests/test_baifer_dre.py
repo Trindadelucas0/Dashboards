@@ -115,6 +115,18 @@ def test_baifer_dre_fixture_jan():
     result = classify_and_extract(FIXTURE_DRE)
     _assert_dre(result, "2026-01", EXPECTED["2026-01"])
 
+    linhas = result["pack_patch"]["dre"]["linhas"]
+    admin_idx = next(i for i, ln in enumerate(linhas) if "DESPESAS ADMINISTRATIVAS" in ln["descricao"])
+    salarios_idx = next(i for i, ln in enumerate(linhas) if "ORDENADOS" in ln["descricao"])
+    inss_idx = next(i for i, ln in enumerate(linhas) if ln["descricao"] == "INSS")
+    fgts_idx = next(i for i, ln in enumerate(linhas) if ln["descricao"] == "FGTS")
+
+    assert linhas[admin_idx]["nivel"] == "total"
+    assert linhas[salarios_idx]["nivel"] == "detalhe"
+    assert linhas[inss_idx]["nivel"] == "detalhe"
+    assert linhas[fgts_idx]["nivel"] == "detalhe"
+    assert admin_idx < salarios_idx < inss_idx < fgts_idx
+
 
 @pytest.mark.skipif(not FIXTURE_DRE.exists(), reason="Fixture baifer-padrao DRE ausente")
 def test_baifer_dre_fixture_fills_dre_tab():

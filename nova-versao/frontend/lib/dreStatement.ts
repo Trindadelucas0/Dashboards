@@ -2,6 +2,7 @@ export type DreLine = {
   codigo?: string;
   descricao: string;
   grupo?: string;
+  nivel?: "total" | "detalhe" | "linha";
   valor: number | null;
 };
 
@@ -16,11 +17,11 @@ export type DreMonth = {
   lucLiq?: number | null;
   margMb?: number | null;
   margMl?: number | null;
-  dre?: { linhas?: DreLine[]; hasValores?: boolean; source?: string };
+  dre?: { kind?: string; linhas?: DreLine[]; hasValores?: boolean; source?: string };
   source?: string;
 };
 
-export type DreRowKind = "group" | "line" | "total" | "lucro";
+export type DreRowKind = "group" | "line" | "subtotal" | "total" | "lucro";
 
 export type DrePivotedRow = {
   key: string;
@@ -163,6 +164,9 @@ export function dreRowClass(ln: { descricao: string; grupo?: string }): {
   if (grupo === "resultado") {
     return { kind: "total", group: null, deduction: false, cmv: false };
   }
+  if (grupo === "total") {
+    return { kind: "total", group: null, deduction: false, cmv: false };
+  }
   return { kind: "line", group: null, deduction: false, cmv: false };
 }
 
@@ -228,6 +232,7 @@ export function collapseTrimestre(months: DreMonth[], selected: string): DreMont
       lucBruto: sumNums(months.map((m) => m.lucBruto ?? null)),
       lucLiq: sumNums(months.map((m) => m.lucLiq ?? null)),
       dre: {
+        kind: months.map((m) => m.dre?.kind).find(Boolean),
         linhas,
         hasValores: linhas.some((l) => l.valor != null),
         source: months.map((m) => m.source || m.dre?.source).filter(Boolean).at(-1),
@@ -235,16 +240,6 @@ export function collapseTrimestre(months: DreMonth[], selected: string): DreMont
       source: months.map((m) => m.source || m.dre?.source).filter(Boolean).at(-1),
     },
   ];
-}
-
-function isSecondaryCmv(key: string, keptCmv: boolean) {
-  if (!keptCmv) return false;
-  return key !== "cmv" && (key.includes("custo das mercadorias") || key.includes("custos das mercadorias") || key.includes("custo da mercadoria"));
-}
-
-function isSecondaryLucro(key: string, hasMainLucro: boolean) {
-  if (!hasMainLucro) return false;
-  return key === "lucro liquido do exercicio";
 }
 
 export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
@@ -262,23 +257,32 @@ export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
     }
   }
 
-  const hasMainLucro = union.some((ln) => {
-    const key = dreLineKey(ln.descricao);
-    return (key.includes("lucro") || key.includes("prejuizo")) && key.includes("exercicio") && key.includes("ou prejuizo");
-  });
-  const hasShortCmv = union.some((ln) => dreLineKey(ln.descricao) === "cmv");
-
   const rows: DrePivotedRow[] = [];
   let lastGroup: string | null = null;
   const groupCount = new Map<string, number>();
-  let keptCmv = false;
+  const preserveSourceLabels = months.some((m) => m.dre?.kind === "exito");
 
   for (const ln of union) {
-    const meta = dreRowClass(ln);
+    let meta = dreRowClass(ln);
     const key = dreLineKey(ln.descricao);
-    if (meta.kind === "line" && meta.group == null) continue;
-    if (isSecondaryCmv(key, hasShortCmv)) continue;
-    if (isSecondaryLucro(key, hasMainLucro)) continue;
+
+    // Packs novos trazem `nivel`; packs antigos continuam funcionando pela
+    // ordem das linhas. Uma linha sem palavra-chave herda o último grupo
+    // contábil, em vez de desaparecer da tabela.
+    if (meta.kind === "line" && meta.group == null && lastGroup) {
+      meta = {
+        ...meta,
+        group: lastGroup,
+        deduction: [GROUP_DEDUCOES, GROUP_CUSTOS, GROUP_DESPESAS].includes(lastGroup),
+      };
+    }
+    if (ln.nivel === "total" && meta.kind === "line") {
+      meta = { ...meta, kind: "subtotal" };
+    }
+    if (meta.kind === "line" && meta.group == null) {
+      // Fora de um grupo reconhecido, ainda assim preserve a linha original.
+      meta = { ...meta, group: GROUP_OUTROS };
+    }
 
     const valores: Record<string, number | null> = {};
     let hasNumber = false;
@@ -296,11 +300,6 @@ export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
       hasNumber = true;
     }
     if (!hasNumber) continue;
-    if (meta.cmv) {
-      if (keptCmv) continue;
-      keptCmv = true;
-    }
-
     if (meta.group && meta.group !== lastGroup) {
       lastGroup = meta.group;
       rows.push({
@@ -320,7 +319,7 @@ export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
 
     const { media, acumulado } = dreMediaAcumulado(months.map((m) => valores[m.competencia]));
     let number: string | undefined;
-    if (meta.kind === "line" && meta.group) {
+    if (!preserveSourceLabels && meta.kind === "line" && meta.group) {
       const n = (groupCount.get(meta.group) || 0) + 1;
       groupCount.set(meta.group, n);
       number = `1.${n}`;
@@ -328,7 +327,9 @@ export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
     rows.push({
       key,
       descricao: ln.descricao,
-      display: withSign(ln.descricao, meta.kind, meta.deduction, meta.group),
+      display: preserveSourceLabels
+        ? (ln.descricao || "").trim()
+        : withSign(ln.descricao, meta.kind, meta.deduction, meta.group),
       kind: meta.kind,
       group: meta.group,
       deduction: meta.deduction,

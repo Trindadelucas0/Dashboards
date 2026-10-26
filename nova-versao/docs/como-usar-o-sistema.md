@@ -45,6 +45,14 @@ Classificação Êxito vazia não impede a gravação: o lançamento aparece com
 
 ## Outras rotinas
 
+### Consultar a DRE detalhada
+
+1. Abra a empresa e acesse **Financeiro → DRE**.
+2. Escolha a competência no seletor superior.
+3. Confira cada subtotal em destaque e as contas detalhadas recuadas logo abaixo, na mesma ordem da planilha EXITO.
+
+Linhas como Salários e Ordenados, INSS, FGTS, Energia Elétrica, Água e Esgoto, Seguros, Honorários Contábeis e Serviços Prestados por Terceiros ficam sempre visíveis. Meses importados antes desta correção também passam a mostrar os detalhes, sem nova importação.
+
 ### Consultar o Balancete por período
 
 1. Abra a empresa e acesse **Financeiro → Balancete**.
