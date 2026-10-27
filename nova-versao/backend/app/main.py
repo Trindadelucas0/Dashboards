@@ -1,13 +1,35 @@
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
+from app.db import Base, engine
+from app import models  # noqa: F401 -- registra todas as tabelas no metadata
 from app.routers import auth, bank_statements, companies, imports, users
 
 settings = get_settings()
-app = FastAPI(title="Dashboards Nova Versão", version="0.1.0")
+
+
+def ensure_database_schema() -> None:
+    """Cria tabelas ausentes antes de a API aceitar requisições.
+
+    O projeto ainda usa ``create_all`` como migração idempotente. Executá-lo
+    também no startup impede que um deploy com modelos novos publique rotas
+    antes de o schema correspondente existir.
+    """
+    Base.metadata.create_all(bind=engine)
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    ensure_database_schema()
+    yield
+
+
+app = FastAPI(title="Dashboards Nova Versão", version="0.1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
