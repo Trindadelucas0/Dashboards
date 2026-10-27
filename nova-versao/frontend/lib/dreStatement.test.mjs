@@ -127,3 +127,36 @@ test("árvore abre grupos, mantém subtotais fechados e preserva resultados fina
   const allVisible = visibleDreTreeRows(tree, allDreExpandedKeys(tree));
   assert.equal(allVisible.length, tree.length);
 });
+
+test("lucro e prejuízo do exercício viram uma linha só e netam no trimestre", () => {
+  const mes = (competencia, label, descricao, valor) => ({
+    competencia,
+    label,
+    hasDre: true,
+    cmvPendente: false,
+    dre: {
+      kind: "exito",
+      linhas: [
+        { descricao: "= LUCRO OU PREJUÍZO LÍQUIDO DO EXERCÍCIO", valor, grupo: "resultado" },
+        { descricao, valor, grupo: "resultado" },
+      ],
+    },
+  });
+  const meses = [
+    mes("2026-07", "Jul/2026", "LUCRO LÍQUIDO DO EXERCÍCIO", 34940),
+    mes("2026-08", "Ago/2026", "LUCRO LÍQUIDO DO EXERCÍCIO", 305265),
+    mes("2026-09", "Set/2026", "PREJUÍZO DO EXERCÍCIO", -111953),
+  ];
+
+  const rows = pivotDreMonths(meses);
+  const resultado = rows.filter((r) => r.kind === "lucro" && !r.display.includes("OU"));
+  assert.equal(resultado.length, 1);
+  assert.equal(resultado[0].acumulado, 228252);
+  assert.equal(resultado[0].display, "LUCRO LÍQUIDO DO EXERCÍCIO");
+  assert.equal(resultado[0].valores["2026-09"], -111953);
+
+  const [tri] = collapseTrimestre(meses, "q3-2026");
+  const triRows = pivotDreMonths([tri]).filter((r) => r.kind === "lucro" && !r.display.includes("OU"));
+  assert.equal(triRows.length, 1);
+  assert.equal(triRows[0].valores["q3-2026"], 228252);
+});

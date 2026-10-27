@@ -61,8 +61,24 @@ function foldLabel(text: string) {
     .trim();
 }
 
+// O balancete rotula a MESMA conta de resultado ora como "LUCRO LÍQUIDO DO
+// EXERCÍCIO", ora como "PREJUÍZO DO EXERCÍCIO", conforme o sinal do mês. Sem
+// unificar, o trimestre cria duas linhas e cada uma soma só parte dos meses.
+const RESULTADO_EXERCICIO_KEY = "resultado liquido do exercicio";
+
+function isResultadoExercicio(key: string) {
+  return (
+    (key.includes("lucro") || key.includes("prejuizo")) &&
+    key.includes("exercicio") &&
+    !key.includes("antes") &&
+    !key.includes("operacional") &&
+    !key.startsWith("lucro ou prejuizo")
+  );
+}
+
 export function dreLineKey(descricao: string) {
-  return foldLabel(descricao);
+  const key = foldLabel(descricao);
+  return isResultadoExercicio(key) ? RESULTADO_EXERCICIO_KEY : key;
 }
 
 export function isTrimestreCompetencia(key: string) {
@@ -336,12 +352,20 @@ export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
       groupCount.set(meta.group, n);
       number = `1.${n}`;
     }
+    // Linha unificada: o rótulo segue o sinal do acumulado do período.
+    const descricao =
+      key === RESULTADO_EXERCICIO_KEY
+        ? (acumulado ?? 0) < 0
+          ? "PREJUÍZO DO EXERCÍCIO"
+          : "LUCRO LÍQUIDO DO EXERCÍCIO"
+        : ln.descricao;
+
     rows.push({
       key,
-      descricao: ln.descricao,
+      descricao,
       display: preserveSourceLabels
-        ? (ln.descricao || "").trim()
-        : withSign(ln.descricao, meta.kind, meta.deduction, meta.group),
+        ? (descricao || "").trim()
+        : withSign(descricao, meta.kind, meta.deduction, meta.group),
       kind: meta.kind,
       group: meta.group,
       deduction: meta.deduction,
