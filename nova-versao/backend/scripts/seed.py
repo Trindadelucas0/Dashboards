@@ -8,8 +8,8 @@ sys.path.insert(0, str(ROOT))
 
 from app.companies import COMPANIES, VIEWER_TABS  # noqa: E402
 from app.config import get_settings  # noqa: E402
-from app.db import SessionLocal  # noqa: E402
-from app.models import Company, CompanyCnpj, User, UserCompany  # noqa: E402
+from app.db import SessionLocal, engine  # noqa: E402
+from app.models import Company, CompanyCnpj, CompanyDeletion, User, UserCompany  # noqa: E402
 from app.security import hash_password  # noqa: E402
 
 COMPANY_DESCRIPTIONS = {
@@ -22,8 +22,13 @@ COMPANY_DESCRIPTIONS = {
 }
 
 
+def seed_company_regs(db):
+    deleted_ids = {row[0] for row in db.query(CompanyDeletion.company_id).all()}
+    return [reg for reg in COMPANIES if reg.id not in deleted_ids]
+
+
 def upsert_companies(db) -> None:
-    for reg in COMPANIES:
+    for reg in seed_company_regs(db):
         row = db.query(Company).filter(Company.id == reg.id).first()
         if not row:
             row = Company(id=reg.id)
@@ -69,7 +74,7 @@ def seed_users(db) -> None:
         admin.is_admin = True
         admin.password_hash = hash_password(admin_pw)
 
-    for reg in COMPANIES:
+    for reg in seed_company_regs(db):
         if not reg.username:
             continue
         user = db.query(User).filter(User.username == reg.username).first()
@@ -97,14 +102,15 @@ def seed_users(db) -> None:
 
 
 def main() -> None:
-    """Só upsert de catálogo + usuários seed. Nunca apaga empresas nem dados fiscais."""
+    """Upsert de catálogo/usuários, respeitando tombstones de empresas excluídas."""
+    CompanyDeletion.__table__.create(bind=engine, checkfirst=True)
     db = SessionLocal()
     try:
         upsert_companies(db)
         db.flush()
         seed_users(db)
         db.commit()
-        ids = ", ".join(c.id for c in COMPANIES)
+        ids = ", ".join(c.id for c in seed_company_regs(db))
         print(f"Seed concluído (upsert: {ids} + admin). Empresas da UI preservadas.")
     finally:
         db.close()

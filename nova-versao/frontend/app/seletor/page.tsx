@@ -15,6 +15,9 @@ export default function SeletorPage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [error, setError] = useState("");
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteErrors, setDeleteErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     (async () => {
@@ -33,6 +36,25 @@ export default function SeletorPage() {
   async function logout() {
     await api("/api/auth/logout", { method: "POST" });
     router.push("/");
+  }
+
+  async function deleteCompany(company: Company) {
+    setDeletingId(company.id);
+    setDeleteErrors((current) => ({ ...current, [company.id]: "" }));
+    try {
+      await api<{ deleted: boolean; companyId: string }>(`/api/companies/${encodeURIComponent(company.id)}`, {
+        method: "DELETE",
+      });
+      setCompanies((current) => current.filter((item) => item.id !== company.id));
+      setConfirmingId(null);
+    } catch (err) {
+      setDeleteErrors((current) => ({
+        ...current,
+        [company.id]: err instanceof Error ? err.message : "Não foi possível excluir a empresa.",
+      }));
+    } finally {
+      setDeletingId(null);
+    }
   }
 
   return (
@@ -61,17 +83,60 @@ export default function SeletorPage() {
           ) : null}
           {companies.map((c) => {
             const meta = CARD_META[c.id];
+            const confirming = confirmingId === c.id;
+            const deleting = deletingId === c.id;
             return (
-              <Link key={c.id} href={`/dashboard/${c.id}/${firstAllowedTab(c.tabs)}`} className="dashboard-card">
-                <div className="card-icon">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={meta?.icon || CARD_META.egaplast.icon} />
-                  </svg>
-                </div>
-                <h2 className="card-title">{c.label}</h2>
-                <p className="card-desc">{c.desc || meta?.desc}</p>
-                <div className="card-arrow">Acessar</div>
-              </Link>
+              <article key={c.id} className="dashboard-card company-card">
+                <Link href={`/dashboard/${c.id}/${firstAllowedTab(c.tabs)}`} className="company-card-main">
+                  <div className="card-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={meta?.icon || CARD_META.egaplast.icon} />
+                    </svg>
+                  </div>
+                  <h2 className="card-title">{c.label}</h2>
+                  <p className="card-desc">{c.desc || meta?.desc}</p>
+                  <div className="card-arrow">Acessar</div>
+                </Link>
+                {isAdmin ? (
+                  confirming ? (
+                    <div className="company-delete-confirm" aria-live="polite">
+                      <p>Excluir <strong>{c.label}</strong> e todas as suas planilhas?</p>
+                      <span>Esta ação não pode ser desfeita.</span>
+                      {deleteErrors[c.id] ? <div className="company-delete-error" role="alert">{deleteErrors[c.id]}</div> : null}
+                      <div className="company-delete-actions">
+                        <button
+                          type="button"
+                          className="btn-delete-cancel"
+                          disabled={Boolean(deletingId)}
+                          onClick={() => setConfirmingId(null)}
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-delete-confirm"
+                          disabled={Boolean(deletingId)}
+                          onClick={() => deleteCompany(c)}
+                        >
+                          {deleting ? "Excluindo…" : "Confirmar exclusão"}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn-delete-company"
+                      disabled={Boolean(deletingId)}
+                      onClick={() => {
+                        setConfirmingId(c.id);
+                        setDeleteErrors((current) => ({ ...current, [c.id]: "" }));
+                      }}
+                    >
+                      Excluir empresa
+                    </button>
+                  )
+                ) : null}
+              </article>
             );
           })}
           {isAdmin ? (

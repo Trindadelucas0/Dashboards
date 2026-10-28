@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.10.7 — alias PIS E COFINS na planilha padrão |
-| Última atualização | 26/10/2026 (importação da aba PIS E COFINS) |
+| Versão do sistema | 2.11.0 — exclusão completa de empresas |
+| Última atualização | 27/10/2026 (exclusão de empresa e dados vinculados pelo administrador) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,8 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.11.0 | Exclusão completa de empresas | No seletor, somente o administrador vê **Excluir empresa**. O primeiro clique abre a confirmação no card; **Confirmar exclusão** remove, em uma transação, dados fiscais, planilhas e lançamentos bancários, meses, notas, CNPJs/unidades e vínculos de usuários. As contas permanecem. `DELETE /api/companies/{company_id}` exige administrador, registra um tombstone técnico sem dados empresariais e o seed não recria empresas fixas excluídas. |
+| 2.10.8 | Schema garantido no startup da API | A API executa a criação idempotente das tabelas modeladas antes de atender requisições. Corrige o erro 500 de **Recebimentos/Pagamentos** em ambientes onde o deploy publicou as rotas de conciliação sem criar `bank_statement_imports` e `bank_transactions`; reinícios e próximos deploys passam a garantir o schema automaticamente. |
 | 2.10.7 | Alias PIS E COFINS | A planilha padrão aceita as abas `PIS COFINS` e `PIS E COFINS` como o mesmo tributo. A variação com a conjunção passa a gerar a part `pis_cofins`, preencher a Memória e os cards de PIS/COFINS em Impostos sem alterar o ICMS do mês. |
 | 2.10.6 | Recorte fiscal ICMS 5005 + ST | A planilha padrão parcial com somente `ICMS 5005-2012` e outra aba fiscal oficial (por exemplo `ST`) é tratada como um único workbook: cada tributo presente é extraído para a aba Impostos/Memória. O identificador fixo `5005-2012` não é mais confundido com a competência maio/2012. A competência real continua vindo de `MMYYYY` no nome do arquivo; se estiver ausente, a prévia bloqueia a gravação e pede correção do nome. |
 | 2.10.5 | Substituição segura de importações | **“Substituir tipos enviados” não limpa mais o mês inteiro:** a API remove e marca como `replaced` somente os tipos presentes na nova prévia, preservando movimento, impostos, DRE e Balancete vindos de outras planilhas. As `NfeLine` também são removidas somente para os tipos substituídos. A interface explica a diferença entre **Gravar** (mesclar) e **Substituir tipos enviados**. Incidentes Baifer e Loja das Máquinas 07–09/2026 recompostos a partir do histórico de `pack_patch`, snapshots, fixtures validadas e metadados do banco; detalhes linha a linha só foram recriados quando havia fonte preservada. |
@@ -283,7 +285,7 @@ O layout novo (cards do livro na Memória, tabela por tributo em Impostos) só r
 
 Carga local: `python scripts/seed.py`, `python scripts/import_schumacher_livro.py` (merge no pack da Matriz), `python scripts/import_schumacher_venda_produto.py` (merge `vendaProduto`; cria os slots da Filial), `python scripts/import_schumacher_margem.py` (margens mês + cidade; atualiza abas), `python scripts/import_schumacher_dre.py` e `python scripts/import_schumacher_balanco.py` (merge na Matriz; não apaga livro nem venda por produto).
 
-**Produção (VPS):** um push na branch `main` dispara `.github/workflows/deploy.yml`. O job é recebido pelo runner exclusivo `exito-vps-Dashboards` na própria VPS e executa [`scripts/vps-root-deploy-nova.txt`](../../scripts/vps-root-deploy-nova.txt) no caminho `/root/PROJETOS/exito/Dashboards`. O script atualiza a cópia de produção, compila `nova-versao/frontend`, reinicia o PM2 `exito-dashboard` e o container `dashboards-nova-api`, executa `seed.py` e `import_schumacher_margem.py` e confere os endereços locais de saúde. O serviço do runner é restrito ao repositório `Trindadelucas0/Dashboards`; credenciais e tokens não ficam na documentação nem no repositório.
+**Produção (VPS):** um push na branch `main` dispara `.github/workflows/deploy.yml`. O job é recebido pelo runner exclusivo `exito-vps-Dashboards` na própria VPS e executa [`scripts/vps-root-deploy-nova.txt`](../../scripts/vps-root-deploy-nova.txt) no caminho `/root/PROJETOS/exito/Dashboards`. O script atualiza a cópia de produção, compila `nova-versao/frontend`, reinicia o PM2 `exito-dashboard` e o container `dashboards-nova-api`, executa `seed.py` e `import_schumacher_margem.py` e confere os endereços locais de saúde. Ao iniciar, a API executa `Base.metadata.create_all` de forma idempotente para criar tabelas modeladas que ainda estejam ausentes antes de liberar as rotas. O serviço do runner é restrito ao repositório `Trindadelucas0/Dashboards`; credenciais e tokens não ficam na documentação nem no repositório.
 
 ### Indústria Schumacher — margens por mês e por cidade
 
@@ -459,6 +461,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | Conciliação — API | `backend/app/routers/bank_statements.py` (preview/commit de admin; options/summary/transactions com empresa, aba e unidade validadas no servidor) |
 | Conciliação — UI | `frontend/components/BankReconciliation.tsx`; montagem dedicada em `frontend/app/dashboard/[empresa]/[aba]/page.tsx`; estilos `.bank-*` em `frontend/app/dashboard.css` |
 | Lista e exclusão | `GET /api/imports?companyId=` e `DELETE /api/imports/{id}` em `backend/app/routers/imports.py` (admin + empresa do registro). Reconstrução do mês: `backend/app/imports_revert.py` (`rebuild_pack`). |
+| Seletor / exclusão de empresa | `frontend/app/seletor/page.tsx`; `DELETE /api/companies/{company_id}` em `backend/app/routers/companies.py`; tombstone `CompanyDeletion` em `backend/app/models.py`; seed respeita exclusões em `backend/scripts/seed.py`. |
 | Fatia por aba UI | `backend/app/routers/companies.py` → `_slice`, `_is_empty`, `build_dre_por_mes`, `build_balancete_por_mes` |
 | CFOP / Finalidade / Serviços | `backend/app/extract/cfop.py` (`CFOP_INFO`, `aggregate_macro`, `aggregate_servicos`) |
 | Linhas NF (export) | `GET .../nfe-lines` em `backend/app/routers/companies.py`; classificação `tipo_doc` / `vendas_por_doc` em `backend/app/extract/aggregate.py` |
@@ -511,6 +514,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 28. Somente administrador cria prévia e confirma importação/substituição. Viewer com acesso à empresa e à aba consulta; outra empresa ou aba não autorizada recebe 403. Toda consulta fica restrita à versão `active` do slot empresa + unidade + banco + competência.
 29. DRE EXITO mensal: `dre.linhas[].nivel` preserva a posição estrutural da planilha (`total` na primeira coluna; `detalhe` nas linhas recuadas). A UI comum não descarta linha por ausência de palavra-chave nem elimina o detalhamento que acompanha CMV ou subtotais. Para packs gravados antes de 2.10.3, a hierarquia é inferida pela ordem e pelo último grupo contábil reconhecido. Não exige reimportação e não altera os cálculos dos KPIs.
 30. Árvore da DRE comum: a hierarquia `grupo → subtotal → detalhe` é derivada somente no frontend. Grupos iniciam expandidos e subtotais recolhidos; **Expandir** abre todos os níveis e **Recolher** restaura esse estado compacto. Receita Líquida, Lucro Bruto, resultados operacionais e Lucro Líquido permanecem como raízes sempre visíveis. Linhas sem filhos não recebem chevron. A interação usa botão semântico com `aria-expanded`, clique, Enter e Espaço. Não altera API, banco nem cálculos.
+31. Excluir empresa é operação exclusiva do administrador e exige dois cliques no card do seletor: **Excluir empresa** → **Confirmar exclusão**. A API remove dados fiscais e bancários, meses, notas, importações, CNPJs/unidades e vínculos em uma única transação; contas de usuário permanecem. Em erro, há rollback e nenhum dado fica parcialmente removido. Um tombstone guarda somente identificador, administrador e data da exclusão para auditoria e para impedir recriação pelo seed; não guarda nome, CNPJ nem valores. Não há restauração pela interface.
 
 ## 6. Pendências de dados (Única)
 
@@ -534,6 +538,8 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 4. Conferir preview (ok / vazia / ignorada) → **Gravar**.
 5. Em **Planilhas importadas** (mesma aba, só administrador), cada arquivo gravado mostra data, mês, unidade e tipos. **Excluir** abre a confirmação dentro do próprio card daquela planilha (Cancelar / **Excluir planilha**); Cancelar devolve o botão Excluir. Sai só o que aquela planilha entrou; outro arquivo do mesmo mês permanece. Na reimportação, **Gravar** mescla tipos novos e **Substituir tipos enviados** troca somente os tipos listados na prévia, sem apagar as outras planilhas do mês.
 6. Selecionar mês no chip superior; conferir DRE, Balancete, **Memória** (livro linha a linha), Impostos, Compras, Vendas. A barra lista os trimestres em ordem de calendário (ex.: 1º–4º de 2025, depois 1º–3º de 2026); com dois anos importados, o chip do trimestre traz o ano (**1º Trim 2025**). Para o **total somado do trimestre**, clique no chip do trimestre (não no mês): aí aparece a faixa de 4 KPIs (vendas, compras, saldo, imposto), **exceto** na Indústria Schumacher, onde a faixa não é montada. No chip de mês essa faixa não aparece.
+
+**Excluir uma empresa inteira (somente administrador):** no seletor de dashboards, clique em **Excluir empresa** no card desejado. Confira o aviso e use **Confirmar exclusão**; **Cancelar** mantém tudo. A confirmação apaga definitivamente todos os dados fiscais e bancários, planilhas, meses, notas, CNPJs/unidades e acessos vinculados à empresa. As contas de usuário continuam cadastradas, mas deixam de acessar essa empresa. A empresa some do seletor e não volta após o seed. A recuperação depende de backup do banco.
 
 **DRE EXITO em árvore:** abra **Financeiro → DRE** e escolha a competência no seletor superior. Os grupos principais já aparecem abertos; clique no nome ou no chevron de um subtotal, como **Despesas Administrativas**, para mostrar as contas detalhadas. Use **Expandir** para abrir todos os níveis e **Recolher** para voltar ao estado compacto. Resultados como Receita Líquida, Lucro Bruto e Lucro Líquido permanecem visíveis. Meses já importados recebem a mesma organização automaticamente, sem nova importação.
 

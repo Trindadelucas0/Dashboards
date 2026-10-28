@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import logging
 import re
 import unicodedata
 
@@ -24,9 +25,21 @@ from app.indicadores_schumacher import (
     compute_indicadores_schumacher,
     indicadores_tem_valor,
 )
-from app.models import Company, CompanyCnpj, FiscalMonth, NfeLine, User, UserCompany
+from app.models import (
+    BankStatementImport,
+    BankTransaction,
+    Company,
+    CompanyCnpj,
+    CompanyDeletion,
+    FiscalMonth,
+    ImportRecord,
+    NfeLine,
+    User,
+    UserCompany,
+)
 
 router = APIRouter(prefix="/api/companies", tags=["companies"])
+logger = logging.getLogger(__name__)
 
 TAB_KEYS = (
     "visao-geral",
@@ -117,7 +130,10 @@ def _unique_id(db: Session, label: str) -> str:
     base = slugify(label)
     candidate = base
     n = 2
-    while db.query(Company).filter(Company.id == candidate).first():
+    while (
+        db.query(Company).filter(Company.id == candidate).first()
+        or db.query(CompanyDeletion).filter(CompanyDeletion.company_id == candidate).first()
+    ):
         candidate = f"{base}-{n}"[:40]
         n += 1
     return candidate
@@ -864,6 +880,73 @@ def create_company(
         "tabs": row.tabs,
         "desc": row.description or row.label,
     }
+
+
+@router.delete("/{company_id}")
+def delete_company(
+    company_id: str,
+    user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    company = (
+        db.query(Company)
+        .filter(Company.id == company_id)
+        .with_for_update()
+        .first()
+    )
+    if not company:
+        raise HTTPException(404, "Empresa não encontrada")
+
+    try:
+        bank_import_ids = [
+            row[0]
+            for row in db.query(BankStatementImport.id)
+            .filter(BankStatementImport.company_id == company_id)
+            .all()
+        ]
+        if bank_import_ids:
+            db.query(BankTransaction).filter(
+                BankTransaction.import_id.in_(bank_import_ids)
+            ).delete(synchronize_session=False)
+        db.query(BankStatementImport).filter(
+            BankStatementImport.company_id == company_id
+        ).delete(synchronize_session=False)
+        db.query(NfeLine).filter(NfeLine.company_id == company_id).delete(
+            synchronize_session=False
+        )
+        db.query(ImportRecord).filter(ImportRecord.company_id == company_id).delete(
+            synchronize_session=False
+        )
+        db.query(FiscalMonth).filter(FiscalMonth.company_id == company_id).delete(
+            synchronize_session=False
+        )
+        db.query(UserCompany).filter(UserCompany.company_id == company_id).delete(
+            synchronize_session=False
+        )
+        db.query(CompanyCnpj).filter(CompanyCnpj.company_id == company_id).delete(
+            synchronize_session=False
+        )
+        db.add(CompanyDeletion(company_id=company_id, deleted_by_user_id=user.id))
+        db.delete(company)
+        db.commit()
+    except HTTPException:
+        db.rollback()
+        raise
+    except Exception as exc:  # noqa: BLE001
+        db.rollback()
+        logger.exception(
+            "company_delete_failed admin_user_id=%s company_id=%s",
+            user.id,
+            company_id,
+        )
+        raise HTTPException(500, "Não foi possível excluir a empresa. Nenhum dado foi removido.") from exc
+
+    logger.info(
+        "company_deleted admin_user_id=%s company_id=%s",
+        user.id,
+        company_id,
+    )
+    return {"deleted": True, "companyId": company_id}
 
 
 @router.get("/{company_id}")

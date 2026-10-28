@@ -35,6 +35,16 @@ class Company(Base):
     cnpjs: Mapped[list["CompanyCnpj"]] = relationship(back_populates="company")
 
 
+class CompanyDeletion(Base):
+    """Tombstone mínimo para impedir que o seed recrie uma empresa excluída."""
+
+    __tablename__ = "company_deletions"
+
+    company_id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    deleted_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    deleted_by_user_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+
 class CompanyCnpj(Base):
     __tablename__ = "company_cnpjs"
     __table_args__ = (UniqueConstraint("cnpj", name="uq_company_cnpj"),)

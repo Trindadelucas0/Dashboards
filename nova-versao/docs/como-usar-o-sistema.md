@@ -45,6 +45,17 @@ Classificação Êxito vazia não impede a gravação: o lançamento aparece com
 
 ## Outras rotinas
 
+### Excluir uma empresa e todas as planilhas
+
+Somente administradores podem executar esta ação.
+
+1. Abra o seletor de dashboards.
+2. No card da empresa, clique em **Excluir empresa**.
+3. Confira o nome e o aviso de que a ação não pode ser desfeita.
+4. Clique em **Confirmar exclusão**. Para desistir, use **Cancelar**.
+
+A empresa sai do seletor junto com planilhas fiscais e bancárias, meses, notas, CNPJs/unidades e vínculos de acesso. As contas de usuário permanecem cadastradas, mas sem acesso à empresa excluída. A operação não possui lixeira ou restauração pela tela; recuperação exige backup do banco. Usuários comuns não veem a opção e não têm permissão na API.
+
 ### Importar e corrigir planilhas fiscais
 
 1. Abra a empresa correta e acesse **Importar**.
@@ -81,6 +92,8 @@ Quando houver mais de um mês visível, a coluna TOTAL soma somente essas coluna
 1. Integre a alteração na branch `main` do repositório `Dashboards`.
 2. Abra **GitHub → Actions → Deploy** e acompanhe o job **Deploy no servidor**.
 3. Considere a publicação concluída somente quando o job terminar em verde; o próprio deploy valida a API e a aplicação web.
+
+Ao iniciar depois de um deploy, a API cria de forma idempotente qualquer tabela modelada que ainda esteja ausente. Assim, telas com persistência própria, como **Recebimentos/Pagamentos**, não ficam disponíveis antes do respectivo schema do PostgreSQL.
 
 Se o job permanecer em **Waiting for a runner**, confira na VPS o serviço do runner exclusivo `exito-vps-Dashboards`. Não coloque senha, token de registro ou chave SSH em commits, documentação ou logs do chamado.
 
