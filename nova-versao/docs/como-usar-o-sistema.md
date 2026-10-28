@@ -45,6 +45,20 @@ Classificação Êxito vazia não impede a gravação: o lançamento aparece com
 
 ## Outras rotinas
 
+### Cadastrar e identificar vários CNPJs no mesmo dashboard
+
+Somente administradores podem cadastrar ou renomear unidades.
+
+1. No seletor, clique em **Nova empresa** e informe o nome e o CNPJ principal.
+2. Em **Outros CNPJs**, clique em **Adicionar outro CNPJ**.
+3. Informe um nome próprio e o CNPJ de cada unidade; nomes e CNPJs não podem se repetir.
+4. Depois de cadastrar, abra o dashboard e escolha a unidade no seletor superior. O nome e o CNPJ exibidos devem acompanhar a seleção.
+5. Em **Todas as unidades**, confira a indicação **CNPJs consolidados**; nenhum CNPJ individual representa esse total.
+6. Para fazer o manejo depois, volte ao seletor, abra os **três pontos** e escolha **Gerenciar unidades e CNPJs**.
+7. Use **Adicionar outro CNPJ** para uma unidade nova. Nas existentes, altere nome/CNPJ e clique em **Salvar unidade**, ou use **Remover**.
+
+Somente administrador vê essas ações. A empresa principal não pode ser alterada por esse painel. Unidade que já possui planilhas, competências ou lançamentos bancários pode ser renomeada, mas não permite trocar o CNPJ nem excluir; isso protege o histórico associado à chave interna.
+
 ### Excluir uma empresa e todas as planilhas
 
 Somente administradores podem executar esta ação.

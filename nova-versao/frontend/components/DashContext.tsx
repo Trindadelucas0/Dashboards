@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-export type CompanyUnit = { key: string; label: string };
+export type CompanyUnit = { key: string; label: string; cnpj: string | null };
 
 export type CompanyDetail = {
   id: string;

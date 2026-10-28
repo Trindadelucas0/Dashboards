@@ -7,7 +7,22 @@ import { api } from "@/lib/api";
 import { CARD_META, firstAllowedTab } from "@/lib/nav";
 import "../selector.css";
 
-type Company = { id: string; label: string; desc: string; tabs?: string[] };
+type CompanyUnit = { key: string; label: string; cnpj: string | null };
+type Company = { id: string; label: string; desc: string; cnpj: string; tabs?: string[] };
+type CompanyDetail = { id: string; label: string; cnpj: string; units: CompanyUnit[] };
+
+function digitsOnly(value: string) {
+  return value.replace(/\D/g, "").slice(0, 14);
+}
+
+function maskCnpj(value: string) {
+  const digits = digitsOnly(value);
+  return digits
+    .replace(/^(\d{2})(\d)/, "$1.$2")
+    .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+    .replace(/\.(\d{3})(\d)/, ".$1/$2")
+    .replace(/(\d{4})(\d)/, "$1-$2");
+}
 
 export default function SeletorPage() {
   const router = useRouter();
@@ -19,6 +34,15 @@ export default function SeletorPage() {
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteErrors, setDeleteErrors] = useState<Record<string, string>>({});
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingUnits, setEditingUnits] = useState<CompanyUnit[]>([]);
+  const [editLoadingId, setEditLoadingId] = useState<string | null>(null);
+  const [editSavingKey, setEditSavingKey] = useState<string | null>(null);
+  const [editError, setEditError] = useState("");
+  const [editSuccess, setEditSuccess] = useState("");
+  const [newUnit, setNewUnit] = useState({ label: "", cnpj: "" });
+  const [addingUnit, setAddingUnit] = useState(false);
+  const [removingKey, setRemovingKey] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -75,6 +99,96 @@ export default function SeletorPage() {
     }
   }
 
+  async function openUnitEditor(company: Company) {
+    setActionMenuId(null);
+    setConfirmingId(null);
+    setEditingId(company.id);
+    setEditingUnits([]);
+    setEditError("");
+    setEditSuccess("");
+    setNewUnit({ label: "", cnpj: "" });
+    setRemovingKey(null);
+    setEditLoadingId(company.id);
+    try {
+      const detail = await api<CompanyDetail>(`/api/companies/${encodeURIComponent(company.id)}`);
+      setEditingUnits(detail.units || []);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : "Não foi possível carregar as unidades.");
+    } finally {
+      setEditLoadingId(null);
+    }
+  }
+
+  function updateUnitDraft(key: string, change: Partial<CompanyUnit>) {
+    setEditingUnits((current) => current.map((unit) => unit.key === key ? { ...unit, ...change } : unit));
+  }
+
+  async function saveUnit(company: Company, unit: CompanyUnit) {
+    setEditError("");
+    setEditSuccess("");
+    const finalNames = editingUnits.filter((item) => item.key !== "todas").map((item) => item.label.trim().toLocaleLowerCase("pt-BR"));
+    if (new Set(finalNames).size !== finalNames.length) {
+      setEditError("Cada unidade deve ter um nome diferente.");
+      return;
+    }
+    const finalCnpjs = editingUnits.filter((item) => item.key !== "todas" && item.cnpj).map((item) => digitsOnly(item.cnpj || ""));
+    if (new Set(finalCnpjs).size !== finalCnpjs.length) {
+      setEditError("Cada unidade deve ter um CNPJ diferente.");
+      return;
+    }
+    setEditSavingKey(unit.key);
+    try {
+      const result = await api<{ companyId: string; unit: CompanyUnit }>(`/api/companies/${encodeURIComponent(company.id)}/units/${encodeURIComponent(unit.key)}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          label: unit.label.trim(),
+          cnpj: digitsOnly(unit.cnpj || ""),
+        }),
+      });
+      setEditingUnits((current) => current.map((item) => item.key === result.unit.key ? result.unit : item));
+      setEditSuccess(`${result.unit.label} foi atualizada.`);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : "Não foi possível salvar a unidade.");
+    } finally {
+      setEditSavingKey(null);
+    }
+  }
+
+  async function addUnit(company: Company) {
+    setEditError("");
+    setEditSuccess("");
+    setAddingUnit(true);
+    try {
+      const result = await api<{ companyId: string; unit: CompanyUnit }>(`/api/companies/${encodeURIComponent(company.id)}/units`, {
+        method: "POST",
+        body: JSON.stringify({ label: newUnit.label.trim(), cnpj: digitsOnly(newUnit.cnpj) }),
+      });
+      setEditingUnits((current) => [...current, result.unit]);
+      setNewUnit({ label: "", cnpj: "" });
+      setEditSuccess(`${result.unit.label} foi adicionada.`);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : "Não foi possível adicionar a unidade.");
+    } finally {
+      setAddingUnit(false);
+    }
+  }
+
+  async function removeUnit(company: Company, unit: CompanyUnit) {
+    setEditError("");
+    setEditSuccess("");
+    setEditSavingKey(unit.key);
+    try {
+      await api(`/api/companies/${encodeURIComponent(company.id)}/units/${encodeURIComponent(unit.key)}`, { method: "DELETE" });
+      setEditingUnits((current) => current.filter((item) => item.key !== unit.key));
+      setRemovingKey(null);
+      setEditSuccess(`${unit.label} foi removida.`);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : "Não foi possível remover a unidade.");
+    } finally {
+      setEditSavingKey(null);
+    }
+  }
+
   return (
     <div className="selector-page">
       <div className="dot-pattern" aria-hidden="true" />
@@ -103,10 +217,11 @@ export default function SeletorPage() {
             const meta = CARD_META[c.id];
             const actionsOpen = actionMenuId === c.id;
             const confirming = confirmingId === c.id;
+            const editing = editingId === c.id;
             const deleting = deletingId === c.id;
             return (
               <article key={c.id} className={`dashboard-card company-card${actionsOpen ? " actions-open" : ""}`}>
-                {isAdmin && !confirming ? (
+                {isAdmin && !confirming && !editing ? (
                   <div className="company-actions" data-company-actions>
                     <button
                       type="button"
@@ -128,9 +243,21 @@ export default function SeletorPage() {
                         <button
                           type="button"
                           role="menuitem"
+                          className="company-actions-edit"
+                          onClick={() => void openUnitEditor(c)}
+                        >
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 20h4l11-11-4-4L4 16v4Zm9-13 4 4" />
+                          </svg>
+                          Gerenciar unidades e CNPJs
+                        </button>
+                        <button
+                          type="button"
+                          role="menuitem"
                           className="company-actions-delete"
                           onClick={() => {
                             setActionMenuId(null);
+                            setEditingId(null);
                             setConfirmingId(c.id);
                             setDeleteErrors((current) => ({ ...current, [c.id]: "" }));
                           }}
@@ -160,7 +287,122 @@ export default function SeletorPage() {
                   </span>
                 </Link>
                 {isAdmin ? (
-                  confirming ? (
+                  editing ? (
+                    <div className="company-unit-editor">
+                      <div className="company-unit-editor-head">
+                        <strong>Gerenciar unidades e CNPJs</strong>
+                        <span>Somente administrador. Unidades com dados importados não permitem trocar o CNPJ nem excluir.</span>
+                      </div>
+                      {editLoadingId === c.id ? <div className="company-unit-status">Carregando unidades…</div> : null}
+                      {!editLoadingId && editingUnits.filter((unit) => unit.key !== "todas").map((unit) => {
+                        const isMain = unit.cnpj === c.cnpj;
+                        const canEdit = Boolean(unit.cnpj) && !isMain;
+                        return (
+                          <form
+                            className="company-unit-card"
+                            key={unit.key}
+                            onSubmit={(event) => {
+                              event.preventDefault();
+                              if (canEdit) void saveUnit(c, unit);
+                            }}
+                          >
+                            <div className="company-unit-field">
+                              <label htmlFor={`unit-name-${c.id}-${unit.key}`}>{isMain ? "Empresa principal" : "Nome da unidade"}</label>
+                              <input
+                                id={`unit-name-${c.id}-${unit.key}`}
+                                value={isMain ? c.label : unit.label}
+                                disabled={!canEdit || Boolean(editSavingKey)}
+                                required={canEdit}
+                                minLength={2}
+                                maxLength={80}
+                                onChange={(event) => updateUnitDraft(unit.key, { label: event.target.value })}
+                              />
+                            </div>
+                            <div className="company-unit-field">
+                              <label htmlFor={`unit-cnpj-${c.id}-${unit.key}`}>CNPJ</label>
+                              <input
+                                id={`unit-cnpj-${c.id}-${unit.key}`}
+                                value={unit.cnpj ? maskCnpj(unit.cnpj) : "Sem CNPJ cadastrado"}
+                                disabled={!canEdit || Boolean(editSavingKey)}
+                                required={canEdit}
+                                inputMode="numeric"
+                                onChange={(event) => updateUnitDraft(unit.key, { cnpj: digitsOnly(event.target.value) })}
+                              />
+                            </div>
+                            {canEdit ? (
+                              removingKey === unit.key ? (
+                                <div className="company-unit-remove-confirm">
+                                  <span>Remover esta unidade vazia?</span>
+                                  <button type="button" className="btn-delete-cancel" onClick={() => setRemovingKey(null)}>Cancelar</button>
+                                  <button type="button" className="btn-delete-confirm" disabled={editSavingKey === unit.key} onClick={() => void removeUnit(c, unit)}>
+                                    {editSavingKey === unit.key ? "Removendo…" : "Confirmar"}
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="company-unit-row-actions">
+                                  <button type="button" className="btn-unit-remove" disabled={Boolean(editSavingKey)} onClick={() => setRemovingKey(unit.key)}>Remover</button>
+                                  <button type="submit" className="btn-unit-save" disabled={Boolean(editSavingKey)}>
+                                    {editSavingKey === unit.key ? "Salvando…" : "Salvar unidade"}
+                                  </button>
+                                </div>
+                              )
+                            ) : null}
+                          </form>
+                        );
+                      })}
+                      {!editLoadingId ? (
+                        <form
+                          className="company-unit-card company-unit-new"
+                          onSubmit={(event) => {
+                            event.preventDefault();
+                            void addUnit(c);
+                          }}
+                        >
+                          <strong>Adicionar outro CNPJ</strong>
+                          <div className="company-unit-field">
+                            <label htmlFor={`new-unit-name-${c.id}`}>Nome da unidade</label>
+                            <input
+                              id={`new-unit-name-${c.id}`}
+                              required
+                              minLength={2}
+                              maxLength={80}
+                              value={newUnit.label}
+                              disabled={addingUnit}
+                              placeholder="Ex.: Empresa ABC Goiânia"
+                              onChange={(event) => setNewUnit((current) => ({ ...current, label: event.target.value }))}
+                            />
+                          </div>
+                          <div className="company-unit-field">
+                            <label htmlFor={`new-unit-cnpj-${c.id}`}>CNPJ</label>
+                            <input
+                              id={`new-unit-cnpj-${c.id}`}
+                              required
+                              inputMode="numeric"
+                              value={newUnit.cnpj}
+                              disabled={addingUnit}
+                              placeholder="00.000.000/0000-00"
+                              onChange={(event) => setNewUnit((current) => ({ ...current, cnpj: maskCnpj(event.target.value) }))}
+                            />
+                          </div>
+                          <button type="submit" className="btn-unit-add" disabled={addingUnit}>
+                            {addingUnit ? "Adicionando…" : "+ Adicionar unidade"}
+                          </button>
+                        </form>
+                      ) : null}
+                      {editError ? <div className="company-delete-error" role="alert">{editError}</div> : null}
+                      {editSuccess ? <div className="company-unit-success" role="status">{editSuccess}</div> : null}
+                      <div className="company-delete-actions">
+                        <button
+                          type="button"
+                          className="btn-delete-cancel"
+                          disabled={Boolean(editSavingKey) || addingUnit}
+                          onClick={() => setEditingId(null)}
+                        >
+                          Fechar
+                        </button>
+                      </div>
+                    </div>
+                  ) : confirming ? (
                     <div className="company-delete-confirm" aria-live="polite">
                       <p>Excluir <strong>{c.label}</strong> e todas as suas planilhas?</p>
                       <span>Esta ação não pode ser desfeita.</span>

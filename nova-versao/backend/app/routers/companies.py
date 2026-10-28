@@ -67,23 +67,29 @@ def catalog_units_payload(company_id: str, company_row) -> list[dict]:
     units: list[dict] = []
     seen: set[str] = set()
     reg = COMPANY_BY_ID.get(company_id)
+    aliases = list(getattr(company_row, "cnpjs", []) or [])
     if reg and reg.units:
         for u in reg.units:
             if u.key in seen:
                 continue
-            units.append({"key": u.key, "label": u.label})
+            alias = next((a for a in aliases if (a.unidade or "matriz") == u.key), None)
+            is_main = bool(company_row and u.cnpj and u.cnpj == (company_row.cnpj or ""))
+            label = company_row.label if is_main else (alias.label if alias and alias.label else u.label)
+            units.append({"key": u.key, "label": label, "cnpj": u.cnpj or None})
             seen.add(u.key)
     else:
-        for a in getattr(company_row, "cnpjs", []) or []:
+        for a in aliases:
             key = a.unidade or "matriz"
             if key in seen:
                 continue
-            units.append({"key": key, "label": a.label or key})
+            is_main = bool(company_row and a.cnpj == (company_row.cnpj or ""))
+            label = company_row.label if is_main else (a.label or key)
+            units.append({"key": key, "label": label, "cnpj": a.cnpj or None})
             seen.add(key)
     if not units:
-        units = [{"key": "matriz", "label": "Matriz"}]
+        units = [{"key": "matriz", "label": getattr(company_row, "label", "Matriz"), "cnpj": getattr(company_row, "cnpj", None) or None}]
     if len(units) > 1:
-        units = [{"key": "todas", "label": "Todas as unidades"}] + units
+        units = [{"key": "todas", "label": "Todas as unidades", "cnpj": None}] + units
     return units
 
 
@@ -117,6 +123,11 @@ def _virtual_months_by_competencia(rows: list) -> list:
     return out
 
 
+class CompanyUnitCreateIn(BaseModel):
+    label: str = Field(min_length=2, max_length=80)
+    cnpj: str = Field(min_length=11, max_length=18)
+
+
 class CompanyCreateIn(BaseModel):
     label: str = Field(min_length=2, max_length=120)
     cnpj: str = Field(min_length=11, max_length=18)
@@ -124,6 +135,98 @@ class CompanyCreateIn(BaseModel):
     description: str = ""
     theme: str = "green"
     extra_cnpjs: str = ""
+    units: list[CompanyUnitCreateIn] = Field(default_factory=list)
+
+
+class CompanyUnitLabelIn(BaseModel):
+    key: str = Field(min_length=1, max_length=40)
+    label: str = Field(min_length=2, max_length=80)
+
+
+class CompanyUnitsUpdateIn(BaseModel):
+    units: list[CompanyUnitLabelIn] = Field(min_length=1)
+
+
+class CompanyUnitUpdateIn(BaseModel):
+    label: str = Field(min_length=2, max_length=80)
+    cnpj: str = Field(min_length=11, max_length=18)
+
+
+def _clean_unit_label(value: str) -> str:
+    return re.sub(r"\s+", " ", str(value or "")).strip()
+
+
+def _extra_units_from_create(body: CompanyCreateIn, main_cnpj: str) -> list[tuple[str, str]]:
+    """Normaliza unidades novas e mantém compatibilidade com extra_cnpjs."""
+    extras: list[tuple[str, str]] = []
+    seen_cnpjs = {main_cnpj}
+    seen_labels = {_clean_unit_label(body.label).casefold()}
+
+    for unit in body.units or []:
+        label = _clean_unit_label(unit.label)
+        digits = only_digits(unit.cnpj)
+        if len(label) < 2:
+            raise HTTPException(400, "O nome de cada unidade deve ter pelo menos 2 caracteres")
+        if len(digits) != 14:
+            raise HTTPException(400, f"CNPJ inválido para a unidade {label}")
+        if digits in seen_cnpjs:
+            raise HTTPException(400, "Cada unidade deve ter um CNPJ diferente")
+        label_key = label.casefold()
+        if label_key in seen_labels:
+            raise HTTPException(400, "Cada unidade deve ter um nome diferente")
+        seen_cnpjs.add(digits)
+        seen_labels.add(label_key)
+        extras.append((digits, label))
+
+    # Contrato antigo: continua aceito enquanto integrações migram para units[].
+    for raw in re.split(r"[\s,;]+", body.extra_cnpjs or ""):
+        digits = only_digits(raw)
+        if not digits:
+            continue
+        if len(digits) != 14:
+            raise HTTPException(400, f"CNPJ extra inválido: {raw}")
+        if digits in seen_cnpjs:
+            continue
+        suffix = len(extras) + 1
+        label = f"Filial {suffix}"
+        while label.casefold() in seen_labels:
+            suffix += 1
+            label = f"Filial {suffix}"
+        seen_cnpjs.add(digits)
+        seen_labels.add(label.casefold())
+        extras.append((digits, label))
+    return extras
+
+
+def _unit_has_data(db: Session, company_id: str, unit_key: str) -> bool:
+    """Protege a identidade de unidades que já possuem dados fiscais ou bancários."""
+    models = (FiscalMonth, ImportRecord, NfeLine, BankStatementImport)
+    return any(
+        db.query(model.id)
+        .filter(model.company_id == company_id, model.unidade == unit_key)
+        .first()
+        is not None
+        for model in models
+    )
+
+
+def _validate_unique_unit_label(company: Company, aliases: list[CompanyCnpj], label: str, current_id: int | None = None) -> None:
+    label_key = _clean_unit_label(label).casefold()
+    if label_key == _clean_unit_label(company.label).casefold():
+        raise HTTPException(400, "Cada unidade deve ter um nome diferente")
+    for alias in aliases:
+        if current_id is not None and alias.id == current_id:
+            continue
+        if _clean_unit_label(alias.label).casefold() == label_key:
+            raise HTTPException(400, "Cada unidade deve ter um nome diferente")
+
+
+def _validate_available_cnpj(db: Session, digits: str, current_alias_id: int | None = None) -> None:
+    if db.query(Company).filter(Company.cnpj == digits).first():
+        raise HTTPException(409, "Este CNPJ já pertence a outra empresa")
+    existing = db.query(CompanyCnpj).filter(CompanyCnpj.cnpj == digits).first()
+    if existing and existing.id != current_alias_id:
+        raise HTTPException(409, "Este CNPJ já está ligado a outra unidade")
 
 
 def _unique_id(db: Session, label: str) -> str:
@@ -823,6 +926,9 @@ def create_company(
     user: User = Depends(require_admin),
     db: Session = Depends(get_db),
 ):
+    company_label = _clean_unit_label(body.label)
+    if len(company_label) < 2:
+        raise HTTPException(400, "O nome da empresa deve ter pelo menos 2 caracteres")
     digits = only_digits(body.cnpj)
     if len(digits) != 14:
         raise HTTPException(400, "CNPJ deve ter 14 dígitos")
@@ -831,26 +937,18 @@ def create_company(
         raise HTTPException(409, "Já existe empresa com este CNPJ")
     if db.query(CompanyCnpj).filter(CompanyCnpj.cnpj == digits).first():
         raise HTTPException(409, "Este CNPJ já está ligado a outra empresa")
-    extras: list[str] = []
-    for raw in re.split(r"[\s,;]+", body.extra_cnpjs or ""):
-        extra = only_digits(raw)
-        if not extra:
-            continue
-        if len(extra) != 14:
-            raise HTTPException(400, f"CNPJ extra inválido: {raw}")
-        if extra == digits or extra in extras:
-            continue
-        extras.append(extra)
+    extras = _extra_units_from_create(body, digits)
+    for extra, _label in extras:
         if db.query(Company).filter(Company.cnpj == extra).first():
             raise HTTPException(409, f"CNPJ extra {extra} já pertence a outra empresa")
         if db.query(CompanyCnpj).filter(CompanyCnpj.cnpj == extra).first():
             raise HTTPException(409, f"CNPJ extra {extra} já está ligado a outra empresa")
-    company_id = _unique_id(db, body.label)
-    razao = (body.razao or body.label).strip()
+    company_id = _unique_id(db, company_label)
+    razao = (body.razao or company_label).strip()
     name_re = re.escape(razao)[:80]
     row = Company(
         id=company_id,
-        label=body.label.strip(),
+        label=company_label,
         theme=theme,
         cnpj=digits,
         tabs=list(ALL_TABS),
@@ -859,14 +957,14 @@ def create_company(
     )
     db.add(row)
     db.flush()
-    db.add(CompanyCnpj(company_id=company_id, cnpj=digits, unidade="matriz", label="Matriz"))
-    for idx, extra in enumerate(extras, start=1):
+    db.add(CompanyCnpj(company_id=company_id, cnpj=digits, unidade="matriz", label=row.label))
+    for idx, (extra, unit_label) in enumerate(extras, start=1):
         db.add(
             CompanyCnpj(
                 company_id=company_id,
                 cnpj=extra,
                 unidade=f"filial-{idx}",
-                label=f"Filial {idx}",
+                label=unit_label,
             )
         )
     db.add(UserCompany(user_id=user.id, company_id=company_id))
@@ -880,6 +978,189 @@ def create_company(
         "tabs": row.tabs,
         "desc": row.description or row.label,
     }
+
+
+@router.patch("/{company_id}/units")
+def update_company_unit_labels(
+    company_id: str,
+    body: CompanyUnitsUpdateIn,
+    user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    company = (
+        db.query(Company)
+        .filter(Company.id == company_id)
+        .with_for_update()
+        .first()
+    )
+    if not company:
+        raise HTTPException(404, "Empresa não encontrada")
+
+    aliases = (
+        db.query(CompanyCnpj)
+        .filter(CompanyCnpj.company_id == company_id)
+        .with_for_update()
+        .all()
+    )
+    by_key = {(alias.unidade or "matriz"): alias for alias in aliases}
+    requested: dict[str, str] = {}
+    for item in body.units:
+        key = item.key.strip()
+        label = _clean_unit_label(item.label)
+        if key in requested:
+            raise HTTPException(400, "Cada unidade deve ser enviada apenas uma vez")
+        if len(label) < 2:
+            raise HTTPException(400, "O nome de cada unidade deve ter pelo menos 2 caracteres")
+        alias = by_key.get(key)
+        if not alias:
+            raise HTTPException(404, f"Unidade não encontrada: {key}")
+        if alias.cnpj == (company.cnpj or ""):
+            raise HTTPException(400, "O nome da unidade principal acompanha o nome da empresa")
+        requested[key] = label
+
+    final_labels = {_clean_unit_label(company.label).casefold()}
+    for key, alias in by_key.items():
+        if alias.cnpj == (company.cnpj or ""):
+            continue
+        label = requested.get(key, _clean_unit_label(alias.label or key))
+        label_key = label.casefold()
+        if label_key in final_labels:
+            raise HTTPException(400, "Cada unidade deve ter um nome diferente")
+        final_labels.add(label_key)
+
+    try:
+        for key, label in requested.items():
+            by_key[key].label = label
+        db.commit()
+    except Exception as exc:  # noqa: BLE001
+        db.rollback()
+        logger.exception("Falha ao atualizar nomes das unidades de %s", company_id)
+        raise HTTPException(500, "Não foi possível atualizar os nomes das unidades") from exc
+
+    logger.info("Nomes de unidades atualizados: company=%s user=%s", company_id, user.id)
+    return {
+        "companyId": company_id,
+        "units": catalog_units_payload(company_id, company),
+    }
+
+
+@router.post("/{company_id}/units")
+def add_company_unit(
+    company_id: str,
+    body: CompanyUnitCreateIn,
+    user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    company = db.query(Company).filter(Company.id == company_id).with_for_update().first()
+    if not company:
+        raise HTTPException(404, "Empresa não encontrada")
+    label = _clean_unit_label(body.label)
+    digits = only_digits(body.cnpj)
+    if len(label) < 2:
+        raise HTTPException(400, "O nome da unidade deve ter pelo menos 2 caracteres")
+    if len(digits) != 14:
+        raise HTTPException(400, "CNPJ deve ter 14 dígitos")
+    aliases = db.query(CompanyCnpj).filter(CompanyCnpj.company_id == company_id).all()
+    _validate_unique_unit_label(company, aliases, label)
+    _validate_available_cnpj(db, digits)
+    used_keys = {(alias.unidade or "matriz") for alias in aliases}
+    suffix = 1
+    while f"filial-{suffix}" in used_keys:
+        suffix += 1
+    alias = CompanyCnpj(
+        company_id=company_id,
+        cnpj=digits,
+        unidade=f"filial-{suffix}",
+        label=label,
+    )
+    try:
+        db.add(alias)
+        db.commit()
+        db.refresh(alias)
+    except Exception as exc:  # noqa: BLE001
+        db.rollback()
+        logger.exception("Falha ao adicionar unidade em %s", company_id)
+        raise HTTPException(500, "Não foi possível adicionar a unidade") from exc
+    logger.info("Unidade adicionada: company=%s unit=%s user=%s", company_id, alias.unidade, user.id)
+    return {"companyId": company_id, "unit": {"key": alias.unidade, "label": alias.label, "cnpj": alias.cnpj}}
+
+
+@router.patch("/{company_id}/units/{unit_key}")
+def update_company_unit(
+    company_id: str,
+    unit_key: str,
+    body: CompanyUnitUpdateIn,
+    user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    company = db.query(Company).filter(Company.id == company_id).with_for_update().first()
+    if not company:
+        raise HTTPException(404, "Empresa não encontrada")
+    alias = (
+        db.query(CompanyCnpj)
+        .filter(CompanyCnpj.company_id == company_id, CompanyCnpj.unidade == unit_key)
+        .with_for_update()
+        .first()
+    )
+    if not alias:
+        raise HTTPException(404, "Unidade não encontrada")
+    if alias.cnpj == (company.cnpj or ""):
+        raise HTTPException(400, "A empresa principal não pode ser alterada nesta tela")
+    label = _clean_unit_label(body.label)
+    digits = only_digits(body.cnpj)
+    if len(label) < 2:
+        raise HTTPException(400, "O nome da unidade deve ter pelo menos 2 caracteres")
+    if len(digits) != 14:
+        raise HTTPException(400, "CNPJ deve ter 14 dígitos")
+    aliases = db.query(CompanyCnpj).filter(CompanyCnpj.company_id == company_id).all()
+    _validate_unique_unit_label(company, aliases, label, alias.id)
+    if digits != alias.cnpj:
+        if _unit_has_data(db, company_id, unit_key):
+            raise HTTPException(409, "O CNPJ não pode ser alterado porque esta unidade já possui dados importados")
+        _validate_available_cnpj(db, digits, alias.id)
+    try:
+        alias.label = label
+        alias.cnpj = digits
+        db.commit()
+    except Exception as exc:  # noqa: BLE001
+        db.rollback()
+        logger.exception("Falha ao atualizar unidade %s de %s", unit_key, company_id)
+        raise HTTPException(500, "Não foi possível atualizar a unidade") from exc
+    logger.info("Unidade atualizada: company=%s unit=%s user=%s", company_id, unit_key, user.id)
+    return {"companyId": company_id, "unit": {"key": unit_key, "label": alias.label, "cnpj": alias.cnpj}}
+
+
+@router.delete("/{company_id}/units/{unit_key}")
+def delete_company_unit(
+    company_id: str,
+    unit_key: str,
+    user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    company = db.query(Company).filter(Company.id == company_id).with_for_update().first()
+    if not company:
+        raise HTTPException(404, "Empresa não encontrada")
+    alias = (
+        db.query(CompanyCnpj)
+        .filter(CompanyCnpj.company_id == company_id, CompanyCnpj.unidade == unit_key)
+        .with_for_update()
+        .first()
+    )
+    if not alias:
+        raise HTTPException(404, "Unidade não encontrada")
+    if alias.cnpj == (company.cnpj or ""):
+        raise HTTPException(400, "A empresa principal não pode ser removida")
+    if _unit_has_data(db, company_id, unit_key):
+        raise HTTPException(409, "A unidade não pode ser removida porque possui dados importados")
+    try:
+        db.delete(alias)
+        db.commit()
+    except Exception as exc:  # noqa: BLE001
+        db.rollback()
+        logger.exception("Falha ao remover unidade %s de %s", unit_key, company_id)
+        raise HTTPException(500, "Não foi possível remover a unidade") from exc
+    logger.info("Unidade removida: company=%s unit=%s user=%s", company_id, unit_key, user.id)
+    return {"deleted": True, "companyId": company_id, "unitKey": unit_key}
 
 
 @router.delete("/{company_id}")

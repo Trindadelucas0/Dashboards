@@ -437,7 +437,11 @@ export default function AbaPage() {
       aba === "indicadores" ||
       aba === "margens-mes" ||
       aba === "margens-cidade");
-  const cnpj = company?.cnpj ? formatCnpj(company.cnpj) : "";
+  const selectedUnit = (company?.units || [])
+    .map((item) => (typeof item === "string" ? { key: item, label: item, cnpj: null } : item))
+    .find((item) => item.key === unidade);
+  const cnpj = selectedUnit?.cnpj ? formatCnpj(selectedUnit.cnpj) : "";
+  const unitLabel = selectedUnit?.label || unidade;
   const forn = (d.fornecedores || []) as { nome: string; uf: string; total: number; qtd?: number }[];
   const topCli = ((d.clientesTop10 || d.clientes || []) as { nome: string; uf: string; total: number; qtd?: number }[]).slice(0, 10);
   const ufEnt = (d.ufEntradas || []) as { uf: string; total: number; pct: number }[];
@@ -489,8 +493,13 @@ export default function AbaPage() {
     <section>
       <div className="sec-header">
         <div>
-          <div className="sec-title">{title} <small>{periodLabel}{!consolidadoSchumacher && unidade ? ` · ${unidade}` : ""}</small></div>
-          <div className="sec-sub">{company?.label}{cnpj ? ` — CNPJ ${cnpj}` : ""}{viewingTrimestre && tri ? ` · Soma ${tri.mesesLabel || ""}` : ""}</div>
+          <div className="sec-title">{title} <small>{periodLabel}{!consolidadoSchumacher && unitLabel ? ` · ${unitLabel}` : ""}</small></div>
+          <div className="sec-sub">
+            {unidade === "todas"
+              ? `${company?.label || "Empresa"} — Todas as unidades · CNPJs consolidados`
+              : `${unitLabel || company?.label || "Empresa"}${cnpj ? ` — CNPJ ${cnpj}` : ""}`}
+            {viewingTrimestre && tri ? ` · Soma ${tri.mesesLabel || ""}` : ""}
+          </div>
         </div>
       </div>
       {aba !== "margens-cidade" ? <MesBar /> : null}

@@ -33,7 +33,7 @@ def test_jpg_catalog_units():
     assert keys == ["sede", "asa_sul", "pr", "sp", "mg", "lannic"]
     assert "jpg" in KEEP_USERNAMES
     payload = catalog_units_payload("jpg", None)
-    assert payload[0] == {"key": "todas", "label": "Todas as unidades"}
+    assert payload[0] == {"key": "todas", "label": "Todas as unidades", "cnpj": None}
     assert {u["key"] for u in payload} >= {"todas", "sede", "pr", "mg", "sp", "asa_sul", "lannic"}
     assert "matriz" not in {u["key"] for u in payload}
     lannic = next(u for u in reg.units if u.key == "lannic")
