@@ -50,9 +50,10 @@ Classificação Êxito vazia não impede a gravação: o lançamento aparece com
 Somente administradores podem executar esta ação.
 
 1. Abra o seletor de dashboards.
-2. No card da empresa, clique em **Excluir empresa**.
-3. Confira o nome e o aviso de que a ação não pode ser desfeita.
-4. Clique em **Confirmar exclusão**. Para desistir, use **Cancelar**.
+2. No canto superior do card da empresa, abra o menu de **três pontos**.
+3. Clique em **Excluir empresa**.
+4. Confira o nome e o aviso de que a ação não pode ser desfeita.
+5. Clique em **Confirmar exclusão**. Para desistir, use **Cancelar**.
 
 A empresa sai do seletor junto com planilhas fiscais e bancárias, meses, notas, CNPJs/unidades e vínculos de acesso. As contas de usuário permanecem cadastradas, mas sem acesso à empresa excluída. A operação não possui lixeira ou restauração pela tela; recuperação exige backup do banco. Usuários comuns não veem a opção e não têm permissão na API.
 

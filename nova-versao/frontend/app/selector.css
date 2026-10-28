@@ -37,11 +37,38 @@
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .dashboard-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 20px 60px rgba(44,185,48,0.18); }
-.company-card { padding: 0; gap: 0; overflow: hidden; }
+.company-card { position: relative; padding: 0; gap: 0; overflow: hidden; }
+.company-card.actions-open { z-index: 4; }
 .company-card-main {
-  width: 100%; min-height: 220px; box-sizing: border-box; padding: 1.75rem 1.5rem 1.1rem;
+  width: 100%; min-height: 220px; box-sizing: border-box; padding: 1.75rem 1.5rem 1.25rem;
   text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center;
   text-align: center; gap: 12px;
+}
+.company-actions { position: absolute; top: 8px; right: 8px; z-index: 5; }
+.company-actions-trigger {
+  width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 12px;
+  background: transparent; color: #64748b; cursor: pointer;
+}
+.company-actions-trigger:hover, .company-actions-trigger:focus-visible, .company-actions-trigger[aria-expanded="true"] {
+  background: #f1f5f9; color: #172033;
+}
+.company-actions-trigger:focus-visible, .company-card-main:focus-visible .card-access { outline: 3px solid rgba(34, 163, 41, 0.28); outline-offset: 2px; }
+.company-card-main:focus-visible { outline: none; }
+.company-actions-trigger:disabled { cursor: wait; opacity: 0.55; }
+.company-actions-trigger svg { width: 20px; height: 20px; fill: currentColor; }
+.company-actions-menu {
+  position: absolute; top: 46px; right: 0; width: 172px; padding: 6px; border: 1px solid #e2e8f0;
+  border-radius: 12px; background: #fff; box-shadow: 0 16px 34px rgba(15, 23, 42, 0.18);
+}
+.company-actions-delete {
+  width: 100%; min-height: 40px; display: flex; align-items: center; gap: 9px; border: 0;
+  border-radius: 8px; padding: 8px 10px; background: transparent; color: #b91c1c;
+  font-size: 0.74rem; font-weight: 700; text-align: left; cursor: pointer;
+}
+.company-actions-delete:hover, .company-actions-delete:focus-visible { background: #fef2f2; outline: none; }
+.company-actions-delete svg {
+  width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round;
 }
 .card-icon {
   width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
@@ -53,13 +80,17 @@
 .card-title { font-size: 0.95rem; font-weight: 700; color: #1a1a2e; margin: 0; }
 .card-desc { font-size: 0.75rem; color: #6b7280; font-weight: 500; margin: 0; }
 .card-arrow { margin-top: auto; font-size: 0.72rem; font-weight: 600; color: #22a329; display: flex; align-items: center; gap: 4px; }
-.btn-delete-company {
-  width: calc(100% - 2rem); margin: 0 1rem 1rem; border: 1px solid #fecaca; background: #fff;
-  color: #b91c1c; border-radius: 10px; padding: 0.55rem 0.8rem; font-size: 0.72rem;
-  font-weight: 700; cursor: pointer;
+.card-access {
+  width: 100%; box-sizing: border-box; margin-top: auto; min-height: 42px; display: flex;
+  align-items: center; justify-content: center; gap: 7px; border-radius: 12px; padding: 0.65rem 0.9rem;
+  background: #1f9d29; color: #fff; font-size: 0.76rem; font-weight: 750;
+  box-shadow: 0 7px 16px rgba(31, 157, 41, 0.2); transition: background 160ms ease, transform 160ms ease;
 }
-.btn-delete-company:hover, .btn-delete-company:focus-visible { background: #fef2f2; border-color: #ef4444; }
-.btn-delete-company:disabled { cursor: wait; opacity: 0.6; }
+.company-card-main:hover .card-access { background: #168221; transform: translateY(-1px); }
+.card-access svg {
+  width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
 .company-delete-confirm {
   width: 100%; box-sizing: border-box; border-top: 1px solid #fecaca; background: #fff7f7;
   padding: 0.9rem 1rem 1rem; text-align: left;

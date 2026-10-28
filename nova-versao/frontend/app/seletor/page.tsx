@@ -15,6 +15,7 @@ export default function SeletorPage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [error, setError] = useState("");
+  const [actionMenuId, setActionMenuId] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteErrors, setDeleteErrors] = useState<Record<string, string>>({});
@@ -33,6 +34,22 @@ export default function SeletorPage() {
     })();
   }, []);
 
+  useEffect(() => {
+    function closeActions(event: PointerEvent) {
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target?.closest("[data-company-actions]")) setActionMenuId(null);
+    }
+    function closeActionsWithKeyboard(event: KeyboardEvent) {
+      if (event.key === "Escape") setActionMenuId(null);
+    }
+    document.addEventListener("pointerdown", closeActions);
+    document.addEventListener("keydown", closeActionsWithKeyboard);
+    return () => {
+      document.removeEventListener("pointerdown", closeActions);
+      document.removeEventListener("keydown", closeActionsWithKeyboard);
+    };
+  }, []);
+
   async function logout() {
     await api("/api/auth/logout", { method: "POST" });
     router.push("/");
@@ -46,6 +63,7 @@ export default function SeletorPage() {
         method: "DELETE",
       });
       setCompanies((current) => current.filter((item) => item.id !== company.id));
+      setActionMenuId(null);
       setConfirmingId(null);
     } catch (err) {
       setDeleteErrors((current) => ({
@@ -83,10 +101,49 @@ export default function SeletorPage() {
           ) : null}
           {companies.map((c) => {
             const meta = CARD_META[c.id];
+            const actionsOpen = actionMenuId === c.id;
             const confirming = confirmingId === c.id;
             const deleting = deletingId === c.id;
             return (
-              <article key={c.id} className="dashboard-card company-card">
+              <article key={c.id} className={`dashboard-card company-card${actionsOpen ? " actions-open" : ""}`}>
+                {isAdmin && !confirming ? (
+                  <div className="company-actions" data-company-actions>
+                    <button
+                      type="button"
+                      className="company-actions-trigger"
+                      aria-label={`Mais opções para ${c.label}`}
+                      aria-haspopup="menu"
+                      aria-expanded={actionsOpen}
+                      disabled={Boolean(deletingId)}
+                      onClick={() => setActionMenuId((current) => current === c.id ? null : c.id)}
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="5" r="1.8" />
+                        <circle cx="12" cy="12" r="1.8" />
+                        <circle cx="12" cy="19" r="1.8" />
+                      </svg>
+                    </button>
+                    {actionsOpen ? (
+                      <div className="company-actions-menu" role="menu">
+                        <button
+                          type="button"
+                          role="menuitem"
+                          className="company-actions-delete"
+                          onClick={() => {
+                            setActionMenuId(null);
+                            setConfirmingId(c.id);
+                            setDeleteErrors((current) => ({ ...current, [c.id]: "" }));
+                          }}
+                        >
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13M10 11v5m4-5v5" />
+                          </svg>
+                          Excluir empresa
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
                 <Link href={`/dashboard/${c.id}/${firstAllowedTab(c.tabs)}`} className="company-card-main">
                   <div className="card-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,7 +152,12 @@ export default function SeletorPage() {
                   </div>
                   <h2 className="card-title">{c.label}</h2>
                   <p className="card-desc">{c.desc || meta?.desc}</p>
-                  <div className="card-arrow">Acessar</div>
+                  <span className="card-access">
+                    Acessar dashboard
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </span>
                 </Link>
                 {isAdmin ? (
                   confirming ? (
@@ -122,19 +184,7 @@ export default function SeletorPage() {
                         </button>
                       </div>
                     </div>
-                  ) : (
-                    <button
-                      type="button"
-                      className="btn-delete-company"
-                      disabled={Boolean(deletingId)}
-                      onClick={() => {
-                        setConfirmingId(c.id);
-                        setDeleteErrors((current) => ({ ...current, [c.id]: "" }));
-                      }}
-                    >
-                      Excluir empresa
-                    </button>
-                  )
+                  ) : null
                 ) : null}
               </article>
             );

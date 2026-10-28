@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.11.0 — exclusão completa de empresas |
-| Última atualização | 27/10/2026 (exclusão de empresa e dados vinculados pelo administrador) |
+| Versão do sistema | 2.11.1 — ações discretas no card da empresa |
+| Última atualização | 28/10/2026 (menu de três pontos e botão Acessar destacado) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.11.1 | Ações discretas no card da empresa | O seletor destaca **Acessar dashboard** como ação principal verde. Para administrador, **Excluir empresa** deixa de ocupar uma faixa permanente e passa ao menu de três pontos no canto superior do card; selecionar a ação mantém a confirmação em dois passos. O menu fecha ao clicar fora ou pressionar Esc. API e regra de exclusão permanecem inalteradas. |
 | 2.11.0 | Exclusão completa de empresas | No seletor, somente o administrador vê **Excluir empresa**. O primeiro clique abre a confirmação no card; **Confirmar exclusão** remove, em uma transação, dados fiscais, planilhas e lançamentos bancários, meses, notas, CNPJs/unidades e vínculos de usuários. As contas permanecem. `DELETE /api/companies/{company_id}` exige administrador, registra um tombstone técnico sem dados empresariais e o seed não recria empresas fixas excluídas. |
 | 2.10.8 | Schema garantido no startup da API | A API executa a criação idempotente das tabelas modeladas antes de atender requisições. Corrige o erro 500 de **Recebimentos/Pagamentos** em ambientes onde o deploy publicou as rotas de conciliação sem criar `bank_statement_imports` e `bank_transactions`; reinícios e próximos deploys passam a garantir o schema automaticamente. |
 | 2.10.7 | Alias PIS E COFINS | A planilha padrão aceita as abas `PIS COFINS` e `PIS E COFINS` como o mesmo tributo. A variação com a conjunção passa a gerar a part `pis_cofins`, preencher a Memória e os cards de PIS/COFINS em Impostos sem alterar o ICMS do mês. |
@@ -514,7 +515,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 28. Somente administrador cria prévia e confirma importação/substituição. Viewer com acesso à empresa e à aba consulta; outra empresa ou aba não autorizada recebe 403. Toda consulta fica restrita à versão `active` do slot empresa + unidade + banco + competência.
 29. DRE EXITO mensal: `dre.linhas[].nivel` preserva a posição estrutural da planilha (`total` na primeira coluna; `detalhe` nas linhas recuadas). A UI comum não descarta linha por ausência de palavra-chave nem elimina o detalhamento que acompanha CMV ou subtotais. Para packs gravados antes de 2.10.3, a hierarquia é inferida pela ordem e pelo último grupo contábil reconhecido. Não exige reimportação e não altera os cálculos dos KPIs.
 30. Árvore da DRE comum: a hierarquia `grupo → subtotal → detalhe` é derivada somente no frontend. Grupos iniciam expandidos e subtotais recolhidos; **Expandir** abre todos os níveis e **Recolher** restaura esse estado compacto. Receita Líquida, Lucro Bruto, resultados operacionais e Lucro Líquido permanecem como raízes sempre visíveis. Linhas sem filhos não recebem chevron. A interação usa botão semântico com `aria-expanded`, clique, Enter e Espaço. Não altera API, banco nem cálculos.
-31. Excluir empresa é operação exclusiva do administrador e exige dois cliques no card do seletor: **Excluir empresa** → **Confirmar exclusão**. A API remove dados fiscais e bancários, meses, notas, importações, CNPJs/unidades e vínculos em uma única transação; contas de usuário permanecem. Em erro, há rollback e nenhum dado fica parcialmente removido. Um tombstone guarda somente identificador, administrador e data da exclusão para auditoria e para impedir recriação pelo seed; não guarda nome, CNPJ nem valores. Não há restauração pela interface.
+31. Excluir empresa é operação exclusiva do administrador e exige abrir o menu de **três pontos** no card: **Excluir empresa** → **Confirmar exclusão**. A API remove dados fiscais e bancários, meses, notas, importações, CNPJs/unidades e vínculos em uma única transação; contas de usuário permanecem. Em erro, há rollback e nenhum dado fica parcialmente removido. Um tombstone guarda somente identificador, administrador e data da exclusão para auditoria e para impedir recriação pelo seed; não guarda nome, CNPJ nem valores. Não há restauração pela interface.
 
 ## 6. Pendências de dados (Única)
 
@@ -539,7 +540,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 5. Em **Planilhas importadas** (mesma aba, só administrador), cada arquivo gravado mostra data, mês, unidade e tipos. **Excluir** abre a confirmação dentro do próprio card daquela planilha (Cancelar / **Excluir planilha**); Cancelar devolve o botão Excluir. Sai só o que aquela planilha entrou; outro arquivo do mesmo mês permanece. Na reimportação, **Gravar** mescla tipos novos e **Substituir tipos enviados** troca somente os tipos listados na prévia, sem apagar as outras planilhas do mês.
 6. Selecionar mês no chip superior; conferir DRE, Balancete, **Memória** (livro linha a linha), Impostos, Compras, Vendas. A barra lista os trimestres em ordem de calendário (ex.: 1º–4º de 2025, depois 1º–3º de 2026); com dois anos importados, o chip do trimestre traz o ano (**1º Trim 2025**). Para o **total somado do trimestre**, clique no chip do trimestre (não no mês): aí aparece a faixa de 4 KPIs (vendas, compras, saldo, imposto), **exceto** na Indústria Schumacher, onde a faixa não é montada. No chip de mês essa faixa não aparece.
 
-**Excluir uma empresa inteira (somente administrador):** no seletor de dashboards, clique em **Excluir empresa** no card desejado. Confira o aviso e use **Confirmar exclusão**; **Cancelar** mantém tudo. A confirmação apaga definitivamente todos os dados fiscais e bancários, planilhas, meses, notas, CNPJs/unidades e acessos vinculados à empresa. As contas de usuário continuam cadastradas, mas deixam de acessar essa empresa. A empresa some do seletor e não volta após o seed. A recuperação depende de backup do banco.
+**Excluir uma empresa inteira (somente administrador):** no seletor de dashboards, abra os **três pontos** no canto superior do card e clique em **Excluir empresa**. Confira o aviso e use **Confirmar exclusão**; **Cancelar** mantém tudo. A confirmação apaga definitivamente todos os dados fiscais e bancários, planilhas, meses, notas, CNPJs/unidades e acessos vinculados à empresa. As contas de usuário continuam cadastradas, mas deixam de acessar essa empresa. A empresa some do seletor e não volta após o seed. A recuperação depende de backup do banco.
 
 **DRE EXITO em árvore:** abra **Financeiro → DRE** e escolha a competência no seletor superior. Os grupos principais já aparecem abertos; clique no nome ou no chevron de um subtotal, como **Despesas Administrativas**, para mostrar as contas detalhadas. Use **Expandir** para abrir todos os níveis e **Recolher** para voltar ao estado compacto. Resultados como Receita Líquida, Lucro Bruto e Lucro Líquido permanecem visíveis. Meses já importados recebem a mesma organização automaticamente, sem nova importação.
 
