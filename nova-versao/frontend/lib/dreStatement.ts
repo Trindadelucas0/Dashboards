@@ -228,20 +228,72 @@ export function filterDrePorMes(porMes: DreMonth[], selected: string): DreMonth[
   return all;
 }
 
+function orderedDreUnion(months: DreMonth[]): DreLine[] {
+  const union: DreLine[] = [];
+  const unionKeys: string[] = [];
+  const seen = new Set<string>();
+
+  for (const month of months) {
+    const lines = (month.dre?.linhas || []).filter((line) => {
+      const description = (line.descricao || "").trim();
+      return Boolean(description) && !isSectionOnly(description);
+    });
+
+    for (let index = 0; index < lines.length; index += 1) {
+      const line = lines[index];
+      const key = dreLineKey(line.descricao);
+      if (!key || seen.has(key)) continue;
+
+      let previousKey: string | null = null;
+      for (let previous = index - 1; previous >= 0; previous -= 1) {
+        const candidate = dreLineKey(lines[previous].descricao);
+        if (seen.has(candidate)) {
+          previousKey = candidate;
+          break;
+        }
+      }
+
+      let nextKey: string | null = null;
+      for (let next = index + 1; next < lines.length; next += 1) {
+        const candidate = dreLineKey(lines[next].descricao);
+        if (seen.has(candidate)) {
+          nextKey = candidate;
+          break;
+        }
+      }
+
+      const previousIndex = previousKey ? unionKeys.indexOf(previousKey) : -1;
+      const nextIndex = nextKey ? unionKeys.indexOf(nextKey) : -1;
+      let insertAt = union.length;
+      if (nextIndex >= 0 && (previousIndex < 0 || previousIndex < nextIndex)) {
+        insertAt = nextIndex;
+      } else if (previousIndex >= 0) {
+        insertAt = previousIndex + 1;
+      }
+
+      union.splice(insertAt, 0, line);
+      unionKeys.splice(insertAt, 0, key);
+      seen.add(key);
+    }
+  }
+
+  return union;
+}
+
 export function collapseTrimestre(months: DreMonth[], selected: string): DreMonth[] {
   if (!isTrimestreCompetencia(selected) || months.length === 0) return months;
-  const lineMap = new Map<string, { ln: DreLine; sum: number }>();
+  const lineSums = new Map<string, number>();
   for (const m of months) {
     for (const ln of m.dre?.linhas || []) {
       const desc = (ln.descricao || "").trim();
       if (!desc || isSectionOnly(desc) || ln.valor == null || Number.isNaN(Number(ln.valor))) continue;
       const key = dreLineKey(desc);
-      const prev = lineMap.get(key);
-      if (!prev) lineMap.set(key, { ln: { ...ln }, sum: Number(ln.valor) });
-      else prev.sum += Number(ln.valor);
+      lineSums.set(key, (lineSums.get(key) || 0) + Number(ln.valor));
     }
   }
-  const linhas = Array.from(lineMap.values()).map(({ ln, sum }) => ({ ...ln, valor: sum }));
+  const linhas = orderedDreUnion(months)
+    .filter((line) => lineSums.has(dreLineKey(line.descricao)))
+    .map((line) => ({ ...line, valor: lineSums.get(dreLineKey(line.descricao)) ?? null }));
   const cmv = sumNums(months.map((m) => m.cmv ?? null));
   const allPending = months.every((m) => m.cmvPendente) && cmv == null;
   return [
@@ -267,18 +319,7 @@ export function collapseTrimestre(months: DreMonth[], selected: string): DreMont
 
 export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
   const months = porMes.filter((m) => m.hasDre);
-  const seen = new Set<string>();
-  const union: DreLine[] = [];
-  for (const m of months) {
-    for (const ln of m.dre?.linhas || []) {
-      const desc = (ln.descricao || "").trim();
-      if (!desc || isSectionOnly(desc)) continue;
-      const key = dreLineKey(desc);
-      if (!key || seen.has(key)) continue;
-      seen.add(key);
-      union.push(ln);
-    }
-  }
+  const union = orderedDreUnion(months);
 
   const rows: DrePivotedRow[] = [];
   let lastGroup: string | null = null;

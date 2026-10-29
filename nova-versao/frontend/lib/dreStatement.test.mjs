@@ -93,6 +93,72 @@ test("trimestre preserva o tipo EXITO e os rótulos originais", () => {
   assert.equal(rows[1].valores["q3-2026"], -110);
 });
 
+test("trimestre insere contas de meses posteriores no subtotal e não após o resultado", () => {
+  const july = month([
+    { descricao: "(-) DESPESAS OPERACIONAIS", valor: -80, grupo: "despesas", nivel: "total" },
+    { descricao: "DESPESAS ADMINISTRATIVAS", valor: -80, grupo: "total", nivel: "total" },
+    { descricao: "DESPESAS COM INTERNET", valor: -80, grupo: "linha", nivel: "detalhe" },
+    { descricao: "= LUCRO OU PREJUÍZO OPERACIONAL", valor: 20, grupo: "total", nivel: "total" },
+    { descricao: "= LUCRO LÍQUIDO DO EXERCÍCIO", valor: 20, grupo: "resultado", nivel: "total" },
+  ]);
+  const august = {
+    ...month([
+      { descricao: "(-) DESPESAS OPERACIONAIS", valor: -182, grupo: "despesas", nivel: "total" },
+      { descricao: "DESPESAS ADMINISTRATIVAS", valor: -182, grupo: "total", nivel: "total" },
+      { descricao: "IPTU", valor: -129, grupo: "linha", nivel: "detalhe" },
+      { descricao: "DESPESAS COM INTERNET", valor: -53, grupo: "linha", nivel: "detalhe" },
+      { descricao: "= LUCRO OU PREJUÍZO OPERACIONAL", valor: -15, grupo: "total", nivel: "total" },
+      { descricao: "= LUCRO LÍQUIDO DO EXERCÍCIO", valor: -15, grupo: "resultado", nivel: "total" },
+    ]),
+    competencia: "2026-08",
+    label: "Ago/2026",
+  };
+  const september = {
+    ...month([
+      { descricao: "(-) DESPESAS OPERACIONAIS", valor: -196, grupo: "despesas", nivel: "total" },
+      { descricao: "DESPESAS ADMINISTRATIVAS", valor: -156, grupo: "total", nivel: "total" },
+      { descricao: "IPTU", valor: -129, grupo: "linha", nivel: "detalhe" },
+      { descricao: "DESPESAS COM INTERNET", valor: -27, grupo: "linha", nivel: "detalhe" },
+      { descricao: "(-) OUTRAS DESPESAS OPERACIONAIS", valor: -40, grupo: "total", nivel: "total" },
+      { descricao: "EVENTOS E CONFRATERNIZAÇÕES", valor: -40, grupo: "linha", nivel: "detalhe" },
+      { descricao: "= LUCRO OU PREJUÍZO OPERACIONAL", valor: 19, grupo: "total", nivel: "total" },
+      { descricao: "= LUCRO LÍQUIDO DO EXERCÍCIO", valor: 19, grupo: "resultado", nivel: "total" },
+    ]),
+    competencia: "2026-09",
+    label: "Set/2026",
+  };
+
+  const rows = pivotDreMonths([july, august, september]);
+  const tree = buildDreTreeRows(rows);
+  const displays = tree.map((node) => node.row.display);
+  const byDisplay = new Map(tree.map((node) => [node.row.display, node]));
+  const iptu = byDisplay.get("IPTU");
+
+  assert.ok(displays.indexOf("IPTU") < displays.indexOf("= LUCRO OU PREJUÍZO OPERACIONAL"));
+  assert.ok(
+    displays.indexOf("(-) OUTRAS DESPESAS OPERACIONAIS") <
+      displays.indexOf("= LUCRO OU PREJUÍZO OPERACIONAL"),
+  );
+  assert.equal(iptu?.parentKey, dreLineKey("DESPESAS ADMINISTRATIVAS"));
+  assert.equal(iptu?.row.valores["2026-07"], null);
+  assert.equal(iptu?.row.valores["2026-08"], -129);
+  assert.equal(iptu?.row.valores["2026-09"], -129);
+  assert.equal(iptu?.row.media, -129);
+  assert.equal(iptu?.row.acumulado, -258);
+  assert.equal(
+    byDisplay.get("EVENTOS E CONFRATERNIZAÇÕES")?.parentKey,
+    dreLineKey("(-) OUTRAS DESPESAS OPERACIONAIS"),
+  );
+
+  const [collapsed] = collapseTrimestre([july, august, september], "q3-2026");
+  const collapsedTree = buildDreTreeRows(pivotDreMonths([collapsed]));
+  const collapsedDisplays = collapsedTree.map((node) => node.row.display);
+  const collapsedIptu = collapsedTree.find((node) => node.row.display === "IPTU");
+  assert.ok(collapsedDisplays.indexOf("IPTU") < collapsedDisplays.indexOf("= LUCRO OU PREJUÍZO OPERACIONAL"));
+  assert.equal(collapsedIptu?.parentKey, dreLineKey("DESPESAS ADMINISTRATIVAS"));
+  assert.equal(collapsedIptu?.row.valores["q3-2026"], -258);
+});
+
 test("árvore abre grupos, mantém subtotais fechados e preserva resultados finais", () => {
   const pivoted = pivotDreMonths([
     month([
