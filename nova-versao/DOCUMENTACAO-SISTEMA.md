@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.12.0 — gerenciamento de unidades e CNPJs |
-| Última atualização | 28/10/2026 (cadastro e manejo administrativo de unidades com CNPJ próprio) |
+| Versão do sistema | 2.12.1 — hierarquia fiel da DRE EXITO |
+| Última atualização | 29/10/2026 (detalhes da DRE permanecem no subtotal original da planilha) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.12.1 | Hierarquia fiel da DRE EXITO | A árvore da DRE passa a respeitar o subtotal imediatamente anterior da planilha antes de classificar uma conta pelo nome. Na BAIFER e na Loja das Máquinas, **Taxas Diversas** permanece em **Despesas Administrativas**; **Bonificações Concedidas** e **Eventos e Confraternizações** permanecem em **Outras Despesas Operacionais**. Packs novos e antigos recebem a correção na apresentação, sem reimportação, alteração de valores ou escrita no banco. |
 | 2.12.0 | Gerenciamento de unidades e CNPJs | **Nova empresa** cadastra cada CNPJ adicional com nome próprio. O cabeçalho acompanha a unidade; **Todas as unidades** identifica o consolidado sem atribuir um CNPJ individual. Pelo menu de três pontos, somente administrador adiciona unidades e altera nome/CNPJ ou remove unidades vazias. Unidade com dados importados aceita renomear, mas bloqueia troca de CNPJ e exclusão; empresa principal fica protegida. APIs `POST/PATCH/DELETE /api/companies/{company_id}/units...` validam permissão, CNPJ e duplicidade. |
 | 2.11.1 | Ações discretas no card da empresa | O seletor destaca **Acessar dashboard** como ação principal verde. Para administrador, **Excluir empresa** deixa de ocupar uma faixa permanente e passa ao menu de três pontos no canto superior do card; selecionar a ação mantém a confirmação em dois passos. O menu fecha ao clicar fora ou pressionar Esc. API e regra de exclusão permanecem inalteradas. |
 | 2.11.0 | Exclusão completa de empresas | No seletor, somente o administrador vê **Excluir empresa**. O primeiro clique abre a confirmação no card; **Confirmar exclusão** remove, em uma transação, dados fiscais, planilhas e lançamentos bancários, meses, notas, CNPJs/unidades e vínculos de usuários. As contas permanecem. `DELETE /api/companies/{company_id}` exige administrador, registra um tombstone técnico sem dados empresariais e o seed não recria empresas fixas excluídas. |
@@ -545,7 +546,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 **Excluir uma empresa inteira (somente administrador):** no seletor de dashboards, abra os **três pontos** no canto superior do card e clique em **Excluir empresa**. Confira o aviso e use **Confirmar exclusão**; **Cancelar** mantém tudo. A confirmação apaga definitivamente todos os dados fiscais e bancários, planilhas, meses, notas, CNPJs/unidades e acessos vinculados à empresa. As contas de usuário continuam cadastradas, mas deixam de acessar essa empresa. A empresa some do seletor e não volta após o seed. A recuperação depende de backup do banco.
 
-**DRE EXITO em árvore:** abra **Financeiro → DRE** e escolha a competência no seletor superior. Os grupos principais já aparecem abertos; clique no nome ou no chevron de um subtotal, como **Despesas Administrativas**, para mostrar as contas detalhadas. Use **Expandir** para abrir todos os níveis e **Recolher** para voltar ao estado compacto. Resultados como Receita Líquida, Lucro Bruto e Lucro Líquido permanecem visíveis. Meses já importados recebem a mesma organização automaticamente, sem nova importação.
+**DRE EXITO em árvore:** abra **Financeiro → DRE** e escolha a competência no seletor superior. Os grupos principais já aparecem abertos; clique no nome ou no chevron de um subtotal, como **Despesas Administrativas**, para mostrar as contas detalhadas. A hierarquia segue a posição da planilha: por exemplo, **Taxas Diversas** permanece em **Despesas Administrativas**, enquanto **Bonificações Concedidas** e **Eventos e Confraternizações** permanecem em **Outras Despesas Operacionais** quando aparecem abaixo desse subtotal. Use **Expandir** para abrir todos os níveis e **Recolher** para voltar ao estado compacto. Resultados como Receita Líquida, Lucro Bruto e Lucro Líquido permanecem visíveis. Meses já importados recebem a mesma organização automaticamente, sem nova importação nem alteração dos dados gravados.
 
 **Única — DRE Análise Vertical (jan–jun/2026):** login `unica` → Importar → selecionar `Análise Vertical do D. R. E.xls` → preview deve listar **6** linhas `dre` (2026-01 … 2026-06) com `ok` → **Gravar** para acrescentar a DRE; se estiver corrigindo uma DRE já gravada, **Substituir tipos enviados** → conferir aba **DRE** em cada chip de mês. Em jan/2026 a planilha não traz lucro operacional → KPI de lucro líquido / ML fica N/D.
 

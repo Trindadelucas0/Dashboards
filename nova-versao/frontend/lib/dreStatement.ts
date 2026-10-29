@@ -282,12 +282,35 @@ export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
 
   const rows: DrePivotedRow[] = [];
   let lastGroup: string | null = null;
+  let sourceSubtotalGroup: string | null = null;
   const groupCount = new Map<string, number>();
   const preserveSourceLabels = months.some((m) => m.dre?.kind === "exito");
 
   for (const ln of union) {
     let meta = dreRowClass(ln);
     const key = dreLineKey(ln.descricao);
+    const sourceTotal =
+      ln.nivel === "total" ||
+      (ln.grupo || "").toLowerCase() === "total" ||
+      key === "receita bruta" ||
+      key === "cmv";
+
+    // Na DRE EXITO, a posição recuada é a fonte da hierarquia. Uma conta de
+    // detalhe pertence ao subtotal imediatamente anterior, mesmo quando o nome
+    // isolado (por exemplo, "Bonificações Concedidas") também poderia sugerir
+    // outro grupo contábil. Packs antigos usam `grupo: linha` e preservam a
+    // mesma ordem, portanto recebem o mesmo tratamento sem nova importação.
+    const sourceDetail =
+      !sourceTotal &&
+      (ln.nivel === "detalhe" ||
+        ((ln.grupo || "").toLowerCase() === "linha" && sourceSubtotalGroup !== null));
+    if (sourceDetail && sourceSubtotalGroup) {
+      meta = {
+        ...meta,
+        group: sourceSubtotalGroup,
+        deduction: [GROUP_DEDUCOES, GROUP_CUSTOS, GROUP_DESPESAS].includes(sourceSubtotalGroup),
+      };
+    }
 
     // Packs novos trazem `nivel`; packs antigos continuam funcionando pela
     // ordem das linhas. Uma linha sem palavra-chave herda o último grupo
@@ -299,17 +322,15 @@ export function pivotDreMonths(porMes: DreMonth[]): DrePivotedRow[] {
         deduction: [GROUP_DEDUCOES, GROUP_CUSTOS, GROUP_DESPESAS].includes(lastGroup),
       };
     }
-    const sourceTotal =
-      ln.nivel === "total" ||
-      (ln.grupo || "").toLowerCase() === "total" ||
-      key === "receita bruta" ||
-      key === "cmv";
     if (sourceTotal && meta.kind === "line") {
       meta = { ...meta, kind: "subtotal" };
     }
     if (meta.kind === "line" && meta.group == null) {
       // Fora de um grupo reconhecido, ainda assim preserve a linha original.
       meta = { ...meta, group: GROUP_OUTROS };
+    }
+    if (sourceTotal) {
+      sourceSubtotalGroup = meta.kind === "subtotal" ? meta.group : null;
     }
 
     const valores: Record<string, number | null> = {};

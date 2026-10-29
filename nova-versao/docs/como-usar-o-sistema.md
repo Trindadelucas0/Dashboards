@@ -91,7 +91,7 @@ Não use a substituição para acrescentar um tipo ausente: nesse caso, **Gravar
 3. Clique no nome ou no chevron de um grupo ou subtotal para mostrar ou ocultar suas contas.
 4. Use **Expandir** para abrir todos os níveis ou **Recolher** para voltar ao estado inicial: grupos abertos e subtotais fechados.
 
-Resultados como Receita Líquida, Lucro Bruto e Lucro Líquido permanecem sempre visíveis. Ao abrir **Despesas Administrativas**, aparecem linhas como Salários e Ordenados, INSS, FGTS, Energia Elétrica, Água e Esgoto, Seguros, Honorários Contábeis e Serviços Prestados por Terceiros. Meses importados antes desta correção também recebem a árvore, sem nova importação.
+Resultados como Receita Líquida, Lucro Bruto e Lucro Líquido permanecem sempre visíveis. Ao abrir **Despesas Administrativas**, aparecem linhas como Salários e Ordenados, INSS, FGTS, Taxas Diversas, Energia Elétrica, Água e Esgoto, Seguros, Honorários Contábeis e Serviços Prestados por Terceiros. **Bonificações Concedidas** e **Eventos e Confraternizações** aparecem dentro de **Outras Despesas Operacionais** quando essa for a posição delas na planilha. Meses importados antes desta correção também recebem a árvore, sem nova importação e sem alteração dos valores gravados.
 
 ### Consultar o Balancete por período
 

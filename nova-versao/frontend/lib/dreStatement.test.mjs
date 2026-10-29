@@ -6,6 +6,7 @@ import {
   buildDreTreeRows,
   collapseTrimestre,
   compactDreExpandedKeys,
+  dreLineKey,
   pivotDreMonths,
   visibleDreTreeRows,
 } from "./dreStatement.ts";
@@ -126,6 +127,64 @@ test("árvore abre grupos, mantém subtotais fechados e preserva resultados fina
 
   const allVisible = visibleDreTreeRows(tree, allDreExpandedKeys(tree));
   assert.equal(allVisible.length, tree.length);
+});
+
+test("DRE EXITO mantém cada detalhe no subtotal original da planilha", () => {
+  const pivoted = pivotDreMonths([
+    month([
+      { descricao: "(-) DESPESAS OPERACIONAIS", valor: -300, grupo: "despesas", nivel: "total" },
+      { descricao: "DESPESAS ADMINISTRATIVAS", valor: -100, grupo: "total", nivel: "total" },
+      { descricao: "TAXAS DIVERSAS", valor: -52, grupo: "linha", nivel: "detalhe" },
+      { descricao: "MATERIAL USO E CONSUMO", valor: -48, grupo: "linha", nivel: "detalhe" },
+      { descricao: "(-) OUTRAS DESPESAS OPERACIONAIS", valor: -200, grupo: "total", nivel: "total" },
+      { descricao: "BONIFICAÇÕES CONCEDIDAS", valor: -168, grupo: "linha", nivel: "detalhe" },
+      { descricao: "EVENTOS E CONFRATERNIZAÇÕES", valor: -32, grupo: "linha", nivel: "detalhe" },
+      { descricao: "(-) OUTRAS RECEITAS OPERACIONAIS", valor: 60, grupo: "total", nivel: "total" },
+      { descricao: "BONIFICAÇÃO RECEBIDA", valor: 60, grupo: "linha", nivel: "detalhe" },
+    ]),
+  ]);
+  const tree = buildDreTreeRows(pivoted);
+  const byDisplay = new Map(tree.map((node) => [node.row.display, node]));
+
+  assert.equal(byDisplay.get("TAXAS DIVERSAS")?.parentKey, dreLineKey("DESPESAS ADMINISTRATIVAS"));
+  assert.equal(byDisplay.get("MATERIAL USO E CONSUMO")?.parentKey, dreLineKey("DESPESAS ADMINISTRATIVAS"));
+  assert.equal(
+    byDisplay.get("BONIFICAÇÕES CONCEDIDAS")?.parentKey,
+    dreLineKey("(-) OUTRAS DESPESAS OPERACIONAIS"),
+  );
+  assert.equal(
+    byDisplay.get("EVENTOS E CONFRATERNIZAÇÕES")?.parentKey,
+    dreLineKey("(-) OUTRAS DESPESAS OPERACIONAIS"),
+  );
+  assert.equal(
+    byDisplay.get("BONIFICAÇÃO RECEBIDA")?.parentKey,
+    dreLineKey("(-) OUTRAS RECEITAS OPERACIONAIS"),
+  );
+  assert.equal(tree.filter((node) => node.row.display === "Outros Resultados").length, 1);
+});
+
+test("packs EXITO antigos preservam detalhes no último subtotal sem reimportação", () => {
+  const pivoted = pivotDreMonths([
+    month([
+      { descricao: "DESPESAS ADMINISTRATIVAS", valor: -52, grupo: "total" },
+      { descricao: "TAXAS DIVERSAS", valor: -52, grupo: "linha" },
+      { descricao: "(-) OUTRAS DESPESAS OPERACIONAIS", valor: -232, grupo: "total" },
+      { descricao: "BONIFICAÇÕES CONCEDIDAS", valor: -200, grupo: "linha" },
+      { descricao: "EVENTOS E CONFRATERNIZAÇÕES", valor: -32, grupo: "linha" },
+    ]),
+  ]);
+  const tree = buildDreTreeRows(pivoted);
+  const byDisplay = new Map(tree.map((node) => [node.row.display, node]));
+
+  assert.equal(byDisplay.get("TAXAS DIVERSAS")?.parentKey, dreLineKey("DESPESAS ADMINISTRATIVAS"));
+  assert.equal(
+    byDisplay.get("BONIFICAÇÕES CONCEDIDAS")?.parentKey,
+    dreLineKey("(-) OUTRAS DESPESAS OPERACIONAIS"),
+  );
+  assert.equal(
+    byDisplay.get("EVENTOS E CONFRATERNIZAÇÕES")?.parentKey,
+    dreLineKey("(-) OUTRAS DESPESAS OPERACIONAIS"),
+  );
 });
 
 test("lucro e prejuízo do exercício viram uma linha só e netam no trimestre", () => {
