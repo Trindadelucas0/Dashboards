@@ -14,6 +14,8 @@ Guia rápido do Dashboards Êxito. A fonte oficial de regras e contratos técnic
 6. Confira banco, competência, lançamentos, entradas, saídas, saldo e itens sem classificação.
 7. Clique em **Gravar importação**.
 
+Empresas antigas que possuem apenas o cadastro principal podem usar normalmente a unidade **Matriz**; não é necessário recadastrar o CNPJ para abrir esta tela.
+
 O sistema usa somente: Data, Débito, Crédito, Valor, Histórico, Nº Nota e Classificação Êxito. Situação, Verificação do cliente, Observação e qualquer coluna posterior não são importadas.
 
 ### Substituir um banco e mês

@@ -16,7 +16,7 @@ from app.db import get_db
 from app.deps import current_user, require_admin, require_company, require_tab
 from app.extract.parse_bank_statement import BankStatementError, parse_bank_statement
 from app.extract.workbook import safe_unlink
-from app.models import BankStatementImport, BankTransaction, CompanyCnpj, User
+from app.models import BankStatementImport, BankTransaction, Company, CompanyCnpj, User
 from app.security import sha256_bytes
 
 router = APIRouter(tags=["bank-statements"])
@@ -48,6 +48,11 @@ def _require_unit(company_id: str, unidade: str, db: Session) -> str:
         .filter(CompanyCnpj.company_id == company_id, CompanyCnpj.unidade == normalized)
         .first()
     )
+    # Empresas antigas podem ter somente o CNPJ principal em `companies`.
+    # O catálogo expõe esse registro como unidade `matriz`, então a conciliação
+    # precisa reconhecer a mesma unidade mesmo sem o alias em `company_cnpjs`.
+    if not exists and normalized == "matriz":
+        exists = db.query(Company.id).filter(Company.id == company_id).first()
     if not exists:
         raise HTTPException(400, "A unidade informada não pertence à empresa.")
     return normalized

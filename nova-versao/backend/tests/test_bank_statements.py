@@ -14,7 +14,7 @@ from app.extract.parse_bank_statement import (
     parse_bank_statement,
     parse_br_money,
 )
-from app.models import BankStatementImport, BankTransaction, User
+from app.models import BankStatementImport, BankTransaction, Company, CompanyCnpj, User
 from app.routers import bank_statements as router
 
 
@@ -277,3 +277,22 @@ def test_unit_validation_blocks_consolidated_and_unknown_unit():
     db.query.return_value.filter.return_value.first.return_value = None
     with pytest.raises(HTTPException, match="não pertence à empresa"):
         router._require_unit("lojao", "filial-inexistente", db)
+
+
+def test_unit_validation_accepts_legacy_company_main_unit_without_alias():
+    db = MagicMock()
+    alias_query = MagicMock()
+    alias_query.filter.return_value.first.return_value = None
+    company_query = MagicMock()
+    company_query.filter.return_value.first.return_value = ("empresa-legada",)
+
+    def query(model, *_columns):
+        if model is CompanyCnpj.id:
+            return alias_query
+        if model is Company.id:
+            return company_query
+        raise AssertionError(f"Consulta inesperada: {model}")
+
+    db.query.side_effect = query
+
+    assert router._require_unit("empresa-legada", "matriz", db) == "matriz"

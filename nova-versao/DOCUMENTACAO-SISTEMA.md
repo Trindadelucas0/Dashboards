@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.12.1 — hierarquia fiel da DRE EXITO |
-| Última atualização | 29/10/2026 (detalhes da DRE permanecem no subtotal original da planilha) |
+| Versão do sistema | 2.12.2 — conciliação para empresas legadas |
+| Última atualização | 29/10/2026 (Recebimentos/Pagamentos reconhece a matriz de empresas antigas sem alias de unidade) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.12.2 | Conciliação para empresas legadas | **Recebimentos/Pagamentos** reconhece como `matriz` o cadastro principal de empresas antigas que ainda não possuem uma linha auxiliar em `company_cnpjs`. A validação continua bloqueando `todas`, filiais desconhecidas e unidades de outra empresa; nenhuma linha é criada ou alterada no banco. |
 | 2.12.1 | Hierarquia fiel da DRE EXITO | A árvore mensal e trimestral da DRE respeita o subtotal e a ordem original das planilhas antes de classificar uma conta pelo nome. Contas que existem apenas em um mês do trimestre, como **IPTU**, entram na posição contábil correta e mostram `—` nos meses ausentes, sem reaparecer depois do Lucro Líquido. Na BAIFER e na Loja das Máquinas, **Taxas Diversas** permanece em **Despesas Administrativas**; **Bonificações Concedidas** e **Eventos e Confraternizações** permanecem em **Outras Despesas Operacionais**. Packs novos e antigos recebem a correção na apresentação, sem reimportação, alteração de valores ou escrita no banco. |
 | 2.12.0 | Gerenciamento de unidades e CNPJs | **Nova empresa** cadastra cada CNPJ adicional com nome próprio. O cabeçalho acompanha a unidade; **Todas as unidades** identifica o consolidado sem atribuir um CNPJ individual. Pelo menu de três pontos, somente administrador adiciona unidades e altera nome/CNPJ ou remove unidades vazias. Unidade com dados importados aceita renomear, mas bloqueia troca de CNPJ e exclusão; empresa principal fica protegida. APIs `POST/PATCH/DELETE /api/companies/{company_id}/units...` validam permissão, CNPJ e duplicidade. |
 | 2.11.1 | Ações discretas no card da empresa | O seletor destaca **Acessar dashboard** como ação principal verde. Para administrador, **Excluir empresa** deixa de ocupar uma faixa permanente e passa ao menu de três pontos no canto superior do card; selecionar a ação mantém a confirmação em dois passos. O menu fecha ao clicar fora ou pressionar Esc. API e regra de exclusão permanecem inalteradas. |
@@ -250,7 +251,7 @@ Central de **conciliação bancária real**, independente dos packs fiscais e do
 
 **Persistência e substituição:** `BankStatementImport` guarda metadados/totais e `BankTransaction` guarda A:G. A chave ativa é empresa + unidade específica + banco normalizado + competência. Arquivo idêntico ativo é duplicado e não grava. Arquivo diferente no mesmo slot exige confirmação; a operação marca o anterior como `replaced`, limpa sua chave ativa e grava a nova versão e suas linhas na mesma transação. O histórico anterior não entra nas consultas.
 
-**Permissões:** `preview` e `commit` dependem de administrador. `options`, `summary` e `transactions` exigem acesso à empresa e à aba `recebimentos`; a API também valida se a unidade pertence à empresa. A opção consolidada `todas` não pode ser usada para importar ou consultar conciliação.
+**Permissões:** `preview` e `commit` dependem de administrador. `options`, `summary` e `transactions` exigem acesso à empresa e à aba `recebimentos`; a API também valida se a unidade pertence à empresa. Para compatibilidade com cadastros antigos, a unidade `matriz` também é válida quando existe o cadastro principal em `companies`, mesmo sem a linha auxiliar correspondente em `company_cnpjs`. A opção consolidada `todas` não pode ser usada para importar ou consultar conciliação.
 
 Endpoints: `POST /api/bank-statements/preview`, `POST /api/bank-statements/commit`, `GET /api/companies/{id}/bank-statements/options`, `/summary` e `/transactions`.
 
