@@ -31,9 +31,10 @@ def upsert_companies(db) -> None:
     for reg in seed_company_regs(db):
         row = db.query(Company).filter(Company.id == reg.id).first()
         if not row:
-            row = Company(id=reg.id)
+            row = Company(id=reg.id, label=reg.label)
             db.add(row)
-        row.label = reg.label
+        elif not (row.label or "").strip():
+            row.label = reg.label
         row.theme = reg.theme
         row.cnpj = reg.cnpj
         row.tabs = list(reg.tabs)

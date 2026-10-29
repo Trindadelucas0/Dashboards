@@ -138,6 +138,10 @@ class CompanyCreateIn(BaseModel):
     units: list[CompanyUnitCreateIn] = Field(default_factory=list)
 
 
+class CompanyUpdateIn(BaseModel):
+    label: str = Field(min_length=2, max_length=120)
+
+
 class CompanyUnitLabelIn(BaseModel):
     key: str = Field(min_length=1, max_length=40)
     label: str = Field(min_length=2, max_length=80)
@@ -978,6 +982,54 @@ def create_company(
         "tabs": row.tabs,
         "desc": row.description or row.label,
     }
+
+
+@router.patch("/{company_id}")
+def update_company(
+    company_id: str,
+    body: CompanyUpdateIn,
+    user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    company = (
+        db.query(Company)
+        .filter(Company.id == company_id)
+        .with_for_update()
+        .first()
+    )
+    if not company:
+        raise HTTPException(404, "Empresa não encontrada")
+
+    label = _clean_unit_label(body.label)
+    if len(label) < 2:
+        raise HTTPException(400, "O nome da empresa deve ter pelo menos 2 caracteres")
+
+    aliases = (
+        db.query(CompanyCnpj)
+        .filter(CompanyCnpj.company_id == company_id)
+        .with_for_update()
+        .all()
+    )
+    label_key = label.casefold()
+    for alias in aliases:
+        if alias.cnpj == (company.cnpj or ""):
+            continue
+        if _clean_unit_label(alias.label).casefold() == label_key:
+            raise HTTPException(400, "O nome da empresa deve ser diferente do nome das unidades")
+
+    try:
+        company.label = label
+        main_alias = next((alias for alias in aliases if alias.cnpj == (company.cnpj or "")), None)
+        if main_alias:
+            main_alias.label = label
+        db.commit()
+    except Exception as exc:  # noqa: BLE001
+        db.rollback()
+        logger.exception("Falha ao atualizar nome da empresa %s", company_id)
+        raise HTTPException(500, "Não foi possível atualizar o nome da empresa") from exc
+
+    logger.info("Nome da empresa atualizado: company=%s user=%s", company_id, user.id)
+    return {"id": company.id, "label": company.label, "cnpj": company.cnpj}
 
 
 @router.patch("/{company_id}/units")

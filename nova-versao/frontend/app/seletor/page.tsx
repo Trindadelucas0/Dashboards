@@ -154,6 +154,33 @@ export default function SeletorPage() {
     }
   }
 
+  async function saveCompanyName(company: Company, unit: CompanyUnit) {
+    setEditError("");
+    setEditSuccess("");
+    const label = unit.label.trim();
+    const finalNames = editingUnits
+      .filter((item) => item.key !== "todas")
+      .map((item) => (item.key === unit.key ? label : item.label.trim()).toLocaleLowerCase("pt-BR"));
+    if (new Set(finalNames).size !== finalNames.length) {
+      setEditError("O nome da empresa deve ser diferente do nome das unidades.");
+      return;
+    }
+    setEditSavingKey(unit.key);
+    try {
+      const result = await api<{ id: string; label: string; cnpj: string }>(`/api/companies/${encodeURIComponent(company.id)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ label }),
+      });
+      setCompanies((current) => current.map((item) => item.id === result.id ? { ...item, label: result.label } : item));
+      setEditingUnits((current) => current.map((item) => item.key === unit.key ? { ...item, label: result.label } : item));
+      setEditSuccess(`${result.label} foi atualizada.`);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : "Não foi possível salvar o nome da empresa.");
+    } finally {
+      setEditSavingKey(null);
+    }
+  }
+
   async function addUnit(company: Company) {
     setEditError("");
     setEditSuccess("");
@@ -249,7 +276,7 @@ export default function SeletorPage() {
                           <svg viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M4 20h4l11-11-4-4L4 16v4Zm9-13 4 4" />
                           </svg>
-                          Gerenciar unidades e CNPJs
+                          Gerenciar empresa, unidades e CNPJs
                         </button>
                         <button
                           type="button"
@@ -290,31 +317,33 @@ export default function SeletorPage() {
                   editing ? (
                     <div className="company-unit-editor">
                       <div className="company-unit-editor-head">
-                        <strong>Gerenciar unidades e CNPJs</strong>
-                        <span>Somente administrador. Unidades com dados importados não permitem trocar o CNPJ nem excluir.</span>
+                        <strong>Gerenciar empresa, unidades e CNPJs</strong>
+                        <span>Somente administrador. O nome da empresa principal pode ser alterado; o CNPJ principal permanece protegido.</span>
                       </div>
                       {editLoadingId === c.id ? <div className="company-unit-status">Carregando unidades…</div> : null}
                       {!editLoadingId && editingUnits.filter((unit) => unit.key !== "todas").map((unit) => {
                         const isMain = unit.cnpj === c.cnpj;
-                        const canEdit = Boolean(unit.cnpj) && !isMain;
+                        const canEditName = Boolean(unit.cnpj);
+                        const canEditUnit = canEditName && !isMain;
                         return (
                           <form
                             className="company-unit-card"
                             key={unit.key}
                             onSubmit={(event) => {
                               event.preventDefault();
-                              if (canEdit) void saveUnit(c, unit);
+                              if (isMain) void saveCompanyName(c, unit);
+                              else if (canEditUnit) void saveUnit(c, unit);
                             }}
                           >
                             <div className="company-unit-field">
                               <label htmlFor={`unit-name-${c.id}-${unit.key}`}>{isMain ? "Empresa principal" : "Nome da unidade"}</label>
                               <input
                                 id={`unit-name-${c.id}-${unit.key}`}
-                                value={isMain ? c.label : unit.label}
-                                disabled={!canEdit || Boolean(editSavingKey)}
-                                required={canEdit}
+                                value={unit.label}
+                                disabled={!canEditName || Boolean(editSavingKey)}
+                                required={canEditName}
                                 minLength={2}
-                                maxLength={80}
+                                maxLength={isMain ? 120 : 80}
                                 onChange={(event) => updateUnitDraft(unit.key, { label: event.target.value })}
                               />
                             </div>
@@ -323,13 +352,19 @@ export default function SeletorPage() {
                               <input
                                 id={`unit-cnpj-${c.id}-${unit.key}`}
                                 value={unit.cnpj ? maskCnpj(unit.cnpj) : "Sem CNPJ cadastrado"}
-                                disabled={!canEdit || Boolean(editSavingKey)}
-                                required={canEdit}
+                                disabled={!canEditUnit || Boolean(editSavingKey)}
+                                required={canEditUnit}
                                 inputMode="numeric"
                                 onChange={(event) => updateUnitDraft(unit.key, { cnpj: digitsOnly(event.target.value) })}
                               />
                             </div>
-                            {canEdit ? (
+                            {isMain ? (
+                              <div className="company-unit-row-actions">
+                                <button type="submit" className="btn-unit-save" disabled={Boolean(editSavingKey)}>
+                                  {editSavingKey === unit.key ? "Salvando…" : "Salvar nome da empresa"}
+                                </button>
+                              </div>
+                            ) : canEditUnit ? (
                               removingKey === unit.key ? (
                                 <div className="company-unit-remove-confirm">
                                   <span>Remover esta unidade vazia?</span>

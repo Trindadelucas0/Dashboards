@@ -110,7 +110,7 @@ def _replacement_types_by_slot(
 def _apply_session_company(extracted: dict, company_id: str | None, db: Session) -> None:
     if not company_id:
         return
-    dest = COMPANY_BY_ID.get(company_id) or db.query(Company).filter(Company.id == company_id).first()
+    dest = db.query(Company).filter(Company.id == company_id).first() or COMPANY_BY_ID.get(company_id)
     if not dest:
         return
     label = getattr(dest, "label", None) or company_id
@@ -185,7 +185,7 @@ async def preview(
         try:
             company_cnpj = ""
             if company_id:
-                dest = COMPANY_BY_ID.get(company_id) or db.query(Company).filter(Company.id == company_id).first()
+                dest = db.query(Company).filter(Company.id == company_id).first() or COMPANY_BY_ID.get(company_id)
                 if dest and getattr(dest, "cnpj", None):
                     company_cnpj = str(dest.cnpj)
             extracted = classify_and_extract(
