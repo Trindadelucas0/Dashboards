@@ -11,6 +11,7 @@ from app.extract.workbook import WorkbookGrid
 LABEL_MAP = {
     "debito original": "debitoOriginal",
     "credito original": "creditoOriginal",
+    "saldo credor": "saldoCredorAnterior",
     "debitos 5005": "debitos5005",
     "creditos 5005": "creditos5005",
     "debito fora": "debitoFora",
@@ -90,6 +91,24 @@ def parse_apuracao_5005(grid: WorkbookGrid, filename: str = "") -> dict:
     ):
         values["totalOriginal"] = round(values["debitoOriginal"] + values["creditoOriginal"], 2)
 
+    # Modelo compacto da matriz Dauto: DÉBITO ORIGINAL, CRÉDITO ORIGINAL,
+    # SALDO CREDOR e um único TOTAL. Nesse layout o TOTAL já é o saldo final
+    # do período (negativo = crédito a transportar), não um subtotal da memória.
+    compact_balance = (
+        len(totals) == 1
+        and "debitoOriginal" in values
+        and "creditoOriginal" in values
+        and "saldoCredorAnterior" in values
+        and not any(key in values for key in ("debitos5005", "creditos5005", "debitoFora", "creditoFora"))
+    )
+    if compact_balance:
+        expected = round(
+            values["debitoOriginal"] - values["creditoOriginal"] - values["saldoCredorAnterior"],
+            2,
+        )
+        if abs(values["totalOriginal"] - expected) <= 0.02:
+            values["icmsARecolher"] = values["totalOriginal"]
+
     competencia = competencia_from_filename(filename) or ""
     if not competencia:
         for m in (MMYYYY_RE.search(filename or ""), MM_SEP_YYYY_RE.search(filename or "")):
@@ -101,12 +120,15 @@ def parse_apuracao_5005(grid: WorkbookGrid, filename: str = "") -> dict:
     tot_fora = values.get("totalFora")
     icms = values.get("icmsARecolher")
     formula_icms = "Total 5005 + Total fora = ICMS a recolher"
+    if compact_balance and "icmsARecolher" in values:
+        formula_icms = "Débito original − crédito original − saldo credor = saldo do período"
     if tot5005 is not None and tot_fora is not None and icms is not None:
         formula_icms = f"{tot5005:,.2f} + ({tot_fora:,.2f}) = {icms:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
     linhas_spec = (
         ("debitoOriginal", "Débito original", "movimento", ""),
         ("creditoOriginal", "Crédito original", "", ""),
+        ("saldoCredorAnterior", "Saldo credor", "saldo anterior", ""),
         ("totalOriginal", "TOTAL original", "débito + crédito", "total"),
         ("debitos5005", "Débitos 5005", "", ""),
         ("creditos5005", "Créditos 5005", "", ""),
@@ -145,6 +167,8 @@ def apuracao_patch_from_5005(parsed: dict) -> dict:
         icms["apurado"] = float(parsed["debitoOriginal"])
     if "creditoOriginal" in parsed:
         icms["credito"] = float(parsed["creditoOriginal"])
+    if "saldoCredorAnterior" in parsed:
+        icms["saldoCredorAnterior"] = float(parsed["saldoCredorAnterior"])
     patch: dict = {
         "memoriaCalculo": memoria,
         "apuracao": {"icms": icms, "fonte": "apuracao_5005"},

@@ -817,7 +817,8 @@ def parse_pis_cofins_padrao(grid: WorkbookGrid) -> dict:
         joined = _fold(" ".join(cells))
         if not joined:
             continue
-        if mode == "resumo" and "imposto" in joined and "debito" in joined and "credito" in joined:
+        if "imposto" in joined and "debito" in joined and "valor imposto" not in joined:
+            mode = "resumo"
             resumo_cols = _resumo_column_map(row)
             continue
         if "valor produto" in joined or ("imposto" in joined and "debito" in joined and "credito" in joined):
@@ -843,6 +844,7 @@ def parse_pis_cofins_padrao(grid: WorkbookGrid) -> dict:
         if mode != "resumo":
             continue
         use_map = bool(resumo_cols and "debito" in resumo_cols and "aRecolher" in resumo_cols)
+        debit_only_summary = bool(resumo_cols and set(resumo_cols) == {"debito"})
         saldo: float | None
         ajuste: float | None
         if use_map and resumo_cols is not None:
@@ -851,6 +853,12 @@ def parse_pis_cofins_padrao(grid: WorkbookGrid) -> dict:
             rec = _cell_num(row, resumo_cols.get("aRecolher"))
             saldo = _cell_num(row, resumo_cols["saldoCredor"]) if "saldoCredor" in resumo_cols else None
             ajuste = _cell_num(row, resumo_cols["ajuste"]) if "ajuste" in resumo_cols else None
+        elif debit_only_summary and resumo_cols is not None:
+            deb = _cell_num(row, resumo_cols.get("debito"))
+            cred = 0.0
+            rec = deb
+            saldo = None
+            ajuste = None
         else:
             deb = _num(row[2] if len(row) > 2 else 0)
             cred = _num(row[3] if len(row) > 3 else 0)
@@ -890,10 +898,16 @@ def parse_pis_cofins_padrao(grid: WorkbookGrid) -> dict:
         out["resumo"][tributo] = resumo_row
         out[tributo] = tax
         out["hasValores"] = True
+        if debit_only_summary:
+            warning = "PIS/COFINS: RESUMO sem crédito/a recolher; DÉBITO usado como valor devido"
+            if warning not in out["warnings"]:
+                out["warnings"].append(warning)
     if out["resumo"] and any("ajuste" in row for row in out["resumo"].values()) and not any(
         "saldoCredor" in row for row in out["resumo"].values()
     ):
         out["formula"] = "aRecolher = coluna IMPOSTO A RECOLHER do RESUMO"
+    elif out["resumo"] and resumo_cols and set(resumo_cols) == {"debito"}:
+        out["formula"] = "aRecolher = DÉBITO do RESUMO (sem coluna de crédito/a recolher)"
     return out
 
 

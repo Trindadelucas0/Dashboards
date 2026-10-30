@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.14.1 — Simples Nacional EXITO para quatro filiais |
-| Última atualização | 30/10/2026 (ICMS compacto e unidade selecionada na importação) |
+| Versão do sistema | 2.14.2 — Resumo fiscal compacto da matriz Dauto |
+| Última atualização | 30/10/2026 (ICMS, PIS e COFINS da matriz Dauto) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.14.2 | Resumo fiscal compacto da matriz Dauto | Na aba `ICMS 5005-2012` com somente **Débito original**, **Crédito original**, **Saldo credor** e um único **Total**, o total conciliado (`débito − crédito − saldo credor`) vira `aRecolher`; negativo é crédito a transportar. Na aba `PIS COFINS` cujo RESUMO tem apenas **IMPOSTO + DÉBITO**, sem crédito nem a recolher, o débito explícito é gravado como devido, com crédito zero e aviso de layout compacto. |
 | 2.14.1 | Simples Nacional EXITO | A importação passa a enviar e validar a unidade selecionada no cabeçalho do dashboard. Planilhas sem CNPJ são gravadas na unidade específica aberta, nunca silenciosamente na Matriz; `Todas as unidades` é bloqueada. A aba única `ICMS` também aceita o resumo compacto **Débito pelas saídas / Crédito pelas entradas / Estorno de crédito / Total**: o estorno compõe o apurado e o `Total` é o saldo a recolher ou credor. A prévia mostra esses quatro componentes em reais, sem a linha vazia de Soma/Δ/NFs. |
 | 2.14.0 | Simples Nacional EXITO | O relatório **Simples Nacional** passa a ser reconhecido somente para os estabelecimentos **44-DAUTO SERVIÇOS-MG**, **45-VET LUZIÂNIA-GO**, **56-ÉTICA-DF** e **67-MERCADO ÁGUAS CLARAS-DF**. CNPJ, empresa cadastrada e código do estabelecimento precisam conferir. A competência aceita a data serial do Excel; a prévia mostra estabelecimento, RPA, alíquota e DAS. O pacote grava somente `memoriaSimples` e `apuracao.das`, preservando movimento, DRE, Balancete e outros impostos. Memória e Impostos usam a RPA oficial como denominador, sem alterar a memória PGDAS antiga da LANNIC. |
 | 2.13.0 | Edição do nome da empresa principal | No seletor, o administrador pode abrir **Gerenciar empresa, unidades e CNPJs** e alterar o nome da empresa principal. A API `PATCH /api/companies/{company_id}` exige administrador, valida tamanho e duplicidade com os nomes das unidades e atualiza o cadastro principal e seu alias de matriz na mesma transação. O seed preserva o nome escolhido e a prévia de importação usa o cadastro do banco. O identificador interno, o CNPJ, as planilhas, os acessos e o histórico permanecem inalterados. |
@@ -109,10 +110,10 @@ O mesmo arquivo modelo serve para Baifer, Loja, Única e **empresa nova**. Só m
 - Empresa: CNPJ do cabeçalho das abas de movimento ou dashboard aberto (empresa só no Postgres também herda o dashboard).
 - `MMYYYY` no nome (`082026`, `092026`, …) vira competência `YYYY-MM` e ancora DRE, Balancete e impostos. O texto fixo da aba `ICMS 5005-2012` é norma/modelo, não maio/2012. Sem uma competência real no nome ou cabeçalho, a prévia bloqueia a gravação. A empresa vem do dashboard aberto.
 - DRE e BALANCETE: só a coluna desse mês. Coluna vazia = part `vazia`. Nunca copia janeiro (nem outro mês preenchido) para a competência do arquivo.
-- ICMS 5005-2012: débito/crédito na memória. `apuracao.icms.aRecolher` só da linha **ICMS a recolher**, se ela existir. Se essa aba existir, o caminho é a memória 5005 (ex. Baifer).
+- ICMS 5005-2012: débito/crédito na memória. Em geral, `apuracao.icms.aRecolher` vem da linha **ICMS a recolher**. Exceção calibrada: no resumo compacto da matriz Dauto, com Débito original + Crédito original + Saldo credor + um único Total, o Total só é aceito como saldo final quando confere `débito − crédito − saldo credor`. Se essa aba existir, o caminho é a memória 5005 (ex. Baifer/Dauto).
 - Aba `ICMS` (comparada sem acento como `icms`, sem 5005): grava só `apuracao.icms` com `apurado` = linha Débito ICMS, `credito` = Crédito ICMS, `aRecolher` = linha ICMS a recolher, `fonte: planilha_padrao_icms`. Não cria `memoriaCalculo`. Sem as três linhas, a aba não é gravada.
 - Aba única `ICMS` no resumo compacto: exige **Débito pelas saídas**, **Crédito pelas entradas** e **Total**; **Estorno de crédito** é opcional e soma ao apurado. O `Total` explícito vira `aRecolher` (negativo = saldo credor). O pack também preserva `debitoSaidas` e `estornoCredito` para auditoria.
-- PIS COFINS / PIS E COFINS: os dois nomes de aba são equivalentes. `aRecolher` é a coluna do RESUMO cujo cabeçalho é A RECOLHER ou IMPOSTO A RECOLHER. Débito − crédito do mês fica em `aRecolherCalculado`. Cabeçalho `SALDO CREDOR` grava `saldoCredor`. Cabeçalho `AJUSTE` (ex. aluguel) grava `ajuste` e não é saldo credor.
+- PIS COFINS / PIS E COFINS: os dois nomes de aba são equivalentes. `aRecolher` é a coluna do RESUMO cujo cabeçalho é A RECOLHER ou IMPOSTO A RECOLHER. Débito − crédito do mês fica em `aRecolherCalculado`. Cabeçalho `SALDO CREDOR` grava `saldoCredor`. Cabeçalho `AJUSTE` (ex. aluguel) grava `ajuste` e não é saldo credor. No layout compacto que traz somente `IMPOSTO` e `DÉBITO`, o débito explícito vira `aRecolher`, crédito zero, com aviso na validação.
 - ST: soma UF/VALOR em `apuracao.icmsSt` só se houver valor. DIFAL e IPI só se a aba tiver valor no resumo/grade.
 - IRPJ/CSLL só se a aba existir e o CNPJ conferir com a empresa do dashboard.
 - ENTRADAS/SAÍDAS alimentam Compras/Vendas só quando essas abas existem.
@@ -586,6 +587,8 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 **Finalidade — exportar:** **Exportar PDF** / **Exportar Excel** do quadro macro e da lista completa de CFOPs (o Excel inclui fornecedores por CFOP). O botão **Por Fornecedor** segue gerando o relatório filtrado no modal.
 
 **Qualquer empresa — planilha padrão do mês:** cadastrar a empresa (se ainda não existir) → login dela → escolher uma **unidade específica** no seletor (não `Todas as unidades`) → dashboard aberto → **Importar** → arquivo cujo nome termina em `MMYYYY` (ex. `… 082026.xlsx` = agosto/2026; no mês seguinte, `092026`). A empresa e, quando a planilha não trouxer CNPJ, a unidade gravadas são as do dashboard aberto, não o texto do nome. No preview: confira empresa, competência e unidade; DRE e Balancete ficam `ok` só se a coluna daquele mês tiver número; coluna vazia fica `vazia` e o janeiro do modelo não entra. ICMS 5005 **ou** ICMS simples, PIS/COFINS, ST, DIFAL e IPI aparecem só quando a aba tem valor. IRPJ/CSLL só se a aba existir e o CNPJ for o da empresa aberta. Sem ENTRADAS/SAÍDAS, Compras e Vendas não mudam com esse arquivo (use o relatório EXITO de entradas/saídas com o CNPJ dela). Use **Gravar** para acrescentar dados e **Substituir tipos enviados** somente ao corrigir os tipos que aparecem na prévia.
+
+**Dauto Matriz — corrigir jul–set/2026:** abra **GRUPO DAUTO**, selecione a unidade **Matriz** e importe novamente os arquivos de julho, agosto e setembro. Na prévia, cada arquivo deve mostrar `apuracao_5005` e `pis_cofins` como `ok`; o aviso de PIS/COFINS informa que o RESUMO só possui DÉBITO. Use **Substituir tipos enviados** para trocar somente esses impostos já gravados. Em **Impostos**, confira: ICMS credor de **R$ 5.603,10** em julho, **R$ 13.391,15** em agosto e **R$ 15.918,83** em setembro; PIS/COFINS de **R$ 6.342,33 / R$ 29.272,31**, **R$ 3.973,72 / R$ 18.340,26** e **R$ 4.625,49 / R$ 21.348,42**, respectivamente.
 
 **Baifer — planilha padrão (exemplo):** mesmo fluxo acima com login `baifer` e arquivo `Planilha Padrão DASBORADS - BAIFER MMYYYY.xlsx`.
 
