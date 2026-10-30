@@ -11,6 +11,7 @@ def test_nfe_line_item_classifies_doc():
     cpf = _nfe_line_item(
         SimpleNamespace(
             competencia="2026-01",
+            unidade="matriz",
             nota="10",
             serie="1",
             nome="Pessoa",
@@ -21,12 +22,14 @@ def test_nfe_line_item_classifies_doc():
         )
     )
     assert cpf["tipoDoc"] == "cpf"
+    assert cpf["unidade"] == "matriz"
     assert cpf["nota"] == "10"
     assert cpf["valor"] == 50.0
 
     cnpj = _nfe_line_item(
         SimpleNamespace(
             competencia="2026-01",
+            unidade="matriz",
             nota="11",
             serie="1",
             nome="Empresa",
@@ -41,6 +44,7 @@ def test_nfe_line_item_classifies_doc():
     outros = _nfe_line_item(
         SimpleNamespace(
             competencia="2026-01",
+            unidade="matriz",
             nota="12",
             serie="",
             nome="X",
@@ -73,6 +77,7 @@ def test_nfe_lines_payload_returns_saidas(monkeypatch):
     rows = [
         SimpleNamespace(
             competencia="2026-01",
+            unidade="matriz",
             nota="1",
             serie="1",
             nome="PF",
@@ -83,6 +88,7 @@ def test_nfe_lines_payload_returns_saidas(monkeypatch):
         ),
         SimpleNamespace(
             competencia="2026-01",
+            unidade="matriz",
             nota="2",
             serie="1",
             nome="PJ",
@@ -101,6 +107,49 @@ def test_nfe_lines_payload_returns_saidas(monkeypatch):
     assert out["companyId"] == "unica"
     assert out["items"][0]["tipoDoc"] == "cpf"
     assert out["items"][1]["tipoDoc"] == "cnpj"
+
+
+def test_nfe_lines_payload_accepts_todas_as_unidades(monkeypatch):
+    monkeypatch.setattr("app.routers.companies.require_company", lambda cid, user, db: cid)
+    rows = [
+        SimpleNamespace(
+            competencia="2026-09",
+            unidade="matriz",
+            nota="10",
+            serie="1",
+            nome="Fornecedor Matriz",
+            doc="12345678000199",
+            uf="GO",
+            cfop="1-102",
+            valor=10,
+        ),
+        SimpleNamespace(
+            competencia="2026-09",
+            unidade="filial",
+            nota="20",
+            serie="1",
+            nome="Fornecedor Filial",
+            doc="98765432000199",
+            uf="DF",
+            cfop="2-102",
+            valor=20,
+        ),
+    ]
+    db = MagicMock()
+    db.query.return_value = _Query(rows)
+
+    out = nfe_lines_payload(
+        "loja-maquinas",
+        "2026-09",
+        "todas",
+        "entradas",
+        SimpleNamespace(id=1, is_admin=True),
+        db,
+    )
+
+    assert out["count"] == 2
+    assert out["tipo"] == "entradas"
+    assert [item["unidade"] for item in out["items"]] == ["matriz", "filial"]
 
 
 def test_nfe_lines_payload_rejects_tipo(monkeypatch):

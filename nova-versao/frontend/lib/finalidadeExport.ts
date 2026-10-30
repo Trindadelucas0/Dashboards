@@ -1,6 +1,8 @@
 import { appendSheet, exportFileName, fmtBrl, getXlsx, newPdf, roundMoney } from "./exportLibs";
+import { consolidateNfeLines, fetchNfeLines } from "./nfeExport";
 
 export type FinalidadeExportInput = {
+  empresaId?: string;
   companyName: string;
   competencia: string;
   unidade: string;
@@ -71,6 +73,14 @@ export async function exportFinalidadePdf(data: FinalidadeExportInput) {
 }
 
 export async function exportFinalidadeExcel(data: FinalidadeExportInput) {
+  if (!data.empresaId) throw new Error("Empresa não identificada para consultar as notas de entrada.");
+  const lines = await fetchNfeLines({
+    empresaId: data.empresaId,
+    competencia: data.competencia,
+    unidade: data.unidade,
+    tipo: "entradas",
+  });
+  const detalhes = consolidateNfeLines(lines.items || [], data.competencia, data.unidade);
   const XLSX = await getXlsx();
   const emitido = new Date().toLocaleDateString("pt-BR");
   const resumo: (string | number)[][] = [
@@ -101,10 +111,38 @@ export async function exportFinalidadeExcel(data: FinalidadeExportInput) {
       data.totalCompras ? roundMoney((c.total / data.totalCompras) * 100) : "—",
     ]);
   }
-  const forn: (string | number)[][] = [["CFOP", "Fornecedor", "CNPJ", "UF", "NFs", "Valor (R$)"]];
-  for (const c of data.cfopDados || []) {
-    for (const f of c.fornecedores || []) {
-      forn.push([c.cfop, f.nome || "—", f.cnpj || "—", f.uf || "—", f.qtd || 0, roundMoney(f.total)]);
+  const forn: (string | number)[][] = [
+    ["Competência", "Unidade", "Nº da Nota", "Série", "CFOP", "Fornecedor", "CNPJ", "UF", "Valor (R$)"],
+  ];
+  if (detalhes.length) {
+    for (const r of detalhes) {
+      forn.push([
+        r.competencia,
+        r.unidade,
+        r.nota,
+        r.serie,
+        r.cfop,
+        r.nome,
+        r.doc,
+        r.uf,
+        roundMoney(r.valor),
+      ]);
+    }
+  } else {
+    for (const c of data.cfopDados || []) {
+      for (const f of c.fornecedores || []) {
+        forn.push([
+          data.competencia,
+          data.unidade,
+          "—",
+          "—",
+          c.cfop,
+          f.nome || "—",
+          f.cnpj || "—",
+          f.uf || "—",
+          roundMoney(f.total),
+        ]);
+      }
     }
   }
   const wb = XLSX.utils.book_new();

@@ -1,6 +1,8 @@
 import { appendSheet, exportFileName, fmtBrl, getXlsx, newPdf, roundMoney } from "./exportLibs";
+import { consolidateNfeLines, fetchNfeLines } from "./nfeExport";
 
 export type VendasExportInput = {
+  empresaId?: string;
   companyName: string;
   competencia: string;
   unidade: string;
@@ -102,6 +104,14 @@ export async function exportVendasPdf(data: VendasExportInput) {
 }
 
 export async function exportVendasExcel(data: VendasExportInput) {
+  if (!data.empresaId) throw new Error("Empresa não identificada para consultar as notas de saída.");
+  const lines = await fetchNfeLines({
+    empresaId: data.empresaId,
+    competencia: data.competencia,
+    unidade: data.unidade,
+    tipo: "saidas",
+  });
+  const detalhes = consolidateNfeLines(lines.items || [], data.competencia, data.unidade);
   const XLSX = await getXlsx();
   const emitido = new Date().toLocaleDateString("pt-BR");
   const resumo: (string | number)[][] = [
@@ -125,18 +135,40 @@ export async function exportVendasExcel(data: VendasExportInput) {
   for (const u of data.ufSaidas || []) uf.push([u.uf, roundMoney(u.total), u.pct]);
   const cfop: (string | number)[][] = [["CFOP", "Descrição", "Qtd NF", "Valor (R$)"]];
   for (const c of data.cfopSaidas || []) cfop.push([c.cfop, c.descricao || "—", c.qtd || 0, roundMoney(c.total)]);
-  const cli: (string | number)[][] = [["#", "Cliente", "Documento", "Tipo", "UF", "NFs", "Valor (R$)"]];
-  (data.clientes || []).forEach((c, i) => {
-    cli.push([
-      i + 1,
-      c.nome || "—",
-      c.cnpj || "—",
-      (c.tipoDoc || "").toUpperCase() || "—",
-      c.uf || "—",
-      c.qtd || 0,
-      roundMoney(c.total),
-    ]);
-  });
+  const cli: (string | number)[][] = [
+    ["Competência", "Unidade", "Nº da Nota", "Série", "CFOP", "Cliente", "Documento", "Tipo", "UF", "Valor (R$)"],
+  ];
+  if (detalhes.length) {
+    for (const r of detalhes) {
+      cli.push([
+        r.competencia,
+        r.unidade,
+        r.nota,
+        r.serie,
+        r.cfop,
+        r.nome,
+        r.doc,
+        r.tipoDoc.toUpperCase(),
+        r.uf,
+        roundMoney(r.valor),
+      ]);
+    }
+  } else {
+    for (const c of data.clientes || []) {
+      cli.push([
+        data.competencia,
+        data.unidade,
+        "—",
+        "—",
+        "—",
+        c.nome || "—",
+        c.cnpj || "—",
+        (c.tipoDoc || "").toUpperCase() || "—",
+        c.uf || "—",
+        roundMoney(c.total),
+      ]);
+    }
+  }
   const wb = XLSX.utils.book_new();
   appendSheet(XLSX, wb, "Resumo", resumo);
   appendSheet(XLSX, wb, "UF", uf);

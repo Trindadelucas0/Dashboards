@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.14.2 — Resumo fiscal compacto da matriz Dauto |
-| Última atualização | 30/10/2026 (ICMS, PIS e COFINS da matriz Dauto) |
+| Versão do sistema | 2.14.3 — Resumo fiscal compacto da matriz Dauto |
+| Última atualização | 30/10/2026 (Nº da nota nos Excel de entradas e saídas) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.14.3 | Resumo fiscal compacto da matriz Dauto | Os Excel gerais de **Finalidade de Compras** e **Vendas** consultam as linhas fiscais e exibem competência, unidade, Nº da Nota, série, CFOP, fornecedor/cliente, documento, UF e valor nas abas **Fornecedores** e **Clientes**. A mesma nota é consolidada por CFOP; notas sem número ou série mostram `—`. Mês, trimestre e **Todas as unidades** são aceitos, com a unidade identificada em cada linha. Resumos, CFOP, PDF e relatório **Por Fornecedor** permanecem inalterados. |
 | 2.14.2 | Resumo fiscal compacto da matriz Dauto | Na aba `ICMS 5005-2012` com somente **Débito original**, **Crédito original**, **Saldo credor** e um único **Total**, o total conciliado (`débito − crédito − saldo credor`) vira `aRecolher`; negativo é crédito a transportar. Na aba `PIS COFINS` cujo RESUMO tem apenas **IMPOSTO + DÉBITO**, sem crédito nem a recolher, o débito explícito é gravado como devido, com crédito zero e aviso de layout compacto. |
 | 2.14.1 | Simples Nacional EXITO | A importação passa a enviar e validar a unidade selecionada no cabeçalho do dashboard. Planilhas sem CNPJ são gravadas na unidade específica aberta, nunca silenciosamente na Matriz; `Todas as unidades` é bloqueada. A aba única `ICMS` também aceita o resumo compacto **Débito pelas saídas / Crédito pelas entradas / Estorno de crédito / Total**: o estorno compõe o apurado e o `Total` é o saldo a recolher ou credor. A prévia mostra esses quatro componentes em reais, sem a linha vazia de Soma/Δ/NFs. |
 | 2.14.0 | Simples Nacional EXITO | O relatório **Simples Nacional** passa a ser reconhecido somente para os estabelecimentos **44-DAUTO SERVIÇOS-MG**, **45-VET LUZIÂNIA-GO**, **56-ÉTICA-DF** e **67-MERCADO ÁGUAS CLARAS-DF**. CNPJ, empresa cadastrada e código do estabelecimento precisam conferir. A competência aceita a data serial do Excel; a prévia mostra estabelecimento, RPA, alíquota e DAS. O pacote grava somente `memoriaSimples` e `apuracao.das`, preservando movimento, DRE, Balancete e outros impostos. Memória e Impostos usam a RPA oficial como denominador, sem alterar a memória PGDAS antiga da LANNIC. |
@@ -234,8 +235,8 @@ Números só do pack / `NfeLine` do mês (e unidade) selecionados no dashboard. 
 
 | Relatório | Onde | Arquivos | Conteúdo |
 |-----------|------|----------|----------|
-| Geral de vendas | Aba **Vendas** | PDF + Excel | Resumo (total, NFs, ticket, CPF/CNPJ) + UF + CFOP + ranking de clientes |
-| Finalidade de compras | Aba **Finalidade** | PDF + Excel | Macro (Revenda / Ativo / Devol / **Serviços** / Outros) + painel Serviços Tomados + CFOP + Excel de fornecedores. |
+| Geral de vendas | Aba **Vendas** | PDF + Excel | Resumo (total, NFs, ticket, CPF/CNPJ) + UF + CFOP; no Excel, a aba Clientes detalha Nº da Nota, série, unidade, CFOP e cliente. |
+| Finalidade de compras | Aba **Finalidade** | PDF + Excel | Macro (Revenda / Ativo / Devol / **Serviços** / Outros) + painel Serviços Tomados + CFOP; no Excel, a aba Fornecedores detalha Nº da Nota, série, unidade, CFOP e fornecedor. |
 | Vendas CPF × CNPJ | Aba **Vendas** | Excel detalhado | Aba Resumo (% e R$) + Clientes + Linhas NF (nota, série, doc, tipo, nome, UF, CFOP, valor) |
 
 Classificação do documento: só dígitos; **11 = CPF**, **14 = CNPJ**, qualquer outro = `outros`. Percentual = valor do tipo / total de vendas do slice; sem vendas → `—`.
@@ -582,9 +583,9 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 **Balancete / DRE / Indicadores:** use o chip do header. No **Balancete comum**, mês mostra só a competência escolhida; trimestre mostra os Balancetes importados daquele trimestre; o botão **Geral** dentro do card alterna entre o recorte selecionado e todos os meses importados do ano. Ao trocar o período no header, Geral é desativado. TOTAL só aparece quando há mais de uma coluna. Expandir/Recolher controla a árvore; busca e filtro de grupo restringem as contas. Na **Schumacher**, abra **Indicadores** na seção lateral homônima (fora de **Financeiro**, onde ficam só Balanço e DRE). A aba usa DRE + Balanço comparativo (não movimento NF); cards pelo chip (clique expande; **!** abre modal), gráfico anual na seção C. Demais empresas: **Indicadores** continua dentro de **Financeiro**; tela genérica; patrimoniais N/D sem Balancete EXITO.
 
-**Vendas — exportar:** com o mês importado aberto, use **Exportar PDF** ou **Exportar Excel** (resumo + UF + CFOP + clientes). **Excel CPF/CNPJ detalhado** gera três abas (Resumo %, Clientes, Linhas NF). Os cards **Vendas CPF** e **Vendas CNPJ** mostram R$ e %; sem vendas no mês ficam `—`.
+**Vendas — exportar:** com o período importado aberto, use **Exportar PDF** ou **Exportar Excel** (resumo + UF + CFOP + clientes). No Excel geral, a aba **Clientes** traz uma linha por nota e CFOP, com competência, unidade, Nº da Nota, série, CFOP, cliente, documento, tipo, UF e valor; sem número ou série, mostra `—`. Funciona por mês, trimestre e **Todas as unidades**. **Excel CPF/CNPJ detalhado** gera três abas (Resumo %, Clientes, Linhas NF). Os cards **Vendas CPF** e **Vendas CNPJ** mostram R$ e %; sem vendas no mês ficam `—`.
 
-**Finalidade — exportar:** **Exportar PDF** / **Exportar Excel** do quadro macro e da lista completa de CFOPs (o Excel inclui fornecedores por CFOP). O botão **Por Fornecedor** segue gerando o relatório filtrado no modal.
+**Finalidade — exportar:** **Exportar PDF** / **Exportar Excel** do quadro macro e da lista completa de CFOPs. No Excel geral, a aba **Fornecedores** traz uma linha por nota e CFOP, com competência, unidade, Nº da Nota, série, CFOP, fornecedor, CNPJ, UF e valor; sem número ou série, mostra `—`. Funciona por mês, trimestre e **Todas as unidades**. O botão **Por Fornecedor** segue gerando o relatório filtrado no modal e não recebe esse detalhamento.
 
 **Qualquer empresa — planilha padrão do mês:** cadastrar a empresa (se ainda não existir) → login dela → escolher uma **unidade específica** no seletor (não `Todas as unidades`) → dashboard aberto → **Importar** → arquivo cujo nome termina em `MMYYYY` (ex. `… 082026.xlsx` = agosto/2026; no mês seguinte, `092026`). A empresa e, quando a planilha não trouxer CNPJ, a unidade gravadas são as do dashboard aberto, não o texto do nome. No preview: confira empresa, competência e unidade; DRE e Balancete ficam `ok` só se a coluna daquele mês tiver número; coluna vazia fica `vazia` e o janeiro do modelo não entra. ICMS 5005 **ou** ICMS simples, PIS/COFINS, ST, DIFAL e IPI aparecem só quando a aba tem valor. IRPJ/CSLL só se a aba existir e o CNPJ for o da empresa aberta. Sem ENTRADAS/SAÍDAS, Compras e Vendas não mudam com esse arquivo (use o relatório EXITO de entradas/saídas com o CNPJ dela). Use **Gravar** para acrescentar dados e **Substituir tipos enviados** somente ao corrigir os tipos que aparecem na prévia.
 

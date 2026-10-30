@@ -1661,6 +1661,7 @@ def _nfe_line_item(r) -> dict:
     doc = r.doc or ""
     return {
         "competencia": r.competencia,
+        "unidade": r.unidade,
         "nota": r.nota or "",
         "serie": r.serie or "",
         "nome": r.nome or "",
@@ -1683,11 +1684,6 @@ def nfe_lines_payload(
 ):
     """Linhas NF do mês (ou trimestre) para exportação detalhada. Ownership no servidor."""
     require_company(company_id, user, db)
-    if _is_todas(unidade):
-        raise HTTPException(
-            400,
-            "Exportação CPF/CNPJ não está disponível em Todas as unidades. Escolha uma filial.",
-        )
     kind_tipo = (tipo or "saidas").strip().lower()
     if kind_tipo not in ("saidas", "entradas"):
         raise HTTPException(400, "tipo deve ser saidas ou entradas")
@@ -1696,16 +1692,17 @@ def nfe_lines_payload(
         db.query(NfeLine)
         .filter(
             NfeLine.company_id == company_id,
-            NfeLine.unidade == unidade,
             NfeLine.tipo == kind_tipo,
         )
     )
+    if not _is_todas(unidade):
+        q = q.filter(NfeLine.unidade == unidade)
     if kind == "trimestre" and period_key:
         meses = _meses_from_trimestre_key(period_key)
         q = q.filter(NfeLine.competencia.in_(meses))
     else:
         q = q.filter(NfeLine.competencia == competencia)
-    rows = q.order_by(NfeLine.competencia, NfeLine.nota, NfeLine.serie, NfeLine.cfop).all()
+    rows = q.order_by(NfeLine.competencia, NfeLine.unidade, NfeLine.nota, NfeLine.serie, NfeLine.cfop).all()
     items = [_nfe_line_item(r) for r in rows]
     return {"companyId": company_id, "competencia": competencia, "unidade": unidade, "tipo": kind_tipo, "items": items, "count": len(items)}
 

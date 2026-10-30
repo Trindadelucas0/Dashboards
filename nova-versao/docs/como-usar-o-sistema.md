@@ -47,6 +47,15 @@ Classificação Êxito vazia não impede a gravação: o lançamento aparece com
 
 ## Outras rotinas
 
+### Exportar entradas e saídas com o Nº da Nota
+
+1. Abra a empresa e escolha um mês, trimestre ou **Todas as unidades**.
+2. Para entradas, acesse **Finalidade de Compras** e clique em **Exportar Excel**. Consulte a aba **Fornecedores**.
+3. Para saídas, acesse **Vendas** e clique em **Exportar Excel**. Consulte a aba **Clientes**.
+4. Confira competência, unidade, Nº da Nota, série, CFOP, fornecedor/cliente, documento, UF e valor.
+
+Quando uma nota possuir mais de um CFOP, ela aparece uma vez para cada CFOP. Se a planilha importada não informar o número ou a série, o Excel mostra `—`. Os botões de PDF e o relatório **Por Fornecedor** mantêm o formato anterior.
+
 ### Renomear uma empresa e cadastrar vários CNPJs no mesmo dashboard
 
 Somente administradores podem cadastrar ou renomear unidades.

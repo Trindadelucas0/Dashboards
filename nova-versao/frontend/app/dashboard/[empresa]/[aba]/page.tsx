@@ -462,6 +462,7 @@ export default function AbaPage() {
 
   function vendasExportInput(): VendasExportInput {
     return {
+      empresaId: company?.id || params.empresa,
       companyName: company?.label || "Empresa",
       competencia: month,
       unidade: unidade || "matriz",
@@ -540,6 +541,7 @@ export default function AbaPage() {
               onClick={() =>
                 runExport(() =>
                   exportFinalidadeExcel({
+                    empresaId: company?.id || params.empresa,
                     companyName: company?.label || "Empresa",
                     competencia: month,
                     unidade: unidade || "matriz",
