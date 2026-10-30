@@ -1,0 +1,11 @@
+FICHA DE ALTERACAO CONTRATUAL
+DATA DE ENVIO == 26/10/2026, 17:38:18
+TOTAL DE PERGUNTAS == 6
+----------------------------------------
+001. Razão Social da Empresa == Borges Almeida Comércio de Tecnologias Agrícolas LTDA
+002. CNPJ da Empresa == 56.089.863/0001-31
+003. Telefone para Contato == (38) 997484295
+004. E-mail para Contato == borges.almeidaagro@gmail.com
+005. Tipo(s) de Alteração Solicitada(s) == Inclusão de Novas Atividades
+006. Novos CNAEs a Incluir == 3314-7/11 – Manutenção e reparação de máquinas e equipamentos para agricultura e pecuária | 4520-0/01 – Serviços de manutenção e reparação mecânica de veículos automotores.
+----------------------------------------

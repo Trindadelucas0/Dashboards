@@ -1262,6 +1262,8 @@ export default function AbaPage() {
       {showImpostosLayout && !d.livroApuracao && (
         (() => {
           const vendas = Number(d.receitaBruta || d.cfopSaidasTotal || totalVend || 0);
+          const memoriaSimples = d.memoriaSimples as Record<string, any> | undefined;
+          const isSimplesExito = memoriaSimples?.fonte === "simples_nacional_exito";
           const taxKeys = ["das", "icms", "icmsSt", "pis", "cofins", "ipi", "difal", "irpj", "csll"] as const;
           let sumRecolher: number | null = null;
           if (ap) {
@@ -1304,8 +1306,8 @@ export default function AbaPage() {
                   color="cyan"
                   icon="file-invoice"
                   value={vendas > 0 ? brlCompact(vendas) : "—"}
-                  label="Vendas do mês"
-                  sub={vendas > 0 ? "Receita bruta / saídas do pack" : "Sem faturamento neste mês"}
+                  label={isSimplesExito ? "RPA do Simples" : "Vendas do mês"}
+                  sub={vendas > 0 ? (isSimplesExito ? "Base oficial da planilha do Simples Nacional" : "Receita bruta / saídas do pack") : "Sem faturamento neste mês"}
                 />
                 <Kpi
                   color="orange"
@@ -1318,8 +1320,8 @@ export default function AbaPage() {
                   color="red"
                   icon="percent"
                   value={fmtPct(pctVendas)}
-                  label="Total impostos / Vendas"
-                  sub={pctVendas != null ? "% sobre faturamento do mês" : "Sem vendas ou sem apuração"}
+                  label={isSimplesExito ? "DAS / RPA" : "Total impostos / Vendas"}
+                  sub={pctVendas != null ? (isSimplesExito ? "% sobre a receita do período" : "% sobre faturamento do mês") : "Sem vendas ou sem apuração"}
                 />
                 <Kpi
                   color="purple"
@@ -1384,7 +1386,9 @@ export default function AbaPage() {
                       </div>
                       <div className="tax-prev">
                         {row
-                          ? `Apurado: ${brl(row.apurado)} · % s/ vendas: ${fmtPct(pctSv)}`
+                          ? key === "das" && isSimplesExito
+                            ? `Base: ${brl(Number(memoriaSimples?.rpa?.total ?? vendas))} · Alíquota: ${Number(memoriaSimples?.aliquota ?? 0).toLocaleString("pt-BR", { maximumFractionDigits: 4 })}%`
+                            : `Apurado: ${brl(row.apurado)} · % s/ vendas: ${fmtPct(pctSv)}`
                           : "Aguardando planilha deste tributo"}
                       </div>
                       {stUfEntries.length ? (

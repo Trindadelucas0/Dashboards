@@ -1558,24 +1558,30 @@ def _slice(tab: str, pack: dict) -> dict:
             "cmv": dre_view.get("cmv") if dre_view.get("cmv") is not None else pack.get("cmv"),
         }
     if tab == "impostos":
+        memoria_simples = pack.get("memoriaSimples") if isinstance(pack.get("memoriaSimples"), dict) else {}
+        simples_base = memoria_simples.get("baseMemoria")
+        base_impostos = float(simples_base) if simples_base not in (None, "") else vendas
         return {
             "impostos": pack.get("impostos"),
             "apuracao": pack.get("apuracao"),
-            "receitaBruta": vendas,
+            "receitaBruta": base_impostos,
             "composicao": pack.get("composicao") or [],
             "deducoes": pack.get("deducoes"),
             "dedPct": pack.get("dedPct"),
             "porUfSt": pack.get("porUfSt") or {},
-            "memoriaSimples": pack.get("memoriaSimples"),
+            "memoriaSimples": memoria_simples or None,
             "livroApuracao": pack.get("livroApuracao"),
         }
     if tab == "memoria":
+        memoria_simples = pack.get("memoriaSimples") if isinstance(pack.get("memoriaSimples"), dict) else {}
+        simples_base = memoria_simples.get("baseMemoria")
+        base_memoria = float(simples_base) if simples_base not in (None, "") else receita
         return {
             "entradasMeta": pack.get("entradasMeta"),
             "saidasMeta": pack.get("saidasMeta"),
             "apuracao": pack.get("apuracao"),
             "memoriaCalculo": pack.get("memoriaCalculo"),
-            "memoriaSimples": pack.get("memoriaSimples"),
+            "memoriaSimples": memoria_simples or None,
             "memoriaPisCofins": pack.get("memoriaPisCofins"),
             "memoriaIpi": pack.get("memoriaIpi"),
             "memoriaIrpj": pack.get("memoriaIrpj"),
@@ -1583,7 +1589,7 @@ def _slice(tab: str, pack: dict) -> dict:
             "porUfSt": pack.get("porUfSt") or {},
             "porUfDifal": pack.get("porUfDifal") or {},
             "subvencao": pack.get("subvencao") or (pack.get("apuracao") or {}).get("subvencao"),
-            "receitaBruta": receita,
+            "receitaBruta": base_memoria,
             "livroApuracao": pack.get("livroApuracao"),
         }
     if tab == "recebimentos":

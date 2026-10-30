@@ -32,6 +32,11 @@ from app.extract.parse_impostos import (
     impostos_table_parts,
 )
 from app.extract.parse_memoria_5005 import apuracao_patch_from_5005, is_apuracao_5005, parse_apuracao_5005
+from app.extract.parse_simples_nacional import (
+    is_allowed_simples_unit,
+    parse_simples_nacional_exito,
+    simples_pack_patch,
+)
 from app.extract.parse_livro_apuracao import extract_livro_apuracao, is_livro_apuracao
 from app.extract.parse_venda_produto import extract_venda_produto, is_venda_produto
 from app.extract.parse_dre_schumacher import extract_dre_schumacher, is_dre_schumacher
@@ -460,8 +465,42 @@ def classify_and_extract(
         "icms",
         "icms_st",
         "apuracao_5005",
+        "simples_nacional",
     ):
         result["errors"].append("Competência não identificada no cabeçalho nem no nome do arquivo")
+        return result
+
+    if tipo == "simples_nacional":
+        parsed = parse_simples_nacional_exito(grid)
+        result["competencia"] = parsed.get("competencia") or result.get("competencia") or ""
+        unit_label = ""
+        if company:
+            unit_label = next(
+                (unit.label for unit in company.units if unit.key == result["unidade"]),
+                "",
+            )
+        if company and not is_allowed_simples_unit(parsed.get("estabelecimentoCodigo") or "", unit_label):
+            result["errors"].append(
+                "Simples Nacional permitido somente para 44-DAUTO, 45-VET LUZIÂNIA, "
+                "56-ÉTICA e 67-MERCADO ÁGUAS CLARAS"
+            )
+        result["errors"].extend(parsed.get("errors") or [])
+        if result["errors"]:
+            result["meta"] = {
+                "estabelecimento": parsed.get("estabelecimentoCodigo"),
+                "rpa": (parsed.get("rpa") or {}).get("total"),
+                "aliquota": parsed.get("aliquota"),
+                "das": parsed.get("das"),
+            }
+            return result
+        result["pack_patch"] = simples_pack_patch(parsed, cnpj=cnpj, razao=razao)
+        result["meta"] = {
+            "estabelecimento": parsed.get("estabelecimentoCodigo"),
+            "rpa": (parsed.get("rpa") or {}).get("total"),
+            "aliquota": parsed.get("aliquota"),
+            "das": parsed.get("das"),
+            "partilha": round(sum((parsed.get("partilha") or {}).values()), 2),
+        }
         return result
 
     if tipo in ("entradas", "saidas"):

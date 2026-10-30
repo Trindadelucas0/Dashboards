@@ -39,6 +39,7 @@ DRE_KEYS = (
 BALANCETE_KEYS = ("hasBalancete", "balancete")
 
 APURACAO_KEYS_BY_TIPO: dict[str, tuple[str, ...]] = {
+    "simples_nacional": ("das",),
     "icms": ("icms",),
     "ipi": ("ipi",),
     "pis": ("pis",),
@@ -131,6 +132,13 @@ def apply_legacy_key_removal(pack: dict, deleted_tipos: set[str], remaining_tipo
     ap_work = dict(ap) if isinstance(ap, dict) else None
     ap_touched = False
     for tipo in deleted_tipos:
+        if tipo == "simples_nacional":
+            out.pop("memoriaSimples", None)
+            out.pop("composicao", None)
+            out.pop("deducoes", None)
+            out.pop("dedPct", None)
+            if not (remaining_tipos & {"dre", "saidas"}):
+                out.pop("receitaBruta", None)
         if tipo == "apuracao_5005":
             out.pop("memoriaCalculo", None)
             out.pop("subvencao", None)

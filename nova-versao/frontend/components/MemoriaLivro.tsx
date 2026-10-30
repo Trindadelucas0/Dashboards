@@ -161,10 +161,12 @@ export function ResumoConsolidado({
   cards,
   rb,
   mesLabel,
+  percentLabel = "% s/ RB",
 }: {
   cards: TaxCardModel[];
   rb: number;
   mesLabel: string;
+  percentLabel?: string;
 }) {
   const rows = cards.filter((c) => c.inResumo !== false);
   if (!rows.length) return null;
@@ -192,7 +194,7 @@ export function ResumoConsolidado({
               <th className="r">Apurado bruto</th>
               <th className="r">Créditos/Benef.</th>
               <th className="r">A recolher</th>
-              <th className="r">% s/ RB</th>
+              <th className="r">{percentLabel}</th>
             </tr>
           </thead>
           <tbody>
@@ -309,6 +311,7 @@ export default function MemoriaLivro({
   const hasPisCofins = hasPis || hasCofins;
   const sn = d.memoriaSimples as Record<string, any> | undefined;
   const hasSimples = !!(sn || taxRow(ap?.das));
+  const isSimplesExito = sn?.fonte === "simples_nacional_exito";
   const rb = Number(d.receitaBruta || 0);
   const subvVal = Number(mem?.ganhoReceitaSubvencao ?? d.subvencao ?? 0);
   const mesLabel = monthTitle(month, monthLabel);
@@ -319,29 +322,51 @@ export default function MemoriaLivro({
     const aRec = Number(sn?.das ?? ap?.das?.aRecolher ?? 0);
     const st = statusFromValor(aRec);
     const part = (sn?.partilha || {}) as Record<string, number>;
-    const rows: DetailRow[] = [
-      { label: "Total saídas", value: moneyOrDash(sn?.totalSaidas), tone: "plain" },
-      { label: "Devoluções", value: moneyOrDash(sn?.devolucoes), tone: "credit" },
-      { label: "RBT12", value: moneyOrDash(sn?.rbt12), tone: "plain" },
-      { label: "RBA", value: moneyOrDash(sn?.rba), tone: "plain" },
-      { label: "Faixa", value: String(sn?.faixa || "—"), tone: "plain" },
-      { label: "Fator r", value: sn?.fatorR != null ? String(sn.fatorR) : "—", tone: "plain" },
-      { label: "Anexo", value: String(sn?.anexo || "I Comércio"), tone: "plain" },
-      { label: "Seção", value: String(sn?.secao || "II ST"), tone: "plain" },
-      { label: "Tabela PIS/COFINS", value: String(sn?.tabela || "7 monofásicos"), tone: "plain" },
-      { label: "Alíquota efetiva", value: sn?.aliquota != null || ap?.das?.aliquota != null ? pctAliq(Number(sn?.aliquota ?? ap?.das?.aliquota)) : "—", tone: "plain" },
-      { label: "DAS a recolher", value: brl(aRec), tone: "debit", emphasis: true },
-      { label: "IRPJ (partilha)", value: moneyOrDash(part.irpj), tone: "plain" },
-      { label: "CSLL (partilha)", value: moneyOrDash(part.csll), tone: "plain" },
-      { label: "COFINS (partilha)", value: moneyOrDash(part.cofins), tone: "zero" },
-      { label: "PIS (partilha)", value: moneyOrDash(part.pis), tone: "zero" },
-      { label: "INSS/CPP (partilha)", value: moneyOrDash(part.inss), tone: "plain" },
-      { label: "ICMS (partilha)", value: moneyOrDash(part.icms), tone: "plain" },
-    ];
+    const rows: DetailRow[] = isSimplesExito
+      ? [
+          { label: "Receita do período (RPA)", value: moneyOrDash(sn?.rpa?.total), tone: "bold" },
+          { label: "Receita tributada", value: moneyOrDash(sn?.receitaTributadaTotal), tone: "plain" },
+          { label: "RBT12", value: moneyOrDash(sn?.rbt12?.total), tone: "plain" },
+          { label: "RBA atual", value: moneyOrDash(sn?.rbaAtual?.total), tone: "plain" },
+          { label: "RBA anterior", value: moneyOrDash(sn?.rbaAnterior?.total), tone: "plain" },
+          { label: "Faixa", value: String(sn?.faixa || "—"), tone: "plain" },
+          { label: "Fator r", value: sn?.fatorR != null ? Number(sn.fatorR).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—", tone: "plain" },
+          { label: "Anexo", value: String(sn?.anexo || "—"), tone: "plain" },
+          { label: "Seção", value: String(sn?.secao || "—"), tone: "plain" },
+          { label: "Tabela", value: String(sn?.tabela || "—"), tone: "plain" },
+          { label: "Alíquota efetiva", value: pctAliq(Number(sn?.aliquota ?? ap?.das?.aliquota)), tone: "plain" },
+          { label: "DAS a recolher", value: brl(aRec), tone: "debit", emphasis: true },
+          { label: "IRPJ (partilha)", value: moneyOrDash(part.irpj), tone: "plain" },
+          { label: "CSLL (partilha)", value: moneyOrDash(part.csll), tone: "plain" },
+          { label: "COFINS (partilha)", value: moneyOrDash(part.cofins), tone: "plain" },
+          { label: "PIS (partilha)", value: moneyOrDash(part.pis), tone: "plain" },
+          { label: "INSS/CPP (partilha)", value: moneyOrDash(part.inss), tone: "plain" },
+          ...(part.icms != null ? [{ label: "ICMS (partilha)", value: moneyOrDash(part.icms), tone: "plain" as ValTone }] : []),
+          ...(part.iss != null ? [{ label: "ISS (partilha)", value: moneyOrDash(part.iss), tone: "plain" as ValTone }] : []),
+        ]
+      : [
+          { label: "Total saídas", value: moneyOrDash(sn?.totalSaidas), tone: "plain" },
+          { label: "Devoluções", value: moneyOrDash(sn?.devolucoes), tone: "credit" },
+          { label: "RBT12", value: moneyOrDash(sn?.rbt12), tone: "plain" },
+          { label: "RBA", value: moneyOrDash(sn?.rba), tone: "plain" },
+          { label: "Faixa", value: String(sn?.faixa || "—"), tone: "plain" },
+          { label: "Fator r", value: sn?.fatorR != null ? String(sn.fatorR) : "—", tone: "plain" },
+          { label: "Anexo", value: String(sn?.anexo || "I Comércio"), tone: "plain" },
+          { label: "Seção", value: String(sn?.secao || "II ST"), tone: "plain" },
+          { label: "Tabela PIS/COFINS", value: String(sn?.tabela || "7 monofásicos"), tone: "plain" },
+          { label: "Alíquota efetiva", value: sn?.aliquota != null || ap?.das?.aliquota != null ? pctAliq(Number(sn?.aliquota ?? ap?.das?.aliquota)) : "—", tone: "plain" },
+          { label: "DAS a recolher", value: brl(aRec), tone: "debit", emphasis: true },
+          { label: "IRPJ (partilha)", value: moneyOrDash(part.irpj), tone: "plain" },
+          { label: "CSLL (partilha)", value: moneyOrDash(part.csll), tone: "plain" },
+          { label: "COFINS (partilha)", value: moneyOrDash(part.cofins), tone: "zero" },
+          { label: "PIS (partilha)", value: moneyOrDash(part.pis), tone: "zero" },
+          { label: "INSS/CPP (partilha)", value: moneyOrDash(part.inss), tone: "plain" },
+          { label: "ICMS (partilha)", value: moneyOrDash(part.icms), tone: "plain" },
+        ];
     cards.push({
       id: "das",
       nome: "Simples Nacional",
-      subtitle: "PGDAS · DAS único",
+      subtitle: isSimplesExito ? `Êxito · estabelecimento ${sn?.estabelecimentoCodigo || "—"}` : "PGDAS · DAS único",
       tone: "das",
       apurado: aRec,
       creditos: null,
@@ -769,6 +794,14 @@ export default function MemoriaLivro({
 
   return (
     <>
+      {isSimplesExito ? (
+        <div className="kpi-grid kpi-grid-4 simples-kpi-grid">
+          <article className="kpi-card c-cyan"><div className="kpi-val">{moneyOrDash(sn?.rpa?.total)}</div><div className="kpi-lbl">Receita do período (RPA)</div><div className="kpi-sub">Base oficial do Simples Nacional</div></article>
+          <article className="kpi-card c-blue"><div className="kpi-val">{moneyOrDash(sn?.rbt12?.total)}</div><div className="kpi-lbl">RBT12</div><div className="kpi-sub">Doze meses anteriores</div></article>
+          <article className="kpi-card c-purple"><div className="kpi-val">{moneyOrDash(sn?.rbaAtual?.total)}</div><div className="kpi-lbl">RBA atual</div><div className="kpi-sub">Ano-calendário corrente</div></article>
+          <article className="kpi-card c-green"><div className="kpi-val">{moneyOrDash(sn?.das ?? ap?.das?.aRecolher)}</div><div className="kpi-lbl">DAS a recolher</div><div className="kpi-sub">Alíquota efetiva {pctAliq(Number(sn?.aliquota ?? ap?.das?.aliquota))}</div></article>
+        </div>
+      ) : null}
       {displayCards.length ? (
         <div className="tax-detail-grid">
           {displayCards.map((c) => (
@@ -777,7 +810,7 @@ export default function MemoriaLivro({
         </div>
       ) : null}
 
-      <ResumoConsolidado cards={resumoCards} rb={rb} mesLabel={mesLabel} />
+      <ResumoConsolidado cards={resumoCards} rb={rb} mesLabel={mesLabel} percentLabel={isSimplesExito ? "% s/ RPA" : "% s/ RB"} />
 
       {hasLivro ? (
         <div className="mem-livro-wrap">
@@ -843,7 +876,7 @@ export default function MemoriaLivro({
               ) : hasSimples ? (
                 <div className="table-card" id="mem-pgdas">
                   <div className="table-head">
-                    <div className="ttl">PGDAS — Simples Nacional</div>
+                    <div className="ttl">{isSimplesExito ? "Memória técnica — Simples Nacional" : "PGDAS — Simples Nacional"}</div>
                     <div className="sub">DAS = base × alíquota efetiva. Partilha não é guia avulsa.</div>
                   </div>
                   <div className="tbl-scroll">
@@ -855,14 +888,21 @@ export default function MemoriaLivro({
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>Total saídas</td>
-                          <td className="r">{moneyOrDash(sn?.totalSaidas)}</td>
-                        </tr>
-                        <tr>
-                          <td>Devoluções</td>
-                          <td className="r">{moneyOrDash(sn?.devolucoes)}</td>
-                        </tr>
+                        {isSimplesExito ? (
+                          <>
+                            <tr><td>RPA — mercado interno</td><td className="r">{moneyOrDash(sn?.rpa?.mercadoInterno)}</td></tr>
+                            <tr><td>RPA — mercado externo</td><td className="r">{moneyOrDash(sn?.rpa?.mercadoExterno)}</td></tr>
+                            <tr><td>RBT12</td><td className="r">{moneyOrDash(sn?.rbt12?.total)}</td></tr>
+                            <tr><td>RBA atual</td><td className="r">{moneyOrDash(sn?.rbaAtual?.total)}</td></tr>
+                            <tr><td>RBA anterior</td><td className="r">{moneyOrDash(sn?.rbaAnterior?.total)}</td></tr>
+                            <tr><td>Alíquota efetiva</td><td className="r">{pctAliq(Number(sn?.aliquota ?? ap?.das?.aliquota))}</td></tr>
+                          </>
+                        ) : (
+                          <>
+                            <tr><td>Total saídas</td><td className="r">{moneyOrDash(sn?.totalSaidas)}</td></tr>
+                            <tr><td>Devoluções</td><td className="r">{moneyOrDash(sn?.devolucoes)}</td></tr>
+                          </>
+                        )}
                         <tr className="dre-lucro">
                           <td className="fw7">DAS a recolher</td>
                           <td className="r fw7">{moneyOrDash(sn?.das ?? ap?.das?.aRecolher)}</td>

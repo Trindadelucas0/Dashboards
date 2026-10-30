@@ -18,7 +18,16 @@ type Item = {
   tipo?: string;
   duplicateHash?: boolean;
   slotExists?: boolean;
-  meta?: { soma?: number; delta?: number; nfs?: number };
+  meta?: {
+    soma?: number;
+    delta?: number;
+    nfs?: number;
+    estabelecimento?: string;
+    rpa?: number;
+    aliquota?: number;
+    das?: number;
+    partilha?: number;
+  };
 };
 
 type Saved = {
@@ -249,7 +258,13 @@ export default function ImportTab() {
           >
             <strong>{it.file}</strong>
             <div>{it.company_label || "empresa ?"} · {it.competencia || "mês ?"} · {it.unidade} · {it.tipo}{it.status ? ` · ${it.status}` : ""}{it.skipped ? " · ignorada" : ""}</div>
-            {it.meta ? <div>Soma {it.meta.soma} · Δ {it.meta.delta} · NFs {it.meta.nfs}</div> : null}
+            {it.meta?.das != null ? (
+              <div>
+                Estabelecimento {it.meta.estabelecimento || "—"} · RPA {it.meta.rpa?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) || "—"}
+                {" · "}Alíquota {it.meta.aliquota?.toLocaleString("pt-BR", { maximumFractionDigits: 4 }) || "—"}%
+                {" · "}DAS {it.meta.das.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+              </div>
+            ) : it.meta ? <div>Soma {it.meta.soma} · Δ {it.meta.delta} · NFs {it.meta.nfs}</div> : null}
             {it.duplicateHash ? <div>Arquivo já importado (hash).</div> : null}
             {it.slotExists ? <div>Este mês já tem dados. Gravar mescla; substituir troca somente os tipos enviados.</div> : null}
             {(it.warnings || []).map((e) => <div key={e}>{e}</div>)}

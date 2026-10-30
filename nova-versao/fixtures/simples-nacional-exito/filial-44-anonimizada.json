@@ -1,0 +1,29 @@
+{
+  "sheet": "Simples Nacional",
+  "rows": [
+    {"row": 0, "cells": {"0": "Empresa:", "6": "EMPRESA ANONIMIZADA LTDA"}},
+    {"row": 1, "cells": {"0": "CNPJ:", "6": "32911621000113"}},
+    {"row": 5, "cells": {"0": "Período:", "6": "46266"}},
+    {"row": 7, "cells": {"0": "SIMPLES NACIONAL"}},
+    {"row": 8, "cells": {"0": "Total de Receitas Brutas (R$)", "18": "Mercado Interno", "24": "Mercado Externo", "34": "Total"}},
+    {"row": 10, "cells": {"0": "Regime de Competência", "18": "127233.38", "24": "0", "34": "127233.38"}},
+    {"row": 12, "cells": {"0": "ao período de apuração (RBT12)", "18": "1369213.03", "24": "0", "34": "1369213.03"}},
+    {"row": 13, "cells": {"0": "Faixa de Enquadramento:", "18": "720.000,01 a 1.800.000,00", "24": "0,00 a 180.000,00"}},
+    {"row": 15, "cells": {"0": "corrente (RBA)", "18": "989841.21", "24": "0", "34": "989841.21"}},
+    {"row": 17, "cells": {"0": "anterior (RBA)", "18": "828040.14", "24": "0", "34": "828040.14"}},
+    {"row": 19, "cells": {"0": "Fator r: 1,00"}},
+    {"row": 20, "cells": {"0": "Estabelecimento:", "3": "44", "10": "EMPRESA ANONIMIZADA LTDA", "27": "CNPJ:", "30": "32911621000113"}},
+    {"row": 21, "cells": {"0": "Anexo:", "4": "Anexo III - Locação de Bens Móveis e Prestação de Serviços"}},
+    {"row": 22, "cells": {"0": "Seção:", "4": "Seção III - Receitas de locação e serviços"}},
+    {"row": 24, "cells": {"0": "Tabela:", "4": "Tabela 2 - Sem retenção, com ISS devido ao próprio Município"}},
+    {"row": 25, "cells": {"0": "Receita Tributada Total:", "12": "127233.38", "17": "Alíquota:", "22": "13.3970449287939", "28": "Simples Nacional Total:", "37": "17045.51"}},
+    {"row": 26, "cells": {"0": "Partilha:", "8": "IRPJ", "14": "CSLL", "20": "COFINS", "23": "PIS", "25": "INSS/CPP", "32": "ISS"}},
+    {"row": 30, "cells": {"0": "Valor:", "8": "681.82", "14": "596.59", "20": "2325.01", "23": "504.55", "25": "7397.75", "32": "5539.79"}},
+    {"row": 31, "cells": {"0": "Outros Acréscimos:", "15": "0"}},
+    {"row": 32, "cells": {"0": "Outras Deduções:", "15": "0"}},
+    {"row": 33, "cells": {"0": "Valor Diferido:", "15": "0"}},
+    {"row": 34, "cells": {"0": "Valor Fixo ICMS:", "15": "0"}},
+    {"row": 35, "cells": {"0": "Valor Fixo ISS:", "15": "0"}},
+    {"row": 36, "cells": {"0": "Simples Nacional a recolher:", "15": "17045.51"}}
+  ]
+}

@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.13.0 — edição do nome da empresa principal |
-| Última atualização | 29/10/2026 (administrador pode renomear empresas principais pelo seletor) |
+| Versão do sistema | 2.14.0 — Simples Nacional EXITO para quatro filiais |
+| Última atualização | 30/10/2026 (importação, memória e impostos do Simples Nacional) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.14.0 | Simples Nacional EXITO | O relatório **Simples Nacional** passa a ser reconhecido somente para os estabelecimentos **44-DAUTO SERVIÇOS-MG**, **45-VET LUZIÂNIA-GO**, **56-ÉTICA-DF** e **67-MERCADO ÁGUAS CLARAS-DF**. CNPJ, empresa cadastrada e código do estabelecimento precisam conferir. A competência aceita a data serial do Excel; a prévia mostra estabelecimento, RPA, alíquota e DAS. O pacote grava somente `memoriaSimples` e `apuracao.das`, preservando movimento, DRE, Balancete e outros impostos. Memória e Impostos usam a RPA oficial como denominador, sem alterar a memória PGDAS antiga da LANNIC. |
 | 2.13.0 | Edição do nome da empresa principal | No seletor, o administrador pode abrir **Gerenciar empresa, unidades e CNPJs** e alterar o nome da empresa principal. A API `PATCH /api/companies/{company_id}` exige administrador, valida tamanho e duplicidade com os nomes das unidades e atualiza o cadastro principal e seu alias de matriz na mesma transação. O seed preserva o nome escolhido e a prévia de importação usa o cadastro do banco. O identificador interno, o CNPJ, as planilhas, os acessos e o histórico permanecem inalterados. |
 | 2.12.2 | Conciliação para empresas legadas | **Recebimentos/Pagamentos** reconhece como `matriz` o cadastro principal de empresas antigas que ainda não possuem uma linha auxiliar em `company_cnpjs`. A validação continua bloqueando `todas`, filiais desconhecidas e unidades de outra empresa; nenhuma linha é criada ou alterada no banco. |
 | 2.12.1 | Hierarquia fiel da DRE EXITO | A árvore mensal e trimestral da DRE respeita o subtotal e a ordem original das planilhas antes de classificar uma conta pelo nome. Contas que existem apenas em um mês do trimestre, como **IPTU**, entram na posição contábil correta e mostram `—` nos meses ausentes, sem reaparecer depois do Lucro Líquido. Na BAIFER e na Loja das Máquinas, **Taxas Diversas** permanece em **Despesas Administrativas**; **Bonificações Concedidas** e **Eventos e Confraternizações** permanecem em **Outras Despesas Operacionais**. Packs novos e antigos recebem a correção na apresentação, sem reimportação, alteração de valores ou escrita no banco. |
@@ -132,6 +133,7 @@ O mesmo arquivo modelo serve para Baifer, Loja, Única e **empresa nova**. Só m
 | DIFAL | `apuracao.difal` se houver valor | **Memória**, Impostos |
 | IPI | `apuracao.ipi` se houver valor | **Memória**, Impostos |
 | IRPJ / CSLL | `apuracao.irpj` / `apuracao.csll` se CNPJ conferir | **Memória**, Impostos |
+| Simples Nacional EXITO | `memoriaSimples`, `apuracao.das` (`fonte: simples_nacional_exito`) | **Memória**, Impostos — somente estabelecimentos 44, 45, 56 e 67 |
 
 Sem as abas de movimento no workbook, Compras/Vendas/Finalidade continuam vindo das planilhas EXITO `Entradas`/`Saídas` (fluxo legado). O relatório **entrada por fornecedor** conta como Entradas.
 
@@ -182,6 +184,7 @@ Regras de exibição:
 - `% s/ RB` = max(aRecolher, 0) / `receitaBruta` do pack (carga a recolher); sem RB → `—`.
 - Ordem do resumo: Simples Nacional (se houver) → ICMS 5005 → ICMS ST → PIS → COFINS → IRPJ → CSLL → TOTAL.
 - **Simples Nacional (LANNIC):** card/tabela PGDAS com saídas e devoluções (sem linha “Base memória”); partilha IRPJ/CSLL/PIS/COFINS/INSS/ICMS **só no livro**. Sem APURAÇÃO 5005 não aparece empty-state de 5005. Pack: `memoriaSimples` + `apuracao.das` (`fonte: pgdas_simples_nacional`). Partilha **não** vai para `apuracao.icms` / `irpj` / `csll`.
+- **Simples Nacional EXITO (44, 45, 56 e 67):** o card usa a **RPA** da própria planilha, mostra RBT12, RBA atual/anterior, faixa, fator R, anexo, seção, tabela, alíquota e DAS. A partilha IRPJ/CSLL/COFINS/PIS/INSS/ICMS/ISS é memória informativa e não cria impostos separados. O detalhe técnico mostra os mercados interno/externo e ajustes disponíveis. Pack: somente `memoriaSimples` + `apuracao.das` (`fonte: simples_nacional_exito`). A memória antiga da LANNIC permanece no formato PGDAS.
 - **Indústria Schumacher** (`livroApuracao`): os mesmos cards e Resumo Consolidado; cada tributo do livro lista as 9 linhas do resumo (não Decreto 5005, não base/alíquota, não UF). IPI entra nessa grade. ICMS ST, IRPJ e CSLL são cards **Em apuração**. **Ver livro técnico** abre ICMS/IPI/PIS/COFINS com Resumo, Entradas/créditos, Saídas/débitos e Conferência. `% s/ RB` = `—`.
 
 Fórmulas gravadas no pack (não calculadas na UI):
@@ -209,6 +212,7 @@ Topo da aba: KPIs **Vendas do mês**, **Total impostos**, **Total impostos / Ven
 - Total impostos: `deducoes` do pack; se ausente, soma dos `aRecolher` presentes na apuração (inclui `das`).
 - `% s/ vendas` por tributo nos cards = `aRecolher / vendas × 100`. Sem vendas ou sem aRecolher → `—` (nunca `0%` inventado).
 - Com `apuracao.das`, a aba mostra o card **Simples Nacional** e **não** lista ICMS/PIS/IPI “Em apuração” vazios.
+- Quando `memoriaSimples.fonte = simples_nacional_exito`, os KPIs e o percentual do card usam `memoriaSimples.baseMemoria` (RPA oficial), mesmo que o movimento fiscal tenha outro total de saídas. Os rótulos mudam para **RPA do Simples** e **DAS / RPA**.
 
 ### 3.2.2 DRE / Indicadores / Balancete (layout)
 
@@ -543,6 +547,8 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 4. Conferir preview (ok / vazia / ignorada) → **Gravar**.
 5. Em **Planilhas importadas** (mesma aba, só administrador), cada arquivo gravado mostra data, mês, unidade e tipos. **Excluir** abre a confirmação dentro do próprio card daquela planilha (Cancelar / **Excluir planilha**); Cancelar devolve o botão Excluir. Sai só o que aquela planilha entrou; outro arquivo do mesmo mês permanece. Na reimportação, **Gravar** mescla tipos novos e **Substituir tipos enviados** troca somente os tipos listados na prévia, sem apagar as outras planilhas do mês.
 6. Selecionar mês no chip superior; conferir DRE, Balancete, **Memória** (livro linha a linha), Impostos, Compras, Vendas. A barra lista os trimestres em ordem de calendário (ex.: 1º–4º de 2025, depois 1º–3º de 2026); com dois anos importados, o chip do trimestre traz o ano (**1º Trim 2025**). Para o **total somado do trimestre**, clique no chip do trimestre (não no mês): aí aparece a faixa de 4 KPIs (vendas, compras, saldo, imposto), **exceto** na Indústria Schumacher, onde a faixa não é montada. No chip de mês essa faixa não aparece.
+
+**Simples Nacional — filiais 44, 45, 56 e 67:** abra o dashboard da empresa correta → selecione **Importar planilhas** → envie o relatório `Simples Nacional.xls` → use **Extrair e validar**. Antes de gravar, confira na prévia o estabelecimento, a competência, a RPA, a alíquota e o DAS. O sistema bloqueia CNPJ sem cadastro, empresa aberta divergente, código fora da lista ou nome de unidade incompatível. Use **Gravar** na primeira carga e **Substituir tipos enviados** para corrigir somente o Simples daquele mês. Em **Memória**, confira RPA/RBT12/RBA, enquadramento e partilha; em **Impostos**, confira DAS e **DAS / RPA**. Excluir essa planilha remove somente a memória e o DAS que ela gerou; os demais dados fiscais do mês permanecem.
 
 **Trocar e gerenciar empresa/unidades:** dentro do dashboard, escolha a unidade no seletor superior; o cabeçalho mostra o nome e o CNPJ correspondentes. Em **Todas as unidades**, informa **CNPJs consolidados**. Para fazer o manejo, o administrador volta ao seletor, abre os **três pontos** → **Gerenciar empresa, unidades e CNPJs**. No cartão **Empresa principal**, altere o nome e use **Salvar nome da empresa**; o identificador e o CNPJ principal não mudam. Também é possível adicionar outro CNPJ e salvar nome/CNPJ de uma unidade vazia. Quando já existem dados fiscais ou bancários, o nome da unidade continua editável, mas trocar seu CNPJ ou removê-la é bloqueado para não separar dados históricos. A empresa principal não pode ser removida nessa tela.
 

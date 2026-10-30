@@ -87,6 +87,19 @@ A empresa sai do seletor junto com planilhas fiscais e bancárias, meses, notas,
 
 Não use a substituição para acrescentar um tipo ausente: nesse caso, **Gravar** é suficiente.
 
+### Importar o Simples Nacional das filiais 44, 45, 56 e 67
+
+Este fluxo é exclusivo para **44-DAUTO SERVIÇOS-MG**, **45-VET LUZIÂNIA-GO**, **56-ÉTICA-DF** e **67-MERCADO ÁGUAS CLARAS-DF**.
+
+1. Abra o dashboard da empresa à qual a filial pertence e acesse **Importar**.
+2. Selecione o relatório `Simples Nacional.xls` e clique em **Extrair e validar**.
+3. Confira na prévia: filial/estabelecimento, competência, RPA, alíquota e DAS. O CNPJ precisa estar cadastrado na mesma empresa e apontar para uma das quatro unidades permitidas.
+4. Na primeira carga, clique em **Gravar**. Para corrigir o Simples já importado naquele mês, use **Substituir tipos enviados**; movimento, DRE, Balancete e outros impostos permanecem.
+5. Em **Memória de Cálculo**, confira RPA, RBT12, RBA, enquadramento, DAS e partilha. Use **Ver memória técnica** para mercados interno/externo e ajustes.
+6. Em **Impostos**, confira **RPA do Simples**, total do DAS e **DAS / RPA**.
+
+O sistema bloqueia competência ausente, empresa/CNPJ divergentes, estabelecimento fora da lista, fórmula do DAS incompatível ou partilha que não fecha. A filial 44 está calibrada com setembro/2026; na primeira planilha das filiais 45, 56 e 67, revise todos os números da prévia antes de gravar.
+
 ### Consultar a DRE detalhada
 
 1. Abra a empresa e acesse **Financeiro → DRE**.

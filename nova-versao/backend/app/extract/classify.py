@@ -231,6 +231,19 @@ def detect_sheet_tipo(grid: WorkbookGrid, filename: str) -> str:
     head = " ".join(" ".join(grid.row(r)).lower() for r in range(min(8, len(grid.rows))))
     file_fold = _fold_text(filename)
     labels_fold = _fold_text(" ".join(str(row[0]) for row in (grid.rows or [])[:14] if row))
+    full_fold = _fold_text(
+        " ".join(" ".join(str(cell or "") for cell in row) for row in (grid.rows or [])[:45])
+    ).replace("\ufffd", "")
+    if all(
+        marker in full_fold
+        for marker in (
+            "simples nacional",
+            "total de receitas brutas",
+            "partilha",
+            "simples nacional a recolher",
+        )
+    ):
+        return "simples_nacional"
     if "5005" in file_fold or (
         "debito original" in labels_fold and ("debitos 5005" in labels_fold or "credito outorgado" in labels_fold)
     ):

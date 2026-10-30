@@ -57,6 +57,8 @@ def _pack_has_tipo(pack: dict | None, tipo: str) -> bool:
     ap = pack.get("apuracao") if isinstance(pack.get("apuracao"), dict) else {}
     if tipo == "apuracao_5005":
         return bool(pack.get("memoriaCalculo") or ap.get("icms"))
+    if tipo == "simples_nacional":
+        return bool(pack.get("memoriaSimples") or ap.get("das"))
     if tipo in ("pis", "cofins", "pis_cofins"):
         return bool(ap.get("pis") or ap.get("cofins"))
     if tipo == "icms_st":
@@ -116,6 +118,11 @@ def _apply_session_company(extracted: dict, company_id: str | None, db: Session)
     label = getattr(dest, "label", None) or company_id
     mapped = extracted.get("company_id")
     if mapped and mapped != company_id:
+        if extracted.get("tipo") == "simples_nacional":
+            extracted.setdefault("errors", []).append(
+                f"CNPJ do Simples Nacional pertence a {extracted.get('company_label') or mapped}, não a {label}"
+            )
+            return
         if company_id in COMPANY_BY_ID:
             extracted.setdefault("errors", []).append(
                 f"Planilha é da empresa {extracted.get('company_label')} e não de {company_id}"
@@ -124,6 +131,11 @@ def _apply_session_company(extracted: dict, company_id: str | None, db: Session)
         extracted.setdefault("warnings", []).append(
             f"CNPJ da planilha aponta {extracted.get('company_label') or mapped}. Gravando em {label}."
         )
+    if not mapped and extracted.get("tipo") == "simples_nacional":
+        extracted.setdefault("errors", []).append(
+            "CNPJ do Simples Nacional não está cadastrado em uma das quatro unidades permitidas"
+        )
+        return
     if not mapped:
         extracted.setdefault("warnings", []).append(f"Empresa herdada do dashboard: {label}")
     extracted["company_id"] = company_id
@@ -154,6 +166,7 @@ def _inherit_batch_competencia(items: list[dict]) -> None:
             "irpj_csll",
             "difal",
             "apuracao_5005",
+            "simples_nacional",
             "dre",
             "balancete",
         ):
