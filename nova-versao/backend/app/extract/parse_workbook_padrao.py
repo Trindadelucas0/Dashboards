@@ -455,6 +455,16 @@ def extract_workbook_padrao(
                                     "apurado": parsed_icms["apurado"],
                                     "credito": parsed_icms["credito"],
                                     "aRecolher": parsed_icms["aRecolher"],
+                                    **(
+                                        {"debitoSaidas": parsed_icms["debitoSaidas"]}
+                                        if "debitoSaidas" in parsed_icms
+                                        else {}
+                                    ),
+                                    **(
+                                        {"estornoCredito": parsed_icms["estornoCredito"]}
+                                        if "estornoCredito" in parsed_icms
+                                        else {}
+                                    ),
                                     "pctRb": 0.0,
                                     "fonte": "planilha_padrao_icms",
                                 },
@@ -465,6 +475,8 @@ def extract_workbook_padrao(
                             "icmsARecolher": parsed_icms.get("aRecolher"),
                             "apurado": parsed_icms.get("apurado"),
                             "credito": parsed_icms.get("credito"),
+                            "debitoSaidas": parsed_icms.get("debitoSaidas"),
+                            "estornoCredito": parsed_icms.get("estornoCredito"),
                         },
                     )
                 )

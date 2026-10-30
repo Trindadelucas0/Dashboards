@@ -738,10 +738,12 @@ def _cell_num(row: list, idx: int | None) -> float:
 def parse_icms_simples_padrao(grid: WorkbookGrid) -> dict:
     """Aba ICMS da planilha padrão sem memória 5005.
 
-    Exige as três linhas Débito ICMS, Crédito ICMS e ICMS a recolher.
-    Não grava memória 5005 nem inventa zero quando uma linha falta.
+    Aceita o resumo Débito ICMS / Crédito ICMS / ICMS a recolher e o
+    recorte contábil Débito pelas saídas / Crédito pelas entradas /
+    Estorno de crédito / Total. Não grava memória 5005 nem inventa zero
+    quando as linhas mínimas do respectivo layout faltam.
     """
-    debito = credito = recolher = None
+    debito = credito = recolher = estorno_credito = total = None
     for row in grid.rows or []:
         label = _fold(_row_label(row))
         if not label:
@@ -755,14 +757,38 @@ def parse_icms_simples_padrao(grid: WorkbookGrid) -> dict:
             credito = val
         elif "icms" in label and "a recolher" in label:
             recolher = val
-    if debito is None or credito is None or recolher is None:
+        elif label.startswith("debito pelas saidas"):
+            debito = val
+        elif label.startswith("credito pelas entradas"):
+            credito = val
+        elif label.startswith("estorno de credito"):
+            estorno_credito = val
+        elif label.startswith("total ") or label == "total":
+            total = val
+    if debito is None or credito is None:
         return {"kind": "planilha_padrao_icms", "hasValores": False}
+    if recolher is None and total is None:
+        return {"kind": "planilha_padrao_icms", "hasValores": False}
+
+    if recolher is not None:
+        return {
+            "kind": "planilha_padrao_icms",
+            "hasValores": True,
+            "apurado": debito,
+            "credito": credito,
+            "aRecolher": recolher,
+            "fonte": "planilha_padrao_icms",
+        }
+
+    estorno = float(estorno_credito or 0)
     return {
         "kind": "planilha_padrao_icms",
         "hasValores": True,
-        "apurado": debito,
+        "apurado": round(float(debito) + estorno, 2),
         "credito": credito,
-        "aRecolher": recolher,
+        "aRecolher": total,
+        "debitoSaidas": debito,
+        "estornoCredito": estorno,
         "fonte": "planilha_padrao_icms",
     }
 

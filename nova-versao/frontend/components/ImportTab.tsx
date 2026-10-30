@@ -27,6 +27,11 @@ type Item = {
     aliquota?: number;
     das?: number;
     partilha?: number;
+    icmsARecolher?: number;
+    apurado?: number;
+    credito?: number;
+    debitoSaidas?: number;
+    estornoCredito?: number;
   };
 };
 
@@ -67,8 +72,13 @@ function slotLabel(slot: SavedSlot) {
   return `${slot.competencia || "mês ?"} · ${slot.unidade || "matriz"}${tipos ? ` · ${tipos}` : ""}`;
 }
 
+function money(value: number | undefined) {
+  if (value == null) return "—";
+  return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
 export default function ImportTab() {
-  const { company, goToSlot, reloadCompany } = useDash();
+  const { company, unidade, goToSlot, reloadCompany } = useDash();
   const [items, setItems] = useState<Item[]>([]);
   const [previewId, setPreviewId] = useState("");
   const [msg, setMsg] = useState("");
@@ -134,6 +144,7 @@ export default function ImportTab() {
     const form = e.currentTarget;
     const fd = new FormData(form);
     if (company?.id) fd.set("company_id", company.id);
+    if (unidade) fd.set("unidade", unidade);
     setLoading(true);
     try {
       const res = await fetch("/api/imports/preview", { method: "POST", body: fd, credentials: "include" });
@@ -264,7 +275,18 @@ export default function ImportTab() {
                 {" · "}Alíquota {it.meta.aliquota?.toLocaleString("pt-BR", { maximumFractionDigits: 4 }) || "—"}%
                 {" · "}DAS {it.meta.das.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
               </div>
-            ) : it.meta ? <div>Soma {it.meta.soma} · Δ {it.meta.delta} · NFs {it.meta.nfs}</div> : null}
+            ) : it.meta?.icmsARecolher != null ? (
+              <div>
+                Débito pelas saídas {money(it.meta.debitoSaidas ?? it.meta.apurado)}
+                {it.meta.estornoCredito ? ` · Estorno de crédito ${money(it.meta.estornoCredito)}` : ""}
+                {` · Créditos ${money(it.meta.credito)}`}
+                {it.meta.icmsARecolher < 0
+                  ? ` · Saldo credor ${money(Math.abs(it.meta.icmsARecolher))}`
+                  : ` · A recolher ${money(it.meta.icmsARecolher)}`}
+              </div>
+            ) : it.meta?.soma != null || it.meta?.delta != null || it.meta?.nfs != null ? (
+              <div>Soma {it.meta?.soma} · Δ {it.meta?.delta} · NFs {it.meta?.nfs}</div>
+            ) : null}
             {it.duplicateHash ? <div>Arquivo já importado (hash).</div> : null}
             {it.slotExists ? <div>Este mês já tem dados. Gravar mescla; substituir troca somente os tipos enviados.</div> : null}
             {(it.warnings || []).map((e) => <div key={e}>{e}</div>)}

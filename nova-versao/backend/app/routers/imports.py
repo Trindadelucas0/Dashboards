@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.db import get_db
 from app.deps import require_admin, require_company
-from app.companies import COMPANY_BY_ID
+from app.companies import COMPANY_BY_ID, only_digits
 from app.extract.aggregate import preserve_simples_receita
 from app.extract.pipeline import classify_and_extract
 from app.extract.parse_workbook_padrao import expand_workbook_parts
@@ -28,7 +28,7 @@ from app.imports_revert import (
     rebuild_pack,
     slot_revert_mode,
 )
-from app.models import Company, FiscalMonth, ImportRecord, NfeLine, User
+from app.models import Company, CompanyCnpj, FiscalMonth, ImportRecord, NfeLine, User
 from app.security import sha256_bytes
 
 router = APIRouter(prefix="/api/imports", tags=["imports"])
@@ -142,6 +142,62 @@ def _apply_session_company(extracted: dict, company_id: str | None, db: Session)
     extracted["company_label"] = label
 
 
+def _session_unit_context(
+    company_id: str,
+    unidade: str | None,
+    db: Session,
+) -> tuple[str, str, str] | None:
+    """Valida a unidade selecionada e devolve chave, CNPJ e rótulo."""
+    if not unidade:
+        return None
+    normalized = unidade.strip() or "matriz"
+    if normalized == "todas":
+        raise HTTPException(400, "Selecione uma unidade específica para importar planilhas.")
+
+    registered = COMPANY_BY_ID.get(company_id)
+    if registered:
+        unit = next((item for item in registered.units if item.key == normalized), None)
+        if unit:
+            return unit.key, unit.cnpj or "", unit.label
+
+    alias = (
+        db.query(CompanyCnpj)
+        .filter(CompanyCnpj.company_id == company_id, CompanyCnpj.unidade == normalized)
+        .first()
+    )
+    if alias:
+        return normalized, alias.cnpj or "", alias.label or normalized
+
+    if normalized == "matriz":
+        company = db.query(Company).filter(Company.id == company_id).first()
+        if company:
+            return normalized, company.cnpj or "", company.label or "Matriz"
+    raise HTTPException(400, "A unidade informada não pertence à empresa.")
+
+
+def _apply_session_unit(
+    extracted: dict,
+    unidade: str | None,
+    unit_cnpj: str = "",
+    unit_label: str = "",
+) -> None:
+    """Usa a unidade do dashboard quando a planilha não a identifica por CNPJ."""
+    if not unidade:
+        return
+    source_cnpj = only_digits(extracted.get("cnpj"))
+    selected_cnpj = only_digits(unit_cnpj)
+    if source_cnpj and selected_cnpj and source_cnpj != selected_cnpj:
+        extracted.setdefault("errors", []).append(
+            f"CNPJ da planilha não pertence à unidade selecionada ({unit_label or unidade})"
+        )
+        return
+    if extracted.get("unidade") != unidade:
+        extracted.setdefault("warnings", []).append(
+            f"Unidade herdada do dashboard: {unit_label or unidade}"
+        )
+    extracted["unidade"] = unidade
+
+
 def _inherit_batch_competencia(items: list[dict]) -> None:
     comps = [it.get("competencia") for it in items if it.get("competencia") and it.get("ok") is not False]
     if not comps:
@@ -178,11 +234,13 @@ def _inherit_batch_competencia(items: list[dict]) -> None:
 async def preview(
     files: list[UploadFile] = File(...),
     company_id: str | None = Form(default=None),
+    unidade: str | None = Form(default=None),
     user: User = Depends(require_admin),
     db: Session = Depends(get_db),
 ):
     if company_id:
         require_company(company_id, user, db)
+    unit_context = _session_unit_context(company_id, unidade, db) if company_id else None
     items = []
     for up in files:
         name = up.filename or "arquivo.xls"
@@ -197,7 +255,9 @@ async def preview(
             tmp_path = tmp.name
         try:
             company_cnpj = ""
-            if company_id:
+            if unit_context:
+                company_cnpj = unit_context[1]
+            elif company_id:
                 dest = db.query(Company).filter(Company.id == company_id).first() or COMPANY_BY_ID.get(company_id)
                 if dest and getattr(dest, "cnpj", None):
                     company_cnpj = str(dest.cnpj)
@@ -223,6 +283,8 @@ async def preview(
         extracted["file_hash"] = sha256_bytes(data)
         extracted["file"] = name
         _apply_session_company(extracted, company_id, db)
+        if unit_context:
+            _apply_session_unit(extracted, *unit_context)
         expanded = expand_workbook_parts(extracted)
         for part in expanded:
             # Hash por aba (expand_workbook_parts); não sobrescrever com hash do arquivo inteiro
@@ -231,6 +293,8 @@ async def preview(
                 part["file_hash"] = extracted.get("file_hash")
             part["source_file_hash"] = extracted.get("file_hash")
             _apply_session_company(part, company_id, db)
+            if unit_context:
+                _apply_session_unit(part, *unit_context)
             existing = (
                 db.query(ImportRecord).filter(ImportRecord.file_hash == part.get("file_hash")).first()
                 if part.get("file_hash")

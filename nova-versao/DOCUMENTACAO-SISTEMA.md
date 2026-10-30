@@ -2,8 +2,8 @@
 
 | Item | Valor |
 |------|--------|
-| Versão do sistema | 2.14.0 — Simples Nacional EXITO para quatro filiais |
-| Última atualização | 30/10/2026 (importação, memória e impostos do Simples Nacional) |
+| Versão do sistema | 2.14.1 — Simples Nacional EXITO para quatro filiais |
+| Última atualização | 30/10/2026 (ICMS compacto e unidade selecionada na importação) |
 | Fonte oficial | Este arquivo |
 
 ## 1. Como usar este documento
@@ -21,6 +21,7 @@ Mapa de fluxos, regras de importação e onde olhar no código para o dashboard 
 
 | Versão | Nome | Mudança |
 |--------|------|---------|
+| 2.14.1 | Simples Nacional EXITO | A importação passa a enviar e validar a unidade selecionada no cabeçalho do dashboard. Planilhas sem CNPJ são gravadas na unidade específica aberta, nunca silenciosamente na Matriz; `Todas as unidades` é bloqueada. A aba única `ICMS` também aceita o resumo compacto **Débito pelas saídas / Crédito pelas entradas / Estorno de crédito / Total**: o estorno compõe o apurado e o `Total` é o saldo a recolher ou credor. A prévia mostra esses quatro componentes em reais, sem a linha vazia de Soma/Δ/NFs. |
 | 2.14.0 | Simples Nacional EXITO | O relatório **Simples Nacional** passa a ser reconhecido somente para os estabelecimentos **44-DAUTO SERVIÇOS-MG**, **45-VET LUZIÂNIA-GO**, **56-ÉTICA-DF** e **67-MERCADO ÁGUAS CLARAS-DF**. CNPJ, empresa cadastrada e código do estabelecimento precisam conferir. A competência aceita a data serial do Excel; a prévia mostra estabelecimento, RPA, alíquota e DAS. O pacote grava somente `memoriaSimples` e `apuracao.das`, preservando movimento, DRE, Balancete e outros impostos. Memória e Impostos usam a RPA oficial como denominador, sem alterar a memória PGDAS antiga da LANNIC. |
 | 2.13.0 | Edição do nome da empresa principal | No seletor, o administrador pode abrir **Gerenciar empresa, unidades e CNPJs** e alterar o nome da empresa principal. A API `PATCH /api/companies/{company_id}` exige administrador, valida tamanho e duplicidade com os nomes das unidades e atualiza o cadastro principal e seu alias de matriz na mesma transação. O seed preserva o nome escolhido e a prévia de importação usa o cadastro do banco. O identificador interno, o CNPJ, as planilhas, os acessos e o histórico permanecem inalterados. |
 | 2.12.2 | Conciliação para empresas legadas | **Recebimentos/Pagamentos** reconhece como `matriz` o cadastro principal de empresas antigas que ainda não possuem uma linha auxiliar em `company_cnpjs`. A validação continua bloqueando `todas`, filiais desconhecidas e unidades de outra empresa; nenhuma linha é criada ou alterada no banco. |
@@ -110,6 +111,7 @@ O mesmo arquivo modelo serve para Baifer, Loja, Única e **empresa nova**. Só m
 - DRE e BALANCETE: só a coluna desse mês. Coluna vazia = part `vazia`. Nunca copia janeiro (nem outro mês preenchido) para a competência do arquivo.
 - ICMS 5005-2012: débito/crédito na memória. `apuracao.icms.aRecolher` só da linha **ICMS a recolher**, se ela existir. Se essa aba existir, o caminho é a memória 5005 (ex. Baifer).
 - Aba `ICMS` (comparada sem acento como `icms`, sem 5005): grava só `apuracao.icms` com `apurado` = linha Débito ICMS, `credito` = Crédito ICMS, `aRecolher` = linha ICMS a recolher, `fonte: planilha_padrao_icms`. Não cria `memoriaCalculo`. Sem as três linhas, a aba não é gravada.
+- Aba única `ICMS` no resumo compacto: exige **Débito pelas saídas**, **Crédito pelas entradas** e **Total**; **Estorno de crédito** é opcional e soma ao apurado. O `Total` explícito vira `aRecolher` (negativo = saldo credor). O pack também preserva `debitoSaidas` e `estornoCredito` para auditoria.
 - PIS COFINS / PIS E COFINS: os dois nomes de aba são equivalentes. `aRecolher` é a coluna do RESUMO cujo cabeçalho é A RECOLHER ou IMPOSTO A RECOLHER. Débito − crédito do mês fica em `aRecolherCalculado`. Cabeçalho `SALDO CREDOR` grava `saldoCredor`. Cabeçalho `AJUSTE` (ex. aluguel) grava `ajuste` e não é saldo credor.
 - ST: soma UF/VALOR em `apuracao.icmsSt` só se houver valor. DIFAL e IPI só se a aba tiver valor no resumo/grade.
 - IRPJ/CSLL só se a aba existir e o CNPJ conferir com a empresa do dashboard.
@@ -150,6 +152,7 @@ Sem as abas de movimento no workbook, Compras/Vendas/Finalidade continuam vindo 
 | PIS/COFINS: cabeçalho `AJUSTE` | Não grava essa coluna em `saldoCredor` |
 | PIS/COFINS: cabeçalho `SALDO CREDOR` | Grava em `saldoCredor` (Baifer/Única) |
 | Aba `ICMS` sem `ICMS 5005-2012` | Part `icms`, só `apuracao.icms`; não é memória 5005 |
+| Aba única `ICMS` com Débito/Crédito/Estorno/Total | Part `icms`; `apurado = débito + estorno`, `credito = crédito pelas entradas`, `aRecolher = Total` |
 | Workbook parcial | Aviso lista só os nomes das abas do esqueleto que faltam. Coluna do mês vazia em DRE/BAL não entra nesse aviso |
 
 ### 3.1 Relatório de entrada por fornecedor (EXITO)
@@ -465,7 +468,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | UI Indicadores Schumacher | `frontend/components/IndicadoresSchumacher.tsx` |
 | Menu lateral (Schumacher: seção Indicadores) | `frontend/lib/nav.ts` (`navSectionsForCompany`), `frontend/app/dashboard/[empresa]/layout-inner.tsx` |
 | Pipeline | `backend/app/extract/pipeline.py` |
-| Preview/commit | `backend/app/routers/imports.py` (`expand_workbook_parts` também expande `dre_vertical`). Cada item gravado guarda `source_file_hash` e `pack_patch`; cada `NfeLine` nova aponta `import_id`. **Substituir tipos enviados** marca como `replaced` e remove linhas somente dos tipos presentes na prévia, preservando os outros dados do mês/unidade. |
+| Preview/commit | `backend/app/routers/imports.py` (`expand_workbook_parts` também expande `dre_vertical`). O preview recebe `company_id` e `unidade`, valida a unidade e usa seu CNPJ como contexto quando o arquivo não o traz. Cada item gravado guarda `source_file_hash` e `pack_patch`; cada `NfeLine` nova aponta `import_id`. **Substituir tipos enviados** marca como `replaced` e remove linhas somente dos tipos presentes na prévia, preservando os outros dados do mês/unidade. |
 | Conciliação — parser e armazenamento | `backend/app/extract/parse_bank_statement.py`; modelos `BankStatementImport` e `BankTransaction` em `backend/app/models.py` |
 | Conciliação — API | `backend/app/routers/bank_statements.py` (preview/commit de admin; options/summary/transactions com empresa, aba e unidade validadas no servidor) |
 | Conciliação — UI | `frontend/components/BankReconciliation.tsx`; montagem dedicada em `frontend/app/dashboard/[empresa]/[aba]/page.tsx`; estilos `.bank-*` em `frontend/app/dashboard.css` |
@@ -487,8 +490,8 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 | JPG unidades / consolidado | `company_detail` + `tab_payload` (`unidade=todas`) em `backend/app/routers/companies.py`; `aggregate_fiscal_packs` soma `irpj`/`csll`; dropdown em `frontend/app/dashboard/[empresa]/layout-inner.tsx` |
 | LANNIC Simples | `Unit lannic` em `backend/app/companies.py`; pack `scripts/seed_jpg_lannic.py` (merge, não apaga NFs); `preserve_simples_receita` em `aggregate.py`; UI Impostos `page.tsx` + `MemoriaLivro.tsx` |
 | Split movimento acumulado | `backend/scripts/split_movimento_mensal.py` |
-| Testes golden | `backend/tests/test_bank_statements.py` (parser sintético, colunas ignoradas, datas, dinheiro, duplicidade e substituição), `backend/tests/test_import_revert.py`, `backend/tests/test_padrao_qualquer_empresa.py` (sintético, sem empresa fixa), `backend/tests/test_workbook_padrao.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_loja_padrao_082026.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py`, `backend/tests/test_livro_apuracao_schumacher.py`, `backend/tests/test_venda_produto_schumacher.py`, `backend/tests/test_dre_schumacher.py`, `backend/tests/test_balanco_schumacher.py`, `backend/tests/test_indicadores_schumacher.py` |
-| Fixtures | `fixtures/baifer-padrao/`, `fixtures/unica-padrao/`, `fixtures/egaplast-padrao/`, `fixtures/loja-maquinas-padrao/`, `fixtures/jpg-padrao/`, `fixtures/schumacher-padrao/` |
+| Testes golden | `backend/tests/test_bank_statements.py` (parser sintético, colunas ignoradas, datas, dinheiro, duplicidade e substituição), `backend/tests/test_import_revert.py`, `backend/tests/test_padrao_qualquer_empresa.py` (sintético, sem empresa fixa), `backend/tests/test_workbook_padrao.py`, `backend/tests/test_dauto_icms_resumo.py`, `backend/tests/test_unica_padrao.py`, `backend/tests/test_loja_padrao_082026.py`, `backend/tests/test_unica_dre_vertical.py`, `backend/tests/test_unica_balancete.py`, `backend/tests/test_cfop.py`, `backend/tests/test_slice_contract.py`, `backend/tests/test_baifer_entradas.py`, `backend/tests/test_baifer_balancete.py`, `backend/tests/test_loja_balancete.py`, `backend/tests/test_jpg.py`, `backend/tests/test_livro_apuracao_schumacher.py`, `backend/tests/test_venda_produto_schumacher.py`, `backend/tests/test_dre_schumacher.py`, `backend/tests/test_balanco_schumacher.py`, `backend/tests/test_indicadores_schumacher.py` |
+| Fixtures | `fixtures/baifer-padrao/`, `fixtures/unica-padrao/`, `fixtures/egaplast-padrao/`, `fixtures/loja-maquinas-padrao/`, `fixtures/jpg-padrao/`, `fixtures/schumacher-padrao/`, `fixtures/dauto-padrao/` |
 
 ## 5. Regras de negócio
 
@@ -504,7 +507,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 10. Percentuais na UI (Impostos `% s/ vendas`, Memória `% s/ RB` = max(aRecolher,0)/RB, DRE margens) só com numerador e denominador no pack; caso contrário `—` / `N/D` / “Em apuração”.
 11. Balancete multi-mês: coluna Total da grade = soma dos saldos mensais exibidos (layout wireframe); não interpreta patrimônio consolidado.
 12. Documento de cliente/fornecedor: 11 dígitos = CPF, 14 = CNPJ; demais = outros. Exportações de vendas/finalidade/CPF×CNPJ usam só pack e `NfeLine` da competência/unidade atuais.
-13. Workbook com ≥3 abas fiscais do modelo é `workbook_padrao`, com ou sem ENTRADAS/SAÍDAS. Também é `workbook_padrao` o arquivo que tem a aba `ICMS` com as três linhas Débito ICMS / Crédito ICMS / ICMS a recolher, mesmo sem as outras abas (antes caía em “Tipo de planilha não reconhecido”). Abas do esqueleto ausentes geram aviso; coluna do mês vazia em DRE/BAL = part `vazia` (não copia outro mês). Sem abas de movimento, Compras/Vendas não são alteradas por esse arquivo. Empresa nova usa o mesmo contrato: só mudam números e `MMYYYY`; `company_id` vem do dashboard.
+13. Workbook com ≥3 abas fiscais do modelo é `workbook_padrao`, com ou sem ENTRADAS/SAÍDAS. Também é `workbook_padrao` o arquivo que tem somente a aba `ICMS` com Débito ICMS / Crédito ICMS / ICMS a recolher ou com Débito pelas saídas / Crédito pelas entradas / Estorno de crédito / Total. Abas do esqueleto ausentes geram aviso; coluna do mês vazia em DRE/BAL = part `vazia` (não copia outro mês). Sem abas de movimento, Compras/Vendas não são alteradas por esse arquivo. Empresa nova usa o mesmo contrato: só mudam números e `MMYYYY`; `company_id` e a unidade sem CNPJ vêm do dashboard.
 14. CFOPs de serviço (1-933/2-933 ISSQN; 1-353/2-353 transporte; faixa SINIEF `.300` comunicação) entram no macro `servicos` e no painel `servicosTomados` da Finalidade.
 15. DRE Análise Vertical sem CNPJ herda a empresa do dashboard (como 5005/ST); não inventa `lucLiq` se a linha de resultado operacional estiver vazia.
 16. Balancete EXITO mensal (Única e demais): totais Ativo/Passivo/Resultado vêm do Saldo Atual das contas `1`/`2`/`3`; um arquivo = uma competência.
@@ -582,7 +585,7 @@ Identidade: Ativo + Passivo + Resultado ≈ 0 (saldos com sinal EXITO). Débitos
 
 **Finalidade — exportar:** **Exportar PDF** / **Exportar Excel** do quadro macro e da lista completa de CFOPs (o Excel inclui fornecedores por CFOP). O botão **Por Fornecedor** segue gerando o relatório filtrado no modal.
 
-**Qualquer empresa — planilha padrão do mês:** cadastrar a empresa (se ainda não existir) → login dela → dashboard aberto → **Importar** → arquivo cujo nome termina em `MMYYYY` (ex. `… 082026.xlsx` = agosto/2026; no mês seguinte, `092026`). A empresa gravada é a do dashboard, não o texto do nome. No preview: DRE e Balancete ficam `ok` só se a coluna daquele mês tiver número; coluna vazia fica `vazia` e o janeiro do modelo não entra. ICMS 5005 **ou** ICMS simples, PIS/COFINS, ST, DIFAL e IPI aparecem só quando a aba tem valor. IRPJ/CSLL só se a aba existir e o CNPJ for o da empresa aberta. Sem ENTRADAS/SAÍDAS, Compras e Vendas não mudam com esse arquivo (use o relatório EXITO de entradas/saídas com o CNPJ dela). Use **Gravar** para acrescentar dados e **Substituir tipos enviados** somente ao corrigir os tipos que aparecem na prévia.
+**Qualquer empresa — planilha padrão do mês:** cadastrar a empresa (se ainda não existir) → login dela → escolher uma **unidade específica** no seletor (não `Todas as unidades`) → dashboard aberto → **Importar** → arquivo cujo nome termina em `MMYYYY` (ex. `… 082026.xlsx` = agosto/2026; no mês seguinte, `092026`). A empresa e, quando a planilha não trouxer CNPJ, a unidade gravadas são as do dashboard aberto, não o texto do nome. No preview: confira empresa, competência e unidade; DRE e Balancete ficam `ok` só se a coluna daquele mês tiver número; coluna vazia fica `vazia` e o janeiro do modelo não entra. ICMS 5005 **ou** ICMS simples, PIS/COFINS, ST, DIFAL e IPI aparecem só quando a aba tem valor. IRPJ/CSLL só se a aba existir e o CNPJ for o da empresa aberta. Sem ENTRADAS/SAÍDAS, Compras e Vendas não mudam com esse arquivo (use o relatório EXITO de entradas/saídas com o CNPJ dela). Use **Gravar** para acrescentar dados e **Substituir tipos enviados** somente ao corrigir os tipos que aparecem na prévia.
 
 **Baifer — planilha padrão (exemplo):** mesmo fluxo acima com login `baifer` e arquivo `Planilha Padrão DASBORADS - BAIFER MMYYYY.xlsx`.
 
